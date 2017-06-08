@@ -1,2 +1,2 @@
-# ubuntu-poorna
+# sinchu
 Post Ubuntu install Setup Script
