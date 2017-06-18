@@ -1,2 +1,2 @@
-# sinchu
-Post Ubuntu install Setup Script
+# Ubuntu After Effects
+A bash script to setup your fresh install of ubuntu.
