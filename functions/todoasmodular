@@ -1,0 +1,102 @@
+#!/bin/sh
+test_connection
+#take a nap :P
+LOG_AND_PRINT "Taking a deep breath before I begin......."
+sleep 3
+printf "\n$COLOR_BLUE\nLets Begin$RESET_COLOR\n"
+printf "\n$COLOR_MAGNATA\nChecking Internet Connection$RESET_COLOR\n"
+checkconnection
+add_repositories
+add_ppa_modular
+
+#Accept some EULA Crap
+echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
+#Install starts here
+LOG_AND_PRINT "Installing Phase 1..."
+LOG_AND_PRINT "Installing Usual tools required"
+sudo apt-get -y -q install apt-xapian-index unity-tweak-tool vlc gimp ubuntu-restricted-extras ubuntu-restricted-addons chromium-browser nautilus-dropbox p7zip-full nautilus-admin playonlinux arc-theme dconf-editor spotify-client caffeine pidgin pidgin-gnome-keyring flashplugin-installer bleachbit darktable compiz-plugins-extra compiz-plugins-main compiz-plugins-main-default compizconfig-settings-manager compiz-plugins docky variety icedtea-8-plugin openjdk-8-jre gdebi  imwheel plank insync laptop-mode-tools git audacity ppa-purge gufw lm-sensors handbrake-gtk handbrake-cli indicator-netspeed syspeek indicator-multiload pavucontrol gparted synaptic lib32gcc1 >>$SCRIPT_LOG && LOG_AND_PRINT "Packages of Phase 1 installed"
+
+#Essentials
+LOG_AND_PRINT "Installing Phase 2..."
+LOG_AND_PRINT "Installing tools"
+#added after running script so not tested
+sudo apt-get install -y adb fastboot audacity htop intel-microcode screenfetch rawtherapee virtualbox virtualbox-ext-pack gnome-exe-thumbnailer gnome-raw-thumbnailer gitg curl spyder spyder3 >>$SCRIPT_LOG && LOG_AND_PRINT "Phase 2: Packages installed"
+
+LOG_AND_PRINT "Installing Phase 3..."
+
+LOG_AND_PRINT "LateX and Tools"
+sudo apt-get install -y texstudio texlive-fonts-extra texlive-formats-extra texlive-fonts-recommended texlive-science texlive-math-extra texlive-generic-extra >>$SCRIPT_LOG && LOG_AND_PRINT "Phase 3: Packages installed"
+
+#Themes
+#LOG_AND_PRINT "Installing Some Themes"
+#sudo apt-get install -y  flatabulous-theme arc-flatabulous-theme >>$SCRIPT_LOG && LOG_AND_PRINT "Packages installed: Phase 3"
+
+echo "Updating cache"
+sudo apt-get update  &>>$SCRIPT_LOG && LOG_AND_PRINT "Done!"
+#cleanup
+rm *.key
+rm *.deb
+LOG_AND_PRINT "Updating Packages"
+sudo apt-get -y upgrade &>>$SCRIPT_LOG && LOG_AND_PRINT "Done"
+
+LOG_AND_PRINT "Installling proprietery driver for Catalyst."
+read -p "Are you sure you want to continue? <y/N> " prompt_catalyst
+DEBUG "Entered : $prompt_catalyst"
+case $prompt_catalyst in
+    [yY][eE][sS]|[yY])
+		DEBUG "Entered YES for Catalyst Prompt"
+		unset prompt_catalyst
+		install_catalyst
+		;;
+
+    [nN][oO]|[nN])
+		DEBUG "Entered NO for Catalyst Prompt"
+		LOG_AND_PRINT "Dont worry! I didin't feel bad because you said no! I Wont install proprietery drivers. Performance, OpenGL, OpenCL might be limited or unavailable."
+		unset prompt_catalyst
+		continue
+       	;;
+
+    *)
+	    LOG_AND_PRINT "Entered Invalid Choice for Abort Prompt: Exiting script!"
+	    unset prompt_catalyst
+	    continue
+	    ;;
+esac
+#Cleanup
+LOG_AND_PRINT "Removing un-necessary Packages"
+sudo apt-get -y autoremove &>>$SCRIPT_LOG && LOG_AND_PRINT "Done"
+LOG_AND_PRINT "Cleaning up cache"
+sudo apt-get clean &>>$SCRIPT_LOG && LOG_AND_PRINT "Done"
+LOG_AND_PRINT "Make sure that ATI adapter is initialized if you chose to install Catalyst driver!!"
+
+
+LOG_AND_PRINT "Shall I make $(uname -n) beautiful? I know stuff and I can get stuff for you. No promises though! These are bleeding edge stuff, they might break somethings! But definately not OS!"
+read -p "Are you sure you want to continue? <y/N> " prompt_looks
+DEBUG "Entered : $prompt_looks"
+case $prompt_looks in
+    [yY][eE][sS]|[yY])
+		DEBUG "Entered YES for Looks"
+		unset prompt_looks
+		make_it_look_nice
+    	#add_ppa_modular_extra
+    	set_gsettings_preferences
+		;;
+
+    [nN][oO]|[nN])
+		DEBUG "Entered NO for Looks Prompt"
+		LOG_AND_PRINT "Dont worry!  I Wont install it!"
+		unset prompt_looks
+		goodbye_msg
+		exit 0
+       	;;
+
+    *)
+	    LOG_AND_PRINT "Entered Invalid Choice : Exiting script!"
+	    unset prompt_looks
+	    goodbye_msg
+	    exit 1
+	    ;;
+esac
+    #put looks function
+    goodbye_msg
+}

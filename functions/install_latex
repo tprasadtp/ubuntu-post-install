@@ -1,0 +1,10 @@
+#!/bin/bash
+install_latex(){
+DEBUG "FCN:install_latex"
+#Accept some EULA Crap
+DEBUG "Entered Install LateX"
+LOG_AND_PRINT "Installing Phase 3..."
+
+LOG_AND_PRINT "LateX and Tools"
+sudo apt-get install -s -y texstudio texlive-fonts-extra texlive-formats-extra texlive-fonts-recommended texlive-science texlive-math-extra texlive-generic-extra >>$SCRIPT_LOG
+}

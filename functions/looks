@@ -1,0 +1,57 @@
+#!/bin/bash
+IMWHEEL_CFG="$dir/data/imwheel_config_file"
+GSETTINGS="$dir/data/gsettings.list"
+make_it_look_nice ()
+{
+  DEBUG "FCN:make_it_look_nice "
+
+if (whiptail --title "Beautify" --yesno "Proceed with installing themes and other handy config changes?" 10 60) then
+  cp $IMWHEEL_CFG ~/.imwheelrc #copy config file to /home dir of user
+  killall imwheel
+  imwheel --kill
+  #Set RTC Time to local to sync time  with Windows (duh!)
+  echo "Setting RTC Time to local Time"
+  timedatectl set-local-rtc 1 &>> $SCRIPT_LOG || DEBUG "Changing Hardware clock to local time"
+  #Unpack Icons
+  #tar -xvzf *.tar.gz  >>$SCRIPT_LOG
+  #Make Spotify Unity Launcher Actions
+  LOG_AND_PRINT "Copying Spotify Launcher Actions"
+  sudo cp -f spotify.launcher /usr/share/applications/spotify.desktop
+  sudo chmod +x /usr/share/applications/spotify.desktop && LOG_AND_PRINT "Done!"
+
+  #Gsettings Config
+  set_gsettings_preferences
+  apport
+  DEBUG "Exiting make_it_look_nice "
+else
+  main
+  DEBUG "Exiting make_it_look_nice "
+fi
+}
+
+
+#Some Gsettings Bullshit
+# Automatically set preferred gsettings keys as outlined in the 'gsettings.list' file
+set_gsettings_preferences () {
+    DEBUG "FCN:set_gsettings_preferences"
+    LOG_AND_PRINT "Setting preferred application-specific & desktop settings..."
+    while IFS= read line
+    do
+        gsettings set $line &>>$SCRIPT_LOG
+    done < "$GSETTINGS"
+    # Done
+    DEBUG "Exiting gsettings"
+}
+
+
+
+
+
+# Disable Apport
+function apport {
+    LOG_AND_PRINT 'Disabling apport crash dialogs...'
+    sudo sed -i "s/enabled=1/enabled=0/g" /etc/default/apport
+
+    whiptail --title "Finished" --msgbox "Settings changed successfully." 8 78
+    configure
+}

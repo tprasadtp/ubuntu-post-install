@@ -1,0 +1,90 @@
+#!/bin/bash
+#Adding PPAs function
+add_ppa_non_modular ()
+{
+#Adding Latest Graphic drivers to support
+#Remove # below if needed system might be unstable ??
+#sudo add-apt-repository -y ppa:oibaf/graphics-drivers
+echo -n "Adding PPAs"
+#Webupd8 PPA
+LOG_AND_PRINT "Adding Webupd8 PPA"
+sudo add-apt-repository -y ppa:nilarimogard/webupd8 >>$SCRIPT_LOG && LOG_AND_PRINT "Done!"
+#NEMO
+LOG_AND_PRINT "Adding Nemo PPA"
+sudo add-apt-repository -y ppa:webupd8team/nemo >>$SCRIPT_LOG LOG_AND_PRINT "Done!"
+#PPA MANAGER
+LOG_AND_PRINT "Adding PPA manager "
+sudo add-apt-repository -y ppa:webupd8team/y-ppa-manager >>$SCRIPT_LOG && LOG_AND_PRINT "Done!"
+
+#Libre Office
+LOG_AND_PRINT "Adding Libre Office PPA"
+sudo add-apt-repository -y ppa:libreoffice/ppa >>$SCRIPT_LOG && LOG_AND_PRINT "Done!"
+
+#Ubuntu Make
+LOG_AND_PRINT "Adding ubuntu make PPA"
+sudo add-apt-repository -y ppa:ubuntu-desktop/ubuntu-make >>$SCRIPT_LOG && LOG_AND_PRINT "Done!"
+
+#Macubuntu Noobslab & Apps
+LOG_AND_PRINT "Adding Noobslab PPA"
+sudo add-apt-repository -y ppa:noobslab/macbuntu >>$SCRIPT_LOG && LOG_AND_PRINT "Done!"
+#Noobslabs Themes
+sudo add-apt-repository -y ppa:noobslab/themes >>$SCRIPT_LOG && LOG_AND_PRINT "Done!"
+
+#Handbrake
+LOG_AND_PRINT "Adding Handbrake PPA"
+sudo add-apt-repository -y ppa:stebbins/handbrake-releases >>$SCRIPT_LOG && LOG_AND_PRINT "Done!"
+
+#Recent Notification Indicator
+LOG_AND_PRINT "Adding recent-notifications PPA"
+sudo add-apt-repository -y ppa:jconti/recent-notifications >>$SCRIPT_LOG && LOG_AND_PRINT "Done!"
+
+#Indicators in Status Bar
+LOG_AND_PRINT "Adding Altero PPA"
+sudo add-apt-repository -y ppa:atareao/atareao >>$SCRIPT_LOG && LOG_AND_PRINT "Done!"
+
+#Firefox Aurora
+LOG_AND_PRINT "Adding Firefox PPA"
+sudo add-apt-repository -y ppa:ubuntu-mozilla-daily/firefox-aurora >>$SCRIPT_LOG && LOG_AND_PRINT "Done!"
+
+#GIMP
+LOG_AND_PRINT "Adding GIMP PPA"
+sudo add-apt-repository -y ppa:otto-kesselgulasch/gimp >>$SCRIPT_LOG && LOG_AND_PRINT "Done!"
+echo "Done adding PPAs"
+##After adding repos &PPAs update apt cache
+echo "Updating cache"
+sudo apt update && sudo -y apt dist-upgrade &>>$SCRIPT_LOG && LOG_AND_PRINT "Done!"
+
+#Downloading debs which dont have repositories or need to be downloaded initially
+
+} #end of ADD_PPA function
+
+add_ppa_modular ()
+{
+  while IFS= read line
+    do
+         printf "\nAdding PPA :$line:\n"
+         DEBUG "$line"
+         sudo add-apt-repository -y $line >> $SCRIPT_LOG
+    done < "$PPA_LIST"
+    # Done
+    printf "$COLOR_BLUE:Done adding PPA_LIST.$RESET_COLOR"
+}
+
+add_ppa_modular_extra ()
+{
+  while IFS= read line
+    do
+         printf "\nAdding from EXTRA PPA List :$line:\n"
+         DEBUG "$line"
+         sudo add-apt-repository -y $line >> $SCRIPT_LOG
+          if [ "$?" = "0" ]; then
+	           LOG_AND_PRINT "Done!"
+             $?="0"
+          else
+	            LOG_AND_PRINT "Some error occured during adding  $line PPA, Ignoring and moving on!"
+              $?="0"
+          fi
+    done < "$PPA_LIST_EXTRA"
+    # Done
+    printf "$COLOR_BLUE:Done adding PPA_LIST_EXTRA.$RESET_COLOR"
+}

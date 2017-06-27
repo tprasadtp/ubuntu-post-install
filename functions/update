@@ -1,0 +1,19 @@
+#!/bin/sh
+function update {
+  DEBUG "FCN:update"
+if (whiptail --title "System Update" --yesno "Proceed with system update?" 10 60) then
+    # Update repository information
+    test_connection
+    LOG_AND_PRINT 'Updating repository information...'
+    sudo apt-get update >>$SCRIPT_LOG
+    LOG_AND_PRINT 'Done.'
+    # Dist-Upgrade
+    LOG_AND_PRINT 'Performing system update...'
+    sudo apt-get upgrade -y >>$SCRIPT_LOG
+    # Done
+    LOG_AND_PRINT 'Done.'
+    # Check
+else
+    main
+fi
+}

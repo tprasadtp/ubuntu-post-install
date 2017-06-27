@@ -1,0 +1,266 @@
+-e [Sun Sep 18 18:36:47 UTC 2016] [DEBUG]	Executing Script
+: setup_script_14.04_modular.sh
+-e [Sun Sep 18 18:36:47 UTC 2016] [DEBUG]	Following details were recognised by the Script
+-e [Sun Sep 18 18:36:48 UTC 2016] [DEBUG]	OS:ubuntu
+-e [Sun Sep 18 18:36:48 UTC 2016] [DEBUG]	VERSION:14.04
+-e [Sun Sep 18 18:36:48 UTC 2016] [DEBUG]	CODE_NAME:trusty
+-e [Sun Sep 18 18:36:48 UTC 2016] [DEBUG]	ARCHITECHTURE:64
+-e [Sun Sep 18 18:36:48 UTC 2016] [DEBUG]	PATH FOR SOURCE FILES:/etc/apt/sources.list.d
+-e [Sun Sep 18 18:36:48 UTC 2016] [DEBUG]	IMPORTED FILES
+-e [Sun Sep 18 18:36:50 UTC 2016] [DEBUG]	Entered : n
+-e [Sun Sep 18 18:36:50 UTC 2016] [DEBUG]	Entered NO for Abort Prompt
+-e [Sun Sep 18 18:36:50 UTC 2016] [DEBUG]	Exiting Script
+: setup_script_14.04_modular.sh
+-e [Sun Sep 18 18:36:50 UTC 2016] [DEBUG]	Taking a deep breath before I begin.......
+-e [Sun Sep 18 18:36:53 UTC 2016] [DEBUG]	Entered add_repositories
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	Entered test_connection
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	INTERNET Connected!
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	Thanks for the internet connection! I can call my boyfriend :P
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	Returning test_connection
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	Entered test_conflicting_apps
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	Checking if conflicting apps are running
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	synaptic not running, Proceeding with installation
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	update-manager not running, Proceeding with installation
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	software-center not running, Proceeding with installation
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	apt-get not running, Proceeding with installation
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	dpkg not running, Proceeding with installation
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	aptitude not running, Proceeding with installation
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	Exiting test_conflicting_apps
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	ARC THEME:Not Supported version of Ubuntu/Ubuntu derivative
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	REPOSITORY: Google Chrome Repository
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	Google Key added:Success!
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	REPOSITORY: Spotify For Linux Repository
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	Spotify KEY Added
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	REPOSITORY: Dukto Repository
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	Added DUKTO_REPO_KEY
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	REPOSITORY: Skype For Linux Repository
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	SKYPE_KEY added: Success!!
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	REPOSITORY: Whatsie Repository
+-e [Sun Sep 18 18:36:56 UTC 2016] [DEBUG]	Key added: Success!!
+-e [Sun Sep 18 18:36:57 UTC 2016] [DEBUG]	Updating APT cache
+-e [Sun Sep 18 18:36:57 UTC 2016] [DEBUG]	Exiting Repositiry function
+-e [Sun Sep 18 18:36:57 UTC 2016] [DEBUG]	ppa:nilarimogard/webupd8
+OK
+-e [Sun Sep 18 18:36:58 UTC 2016] [DEBUG]	ppa:webupd8team/nemo
+OK
+-e [Sun Sep 18 18:36:59 UTC 2016] [DEBUG]	ppa:webupd8team/y-ppa-manager
+OK
+-e [Sun Sep 18 18:37:00 UTC 2016] [DEBUG]	ppa:libreoffice/ppa
+OK
+-e [Sun Sep 18 18:37:02 UTC 2016] [DEBUG]	ppa:ubuntu-desktop/ubuntu-make
+OK
+-e [Sun Sep 18 18:37:03 UTC 2016] [DEBUG]	ppa:noobslab/macbuntu
+OK
+-e [Sun Sep 18 18:37:05 UTC 2016] [DEBUG]	ppa:noobslab/themes
+OK
+-e [Sun Sep 18 18:37:07 UTC 2016] [DEBUG]	ppa:stebbins/handbrake-releases
+OK
+-e [Sun Sep 18 18:37:08 UTC 2016] [DEBUG]	ppa:jconti/recent-notifications
+OK
+-e [Sun Sep 18 18:37:10 UTC 2016] [DEBUG]	ppa:atareao/atareao
+OK
+-e [Sun Sep 18 18:37:11 UTC 2016] [DEBUG]	ppa:ubuntu-mozilla-daily/firefox-aurora
+OK
+-e [Sun Sep 18 18:37:13 UTC 2016] [DEBUG]	Installing Phase 1...
+-e [Sun Sep 18 18:37:13 UTC 2016] [DEBUG]	Packages installed
+-e [Sun Sep 18 18:37:13 UTC 2016] [DEBUG]	Installing Phase 2...
+-e [Sun Sep 18 18:37:13 UTC 2016] [DEBUG]	Phase 2: Packages installed
+-e [Sun Sep 18 18:37:13 UTC 2016] [DEBUG]	Packages installed: Phase 3
+-e [Sun Sep 18 18:37:13 UTC 2016] [DEBUG]	Done!
+-e [Sun Sep 18 18:37:13 UTC 2016] [DEBUG]	Updating Packages
+-e [Sun Sep 18 18:37:13 UTC 2016] [DEBUG]	Done
+-e [Sun Sep 18 18:37:13 UTC 2016] [DEBUG]	Installling proprietery driver for Catalyst.
+-e [Sun Sep 18 18:38:46 UTC 2016] [DEBUG]	Entered : y
+-e [Sun Sep 18 18:38:46 UTC 2016] [DEBUG]	Entered YES for Catalyst Prompt
+-e [Sun Sep 18 18:38:46 UTC 2016] [DEBUG]	Entered Catalyst Install Functions
+-e [Sun Sep 18 18:38:46 UTC 2016] [DEBUG]	Attempting to install Catalyst Drivers
+-e [Sun Sep 18 18:38:46 UTC 2016] [DEBUG]	Removed DIR:fglrx
+-e [Sun Sep 18 18:38:46 UTC 2016] [DEBUG]	Exiting Catalyst Install functions 
+-e [Sun Sep 18 18:38:46 UTC 2016] [DEBUG]	Removing un-necessary Packages
+-e [Sun Sep 18 18:38:46 UTC 2016] [DEBUG]	Done
+-e [Sun Sep 18 18:38:46 UTC 2016] [DEBUG]	Cleaning up cache
+-e [Sun Sep 18 18:38:46 UTC 2016] [DEBUG]	Done
+-e [Sun Sep 18 18:38:46 UTC 2016] [DEBUG]	Make sure that ATI adapter is initialized if you chose to install Catalyst driver!!
+-e [Sun Sep 18 18:38:46 UTC 2016] [DEBUG]	Shall I make tprasadtp-sindhu2-3783192 beautiful? I know stuff and I can get stuff for you. No promises though! These are bleeding edge stuff, they might break somethings! But definately not OS!
+-e [Sun Sep 18 18:38:56 UTC 2016] [DEBUG]	Entered : 
+-e [Sun Sep 18 18:38:56 UTC 2016] [DEBUG]	Entered Invalid Choice : Exiting script!
+-e [Sun Sep 18 18:42:24 UTC 2016] [DEBUG]	Executing Script
+: test.sh
+-e [Sun Sep 18 18:42:24 UTC 2016] [DEBUG]	Following details were recognised by the Script
+-e [Sun Sep 18 18:42:24 UTC 2016] [DEBUG]	OS:ubuntu
+-e [Sun Sep 18 18:42:24 UTC 2016] [DEBUG]	VERSION:14.04
+-e [Sun Sep 18 18:42:24 UTC 2016] [DEBUG]	CODE_NAME:trusty
+-e [Sun Sep 18 18:42:24 UTC 2016] [DEBUG]	ARCHITECHTURE:64
+-e [Sun Sep 18 18:42:24 UTC 2016] [DEBUG]	PATH FOR SOURCE FILES:/etc/apt/sources.list.d
+-e [Sun Sep 18 18:42:24 UTC 2016] [DEBUG]	IMPORTED FILES
+-e [Sun Sep 18 18:42:24 UTC 2016] [DEBUG]	Entered Catalyst Install Functions
+-e [Sun Sep 18 18:42:24 UTC 2016] [DEBUG]	Attempting to install Catalyst Drivers
+-e [Sun Sep 18 18:42:24 UTC 2016] [DEBUG]	Removed DIR:fglrx
+-e [Sun Sep 18 18:42:24 UTC 2016] [DEBUG]	Exiting Catalyst Install functions 
+[Sun Mar 12 19:57:10 CET 2017] [DEBUG]	Executing Script
+SCRIPTENTRY: setup_script_14.04_modular.sh
+[Sun Mar 12 19:57:10 CET 2017] [DEBUG]	Following details were recognised by the Script
+[Sun Mar 12 19:57:10 CET 2017] [DEBUG]	OS:ubuntu
+[Sun Mar 12 19:57:10 CET 2017] [DEBUG]	VERSION:16.04
+[Sun Mar 12 19:57:10 CET 2017] [DEBUG]	CODE_NAME:xenial
+[Sun Mar 12 19:57:10 CET 2017] [DEBUG]	ARCHITECHTURE:64
+[Sun Mar 12 19:57:10 CET 2017] [DEBUG]	PATH FOR SOURCE FILES:/etc/apt/sources.list.d
+[Sun Mar 12 19:57:10 CET 2017] [DEBUG]	Exiting source
+[Sun Mar 12 19:57:10 CET 2017] [DEBUG]	IMPORTED FILES
+[Sun Mar 12 19:57:10 CET 2017] [DEBUG]	WARNING! THIS SCRIPT CAN DAMAGE YOUR SYSTEM! ASSUMING THAT YOU ARE USING A FRESH INSTALL, THE SCRIPT COMES WITH NO WARRANTY WHATSOEVER!
+[Sun Mar 12 19:57:10 CET 2017] [DEBUG]	FCN:test_connection
+[Sun Mar 12 19:57:10 CET 2017] [DEBUG]	INTERNET Connected!
+[Sun Mar 12 19:57:10 CET 2017] [DEBUG]	Thanks for the internet connection! I can call my boyfriend :P
+[Sun Mar 12 19:57:10 CET 2017] [DEBUG]	End test_connection
+[Sun Mar 12 19:57:20 CET 2017] [DEBUG]	Exiting Script
+SCRIPTEXIT: setup_script_14.04_modular.sh
+[Sun Mar 12 20:01:04 CET 2017] [DEBUG]	Executing Script
+SCRIPTENTRY: setup_script_14.04_modular.sh
+[Sun Mar 12 20:01:04 CET 2017] [DEBUG]	Following details were recognised by the Script
+[Sun Mar 12 20:01:04 CET 2017] [DEBUG]	OS:ubuntu
+[Sun Mar 12 20:01:04 CET 2017] [DEBUG]	VERSION:16.04
+[Sun Mar 12 20:01:04 CET 2017] [DEBUG]	CODE_NAME:xenial
+[Sun Mar 12 20:01:04 CET 2017] [DEBUG]	ARCHITECHTURE:64
+[Sun Mar 12 20:01:04 CET 2017] [DEBUG]	PATH FOR SOURCE FILES:/etc/apt/sources.list.d
+[Sun Mar 12 20:01:04 CET 2017] [DEBUG]	Exiting source
+[Sun Mar 12 20:01:04 CET 2017] [DEBUG]	IMPORTED FILES
+[Sun Mar 12 20:01:04 CET 2017] [DEBUG]	WARNING! THIS SCRIPT CAN DAMAGE YOUR SYSTEM! ASSUMING THAT YOU ARE USING A FRESH INSTALL, THE SCRIPT COMES WITH NO WARRANTY WHATSOEVER!
+[Sun Mar 12 20:01:04 CET 2017] [DEBUG]	FCN:test_connection
+[Sun Mar 12 20:01:05 CET 2017] [DEBUG]	INTERNET Connected!
+[Sun Mar 12 20:01:05 CET 2017] [DEBUG]	Thanks for the internet connection! I can call my boyfriend :P
+[Sun Mar 12 20:01:05 CET 2017] [DEBUG]	End test_connection
+[Sun Mar 12 20:01:11 CET 2017] [DEBUG]	Exiting Script
+SCRIPTEXIT: setup_script_14.04_modular.sh
+[Sun Mar 12 20:02:53 CET 2017] [DEBUG]	Executing Script
+SCRIPTENTRY: setup_script_14.04_modular.sh
+[Sun Mar 12 20:02:53 CET 2017] [DEBUG]	Following details were recognised by the Script
+[Sun Mar 12 20:02:54 CET 2017] [DEBUG]	OS:ubuntu
+[Sun Mar 12 20:02:54 CET 2017] [DEBUG]	VERSION:16.04
+[Sun Mar 12 20:02:54 CET 2017] [DEBUG]	CODE_NAME:xenial
+[Sun Mar 12 20:02:54 CET 2017] [DEBUG]	ARCHITECHTURE:64
+[Sun Mar 12 20:02:54 CET 2017] [DEBUG]	PATH FOR SOURCE FILES:/etc/apt/sources.list.d
+[Sun Mar 12 20:02:54 CET 2017] [DEBUG]	Exiting source
+[Sun Mar 12 20:02:54 CET 2017] [DEBUG]	IMPORTED FILES
+[Sun Mar 12 20:02:54 CET 2017] [DEBUG]	
+WARNING! THIS SCRIPT CAN DAMAGE YOUR SYSTEM! ASSUMING THAT YOU ARE USING A FRESH INSTALL,
+THE SCRIPT COMES WITH NO WARRANTY WHATSOEVER!
+[Sun Mar 12 20:02:54 CET 2017] [DEBUG]	FCN:test_connection
+[Sun Mar 12 20:02:54 CET 2017] [DEBUG]	INTERNET Connected!
+[Sun Mar 12 20:02:54 CET 2017] [DEBUG]	Thanks for the internet connection! I can call my boyfriend :P
+[Sun Mar 12 20:02:54 CET 2017] [DEBUG]	End test_connection
+[Sun Mar 12 20:02:59 CET 2017] [DEBUG]	Exiting Script
+SCRIPTEXIT: setup_script_14.04_modular.sh
+[Sun Mar 12 20:04:17 CET 2017] [DEBUG]	Executing Script
+SCRIPTENTRY: setup_script_14.04_modular.sh
+[Sun Mar 12 20:04:17 CET 2017] [DEBUG]	Following details were recognised by the Script
+[Sun Mar 12 20:04:17 CET 2017] [DEBUG]	OS:ubuntu
+[Sun Mar 12 20:04:17 CET 2017] [DEBUG]	VERSION:16.04
+[Sun Mar 12 20:04:17 CET 2017] [DEBUG]	CODE_NAME:xenial
+[Sun Mar 12 20:04:17 CET 2017] [DEBUG]	ARCHITECHTURE:64
+[Sun Mar 12 20:04:17 CET 2017] [DEBUG]	PATH FOR SOURCE FILES:/etc/apt/sources.list.d
+[Sun Mar 12 20:04:17 CET 2017] [DEBUG]	Exiting source
+[Sun Mar 12 20:04:17 CET 2017] [DEBUG]	IMPORTED FILES
+[Sun Mar 12 20:04:17 CET 2017] [DEBUG]	
+WARNING! THIS SCRIPT CAN DAMAGE YOUR SYSTEM! ASSUMING THAT YOU ARE USING A FRESH INSTALL,
+THE SCRIPT COMES WITH NO WARRANTY WHATSOEVER!
+[Sun Mar 12 20:04:17 CET 2017] [DEBUG]	FCN:test_connection
+[Sun Mar 12 20:04:17 CET 2017] [DEBUG]	INTERNET Connected!
+[Sun Mar 12 20:04:17 CET 2017] [DEBUG]	Thanks for the internet connection! I can call my boyfriend :P
+[Sun Mar 12 20:04:17 CET 2017] [DEBUG]	End test_connection
+[Sun Mar 12 20:04:20 CET 2017] [DEBUG]	Exiting Script
+SCRIPTEXIT: setup_script_14.04_modular.sh
+[Sun Mar 12 20:08:48 CET 2017] [DEBUG]	Executing Script
+SCRIPTENTRY: setup_script_14.04_modular.sh
+[Sun Mar 12 20:08:48 CET 2017] [DEBUG]	Following details were recognised by the Script
+[Sun Mar 12 20:08:48 CET 2017] [DEBUG]	OS:ubuntu
+[Sun Mar 12 20:08:48 CET 2017] [DEBUG]	VERSION:16.04
+[Sun Mar 12 20:08:48 CET 2017] [DEBUG]	CODE_NAME:xenial
+[Sun Mar 12 20:08:48 CET 2017] [DEBUG]	ARCHITECHTURE:64
+[Sun Mar 12 20:08:48 CET 2017] [DEBUG]	PATH FOR SOURCE FILES:/etc/apt/sources.list.d
+[Sun Mar 12 20:08:48 CET 2017] [DEBUG]	Exiting source
+[Sun Mar 12 20:08:48 CET 2017] [DEBUG]	IMPORTED FILES
+[Sun Mar 12 20:08:48 CET 2017] [DEBUG]	
+WARNING! THIS SCRIPT CAN DAMAGE YOUR SYSTEM! ASSUMING THAT YOU ARE USING A FRESH INSTALL,
+THE SCRIPT COMES WITH NO WARRANTY WHATSOEVER!
+[Sun Mar 12 20:08:48 CET 2017] [DEBUG]	FCN:test_connection
+[Sun Mar 12 20:08:49 CET 2017] [DEBUG]	INTERNET Connected!
+[Sun Mar 12 20:08:49 CET 2017] [DEBUG]	Thanks for the internet connection! I can call my boyfriend :P
+[Sun Mar 12 20:08:49 CET 2017] [DEBUG]	End test_connection
+[Sun Mar 12 20:08:52 CET 2017] [DEBUG]	Exiting Script
+SCRIPTEXIT: setup_script_14.04_modular.sh
+[Sun Mar 12 20:10:24 CET 2017] [DEBUG]	Executing Script
+SCRIPTENTRY: setup_script_14.04_modular.sh
+[Sun Mar 12 20:10:24 CET 2017] [DEBUG]	Following details were recognised by the Script
+[Sun Mar 12 20:10:24 CET 2017] [DEBUG]	OS:ubuntu
+[Sun Mar 12 20:10:24 CET 2017] [DEBUG]	VERSION:16.04
+[Sun Mar 12 20:10:24 CET 2017] [DEBUG]	CODE_NAME:xenial
+[Sun Mar 12 20:10:24 CET 2017] [DEBUG]	ARCHITECHTURE:64
+[Sun Mar 12 20:10:24 CET 2017] [DEBUG]	PATH FOR SOURCE FILES:/etc/apt/sources.list.d
+[Sun Mar 12 20:10:24 CET 2017] [DEBUG]	Exiting source
+[Sun Mar 12 20:10:24 CET 2017] [DEBUG]	IMPORTED FILES
+[Sun Mar 12 20:10:24 CET 2017] [DEBUG]	
+WARNING! THIS SCRIPT CAN DAMAGE YOUR SYSTEM! ASSUMING THAT YOU ARE USING A FRESH INSTALL,
+THE SCRIPT COMES WITH NO WARRANTY WHATSOEVER!
+[Sun Mar 12 20:10:24 CET 2017] [DEBUG]	FCN:test_connection
+[Sun Mar 12 20:10:24 CET 2017] [DEBUG]	INTERNET Connected!
+[Sun Mar 12 20:10:24 CET 2017] [DEBUG]	Thanks for the internet connection! I can call my boyfriend :P
+[Sun Mar 12 20:10:24 CET 2017] [DEBUG]	End test_connection
+[Sun Mar 12 20:10:29 CET 2017] [DEBUG]	Exiting Script
+SCRIPTEXIT: setup_script_14.04_modular.sh
+[Sat 24 Jun 16:03:19 CEST 2017] [DEBUG]	Executing Script
+SCRIPTENTRY: setup_script_modular.sh
+[Sat 24 Jun 16:03:20 CEST 2017] [DEBUG]	Following details were recognised by the Script
+[Sat 24 Jun 16:03:20 CEST 2017] [DEBUG]	OS:ubuntu
+[Sat 24 Jun 16:03:20 CEST 2017] [DEBUG]	VERSION:17.04
+[Sat 24 Jun 16:03:20 CEST 2017] [DEBUG]	CODE_NAME:zesty
+[Sat 24 Jun 16:03:20 CEST 2017] [DEBUG]	ARCHITECHTURE:64
+[Sat 24 Jun 16:03:20 CEST 2017] [DEBUG]	PATH FOR SOURCE FILES:/etc/apt/sources.list.d
+[Sat 24 Jun 16:03:20 CEST 2017] [DEBUG]	Exiting source
+[Sat 24 Jun 16:03:20 CEST 2017] [DEBUG]	IMPORTED FILES
+[Sat 24 Jun 16:03:20 CEST 2017] [DEBUG]	
+WARNING! THIS SCRIPT CAN DAMAGE YOUR SYSTEM! ASSUMING THAT YOU ARE USING A FRESH INSTALL,
+THE SCRIPT COMES WITH NO WARRANTY WHATSOEVER!
+[Sat 24 Jun 16:03:20 CEST 2017] [DEBUG]	FCN:test_connection
+[Sat 24 Jun 16:03:20 CEST 2017] [DEBUG]	INTERNET Connected!
+[Sat 24 Jun 16:03:20 CEST 2017] [DEBUG]	Thanks for the internet connection! I can call my boyfriend :P
+[Sat 24 Jun 16:03:20 CEST 2017] [DEBUG]	End test_connection
+[Sat 24 Jun 16:03:28 CEST 2017] [DEBUG]	Exiting Script
+SCRIPTEXIT: setup_script_modular.sh
+[Sat 24 Jun 16:08:51 CEST 2017] [DEBUG]	Executing Script
+SCRIPTENTRY: setup_script_modular.sh
+[Sat 24 Jun 16:08:51 CEST 2017] [DEBUG]	Following details were recognised by the Script
+[Sat 24 Jun 16:08:51 CEST 2017] [DEBUG]	OS:ubuntu
+[Sat 24 Jun 16:08:51 CEST 2017] [DEBUG]	VERSION:17.04
+[Sat 24 Jun 16:08:51 CEST 2017] [DEBUG]	CODE_NAME:zesty
+[Sat 24 Jun 16:08:51 CEST 2017] [DEBUG]	ARCHITECHTURE:64
+[Sat 24 Jun 16:08:51 CEST 2017] [DEBUG]	PATH FOR SOURCE FILES:/etc/apt/sources.list.d
+[Sat 24 Jun 16:08:51 CEST 2017] [DEBUG]	Exiting source
+[Sat 24 Jun 16:08:51 CEST 2017] [DEBUG]	IMPORTED FILES
+[Sat 24 Jun 16:08:51 CEST 2017] [DEBUG]	
+WARNING! THIS SCRIPT CAN DAMAGE YOUR SYSTEM! ASSUMING THAT YOU ARE USING A FRESH INSTALL,
+THE SCRIPT COMES WITH NO WARRANTY WHATSOEVER!
+[Sat 24 Jun 16:08:51 CEST 2017] [DEBUG]	FCN:test_connection
+[Sat 24 Jun 16:08:52 CEST 2017] [DEBUG]	INTERNET Connected!
+[Sat 24 Jun 16:08:52 CEST 2017] [DEBUG]	Thanks for the internet connection! I can call my boyfriend :P
+[Sat 24 Jun 16:08:52 CEST 2017] [DEBUG]	End test_connection
+[Sat 24 Jun 16:08:56 CEST 2017] [DEBUG]	Exiting Script
+SCRIPTEXIT: setup_script_modular.sh
+[Sat 24 Jun 16:28:35 CEST 2017] [DEBUG]	Executing Script
+SCRIPTENTRY: setup_script_modular.sh
+[Sat 24 Jun 16:28:35 CEST 2017] [DEBUG]	Following details were recognised by the Script
+[Sat 24 Jun 16:28:35 CEST 2017] [DEBUG]	OS:ubuntu
+[Sat 24 Jun 16:28:35 CEST 2017] [DEBUG]	VERSION:17.04
+[Sat 24 Jun 16:28:35 CEST 2017] [DEBUG]	CODE_NAME:zesty
+[Sat 24 Jun 16:28:35 CEST 2017] [DEBUG]	ARCHITECHTURE:64
+[Sat 24 Jun 16:28:35 CEST 2017] [DEBUG]	PATH FOR SOURCE FILES:/etc/apt/sources.list.d
+[Sat 24 Jun 16:28:35 CEST 2017] [DEBUG]	Exiting source
+[Sat 24 Jun 16:28:35 CEST 2017] [DEBUG]	IMPORTED FILES
+[Sat 24 Jun 16:28:35 CEST 2017] [DEBUG]	
+WARNING! THIS SCRIPT CAN DAMAGE YOUR SYSTEM! ASSUMING THAT YOU ARE USING A FRESH INSTALL,
+THE SCRIPT COMES WITH NO WARRANTY WHATSOEVER!
+[Sat 24 Jun 16:28:35 CEST 2017] [DEBUG]	FCN:test_connection
+[Sat 24 Jun 16:28:35 CEST 2017] [DEBUG]	INTERNET Connected!
+[Sat 24 Jun 16:28:35 CEST 2017] [DEBUG]	Thanks for the internet connection! I can call my boyfriend :P
+[Sat 24 Jun 16:28:35 CEST 2017] [DEBUG]	End test_connection
+[Sat 24 Jun 16:28:50 CEST 2017] [DEBUG]	Exiting Script
+SCRIPTEXIT: setup_script_modular.sh
