@@ -5,6 +5,9 @@ function all_in_one_gui ()
   DEBUG "User Selected: all_in_one_gui"
   if (whiptail --title "No frills Setup" --yesno "Proceed with Auto configuration? Please read what it does on Github" 10 60) then
   all_in_one;
+  else
+    _process_opts
+  fi
 }
 
 function all_in_one()
@@ -18,7 +21,5 @@ function all_in_one()
   install_latex;
   make_it_look_nice;
   goodbye_msg;
-  else
-    main
-  fi
+
 }

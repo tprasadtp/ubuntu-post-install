@@ -3,7 +3,7 @@
 A bash script to setup your fresh install of ubuntu.
 Currently I am reorganizing this project so few things are broken.
 
-[![Build Status](https://travis-ci.org/tprasadtp/after-effects-ubuntu.svg?branch=master)](https://github.com/tprasadtp/after-effects-ubuntu)
+[![Build Status](https://travis-ci.org/tprasadtp/after-effects-ubuntu.svg?branch=master)](https://travis-ci.org/tprasadtp/after-effects-ubuntu)
 [![Latest Version](https://img.shields.io/github/release/tprasadtp/after-effects-ubuntu/all.svg?label=Latest)](https://github.com/tprasadtp/after-effects-ubuntu/releases)
 [![Latest Version](https://img.shields.io/github/release/tprasadtp/after-effects-ubuntu.svg?label=Stable)](https://github.com/tprasadtp/after-effects-ubuntu/releases)
 [![label](https://img.shields.io/github/issues-raw/badges/shields/website.svg)](https://github.com/tprasadtp/after-effects-ubuntu/issues)
@@ -16,15 +16,23 @@ Currently I am reorganizing this project so few things are broken.
 ```
 .
 ├── data
-│   ├── DEB_FILES.list
-│   ├── gsettings.list
-│   ├── PPA_EXTRA.list
-│   ├── PPA.list
-│   ├── repos_and_deb_urls.sh
+│   ├── extra
+│   │   └── spotify
+│   ├── lists
+│   │   ├── deb_files.list
+│   │   ├── development.list
+│   │   ├── gsettings.list
+│   │   ├── keyservers.list
+│   │   ├── keys.list
+│   │   ├── latex.list
+│   │   ├── multimedia.list
+│   │   ├── ppa_extra.list
+│   │   ├── ppa.list
+│   │   └── utilities.list
+│   ├── repos_and_deb_urls
 │   ├── Repos_Manual_addedby_DEBs
 │   ├── setup_script.log
-│   ├── spotify
-│   └── ubuntu-16.04-fresh-install-bash-hist.list
+│   └── ubuntu-16.04-fresh-install-bash-hist.log
 ├── functions
 │   ├── addppa
 │   ├── addrepository
@@ -41,14 +49,12 @@ Currently I am reorganizing this project so few things are broken.
 │   ├── update
 │   └── utils
 ├── tests
-│   ├── test-dockerfiles
-│   ├── test-dockerfiles-diff
 │   └── test-shell-scripts
-├── after-effects.tree
+├── after-effects
 ├── .gitignore
 ├── LICENSE
+├── project.tree
 ├── README.md
-├── setup_script_modular.sh
 └── .travis.yml
 ```
 

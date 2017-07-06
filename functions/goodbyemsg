@@ -2,5 +2,5 @@
 #function to read user choice
 goodbye_msg ()
 {
-printf "\n$(tput setaf 3)It was nice helping you,\n\nHave a great time with this Linux Machine.\n\nWith loads of love,\n$(tput setaf 6)"$SCRIPT" running on $(uname -n) as "$USER" $(tput sgr 0)\n"
+printf "\n$(tput setaf 3)It was nice helping you,\n\nHave a great time with this Linux Machine.\n\nWith loads of love,\n$(tput setaf 6)${SCRIPT} running on $(uname -n) as ${USER} $(tput sgr 0)\n"
 }
