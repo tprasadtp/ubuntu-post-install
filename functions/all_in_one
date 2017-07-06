@@ -1,18 +1,24 @@
 #!/bin/bash
 #check if the user has an active internet connection
-all_in_one (){
-DEBUG "FCN:all_in_one"
-if (whiptail --title "No frills Setup" --yesno "Proceed with Auto configuration? Please read what it does on Github" 10 60) then
+function all_in_one_gui ()
+{
+  DEBUG "User Selected: all_in_one_gui"
+  if (whiptail --title "No frills Setup" --yesno "Proceed with Auto configuration? Please read what it does on Github" 10 60) then
+  all_in_one;
+}
 
-test_connection
-update
-add_repositories
-add_ppa_modular
-install_apps1
-install_latex
-make_it_look_nice
-goodbye_msg
-else
-  main
-fi
+function all_in_one()
+{
+  DEBUG "FCN:all_in_one"
+  test_connection;
+  update;
+  add_repositories;
+  add_ppa_modular;
+  install_apps1;
+  install_latex;
+  make_it_look_nice;
+  goodbye_msg;
+  else
+    main
+  fi
 }

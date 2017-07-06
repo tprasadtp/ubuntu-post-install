@@ -11,10 +11,10 @@ install_debs_modular ()
            printf "\nDownloading:$line:\n"
            DEBUG "$line"
            DEB_URL=$($line)
-           wget ${!DEB_URL} >>$SCRIPT_LOG
+           wget ${!DEB_URL} >>"$SCRIPT_LOG"
            DEB_INSTALLER_NAME=$(basename "$DEB_URL")
-           sudo dpkg -i --simulate $DEB_INSTALLER_NAME >>$SCRIPT_LOG
-           sudo apt-get install -y -f >>$SCRIPT_LOG
+           sudo dpkg -i --simulate $DEB_INSTALLER_NAME >>"$SCRIPT_LOG"
+           sudo apt-get install -y -f >>"$SCRIPT_LOG"
             if [ "$?" = "0" ]; then
                LOG_AND_PRINT "Done!"
                $?="0"
@@ -25,7 +25,7 @@ install_debs_modular ()
         }
       done < "$DEB_FILES_LIST"
       # Done
-      printf "\n$COLOR_BLUE:Done.$RESET_COLOR\n"
+      printf "\n$${COLOR_BLUE}:Done.$RESET_COLOR\n"
   else
     {
       DEBUG "Exiting ${FUNCNAME[0]}"
@@ -45,37 +45,37 @@ echo "Downloading DEBs"
 echo "Do you love me $USER?"
 #Cumulus
 echo "Downloading Cumulus"
-wget $CUMULUS_DEB >>$SCRIPT_LOG
+wget $CUMULUS_DEB >>"$SCRIPT_LOG"
 DEB_INSTALLER_NAME=$(basename "$CUMULUS_DEB")
-sudo dpkg -i $DEB_INSTALLER_NAME >>$SCRIPT_LOG
-sudo apt-get install -y -f >>$SCRIPT_LOG
+sudo dpkg -i $DEB_INSTALLER_NAME >>"$SCRIPT_LOG"
+sudo apt-get install -y -f >>"$SCRIPT_LOG"
 
 #Teamviewver
 echo "Downloading Teamviewer"
-wget $TEAMVIEWER_DEB_URL >>$SCRIPT_LOG
+wget $TEAMVIEWER_DEB_URL >>"$SCRIPT_LOG"
 DEB_INSTALLER_NAME=$(basename "$TEAMVIEWER_DEB_URL")
-sudo dpkg -i $DEB_INSTALLER_NAME >>$SCRIPT_LOG
-sudo apt-get install -y -f >>$SCRIPT_LOG
+sudo dpkg -i $DEB_INSTALLER_NAME >>"$SCRIPT_LOG"
+sudo apt-get install -y -f >>"$SCRIPT_LOG"
 
 #Atom by github
 echo "Downloading Atom"
-wget $ATOM_DEB_URL >>$SCRIPT_LOG
+wget $ATOM_DEB_URL >>"$SCRIPT_LOG"
 DEB_INSTALLER_NAME=$(basename "$ATOM_DEB_URL")
-sudo dpkg -i $DEB_INSTALLER_NAME >>$SCRIPT_LOG
-sudo apt-get install -y -f >>$SCRIPT_LOG
+sudo dpkg -i $DEB_INSTALLER_NAME >>"$SCRIPT_LOG"
+sudo apt-get install -y -f >>"$SCRIPT_LOG"
 
 #Unified Remote
 echo "Downloading UR"
-wget $UR_DEB_URL >>$SCRIPT_LOG
+wget $UR_DEB_URL >>"$SCRIPT_LOG"
 DEB_INSTALLER_NAME=$(basename "$UR_DEB_URL")
-sudo dpkg -i $DEB_INSTALLER_NAME >>$SCRIPT_LOG
-sudo apt-get install -y -f >>$SCRIPT_LOG
+sudo dpkg -i $DEB_INSTALLER_NAME >>"$SCRIPT_LOG"
+sudo apt-get install -y -f >>"$SCRIPT_LOG"
 
 #Visual Studio Code
 echo "Downloading CODE"
-wget $VISUAL_STUDIO_CODE_URL >>$SCRIPT_LOG
+wget $VISUAL_STUDIO_CODE_URL >>"$SCRIPT_LOG"
 DEB_INSTALLER_NAME=$(basename "$VISUAL_STUDIO_CODE_URL")
-sudo dpkg -i $DEB_INSTALLER_NAME >>$SCRIPT_LOG
-sudo apt-get install -y -f >>$SCRIPT_LOG
+sudo dpkg -i $DEB_INSTALLER_NAME >>"$SCRIPT_LOG"
+sudo apt-get install -y -f >>"$SCRIPT_LOG"
 DEBUG "Exiting ${FUNCNAME[0]}"
 } #deb non modular function ends here

@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+# This is a bash utility to test the shellscripts in this repo using shellcheck
+# Version:0.1
+# Author: Prasad Tengse
+# Licence: MIT
+# Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
+
+set -e
+set -o pipefail
+
+ERRORS=()
+
+# find all executables and run `shellcheck`
+for file in $(find . -type f -not -iwholename '*.git*' -executable -not -iwholename '*templates*' | sort -u); do
+	if file "${file}" ; then
+		{
+			# ignore unused variables in pf 2059, double  quote strings  2086 2034 unused strings
+			shellcheck -x -e SC2086 -e SC2154 -e SC2001 -e SC2059  -e SC2034 "${file}" && echo "[OK]: sucessfully linted ${file}"
+			##shellcheck -x -e SC2086 -e SC2154 -e SC2001 -e SC2059  "${file}" && echo "[OK]: sucessfully linted ${file}"
+		} ||
+		{
+			# If shell check failed
+			ERRORS+=("${file}")
+		}
+	fi
+done
+
+if [ ${#ERRORS[@]} -eq 0 ]; then
+	echo "No errors, hooray"
+else
+	echo "These files failed shellcheck: ${ERRORS[*]}"
+	exit 1
+fi

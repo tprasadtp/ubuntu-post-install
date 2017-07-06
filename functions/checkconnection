@@ -1,17 +1,18 @@
 #!/bin/bash
 #check if the user has an active internet connection
-test_connection (){
-DEBUG "FCN:test_connection"
-testconnection=$(wget --tries=3 --timeout=15 www.google.com -O /tmp/testinternet &>/dev/null 2>&1) &>> $SCRIPT_LOG
-if [ $? != 0 ]; then
+test_connection ()
 {
-  LOG_AND_PRINT "Booooooo! You are not connected to the Internet!. Please check your Internet connection and try again."
-}
-else
+  DEBUG "FCN:test_connection"
+  testconnection=$(wget --tries=3 --timeout=15 www.google.com -O /tmp/testinternet &>/dev/null 2>&1) &>> "$SCRIPT_LOG"
+  if [ $? != 0 ]; then
   {
-    DEBUG "INTERNET Connected!"
-    LOG_AND_PRINT "Thanks for the internet connection! I can call my boyfriend :P"
+    LOG_AND_PRINT "Booooooo! You are not connected to the Internet!. Please check your Internet connection and try again."
+    exit 1;
   }
-fi
-DEBUG "End test_connection"
+  else
+    {
+      DEBUG "INTERNET Connected!"
+      LOG_AND_PRINT "Thanks for the internet connection! I can call my boyfriend :P"
+    }
+  fi
 }

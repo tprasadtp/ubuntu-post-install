@@ -12,5 +12,5 @@ sudo apt-get -y -q install apt-xapian-index unity-tweak-tool vlc gimp ubuntu-res
 LOG_AND_PRINT "Installing Phase 2..."
 LOG_AND_PRINT "Installing tools"
 #added after running script so not tested
-sudo apt-get install -s -y adb fastboot audacity htop intel-microcode screenfetch rawtherapee virtualbox virtualbox-ext-pack gnome-exe-thumbnailer gnome-raw-thumbnailer gitg curl spyder spyder3 >>$SCRIPT_LOG && LOG_AND_PRINT "Phase 2: Packages installed"
+sudo apt-get install -s -y adb fastboot audacity  >>$SCRIPT_LOG && LOG_AND_PRINT "Phase 2: Packages installed"
 }

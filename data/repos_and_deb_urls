@@ -1,17 +1,17 @@
 # KEYS FOR REPOS & Key servers
 #List of variables and URLS
 # KEYS FOR REPOS & Key servers
-ARC_THEME_KEY=http://downloadvariables.opensuse.org/repositories/home:Horst3180/xUbuntu_$VERSION/Release.key
+ARC_THEME_KEY=http://downloadvariables.opensuse.org/repositories/home:Horst3180/xUbuntu_"${VERSION}"/Release.key
 INSYNC_KEY=https://d2t3ff60b2tol4.cloudfront.net/services@insynchq.com.gpg.key
 GOOGLE_KEY=https://dl.google.com/linux/linux_signing_key.pub
 SPOTIFY_KEY=BBEBDCB318AD50EC6865090613B00F1FD2C19886
-DUKTO_REPO_KEY=http://download.opensuse.org/repositories/home:colomboem/xUbuntu_$VERSION/Release.key
+DUKTO_REPO_KEY=http://download.opensuse.org/repositories/home:colomboem/xUbuntu_"${VERSION}"/Release.key
 SKYPE_KEY=https://repo.skype.com/data/SKYPE-GPG-KEY
 UBUNTU_KEY_SERVER=hkp://keyserver.ubuntu.com:80
 OPENPGP_KEYSERVER=http://pool.sks-keyservers.net/
 #Path for Repositories
-ARC_THEME_REPOSITORY=http://download.opensuse.org/repositories/home:/Horst3180/xUbuntu_$VERSION/
-DUKTO_REPOSITORY=http://download.opensuse.org/repositories/home:/colomboem/xUbuntu_$VERSION/
+ARC_THEME_REPOSITORY=http://download.opensuse.org/repositories/home:/Horst3180/xUbuntu_"${VERSION}"/
+DUKTO_REPOSITORY=http://download.opensuse.org/repositories/home:/colomboem/xUbuntu_"${VERSION}"/
 GOOGLE_CHROME_REPOSITORY=http://dl.google.com/linux/chrome/deb/
 GOOGLE_EARTH_REPOSITORY=http://dl.google.com/linux/earth/deb/
 WHATSIE_REPO=https://dl.bintray.com/aluxian/deb

@@ -1,12 +1,13 @@
 #!/bin/bash
-rest_repo(){
-old_path=$(pwd)
-sudo apt-key del D38B4796
-sudo apt-key del 7FAC5991
-sudo apt-key del C07CB649
-sudo apt-key del A4EBB320
-sudo apt-key del 0D988D6E
-sudo apt-key del DF7587C3
-cd /etc/apt/sources.list.d && sudo rm dukto.list google.list googleearth.list skype-stable.list spotify.list insync.list
-cd $old_path
+rest_repo()
+{
+  local old_path=$(pwd)
+  sudo apt-key del D38B4796
+  sudo apt-key del 7FAC5991
+  sudo apt-key del C07CB649
+  sudo apt-key del A4EBB320
+  sudo apt-key del 0D988D6E
+  sudo apt-key del DF7587C3
+  cd /etc/apt/sources.list.d && sudo rm dukto.list google.list googleearth.list skype-stable.list spotify.list insync.list
+  cd "$old_path"
 }

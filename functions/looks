@@ -11,9 +11,9 @@ if (whiptail --title "Beautify" --yesno "Proceed with installing themes and othe
   imwheel --kill
   #Set RTC Time to local to sync time  with Windows (duh!)
   echo "Setting RTC Time to local Time"
-  timedatectl set-local-rtc 1 &>> $SCRIPT_LOG || DEBUG "Changing Hardware clock to local time"
+  timedatectl set-local-rtc 1 &>> "$SCRIPT_LOG"  || DEBUG "Changing Hardware clock to local time"
   #Unpack Icons
-  #tar -xvzf *.tar.gz  >>$SCRIPT_LOG
+  #tar -xvzf *.tar.gz  >>"$SCRIPT_LOG"
   #Make Spotify Unity Launcher Actions
   LOG_AND_PRINT "Copying Spotify Launcher Actions"
   sudo cp -f spotify.launcher /usr/share/applications/spotify.desktop
@@ -37,7 +37,7 @@ set_gsettings_preferences () {
     LOG_AND_PRINT "Setting preferred application-specific & desktop settings..."
     while IFS= read line
     do
-        gsettings set $line &>>$SCRIPT_LOG
+        gsettings set $line &>>"$SCRIPT_LOG"
     done < "$GSETTINGS"
     # Done
     DEBUG "Exiting gsettings"

@@ -1,82 +1,139 @@
-#!/bin/bash
-add_repositories()
+#!/usr/bin/env bash
+
+# This is a bash utility to help with fresh install of Ubuntu
+# Module: ADD Repositories
+# Version:2.1
+# Author: Prasad Tengse
+# Licence: GPLv3
+# Github Repository: https://github.com/tprasadtp/ubuntu-after-effects
+# Requirements - Bash v4.4 and above
+#              - Have common sense.
+#
+# ------------------------------------------------------------------------------
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Changelogs~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# v1.0      - Initial decouple from monilithic script
+# v2.0      - Rewrite modular
+# v2.1      - Rewrite to pass shellcheck better organization
+
+# ------------------------------------------------------------------------------
+
+function add_repositories_legacy()
 {
+	# This function adds Repositories listed below. This function is obsolete and is not used any more!
+  # Do not use this on any install other than Ubuntu with Unity
 	DEBUG "Entered add_repositories"
-ADD_REPOSITORIES_SUCCESS_FLAG=false
-  #statements
-echo "$SCRIP at your finger tips :) Lets add all the repositories we need shall we? "
-sleep 3
-#testing internet connection
+	ADD_REPOSITORIES_SUCCESS_FLAG=false
+	echo "$SCRIP at your finger tips :) Lets add all the repositories we need shall we? "
+	sleep 3
+	#testing internet connection
 
-test_connection
-#Testing conflicting apps
-test_conflicting_apps
-echo "Updating APT-CACHE"
-sudo apt-get update &>> $SCRIPT_LOG && echo -n "Done updating apt cache"
-
+	test_connection
+	#Testing conflicting apps
+	test_conflicting_apps
+	echo "Updating APT-CACHE"
+	sudo apt-get update &>> "$SCRIPT_LOG"  && echo -n "Done updating apt cache"
 
 
-echo "Adding Keys & Repositories"
 
-#Arc Theme Key & Repository
-if  [ $VERSION = "16.04" || $VERSION = "16.10" ]:
-then
-{
-	LOG_AND_PRINT "REPOSITORY: Adding ARC Theme Repository"
-	wget $ARC_THEME_KEY &>> $SCRIPT_LOG  && LOG_AND_PRINT "ARC_THEME_KEY added successfully"
-	sudo apt-key add - < Release.key &>> $SCRIPT_LOG || LOG_AND_PRINT "Adding Arc Theme Key Failed"
-	sudo sh -c "echo 'deb $ARC_THEME_REPOSITORY /' >> $SOURCES_FILE_DIR/arc-theme.list" || LOG_AND_PRINT "Adding ARC_THEME_REPOSITORY to SOURCES_FILE_DIR failed"
-}
-else
-echo "ARC THEME: Not Ubuntu 16.04 LTS. The version is not supported!!" && LOG_AND_PRINT "ARC THEME:Not Supported version of Ubuntu/Ubuntu derivative"
-fi
+	echo "Adding Keys & Repositories"
 
-#INSYNC
-if !$insync_abort:
-then #insync is uncertain of os
-{
-  LOG_AND_PRINT "REPOSITORY: Adding Insync Repository"
-  wget -qO - $INSYNC_KEY \| sudo apt-key add - &>> $SCRIPT_LOG && LOG_AND_PRINT "Key added:Success!"
-  #add insync Repository
-  echo "deb http://apt.insynchq.com/$OS_DISTRIBUTION $CODE_NAME non-free contrib" | sudo tee $SOURCES_FILE_DIR/insync.list || LOG_AND_PRINT "Failed to add INSYNC_REPO"
-  #Add exit code check and set flag
-}
-elif $try_generic_name; then
-{
-  echo "deb http://apt.insynchq.com/ubuntu xenial non-free contrib" | sudo tee $SOURCES_FILE_DIR/insync.list || LOG_AND_PRINT "Failed to add INSYNC_REPO Using generic code name"
-}
-else
-{
-  DEBUG "INSYNC not installed : Skipped"
-  echo "INSYNC Wont be installed. Please install it manually"
-}
-fi
+	#Arc Theme Key & Repository
+	if  [ $VERSION = "16.04" || $VERSION = "16.10" ]:
+	then
+	{
+		LOG_AND_PRINT "REPOSITORY: Adding ARC Theme Repository"
+		wget $ARC_THEME_KEY &>> "$SCRIPT_LOG"   && LOG_AND_PRINT "ARC_THEME_KEY added successfully"
+		sudo apt-key add - < Release.key &>> "$SCRIPT_LOG"  || LOG_AND_PRINT "Adding Arc Theme Key Failed"
+		sudo sh -c "echo 'deb $ARC_THEME_REPOSITORY /' >> $SOURCES_FILE_DIR/arc-theme.list" || LOG_AND_PRINT "Adding ARC_THEME_REPOSITORY to SOURCES_FILE_DIR failed"
+	}
+	else
+	echo "ARC THEME: Not Ubuntu 16.04 LTS. The version is not supported!!" && LOG_AND_PRINT "ARC THEME:Not Supported version of Ubuntu/Ubuntu derivative"
+	fi
 
-#Google Linux Repository
-LOG_AND_PRINT "REPOSITORY: Google Chrome Repository"
-wget -q -O - $GOOGLE_KEY | sudo apt-key add - &>>$SCRIPT_LOG && LOG_AND_PRINT "Google Key added:Success!"
-sudo sh -c "echo 'deb [arch=amd64] $GOOGLE_CHROME_REPOSITORY stable main' >> $SOURCES_FILE_DIR/google.list" || LOG_AND_PRINT "Adding GOOGLE_CHROME_REPOSITORY to SOURCES_FILE_DIR failed"
-sudo sh -c "echo 'deb [arch=amd64] $GOOGLE_EARTH_REPOSITORY stable main' >> $SOURCES_FILE_DIR/googleearth.list" ||LOG_AND_PRINT "Adding GOOGLE_EARTH_REPOSITORY to SOURCES_FILE_DIR failed"
+	#INSYNC
+	if !$insync_abort:
+	then #insync is uncertain of os
+	{
+	  LOG_AND_PRINT "REPOSITORY: Adding Insync Repository"
+	  wget -qO - $INSYNC_KEY \| sudo apt-key add - &>> "$SCRIPT_LOG"  && LOG_AND_PRINT "Key added:Success!"
+	  #add insync Repository
+	  echo "deb http://apt.insynchq.com/$OS_DISTRIBUTION $CODE_NAME non-free contrib" | sudo tee $SOURCES_FILE_DIR/insync.list || LOG_AND_PRINT "Failed to add INSYNC_REPO"
+	  #Add exit code check and set flag
+	}
+	elif $try_generic_name; then
+	{
+	  echo "deb http://apt.insynchq.com/ubuntu xenial non-free contrib" | sudo tee $SOURCES_FILE_DIR/insync.list || LOG_AND_PRINT "Failed to add INSYNC_REPO Using generic code name"
+	}
+	else
+	{
+	  DEBUG "INSYNC not installed : Skipped"
+	  echo "INSYNC Wont be installed. Please install it manually"
+	}
+	fi
 
-#Spotify Linux Repositiry
-LOG_AND_PRINT "REPOSITORY: Spotify For Linux Repository"
-sudo apt-key adv --keyserver $UBUNTU_KEY_SERVER --recv-keys $SPOTIFY_KEY  &>>$SCRIPT_LOG || LOG_AND_PRINT "Fetching SPOTIFY_KEY failed"
-echo deb $SPOTIFY_REPO stable non-free | sudo tee $SOURCES_FILE_DIR/spotify.list ||LOG_AND_PRINT "Adding SPOTIFY_REPO to SOURCES_FILE_DIR failed"
-DEBUG "Spotify KEY Added"
+	#Google Linux Repository
+	LOG_AND_PRINT "REPOSITORY: Google Chrome Repository"
+	wget -q -O - $GOOGLE_KEY | sudo apt-key add - &>>"$SCRIPT_LOG"  && LOG_AND_PRINT "Google Key added:Success!"
+	sudo sh -c "echo 'deb [arch=amd64] $GOOGLE_CHROME_REPOSITORY stable main' >> $SOURCES_FILE_DIR/google.list" || LOG_AND_PRINT "Adding GOOGLE_CHROME_REPOSITORY to SOURCES_FILE_DIR failed"
+	sudo sh -c "echo 'deb [arch=amd64] $GOOGLE_EARTH_REPOSITORY stable main' >> $SOURCES_FILE_DIR/googleearth.list" ||LOG_AND_PRINT "Adding GOOGLE_EARTH_REPOSITORY to SOURCES_FILE_DIR failed"
 
-#Ducto File Transfer client
-LOG_AND_PRINT "REPOSITORY: Dukto Repository"
-wget $DUKTO_REPO_KEY &>>$SCRIPT_LOG
-sudo apt-key add - < Release.key &>>$SCRIPT_LOG && LOG_AND_PRINT "Added DUKTO_REPO_KEY"
-sudo sh -c "echo 'deb $DUKTO_REPOSITORY /' >> /$SOURCES_FILE_DIR/dukto.list" || LOG_AND_PRINT "Adding DUKTO_REPOSITORY to SOURCES_FILE_DIR failed"
+	#Spotify Linux Repositiry
+	LOG_AND_PRINT "REPOSITORY: Spotify For Linux Repository"
+	sudo apt-key adv --keyserver $UBUNTU_KEY_SERVER --recv-keys $SPOTIFY_KEY  &>>"$SCRIPT_LOG"  || LOG_AND_PRINT "Fetching SPOTIFY_KEY failed"
+	echo deb $SPOTIFY_REPO stable non-free | sudo tee $SOURCES_FILE_DIR/spotify.list ||LOG_AND_PRINT "Adding SPOTIFY_REPO to SOURCES_FILE_DIR failed"
+	DEBUG "Spotify KEY Added"
 
-#Skype For linux
-LOG_AND_PRINT "REPOSITORY: Skype For Linux Repository"
-curl $SKYPE_KEY | sudo apt-key add - &>>$SCRIPT_LOG && LOG_AND_PRINT "SKYPE_KEY added: Success!!"
-echo "deb [arch=amd64] $SKYPE_REPO stable main" | sudo tee $SOURCES_FILE_DIR/skype-stable.list || LOG_AND_PRINT "Adding SKYPE_REPO to SOURCES_FILE_DIR failed"
+	#Ducto File Transfer client
+	LOG_AND_PRINT "REPOSITORY: Dukto Repository"
+	wget $DUKTO_REPO_KEY &>>"$SCRIPT_LOG"
+	sudo apt-key add - < Release.key &>>"$SCRIPT_LOG"  && LOG_AND_PRINT "Added DUKTO_REPO_KEY"
+	sudo sh -c "echo 'deb $DUKTO_REPOSITORY /' >> /$SOURCES_FILE_DIR/dukto.list" || LOG_AND_PRINT "Adding DUKTO_REPOSITORY to SOURCES_FILE_DIR failed"
 
-#Update cache
-LOG_AND_PRINT "Updating APT cache"
-sudo apt update &>>$SCRIPT_LOG
-DEBUG "Exiting Repositiry function"
+	#Skype For linux
+	LOG_AND_PRINT "REPOSITORY: Skype For Linux Repository"
+	curl $SKYPE_KEY | sudo apt-key add - &>>"$SCRIPT_LOG"  && LOG_AND_PRINT "SKYPE_KEY added: Success!!"
+	echo "deb [arch=amd64] $SKYPE_REPO stable main" | sudo tee $SOURCES_FILE_DIR/skype-stable.list || LOG_AND_PRINT "Adding SKYPE_REPO to SOURCES_FILE_DIR failed"
+
+	#Update cache
+	LOG_AND_PRINT "Updating APT cache"
+	sudo apt update &>>"$SCRIPT_LOG"
+	DEBUG "Exiting Repositiry function"
 } #End of adding Repository
+
+
+function add_repository_keys_from_wget()
+{
+	  # Function Reads the file ./data/lists/keys.list and adds the keys to the system
+		# The function gets the keys in current directory
+	  while IFS= read line
+	    do
+	         LOG_AND_PRINT "\nAdding Keys :$line:\n"
+	         DEBUG "$line"
+	         wget "$line" | sudo apt-key add - &>>"$SCRIPT_LOG"
+          printf "${BLUE}Adding Keys: ${line}.....${RESET_COLOR}\n"
+					if [ -e Release.key ]; then
+						rm *.key && DEBUG "Deleted Key: ${line}"
+					elif [ -e *.pub ]; then
+					 rm *.pub
+				 fi
+	    done < "$KEYS_LIST"
+	    printf "\n${COLOR_BLUE}:Done adding KEY_LIST.${RESET_COLOR}"
+
+}
+
+
+function add_repository_keys_from_server()
+{
+	  # Function Reads the file ./data/lists/keys.list and adds the keys to the system
+		# The function gets the keys in current directory
+	  while IFS= read line
+	    do
+	         LOG_AND_PRINT "\nAdding Keys from KEY SERVER :$line:\n"
+	         DEBUG "Adding line : $line"
+	         sudo apt-key adv --keyserver $UBUNTU_KEY_SERVER --recv-keys "$line"  &>>"$SCRIPT_LOG"
+          printf "${BLUE}Adding Keys: ${line}.....${RESET_COLOR}\n"
+	    done < "$KEYS_SERVER_LIST"
+	    printf "\n${COLOR_BLUE}:Done adding KEY_LIST.${RESET_COLOR}"
+
+}
