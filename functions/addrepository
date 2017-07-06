@@ -39,7 +39,7 @@ function add_repositories_legacy()
 	echo "Adding Keys & Repositories"
 
 	#Arc Theme Key & Repository
-	if  [ $VERSION = "16.04" || $VERSION = "16.10" ]:
+	if  [ $VERSION = "16.04" ] | [ $VERSION = "16.10" ]:
 	then
 	{
 		LOG_AND_PRINT "REPOSITORY: Adding ARC Theme Repository"
@@ -52,7 +52,7 @@ function add_repositories_legacy()
 	fi
 
 	#INSYNC
-	if !$insync_abort:
+	if ! $insync_abort:
 	then #insync is uncertain of os
 	{
 	  LOG_AND_PRINT "REPOSITORY: Adding Insync Repository"
@@ -114,7 +114,7 @@ function add_repository_keys_from_wget()
           printf "${BLUE}Adding Keys: ${line}.....${RESET_COLOR}\n"
 					if [ -e Release.key ]; then
 						rm *.key && DEBUG "Deleted Key: ${line}"
-					elif [ -e *.pub ]; then
+					elif [ -e linux_signing_key.pub.pub ]; then
 					 rm *.pub
 				 fi
 	    done < "$KEYS_LIST"

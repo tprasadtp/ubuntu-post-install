@@ -1,5 +1,7 @@
+#!/usr/bin/env bash
 
-
+function todoasmodular()
+{
 LOG_AND_PRINT "Shall I make $(uname -n) beautiful? I know stuff and I can get stuff for you. No promises though! These are bleeding edge stuff, they might break somethings! But definately not OS!"
 read -p "Are you sure you want to continue? <y/N> " prompt_looks
 DEBUG "Entered : $prompt_looks"
@@ -29,4 +31,5 @@ case $prompt_looks in
 esac
     #put looks function
     goodbye_msg
+
 }

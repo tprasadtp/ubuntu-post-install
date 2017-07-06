@@ -1,6 +1,6 @@
 #!/bin/bash
-IMWHEEL_CFG="$dir/data/imwheel_config_file"
-GSETTINGS="$dir/data/gsettings.list"
+#IMWHEEL_CFG="$dir/data/imwheel_config_file"
+#GSETTINGS="$dir/data/gsettings.list"
 make_it_look_nice ()
 {
   DEBUG "FCN:make_it_look_nice "

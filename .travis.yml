@@ -2,7 +2,10 @@ sudo: false
 language: bash
 services:
 - docker
-before_install:
+addons:
+  apt:
+    sources:
+    - shellcheck
 script:
 - "./tests/test-shell-scripts"
 matrix:
