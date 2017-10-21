@@ -24,8 +24,9 @@
 #Constants
 DATE=$(date +%Y-%m-%d:%H:%M:%S)
 SCRIPT=$(basename "$0")
-log_file="/tmp/minchu-logs/after-effects.log"
-mkdir -p /tmp/minchu-logs
+dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+log_file="$dir"/minchu-logs/after-effects.log
+mkdir -p "$dir"/minchu-logs
 
 
 function _init_script_variables()
@@ -33,8 +34,6 @@ function _init_script_variables()
   # Function defines Script variables
   # Necessary variables used by the script are initialized here. This function
   # should be called first before choices are made, always.
-
-  dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 
   #grabbing os info
   readonly OS_DISTRIBUTION=$(lsb_release --id | cut -f2 | tr '[:upper:]' '[:lower:]')
@@ -53,10 +52,6 @@ function _init_script_variables()
   # Package list files
   readonly DEB_FILES_LIST="$dir"/data/deb_files.list
   readonly PPA_LIST="$dir"/data/lists/ppa.list
-  readonly DEV="$dir"/data/delelopment.list
-  readonly UTIL="$dir"/data/utilities.list
-  readonly LATEX="$dir"/data/latex.list
-  readonly MULTIMEDIA="$dir"/data/multimedia.list
   readonly app_list_list="$dir"/data/app-list.list
 
 
@@ -118,7 +113,7 @@ function set_default()
 
 function _script_launch_log()
 {
-    __debug_log "Executing Script"
+    _debug_log "Executing Script"
     printf "\nRunning %s on %s" "$SCRIPT" "DATE\n" >> "$log_file"
 }
 
@@ -129,12 +124,12 @@ printf "\n$(tput setaf 3)It was nice helping you,\n\nHave a great time with this
 
 function _script_exit_log()
 {
-    __debug_log "Exiting Script"
+    _debug_log "Exiting Script"
     printf "\nFinished %s on %s.\n Last exit code was: %d\n" "$SCRIPT" "$DATE" "$?" >> "$log_file"
 }
 
 
-function __debug_log()
+function _debug_log()
 {
     local msg="$1"
     printf "\n[$(date)] [ DEBUG ]\t$msg \n" >> "$log_file"
