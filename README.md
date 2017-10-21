@@ -12,63 +12,7 @@ Currently I am reorganizing this project so few things are broken.
 
 ` Github URL: https://github.com/tprasadtp/after-effects-ubuntu `
 
-* Current Project structure
-```
-.
-├── data
-│   ├── extra
-│   │   └── spotify
-│   ├── lists
-│   │   ├── deb_files.list
-│   │   ├── development.list
-│   │   ├── gsettings.list
-│   │   ├── keyservers.list
-│   │   ├── keys.list
-│   │   ├── latex.list
-│   │   ├── multimedia.list
-│   │   ├── ppa_extra.list
-│   │   ├── ppa.list
-│   │   └── utilities.list
-│   ├── repos_and_deb_urls
-│   ├── Repos_Manual_addedby_DEBs
-│   ├── setup_script.log
-│   └── ubuntu-16.04-fresh-install-bash-hist.log
-├── functions
-│   ├── addppa
-│   ├── addrepository
-│   ├── all_in_one
-│   ├── catalyst
-│   ├── checkconnection
-│   ├── goodbyemsg
-│   ├── installapps1
-│   ├── installdebs
-│   ├── install_latex
-│   ├── looks
-│   ├── reset_repo
-│   ├── todoasmodular
-│   ├── update
-│   └── utils
-├── tests
-│   └── test-shell-scripts
-├── after-effects
-├── .gitignore
-├── LICENSE
-├── project.tree
-├── README.md
-└── .travis.yml
-```
 
-
-
-### Required additional programs, General  Requirements
-- _adb_ and _fastboot_ for `android-tools`
-- _imagemagick_ for `image-processing`
-- _texlive-extra-utils_ for `office-tools`
-- _stow_ for `stow`: to symlink config files and scripts from a single directory.
-- _imwheel_ for using custom imwheel config
-- Assumes that you are using a debian based system.
-- Please see the documentation in individual folders for details regarding each of them.
-- Most of them have help flag `--help -h` builtin.
 
 ### Changelogs
 
@@ -76,6 +20,5 @@ Currently I am reorganizing this project so few things are broken.
 #### _v1.0_
 * Initial upload.
 
-Well Bob, why have you explained every stupid thing in comments? I know most of them, its stupid.
-
---You might! But that increases readability and in case I let it eat dust, catch up with it after 10 years, it helps.
+#### _v2.0_
+* Rewrite
