@@ -16,8 +16,8 @@ for file in $(find . -type f -not -iwholename '*.git*' -executable -not -iwholen
 	if file "${file}" ; then
 		{
 			# ignore unused variables in pf 2059, double  quote strings  2086 2034 unused strings
-			shellcheck -x -e "${file}" && echo "[OK]: sucessfully linted ${file}"
-			##shellcheck -x -e SC2086 -e SC2154 -e SC2001 -e SC2059  "${file}" && echo "[OK]: sucessfully linted ${file}"
+			shellcheck  "${file}" && echo "[OK]: sucessfully linted ${file}"
+
 		} ||
 		{
 			# If shell check failed

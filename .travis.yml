@@ -1,7 +1,5 @@
 sudo: false
 language: bash
-services:
-- docker
 addons:
   apt:
     sources:
