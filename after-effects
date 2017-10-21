@@ -39,7 +39,7 @@ function _init_script_variables()
   readonly OS_DISTRIBUTION=$(lsb_release --id | cut -f2 | tr '[:upper:]' '[:lower:]')
   readonly VERSION=$(lsb_release --release | cut -f2)
   readonly LONG_VERSION=$(lsb_release -d | cut -f2 | cut -d ' ' -f2)
-  CODE_NAME=$(lsb_release -cs)
+  code_name=$(lsb_release -cs)
   readonly ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
   readonly SOURCES_FILE_DIR=/etc/apt/sources.list.d
 
@@ -81,11 +81,11 @@ function _init_script_initialization()
   # This function logs the Necessary details which hel--dry-run--dry-runps in debugging.
   # Should be used after _init_script_variables function
   _debug_log "Following details were recognised by the Script"
-  _debug_log "OS:${OS_DISTRIBUTION}"
-  _debug_log "VERSION:${VERSION}"
-  _debug_log "code_name:${CODE_NAME}"
-  _debug_log "ARCHITECHTURE:${ARCH}"
-  _debug_log "PATH FOR SOURCE FILES:${SOURCES_FILE_DIR}"
+  _debug_log "OS: ${OS_DISTRIBUTION}"
+  _debug_log "VERSION: ${VERSION}"
+  _debug_log "Code Name: ${code_name}"
+  _debug_log "ARCHITECHTURE: ${ARCH}"
+  _debug_log "PATH FOR SOURCE FILES: ${SOURCES_FILE_DIR}"
 
   #disable hist chars  so that I can print "!!"" properly
   histchars=
@@ -93,9 +93,9 @@ function _init_script_initialization()
 
 
 # Utility Functions
-function line_fill()
+function _line_fill()
 {
-    printf "%-$(tput cols)s@%s\n" | sed -e "s/ /-/g" -e "s/-@/ /" -e "s/@-/ /"
+    printf "\n%-$(tput cols)s@%s\n" | sed -e "s/ /-/g" -e "s/-@/ /" -e "s/@-/ /"
 }
 function set_blue()
 {
@@ -114,7 +114,8 @@ function set_default()
 function _script_launch_log()
 {
     _debug_log "Executing Script"
-    printf "\nRunning %s on %s" "$SCRIPT" "DATE\n" >> "$log_file"
+    _line_fill | tee -a "$log_file"
+    _debug_log "Running %s on %s as %s" "$SCRIPT" "$DATE" "$USER"
 }
 
 function _goodbye_msg ()
@@ -125,21 +126,23 @@ printf "\n$(tput setaf 3)It was nice helping you,\n\nHave a great time with this
 function _script_exit_log()
 {
     _debug_log "Exiting Script"
-    printf "\nFinished %s on %s.\n Last exit code was: %d\n" "$SCRIPT" "$DATE" "$?" >> "$log_file"
+    printf "\nFinished %s on %s.\nLast exit code was: %d\n" "$SCRIPT" "$DATE" "$?" >> "$log_file"
 }
 
 
 function _debug_log()
 {
     local msg="$1"
-    printf "\n[$(date)] [ DEBUG ]\t$msg \n" >> "$log_file"
+    printf "[$(date)] [ DEBUG ]\t$msg \n" >> "$log_file"
+    #Remove/comment before commit
+    #printf "[$(date)] [ DEBUG ]\t$msg \n"
 }
 
 function _log_and_show()
 {
     local msg="$1"
     printf "$msg\n"
-    printf "\n[$(date)] [  LOG  ]\t$msg \n" >> "$log_file"
+    printf "[$(date)] [  LOG  ]\t$msg \n" >> "$log_file"
 }
 
 function _log_and_exit()
@@ -147,10 +150,28 @@ function _log_and_exit()
   # ARG-1 log msg
   # ARG-2 exit code int
     local msg="$1"
-    printf "\n[$(date)] [  LOG  ]\t$msg \n" | tee -a "$log_file"
+    printf "[$(date)] [  LOG  ]\t$msg \n" | tee -a "$log_file"
     exit "$2";
 }
 
+function delete_log_file()
+{
+  set_yellow;
+  printf "Deleting log file %s.\n" "$log_file"
+  rm -f "$log_file"
+  set_default;
+  exit 700;
+
+}
+
+
+function  _add_timestamp_to_apt_logs()
+{
+  # This function adds time stamp to apt-logs without using external utilities
+  # Pipe the output to this dunction before redirecting to file.
+  # Usage command | _add_timestamp_to_apt_logs >> file
+  while IFS= read -r line; do printf "[$(date)] [  APT  ]\t%s\n" "$line"; done
+}
 
 
 function _fix_ubuntu_derivatives()
@@ -166,20 +187,21 @@ function _fix_ubuntu_derivatives()
   # IF the release is not known exits the script for safety.
   _log_and_show "Checking for known Ubuntu derivatives....\n"
   set_yellow;
+        _debug_log "Variable code_name is : $code_name"
   case ${code_name} in
-      qiana | rebecca | rafaela | rosa)     _log_and_show "Release is Linux mint 17.X. Setting additional repositoris to follow Ubuntu 14.04."
+      qiana | rebecca | rafaela | rosa )    _log_and_show "Release is Linux mint 17.X. Setting additional repositoris to follow Ubuntu 14.04."
                                             code_name="trusty"
                                             ;;
-      sarah | serena | sonya | sylvia)      _log_and_show "Release is Linux mint 18.X. Setting additional repositoris to follow Ubuntu 16.04."
+      sarah | serena | sonya | sylvia )     _log_and_show "Release is Linux mint 18.X. Setting additional repositoris to follow Ubuntu 16.04."
                                             code_name="xenial"
                                             ;;
-      loki | juno)                          _log_and_show "This release of Elementary OS is based on Ubuntu 16.04 Xenial. External repositories will use 16.04."
+      loki | juno )                         _log_and_show "This release of Elementary OS is based on Ubuntu 16.04 Xenial. External repositories will use 16.04."
                                             code_name="xenial"
                                             ;;
-      freya)                                _log_and_show "This release of Elementary OS is based on Ubuntu 14.04 Trusty. External repositories will use 14.04."
+      freya )                               _log_and_show "This release of Elementary OS is based on Ubuntu 14.04 Trusty. External repositories will use 14.04."
                                             code_name="trusty"
                                             ;;
-      xenial | trusty | artful | zesty)     _log_and_show "No known derivative of Ubuntu which uses different codenames found. Keeping the codename as: $code_name.\n If installation fails or errors out, please report.";
+      xenial | trusty | artful | zesty )    _log_and_show "No known derivative of Ubuntu which uses different codenames found. Keeping the codename as: $code_name.\nIf installation fails or errors out, please report.";
                                             ;;
       *)                                    _log_and_show "[ ERROR ]"
                                             _log_and_show "Unknown Distribution/Release.\n This Script is not designed to run on this ($code_name) distro/release."
@@ -195,13 +217,15 @@ function _fix_ubuntu_derivatives()
 function _test_internet_connection ()
 {
   # Function to check internet connection
-  _log_and_show "Testing internet connection"
+  _line_fill
+  _log_and_show "Testing internet connection..."
   if wget --tries=3 --timeout=15 www.google.com -O /tmp/testinternet &>/dev/null 2>&1; then
-    _log_and_show "Internet connection available."
+    _log_and_show "Internet connection is available."
   else
     _log_and_show "Booooooo! You are not connected to the Internet!. Please check your Internet connection and try again."
     exit 400;
   fi
+  _line_fill;
 }
 
 
@@ -215,6 +239,7 @@ function _test_conflicting_apps ()
     if ps -U root -u root u | grep $lock | grep -v grep > /dev/null;
        then
          _log_and_show "Installation won't work. Please close $lock first then try again."
+         _script_exit_log
          exit 404;
        else
         _debug_log "$lock not running, Checking other apps.."
@@ -389,19 +414,48 @@ function add_repositories()
 
 function update_repos()
 {
-  printf "${BLUE}Updating Repositories\n${NC}"
-  apt-get update >> "$log_file" || _log_and_show "Something went wrong cannot update Repositories. Please see the log file"
+  local exit_status
+  set_yellow
+  _debug_log "Updating Repository index/metadata."
+  apt-get update | _add_timestamp_to_apt_logs >> "$log_file"
+  exit_status=$?
+  if [ "$exit_status" -eq 0 ]; then
+    set_yellow;
+    _log_and_show "Upgrade Completed Successfully"
+  else
+    _log_and_show "Something went wrong in upgrading packages. Please see the log file for more details. Most of the times its either missing repositories or wrongly configured repositories."
+  fi
+  exit_status=$?
+  _line_fill;
+  set_default;
 }
 
 
 function upgrade_apps()
 {
-  printf "Upgrading apps"
-  apt list --upgradable | tee -a "$log_file"
+  local exit_status
+  printf "${BLUE}Upgrading apps${NC}"
+  set_yellow;
+  _debug_log "Listing Upgradable packages"
+  _line_fill;
+  set_default;
+  # upgradable is not availabel in apt-get ignore warning about apt being unstable
+  apt list --upgradable | _add_timestamp_to_apt_logs | tee -a "$log_file"  || _log_and_show "Something went wrong while listing upgradable packages. Please see the log file for more details."
+  set_yellow;
   _log_and_show "The above list of apps are upgradable."
   sleep 5;
   _debug_log "Upgrading Apps"
-  apt-get upgrade && dist-upgrade | tee -a "$log_file"
+  apt-get -y upgrade | _add_timestamp_to_apt_logs | tee -a "$log_file"
+  apt-get -y dist-upgrade | _add_timestamp_to_apt_logs | tee -a "$log_file"
+  exit_status=$?
+  if [ "$exit_status" -eq 0 ]; then
+    set_yellow;
+    _log_and_show "Upgrade Completed Successfully"
+  else
+    _log_and_show "Something went wrong in upgrading packages. Please see the log file for more details. Most of the times its either missing repositories or wrongly configured repositories."
+  fi
+  _line_fill;
+  set_default;
 }
 
 
@@ -418,13 +472,38 @@ function disable_external_repos()
     local old_path
     old_path=$(pwd)
     sudo apt-key del D38B4796
-    sudo apt-key del 7FAC5991
-    sudo apt-key del C07CB649
-    sudo apt-key del A4EBB320
-    sudo apt-key del 0D988D6E
-    sudo apt-key del DF7587C3
+    _debug_log "Deleting Google signing key"
+    apt-key del 7FAC5991 | _add_timestamp_to_apt_logs >> "$log_file" || _log_and_show "Deleting Google signing key -1 failed."
+    _debug_log "Deleting Google signing key"
+    apt-key del D38B4796 | _add_timestamp_to_apt_logs >> "$log_file" || _log_and_show "Deleting Google signing key -2 failed."
+    _debug_log "Deleting Webupd8 signing key"
+    apt-key del 4C9D234C | _add_timestamp_to_apt_logs >> "$log_file" || _log_and_show "Deleting Google Webupd8 failed."
+    _debug_log "Deleting Spotify signing key"
+    apt-key del D2C19886 | _add_timestamp_to_apt_logs >> "$log_file" || _log_and_show "Deleting Spotify signing key -2 failed."
+    _debug_log "Deleting Spotify signing key"
+    apt-key del 341D9410 | _add_timestamp_to_apt_logs >> "$log_file" || _log_and_show "Deleting Spotify signing key -2 failed."
+    _debug_log "Deleting Skype for Linux signing key"
+    apt-key del DF7587C3 | _add_timestamp_to_apt_logs >> "$log_file" || _log_and_show "Deleting Skype for Linux keys failed."
+    _debug_log "Deleting WineHQ signing key"
+    apt-key del 5FCBF54A | _add_timestamp_to_apt_logs >> "$log_file" || _log_and_show "Deleting  WineHQ keys failed."
+    _debug_log "Deleting Google Cloud signing key"
+    apt-key del A73170BF | _add_timestamp_to_apt_logs >> "$log_file" || _log_and_show "Deleting Google Cloud keys failed."
+    _debug_log "Deleting InSync signing key"
+    apt-key del ACCAF35C | _add_timestamp_to_apt_logs >> "$log_file" || _log_and_show "Deleting InSync keys failed."
+    _debug_log "Deleting Docker-CE signing key"
+    apt-key del 0EBFCD88 | _add_timestamp_to_apt_logs >> "$log_file" || _log_and_show "Deleting Docker-CE keys failed."
     _debug_log "Removing list files from ${SOURCES_FILE_DIR}"
     cd /etc/apt/sources.list.d && rm  -f google.* google-earth.* skype-stable.* spotify.* insync.* google-cloud-sdk.* gcsfuse.* docker.* winehq.*
+    local exit_status
+    exit_status=$?
+    if [ "$exit_status" -eq 0 ]; then
+      set_yellow;
+      _log_and_show "Removed additional APT keys and repositories. Canonical partner repository were left unchanged."
+    else
+      _log_and_show "Failed to remove all or some of the list files or keys in Sources directory. Please see the log file for more details. Most of the times its either missing repositories or wrongly configured repositories."
+    fi
+    _line_fill;
+    set_default;
     cd "$old_path" || return
 }
 
@@ -474,6 +553,7 @@ function install_debs ()
   local deb_command="-i"
   local apt_command="install -y -f"
 
+  _debug_log "Option: Install DEB Files, Function name: install_debs"
   # Check if simulate is true
   if [ "$simulate_apt_install" == "true" ]; then
     _log_and_show "Simulating apt-get & deb install. Nothing will be installed!!"
@@ -514,8 +594,11 @@ function install_debs ()
 function all_in_one()
 {
   #Wrapper for all options
-  printf "${YELLOW}Apps will be installed, upgrades and repositoris and will be added, and deb files will b downloaded and installed!\nThis action is not reversible in all cases\n"
+  set_yellow;
+  _debug_log "Option: ALL IN ONE, function name: all_in_one"
+  printf "Apps will be installed, upgrades and repositoris and will be added, and deb files will b downloaded and installed!\nThis action is not reversible in all cases\n"
   _debug_log "All in One initialized"
+  set_default
   update_repos;
   upgrade_apps;
   add_ppas;
@@ -527,22 +610,26 @@ function all_in_one()
 
 function _process_opts
 {
-    # shellcheck disable=SC2046
-    eval $(resize)
+    COLUMNS=$(tput cols)
+    LINES=$(tput lines)
+    export COLUMNS LINES
+    # shellcheck disable=SC2086
     MAIN=$(whiptail \
         --notags \
-        --title "$SCRIPT" \
-        --menu "\nWhat would you like me to do?" \
+        --backtitle "$SCRIPT" \
+        --title "Ubuntu Post-Install Script" \
+        --menu "\nWhat would you like me to do?\nLogs will be written to ${log_file}. Check the logs if you need details on what's been done." \
         --cancel-button "Quit" \
         $LINES $COLUMNS $(( LINES - 12 )) \
         update_repos           'Update Repositories' \
         upgrade_system         'Upgrade packages to latest' \
         all_in_one             'Install all apps and configure, I am in control' \
         add_repositories       'Add Common Repositories' \
-        add_ppa               'Add PPAs from file' \
+        add_ppa                'Add PPAs from file' \
         install_apps           'Install most common tools' \
         install_debs           'Install DEBS not available in Repositories' \
         disable_external_repos 'Reset Repositories for cleanup or another test run' \
+        delete_log_file        "Delete Script logs from $log_file" \
         3>&1 1>&2 2>&3)
 
     exitstatus=$?
@@ -558,8 +645,8 @@ function _process_opts
 function quit
 {
     if (whiptail --title "Quit" --yesno "Are you sure you want quit?" 10 60) then
-        echo "Exiting..."
-        goodbye_msg;
+        _log_and_show "Exiting $SCRIPT"
+        _goodbye_msg;
         _script_exit_log;
         exit 99;
     else
@@ -572,9 +659,10 @@ function main()
 {
 
   if [[ $EUID -ne 0 ]]; then
-    _debug_log "Insufficinet privilages"
+    _debug_log "Insufficinet privilages!!"
+    set_yellow;
     _log_and_show "[ ERROR ] This script must be run as root.\nPlease use sudo %s to run as root.\n" "$SCRIPT"
-    _log_and_show "\n[ DEBUG- %s ] Insufficinet privilages.\n" "$DATE" >> "$log_file"
+    set_default;
     exit 100;
   fi
 
