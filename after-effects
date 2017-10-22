@@ -126,7 +126,7 @@ printf "\n$(tput setaf 3)It was nice helping you,\n\nHave a great time with this
 function _script_exit_log()
 {
     _debug_log "Exiting Script"
-    printf "\nFinished %s on %s.\nLast exit code was: %d\n" "$SCRIPT" "$DATE" "$?" >> "$log_file"
+    printf "\nFinished %s on %s.\nLast exit code was: %d\n" "$SCRIPT" "$(date)" "$?" >> "$log_file"
 }
 
 
@@ -287,7 +287,7 @@ fi
 }
 
 
-function add_ppa()
+function add_ppas()
 {
   # Function to add ppa from reading ppa from ppa.list file in /data directory
   # List file should contain ppas in following format
