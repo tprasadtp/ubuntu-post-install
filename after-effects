@@ -294,7 +294,7 @@ function _test_internet_connection ()
   else
     set_yellow;
     _log_and_show "${_oh_no} Booooooo! You are not connected to the Internet!. Please check your Internet connection and try again."
-    /tmp/testinternet
+    rm -f /tmp/testinternet
     set_default;
     exit 400;
   fi
@@ -526,8 +526,8 @@ function upgrade_apps()
   _line_fill;
   sleep 5
   _debug_log "${_upgrading} packages..."
-  #apt-get -y upgrade | _add_timestamp_to_apt_logs >> "$log_file"
-  #apt-get -y dist-upgrade | _add_timestamp_to_apt_logs >> "$log_file"
+  apt-get -y upgrade | _add_timestamp_to_apt_logs >> "$log_file"
+  apt-get -y dist-upgrade | _add_timestamp_to_apt_logs >> "$log_file"
   exit_status=$?
   set_yellow;
   if [ "$exit_status" -eq 0 ]; then
