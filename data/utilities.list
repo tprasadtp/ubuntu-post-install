@@ -1,5 +1,4 @@
 apt-xapian-index
-unity-tweak-tool
 ubuntu-restricted-extras
 ubuntu-restricted-addons
 chromium-browser
@@ -9,8 +8,6 @@ nautilus-admin
 playonlinux
 arc-theme
 dconf-editor
-spotify-client
-pidgin pidgin-gnome-keyring
 flashplugin-installer
 bleachbit
 darktable
@@ -22,7 +19,7 @@ insync
 ppa-purge
 gufw
 lm-sensors
-pavucontro
+pavucontrol
 gparted
 synaptic
 lib32gcc1

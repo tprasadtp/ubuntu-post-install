@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# shellcheck disable=SC2059
 # Legal Preamble:
 #
 # This script is free software; you can redistribute it and/or modify it under
@@ -13,173 +14,789 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see <https://www.gnu.org/licenses/gpl-3.0.txt>
 
+# Version:2.0
+# Author: Prasad Tengse
+# Licence: MIT
+# Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
+# Requirements - Bash v4.4 and above
+
+
+#Constants
+DATE=$(date +%Y-%m-%d:%H:%M:%S)
+SCRIPT=$(basename "$0")
+dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+log_file="$dir"/minchu-logs/after-effects.log
+mkdir -p "$dir"/minchu-logs
 
 
 function _init_script_variables()
 {
-  #defining directory
-  dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-  #PACKAGES_REQ="$dir/data/PACKAGES_REQ.list"
+  # Function defines Script variables
+  # Necessary variables used by the script are initialized here. This function
+  # should be called first before choices are made, always.
 
-  #DEFINE LOGGING FUNCTIONS
-  #Define LOG FILE
-  readonly SCRIPT=Inchara
-  readonly SCRIPT_LOG="$dir"/data/setup_script.log
-  error_flag=false
-  insync_abort=false
-  try_generic_name=false
-  touch "$SCRIPT_LOG"
-
-  #set flags
-  insync_abort=false
-
-  DEBUG "Following details were recognised by the Script"
   #grabbing os info
-  readonly OS_DISTRIBUTION=$(lsb_release --id | cut -f2 | tr '[:upper:]' '[:lower:]') || insync_abort=true && try_generic_name=true
+  readonly OS_DISTRIBUTION=$(lsb_release --id | cut -f2 | tr '[:upper:]' '[:lower:]')
   readonly VERSION=$(lsb_release --release | cut -f2)
   readonly LONG_VERSION=$(lsb_release -d | cut -f2 | cut -d ' ' -f2)
-  readonly CODE_NAME=$(lsb_release --codename | cut -f2)|| insync_abort=true && try_generic_name=true
-  readonly ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
+  code_name=$(lsb_release -cs)
+  readonly architeture=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
+  if [ "$architeture" == "64" ];then
+    _debug_log "Architeture is 64 bit."
+    readonly ARCH=amd64
+  elif [[ "$architeture" == "32" ]]; then
+    _debug_log "Architeture is 32 bit."
+    readonly ARCH=i386
+  else
+    set_yellow;
+    _log_and_show "${_error} This architeture is not supported by this script!"
+    set_default;
+    _line_fill;
+    _log_and_exit "Unsupported Architeture." "103"
+  fi
   readonly SOURCES_FILE_DIR=/etc/apt/sources.list.d
 
   #colors for display
-  readonly COLOR_BLUE=$(tput setaf 6)
+  readonly BLUE=$(tput setaf 6)
   readonly YELLOW=$(tput setaf 3)
-  readonly RESET_COLOR=$(tput sgr 0)
-  readonly COLOR_MAGNATA=$(tput setaf 5)
+  readonly NC=$(tput sgr 0)
+  readonly MAGNATA=$(tput setaf 5)
+
+  # Package list files
+  readonly DEB_FILES_LIST="$dir"/data/deb_files.list
+  readonly PPA_LIST="$dir"/data/ppa.list
+  readonly app_list_list="$dir"/data/app-list.list
 
 
-  DEBUG "IMPORTED FILES"
-  readonly DEB_FILES_LIST="$dir"/data/lists/lists/deb_files.list
-  readonly GSETTINGS="$dir"/data/lists/gsettings.list
-  readonly PPA_LIST="$dir"/data/lists/ppa.list
-  readonly PPA_LIST_EXTRA="$dir"/data/lists/ppa_extra.list
-  readonly KEYS_LIST="$dir"/data/lists/keys.list
-  readonly KEYS_SERVER_LIST="$dir"/data/lists/keyservers.list
-  readonly DEV="$dir"/data/lists/delelopment.list
-  readonly UTIL="$dir"/data/lists/utilities.list
-  readonly LATEX="$dir"/data/lists/latex.list
-  readonly MULTIMEDIA="$dir"/data/lists/multimedia.list
 
+  #============================ Switches/ bools ================================
+  # Latest wine builds
+  readonly add_winehq_repo=false
 
-}
+  #Docker community edition
+  readonly add_docker_repo=true
 
-function SCRIPTENTRY()
-{
-    DEBUG "Executing Script"
-    script_name=$(basename "$0")
-    printf "\n${FUNCNAME}: $script_name" >> "$SCRIPT_LOG"
-}
+  #Fix Repo not available for latest release
+  readonly fix_repo_not_available_for_latest="true"
+  readonly code_name_latest_release="artful"
+  readonly codename_previous_release="zesty"
+  code_name_fix_latest="$code_name_latest_release"
 
-function SCRIPTEXIT()
-{
-    DEBUG "Exiting Script"
-    script_name=$(basename "$0")
-    printf "\n${FUNCNAME}: $script_name" >> "$SCRIPT_LOG"
-}
+  # Simulate apt-get install
+  simulate_apt_install="true"
 
-
-function DEBUG()
-{
-    local msg="$1"
-    #local timestamp=$(date)
-    printf "\n[$(date)] [DEBUG]\t$msg" >> "$SCRIPT_LOG"
-}
-
-function LOG_AND_PRINT()
-{
-  local msg="$1"
-  #local timestamp=$(date)
-  printf "\n[$(date)] [DEBUG]\t$msg" >> "$SCRIPT_LOG"
-  printf "\n${msg}"
+  #================ Because I care about Beauty of Output Logs =================
+  readonly         _adding="[     Adding    ]"
+  readonly          _added="[     Added     ]"
+  readonly     _adding_ppa="[   Adding PPA  ]"
+  readonly      _added_ppa="[   Added  PPA  ]"
+  readonly          _oh_no="[     Oh No!    ]"
+  readonly     _installing="[   Installing  ]"
+  readonly      _installed="[   Installed   ]"
+  readonly       _removing="[    Removing   ]"
+  readonly        _removed="[    Removed    ]"
+  readonly       _deleting="[    Deleting   ]"
+  readonly        _deleted="[    Deleted    ]"
+  readonly      _linuxmint="[  Linux - Mint ]"
+  readonly     _elementary="[ Elementary-OS ]"
+  readonly      _canonical="[  Canonical-y  ]"
+  readonly        _purging="[    Purging    ]"
+  readonly         _purged="[    Purged     ]"
+  readonly           _done="[     Done!     ]"
+  readonly          _error="[     Error!    ]"
+  readonly     _aptrunning="[ She's Running ]"
+  readonly       _internet="[    Internet   ]"
+  readonly             _ok="[      OK!      ]"
+  readonly       _updating="[    Updating   ]"
+  readonly        _updated="[    Updated    ]"
+  readonly      _upgrading="[   Upgrading   ]"
+  readonly       _upgraded="[   Upgraded    ]"
+  readonly    _derivatives="[  Derivatives  ]"
+  readonly      _conflicts="[   Conflicts   ]"
+  readonly         _notice="[    Notice     ]"
+  readonly    _downloading="[  Downloading  ]"
+  readonly           _info="[     Info      ]"
+  readonly         _failed="[     Failed    ]"
+  readonly   _google_cloud="[ Google  Cloud ]"
+  readonly       _simulate="[   Simulating  ]"
 }
 
 function _init_script_initialization()
 {
-if ${insync_abort}; then
-  DEBUG "INSYNC WONT INSTALL: Either OS Detection or release code name detection failed"
-fi
+  # This function logs the Necessary details which hel--dry-run--dry-runps in debugging.
+  # Should be used after _init_script_variables function
+  _log_and_show "${_notice} Following details were recognised by the Script."
+  _log_and_show "${_info} Distro: ${OS_DISTRIBUTION}"
+  _log_and_show "${_info} Version: ${VERSION}"
+  _log_and_show "${_info} Code Name: ${code_name}"
+  _log_and_show "${_info} Architeture: ${ARCH}"
+  _log_and_show "${_info} Path for sources.list.d: ${SOURCES_FILE_DIR}"
 
-DEBUG "OS:${OS_DISTRIBUTION}"
-DEBUG "VERSION:${VERSION}"
-DEBUG "CODE_NAME:${CODE_NAME}"
-DEBUG "ARCHITECHTURE:${ARCH}"
-DEBUG "PATH FOR SOURCE FILES:${SOURCES_FILE_DIR}"
-
-#----- Import Functions -----#
-
-. "$dir"/functions/addppa
-. "$dir"/functions/addrepository
-. "$dir"/functions/all_in_one
-. "$dir"/functions/catalyst
-. "$dir"/functions/checkconnection
-. "$dir"/functions/goodbyemsg
-. "$dir"/functions/install_latex
-. "$dir"/functions/installapps1
-. "$dir"/functions/installdebs
-. "$dir"/functions/looks
-. "$dir"/functions/reset_repo
-. "$dir"/functions/update
-. "$dir"/functions/utils
-
-
-#----------------------------#
-
-#disable hist chars  so that I can print "!!"" properly
-histchars=
-# Main loop
+  #disable hist chars  so that I can print "!!"" properly
+  histchars=
 }
 
-function _process_opts {
-    eval $(resize)
-    MAIN=$(whiptail \
-        --notags \
-        --title "$SCRIPT" \
-        --menu "\nWhat would you like me to do?" \
-        --cancel-button "Quit" \
-        $LINES $COLUMNS $(( LINES - 12 )) \
-        update_repos        'Perform system update' \
-        all_in_one          'Install all apps and configure, I am in control' \
-        install_catalyst    'Install Catalyst(only for 14.04.01 or below)' \
-        add_repositories    'Add Common Repositories' \
-        add_ppa_modular     'Add PPAs from file' \
-        install_apps       'Install most common tools' \
-        install_latex       'Install LateX' \
-        install_debs_modular 'Install DEBS not available in Repositories' \
-        make_it_look_nice   'Takes care of some themes and gsettings configurations'\
-        rest_repo           'Reset Repositories for cleanup or another test run'\
-        3>&1 1>&2 2>&3)
+
+# Utility Functions
+function _line_fill()
+{
+    printf "%-$(tput cols)s@%s\n" | sed -e "s/ /-/g" -e "s/-@/ /" -e "s/@-/ /"
+}
+function set_blue()
+{
+  tput setaf 6
+}
+
+function set_yellow()
+{
+  tput setaf 3
+}
+function set_default()
+{
+  tput sgr 0
+}
+
+function _script_launch_log()
+{
+    _debug_log "Executing Script"
+    _line_fill | tee -a "$log_file"
+    _debug_log "Running %s on %s as %s" "$SCRIPT" "$DATE" "$USER"
+}
+
+function _goodbye_msg ()
+{
+printf "\n$(tput setaf 3)It was nice helping you,\nHave a great time with this Linux Machine.\nWith loads of love,\n$(tput setaf 6)${SCRIPT} running on $(uname -n) as ${USER} $(tput sgr 0)\n"
+}
+
+function _script_exit_log()
+{
+    _debug_log "Exiting Script"
+    printf "\nFinished %s on %s.\nLast exit code was: %d\n" "$SCRIPT" "$(date)" "$?" >> "$log_file"
+}
+
+
+function _debug_log()
+{
+    local msg="$1"
+    printf "[$(date)] [ DEBUG ]\t$msg \n" >> "$log_file"
+    #Remove/comment before commit
+    #printf "[$(date)] [ DEBUG ]\t$msg \n"
+}
+
+function _log_and_show()
+{
+    local msg="$1"
+    printf "$msg\n"
+    printf "[$(date)] [  LOG  ]\t$msg \n" >> "$log_file"
+}
+
+function _log_and_exit()
+{
+  # ARG-1 log msg
+  # ARG-2 exit code int
+    local msg="$1"
+    printf "[$(date)] [  LOG  ]\t$msg \n" | tee -a "$log_file"
+    printf "\nFinished %s on %s.\nLast exit code was: %d\n" "$SCRIPT" "$(date)" "$?" >> "$log_file"
+    exit "$2";
+}
+
+function delete_log_file()
+{
+  set_yellow;
+  printf "${_deleting} log file %s.\n" "$log_file"
+  set_default;
+  rm -f "$log_file"
+  exit 700;
+
+}
+
+
+function  _add_timestamp_to_apt_logs()
+{
+  # This function adds time stamp to apt-logs without using external utilities
+  # Pipe the output to this dunction before redirecting to file.
+  # Usage command | _add_timestamp_to_apt_logs >> file
+  while IFS= read -r line; do printf "[$(date)] [  APT  ]\t%s\n" "$line"; done
+}
+
+function  _add_timestamp_to_dpkg_logs()
+{
+  # This function adds time stamp to dpkg-logs without using external utilities
+  # Pipe the output to this function before redirecting to file.
+  # Usage command | _add_timestamp_to_dpkg_logs >> file
+  while IFS= read -r line; do printf "[$(date)] [  PKG  ]\t%s\n" "$line"; done
+}
+
+function  _add_timestamp_to_cat_logs()
+{
+  # This function adds time stamp to cat without using external utilities
+  # Pipe the output to this function before redirecting to file.
+  # Usage command | _add_timestamp_to_cat_logs >> file
+  echo "" >> "$log_file"
+  while IFS= read -r line; do printf "[$(date)] [  CAT  ]\t%s\n" "$line"; done
+}
+
+
+function _fix_ubuntu_derivatives()
+{
+  # Ubuntu derivatives use their own codename (Linux mint, Elementary) some repository functions require
+  # That ubuntu codename is used.
+  # This function fixes that for
+  # Linux mint 17.X : Ubuntu 14.04 Trusty,
+  # Linux mint 18.x : Ubuntu 16.04 Xenial,
+  # Elementary OS Loki : Ubuntu 14.04 Trusty,
+  # Elementary OS Freya and Juno : Ubuntu 16.04 Xenial
+  # POP_OS! uses Ubuntu codenames (No need to apply fix)
+  # IF the release is not known exits the script for safety.
+  _log_and_show "${_derivatives} Checking for Ubuntu based Distributions"
+  set_yellow;
+        _debug_log "Variable code_name is : $code_name"
+  case ${code_name} in
+      qiana | rebecca | rafaela | rosa )    _log_and_show "${_linuxmint} Release is Linux mint 17.X."
+                                            _log_and_show "${_notice} Setting additional repositoris to follow Ubuntu 14.04."
+                                            code_name="trusty"
+                                            ;;
+      sarah | serena | sonya | sylvia )     _log_and_show "${_linuxmint} Release is Linux mint 18.X."
+                                            _log_and_show "${_notice} Setting additional repositoris to follow Ubuntu 16.04."
+                                            code_name="xenial"
+                                            ;;
+      loki | juno )                         _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 16.04 Xenial."
+                                            _log_and_show "${_notice} External repositories will use 16.04."
+                                            code_name="xenial"
+                                            ;;
+      freya )                               _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 14.04 Trusty."
+                                            _log_and_show "${_notice} External repositories will use 14.04."
+                                            code_name="trusty"
+                                            ;;
+      xenial | trusty | artful | zesty )    _log_and_show "${_canonical} No known derivative of Ubuntu found."
+                                            set_default;
+                                            _log_and_show "${_info} Keeping the codename as: $code_name."
+                                            _log_and_show "${_notice} If installation fails or errors out, please report.";
+                                            ;;
+      *)                                    _log_and_show "${_error} Unknown Distribution/Release."
+                                            _log_and_show "${_notice} This Script is not designed to run on this ($code_name) distro/release."
+                                            _script_exit_log;
+                                            exit 500;
+                                            ;;
+  esac
+  set_default;
+
+}
+
+
+function _test_internet_connection ()
+{
+  # Function to check internet connection
+  _log_and_show "${_internet} Checking..."
+  if wget --tries=10 --timeout=15 www.google.com -O /tmp/testinternet &>/dev/null 2>&1; then
+    _log_and_show "${_internet} Connected"
+    rm -f /tmp/testinternet
+  else
+    set_yellow;
+    _log_and_show "${_oh_no} Booooooo! You are not connected to the Internet!. Please check your Internet connection and try again."
+    rm -f /tmp/testinternet
+    set_default;
+    exit 400;
+  fi
+}
+
+
+function _test_conflicting_apps ()
+{
+  # Function checks if any apps like syanptic aptitude are running.
+  _log_and_show "${_conflicts} Checking"
+  for lock in synaptic update-manager software-center apt-get dpkg aptitude
+  do
+    # shellcheck disable=SC2009
+    if ps -U root -u root u | grep $lock | grep -v grep > /dev/null;
+       then
+         _log_and_show "${_aptrunning} Installation won't work. Please close $lock first then try again."
+         _script_exit_log
+         exit 404;
+       else
+        _debug_log "$lock not running, Checking other apps..."
+     fi
+   done
+   _log_and_show "${_conflicts} None detected."
+   sleep 5
+}
+
+
+function _install_pre_requisites()
+{
+  # This function installs required packages for adding apt repositories
+  # These should be present in your base ubuntu instal. If not present then, this function
+  # will install them.
+  # Following are the packages installed by this function:
+  # linux-image-extra-<>, apt-transport-https, ca-certificates,
+  # curl, software-properties-common
+  _log_and_show "${_installing} Necessary dependencies "
+  _debug_log "${_installing} apt-transport-https, ca-certificates, curl, software-properties-common ppa-purge."
+   apt-get -y install apt-transport-https \
+    ca-certificates \
+    curl \
+    ppa-purge\
+    software-properties-common | _add_timestamp_to_apt_logs >> "$log_file" || _log_and_exit "${_failed} Installing dependencies. Script cannot continue!!" "102"
+  _log_and_show "${_installed} Dependencies."
+}
+
+
+function fix_repo_not_available()
+{
+  # If repository is not available for latest ubuntu release, this uses last stable release
+  # (may not be LTS) for adding repository
+  if [ "$fix_repo_not_available_for_latest" == "true" ]; then
+    # Only do this on latest releases
+    if [ "$code_name" == "$code_name_latest_release" ]; then
+      _debug_log "Sometimes repositories are not available for latest ubuntu release.\nUsing last known stabel release: $code_name_latest_release."
+      printf "${YELLOW}Since Repository is not available for the latest Ubuntu release,\npreviously available repositories from an older release: $codename_previous_release is being used.\n"
+      printf "You need to modify this in Software and updates when it becomes available for ${code_name_latest_release}.\n${NC}"
+      code_name_fix_latest="$codename_previous_release"
+    else
+      _debug_log "This release has repositories available. No need to apply fix repo not available error, when builds are latest."
+    fi
+  else
+    _debug_log "fix_repo_not_available is disabled."
+fi
+}
+
+
+function add_ppas()
+{
+  # Function to add ppa from reading ppa from ppa.list file in /data directory
+  # List file should contain ppas in following format
+  # ppa:ppa:<author>/<ppa> for example, ppa:mozillateam/firefox-nex for adding firefox next/Beta PPA
+    _debug_log "Adding PPA Fucntion"
+    # Function Reads the file ./data/ppa.list and adds the ppa one by one
+    while IFS= read -r line
+      do
+           _log_and_show "${_adding_ppa} $line"
+           _debug_log "Adding $line"
+           _debug_log "PPA Log Below"
+           if add-apt-repository -y "$line"  >> "$log_file" 2>&1; then
+             _log_and_show "${_added_ppa} $line."
+           else
+             _log_and_show "${_oh_no} Some Error occured while adding $line. Ignoring and moving on.\n"
+           fi
+      done < "$PPA_LIST"
+      set_yellow;
+      _log_and_show "${_added} PPAs in the list file."
+      set_default;
+}
+
+
+function add_repositories()
+{
+  # This function adds repositories for several apps like
+  # Google Chrome, Spotify, AWS tools, Google Cloud SDK, GCSFUSE(Part of google cloud),
+  # Skype, Docker, Skype, Microsoft Visual Studio Code, Google Earth, Insync client
+  # WARNING: Some repositories might not support latest version of Ubuntu.
+  # ${code_name_fix_latest} is used in known cases where a repository might be unavailable for latest Ubuntu Release
+
+  local CLOUD_SDK_REPO
+  local GCSFUSE_REPO
+  # install dependencies required
+  _install_pre_requisites;
+  fix_repo_not_available;
+  _debug_log "Adding External Repositories"
+
+  # Add Google Chrome and Google Earth
+  _log_and_show "${_adding} Google Repositories"
+    _debug_log "Adding Google Package Siging Key"
+  wget -q  https://dl.google.com/linux/linux_signing_key.pub -O linux_signing_key.pub >> $"log_file"
+  _debug_log "Adding Google Key to Trusted Keys list"
+  apt-key add linux_signing_key.pub >> "$log_file" 2>&1  || _log_and_show "Adding Trusted Keys for Google failed."
+  _log_and_show "${_adding} Google Chrome Repository\n"
+  echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > ${SOURCES_FILE_DIR}/google.list || _log_and_show "Adding Google Chrome Repository failed"
+  _log_and_show "${_adding} Google Earth Repository"
+  echo "deb [arch=amd64] http://dl.google.com/linux/earth/deb/ stable main" > ${SOURCES_FILE_DIR}/google-earth.list || _log_and_show "Adding Google Chrome Repository failed"
+
+
+  # Spotify client
+  _log_and_show "${_adding} Spotify repository"
+  _debug_log "Adding Spotify Keys"
+  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys BBEBDCB318AD50EC6865090613B00F1FD2C19886 >> "$log_file" 2>&1  || _log_and_show "Adding Spotify Repository failed"
+  echo "deb http://repository.spotify.com stable non-free" > ${SOURCES_FILE_DIR}/spotify.list || _log_and_show "Adding Spotify Repository Failed"
+
+   # Insync
+  _log_and_show "${_adding} Insync repository"
+  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ACCAF35C  >> "$log_file" 2>&1
+  echo "deb http://apt.insynchq.com/ubuntu $code_name_fix_latest non-free contrib" > ${SOURCES_FILE_DIR}/insync.list || _log_and_show "Adding Insync Repository failed"
+
+  # Google Cloud SDK and GCS-FUSE
+  CLOUD_SDK_REPO="cloud-sdk-$code_name_fix_latest"
+  GCSFUSE_REPO="gcsfuse-$code_name_fix_latest"
+  _log_and_show "${_google_cloud} Repositories"
+  _debug_log "Adding Google Cloud repository sigining key"
+  curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - >> "$log_file"  2>&1
+  _log_and_show "${_adding} Google-Cloud-SDK repository"
+  echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  || _log_and_show "Adding GCSFUSE Repository failed"
+  _log_and_show "${_adding} GCSFUSE repository"
+  echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main" > ${SOURCES_FILE_DIR}/gcsfuse.list  || _log_and_show "Adding Google Cloud SDK Repository failed"
+  #AWS
+  # Handled by pip
+
+  #Wine HQ
+  if [ "$add_winehq_repo" == "true" ]; then
+    _debug_log "Adding WINWHQ is set to true"
+    _log_and_show "${_adding} WineHQ repository"
+    _debug_log "Getting WineHQ repository Key"
+    wget -q https://dl.winehq.org/wine-builds/Release.key -O wine-hq-sigining-key.key >> "$log_file"  2>&1
+    _debug_log "Adding WineHQ Key"
+    apt-key add wine-hq-sigining-key.key >> "$log_file"  2>&1 || _log_and_show "Adding WineHQ keys failed"
+    _debug_log "Adding WineHQ Repository"
+    echo "deb https://dl.winehq.org/wine-builds/ubuntu/ $code_name_fix_latest main" > ${SOURCES_FILE_DIR}/winehq.list || _log_and_show "Adding WineHQ repository failed"
+  else
+    _log_and_show "${_adding} WineHQ is set to false. Skipping."
+  fi
+  # Docker CE
+  if [ "$add_docker_repo" == "true" ]; then
+    _debug_log "Adding Docker repository is set to true"
+    _log_and_show "${_adding} Docker-CE repository"
+    _debug_log "Getting Docker-CE repository Key"
+    wget -q https://download.docker.com/linux/ubuntu/gpg -O docker-key.gpg >> "$log_file"  2>&1
+    _debug_log "Adding Docker repository key"
+    apt-key add docker-key.gpg >> "$log_file"  2>&1 || _log_and_show "Adding Docker-CE keys failed"
+    _debug_log "${_added} Docker-CE"
+    echo "deb [arch=$ARCH] https://download.docker.com/linux/ubuntu  $code_name_fix_latest stable" > ${SOURCES_FILE_DIR}/docker.list || _log_and_show "Adding Docker-CE repository failed"
+  else
+    _debug_log "Adding Docekr-CE is set to false. Skipping."
+  fi
+
+  # Skype
+  _log_and_show "${_adding} Skype for linux repository"
+  _debug_log "Getting Skype repository key"
+  wget -q https://repo.skype.com/data/SKYPE-GPG-KEY -O skype-linux-key.gpg >> "$log_file"
+  _debug_log "Adding Skype keys to trusted list"
+  apt-key add skype-linux-key.gpg >> "$log_file"  2>&1 || _log_and_show "Adding Skype for linux key failed"
+  echo "deb [arch=$ARCH] https://repo.skype.com/deb stable main" > $SOURCES_FILE_DIR/skype-stable.list || _log_and_show "Adding Skype for linux repository failed"
+
+
+  #Visual Studio Code
+  #_log_and_show "${_adding} Visual Studio Code repository"
+  #_debug_log "Getting GPG keys for repository"
+  #curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+  #_debug_log "Adding Key to trusted GPG keys directory"
+  #mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg >> "$log_file" 2>&1
+  #echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main" > ${SOURCES_FILE_DIR}/vscode.list
+
+  # Enable canonical Partner repos
+  _log_and_show "${_adding} Canonical partner repositoris"
+  add-apt-repository "deb http://archive.canonical.com/ubuntu $code_name partner" >> "$log_file"
+
+  # Remove artifacts and keys
+  _debug_log "Removing keys and converted files from current directory"
+  rm  -f ./*.gpg ./*.asc ./*.pub ./Release ./*.pub.* ./*.asc.* ./*.key.* ./*.gpg.*
+
+}
+
+
+function update_repos()
+{
+  local exit_status
+  set_yellow
+  _log_and_show "${_updating} Repository index/metadata."
+  set_default
+  apt-get update | _add_timestamp_to_apt_logs >> "$log_file"
+  exit_status=$?
+  set_yellow;
+  if [ "$exit_status" -eq 0 ]; then
+    _log_and_show "${_updated} Successfully!"
+  else
+    set_yellow
+    _log_and_show "${_oh_no} Something went wrong in upgrading packages. Please see the log file for more details."
+    _log_and_show "${_notice} Most of the times its either missing repositories/keys or wrongly configured repositories."
+  fi
+  set_default;
+}
+
+
+function upgrade_apps()
+{
+  local exit_status
+  _log_and_show "${_upgrading} packages"
+  _debug_log "Listing Upgradable packages"
+  _line_fill;
+  # upgradable is not availabel in apt-get ignore warning about apt being unstable
+  apt list --upgradable | _add_timestamp_to_apt_logs | tee -a "$log_file"  || _log_and_show "Something went wrong while listing upgradable packages. Please see the log file for more details."
+  set_yellow;
+  _log_and_show "${_notice} The above list of packages will be upgraded!"
+  sleep 5;
+  set_default;
+  _line_fill;
+  sleep 5
+  _debug_log "${_upgrading} packages..."
+  apt-get -y upgrade | _add_timestamp_to_apt_logs >> "$log_file"
+  apt-get -y dist-upgrade | _add_timestamp_to_apt_logs >> "$log_file"
+  exit_status=$?
+  set_yellow;
+  if [ "$exit_status" -eq 0 ]; then
+    _log_and_show "${_upgraded} Successfully!"
+  else
+    _log_and_show "${_oh_no} Something went wrong in upgrading packages."
+    _log_and_show "${_notice} Please see the log file for more details. Most of the times its either missing repositories or wrongly configured repositories."
+  fi
+  set_default;
+  _line_fill;
+}
+
+
+function  upgrade_system()
+{
+  _debug_log "Updating and upgrading packages"
+  update_repos;
+  upgrade_apps;
+}
+
+function disable_external_repos()
+{
+  _log_and_show "${_deleting} External repositoris"
+  _install_pre_requisites;
+  # Function to disable external repositoris added by this script.
+    # Function Reads the file ./data/ppa.list and purges the ppa one by one
+    while IFS= read -r line
+      do
+           _log_and_show "${_purging} $line"
+           _debug_log "Purging: $line"
+           if ppa-purge  "$line" | _add_timestamp_to_apt_logs >> "$log_file"  2>&1 ; then
+             sleep 10 #wait sometimes apt lock isnt released soon.
+             _log_and_show "${_purged} $line."
+           else
+             _log_and_show "${_oh_no} Some Error occured while purging $line."
+           fi
+      done < "$PPA_LIST"
+      set_yellow;
+    _log_and_show "${_purged} External PPAs."
+    _log_and_show "${_deleting} Keys and External Repositoris"
+    set_default
+    local old_path
+    old_path=$(pwd)
+    _log_and_show "${_deleting} Google signing key -1"
+    apt-key del 7FAC5991 | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  Google signing key -1 failed."
+    _log_and_show "${_deleting} Google signing key -2"
+    apt-key del D38B4796 | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  Google signing key -2 failed."
+    _log_and_show "${_deleting} Webupd8 signing key"
+    apt-key del 4C9D234C | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  Webupd8 failed."
+    _log_and_show "${_deleting} Spotify signing key"
+    apt-key del D2C19886 | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  Spotify signing key -2 failed."
+    _log_and_show "${_deleting} Spotify signing key"
+    apt-key del 341D9410 | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  Spotify signing key -2 failed."
+    _log_and_show "${_deleting} Skype for Linux signing key"
+    apt-key del DF7587C3 | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  Skype for Linux keys failed."
+    _log_and_show "${_deleting} WineHQ signing key"
+    apt-key del 5FCBF54A | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  WineHQ keys failed."
+    _log_and_show "${_deleting} Google Cloud signing key"
+    apt-key del A73170BF | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  Google Cloud keys failed."
+    _log_and_show "${_deleting} InSync signing key"
+    apt-key del ACCAF35C | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  InSync keys failed."
+    _log_and_show "${_deleting} Docker-CE signing key"
+    apt-key del 0EBFCD88 | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  Docker-CE keys failed."
+    _log_and_show "${_removing} External Repositoris"
+    _debug_log "${_removing} *.list and *.save files from ${SOURCES_FILE_DIR}"
+    cd /etc/apt/sources.list.d && rm  -f google.* google-earth.* skype-stable.* spotify.* insync.* google-cloud-sdk.* gcsfuse.* docker.* winehq.* vscode.*
+    local exit_status
+    exit_status=$?
+    set_yellow;
+    if [ "$exit_status" -eq 0 ]; then
+      _log_and_show "${_removed} Additional APT keys and repositories."
+      _log_and_show "${_notice} Canonical partner repository was left unchanged."
+    else
+      _log_and_show "${_oh_no} Failed to remove all or some of the list files or keys in Sources directory."
+      set_blue
+      _log_and_show "${_notice} Please see the log file for more details."
+    fi
+    _line_fill;
+    set_default;
+    cd "$old_path" || return
+    _log_and_show "${_removed} PPAs and Repositories. Please check the logs for errors."
+
+}
+
+function install_apps()
+
+{
+  # Function to install apps mentioned in individual list files in the app-list.list
+  # Repositories manually added get their own list file because they are prone to errors
+  # This function reads from list of lists
+  # File ./data/app-list.list contains list of list files in ./data/ directory
+  # which contain package names of the packages to be installed.
+  #
+  # external-repo should always be at last to avoid any errors in previous lists.
+  # No checks are being made on any of the files for validity. One entry per line is recommended.
+  # If a package is not available entire collection in the file *.list will not be installed!!
+  # Accept some EULA
+  update_repos;
+  echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
+  #Install starts here
+  local packages
+
+
+  while IFS= read -r line
+    do
+         _log_and_show "${_installing} packages from list :$line:"
+         _debug_log "$line\n"
+         # shellcheck disable=SC2002
+         # just to print it in logs so ignore shellcheck
+         cat "$line" | _add_timestamp_to_cat_logs >> "$log_file"
+         packages=$(cat "$line")
+         # Check if simulate is true
+         if [ "$simulate_apt_install" == "true" ]; then
+           set_yellow;
+           _log_and_show "${_simulate} apt-get install. Nothing will be installed!!"
+           set_default;
+           # disable shellcheck for quoted variable as its an exception
+           # quoting $packages leads to errors.
+           # shellcheck disable=SC2086
+           apt-get -y install -s $packages | _add_timestamp_to_apt_logs >> "$log_file" 2>&1
+         else
+           # shellcheck disable=SC2086
+           apt-get -y install $packages | _add_timestamp_to_apt_logs >> "$log_file" 2>&1
+         fi
+         exit_status=$?
+         if [ "$exit_status" -eq 0 ]; then
+           set_yellow
+           _log_and_show "${_installed} packages in the list $line"
+         else
+           _log_and_show "${_oh_no} Something went wrong while installing  packages in $line"
+           set_blue;
+           _log_and_show "${_notice} Please see the log file for more details."
+       fi
+         set_default;
+    done < "$app_list_list"
+
+}
+
+function install_debs ()
+{
+
+  #Function to get the deb files from UR_DEB_URL in the ./data/deb_files.list
+  # The list fine has following format
+  #  URL to get the deb file  <space or tab> NAME_OF_THE_APP
+
+  local deb_url
+  local deb_name
+
+  _debug_log "Option: Install DEB Files, Function name: install_debs"
+
+  if (whiptail --title "Install DEB Files" --yesno "Proceed with install?" 10 60) then
+    _log_and_show "${_downloading} DEB files :)"
+    while IFS= read -r line
+      do
+           _debug_log "$line"
+           deb_url=$(echo "$line" | cut -d ' ' -f1 )
+           deb_name=$(echo "$line" | cut -d ' ' -f2 )
+           _debug_log "DEB file url: $deb_url"
+           _debug_log "DEB file name: $deb_name"
+           _log_and_show "${_downloading} $deb_name"
+           wget -q "$deb_url" -O "${deb_name}" >> "$log_file"
+
+           _log_and_show "${_installing} $deb_name"
+           # Check if simulate is true
+           if [ "$simulate_apt_install" == "true" ]; then
+             _log_and_show "${_simulate} deb packages install. Nothing will be installed!!"
+             dpkg -i --dry-run "$deb_name" | _add_timestamp_to_dpkg_logs >> "$log_file" 2>&1
+             _debug_log "$_installing missing packages"
+             apt-get -y install -f >> "$log_file"
+            else
+            dpkg -i "$deb_name" | _add_timestamp_to_dpkg_logs >> "$log_file" 2>&1
+           fi
+
+            # shellcheck disable=SC2181
+           if [ "$?" = "0" ]; then
+                _log_and_show "${_installed} $line successfully"
+           else
+                _log_and_show "${_oh_no} Some error occured during downloading and installing $line."
+                $?="0"
+          fi
+      done < "$DEB_FILES_LIST"
+  else
+      _debug_log "Selected No for DEB installing, Returning to Main menu"
+      _process_opts;
+  fi
+}
+
+function all_in_one()
+{
+  #Wrapper for all options
+  set_yellow;
+  _debug_log "Option: ALL IN ONE, function name: all_in_one"
+  _line_fill;
+  set_blue;
+  _log_and_show "${_info} Apps will be installed, Upgrades and repositoris and will be added, deb files will be downloaded and installed!\nThis action is not reversible in all cases."
+  _debug_log "All in One initialized"
+  set_default;
+  update_repos;
+  upgrade_apps;
+  add_ppas;
+  add_repositories;
+  install_apps;
+  install_debs;
+  set_yellow;
+  _line_fill;
+  set_default;
+}
+
+
+function _process_opts
+{
+  COLUMNS=$(tput cols)
+  LINES=$(tput lines)
+  export COLUMNS LINES
+  # shellcheck disable=SC2086
+  MAIN=$(whiptail \
+      --notags \
+      --backtitle "$SCRIPT" \
+      --title "Ubuntu Post-Install Script" \
+      --menu "\nWhat would you like me to do?\nLogs will be written to ${log_file}. Check the logs if you need details on what's been done." \
+      --cancel-button "Quit" \
+      $LINES $COLUMNS $(( LINES - 12 )) \
+      update_repos           'Update Repositories' \
+      upgrade_system         'Upgrade packages to latest' \
+      all_in_one             'Install all apps and configure, I am in control' \
+      add_repositories       'Add Common Repositories' \
+      add_ppas                'Add PPAs from file' \
+      install_apps           'Install most common tools' \
+      install_debs           'Install DEBS not available in Repositories' \
+      disable_external_repos 'Reset Repositories for cleanup or another test run' \
+      delete_log_file        "Delete Script logs from $log_file" \
+      3>&1 1>&2 2>&3)
+
+    # Run the task
+    #$MAIN
 
     exitstatus=$?
     if [ $exitstatus = 0 ]; then
         $MAIN
     else
-        quit
+        _script_exit_log
     fi
 }
 
-# Quit
-function quit {
-    if (whiptail --title "Quit" --yesno "Are you sure you want quit?" 10 60) then
-        echo "Exiting..."
-        goodbye_msg;
-        SCRIPTEXIT;
-        exit 99;
-    else
-        _process_opts;
-    fi
-}
+
 
 function main()
 {
+
+  if [[ $EUID -ne 0 ]]; then
+    _debug_log "[ Whoopsie ] Insufficinet privilages!!"
+    set_yellow;
+    _log_and_show "[ Whoopsie ] This script must be run as root.\nPlease use sudo %s to run as root.\n" "$SCRIPT"
+    set_default;
+    exit 100;
+  fi
+
   _init_script_variables;
   _init_script_initialization;
-  while :
-  do
-    _process_opts;
-  done
+  _fix_ubuntu_derivatives;
+  _test_internet_connection;
+  _test_conflicting_apps;
+  _process_opts;
+
 
 }
 
+
+#Initialze main
 main "$@"
-SCRIPTEXIT
+#Logs exit and exit code of script
+_script_exit_log

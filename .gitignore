@@ -1,5 +1,3 @@
-/untrackedfiles/*
-cp2stow.withvalidation
 # Compiled source #
 ###################
 *.com
@@ -77,3 +75,24 @@ Thumbs.db
 #IDEAS
 /.idea/workspace.xml
 /.idea/tasks.xml
+
+
+# AEU
+*.log
+*.gpg
+*.gpg.*
+*.asc
+*.asc.*
+*.deb
+*.deb.*
+*.pub
+*.pub.*
+*.list.save
+*.key
+*.key.*
+Release*
+*.deb
+*.deb.*
+*.AppImage
+*.bundle
+*.run
