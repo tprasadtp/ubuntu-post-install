@@ -3,4 +3,5 @@
 ./data/latex.list
 ./data/development.list
 ./data/cloud.list
+./data/wine.list
 ./data/extern-repo.list

@@ -1,5 +1,15 @@
-gitg
 curl
 spyder
 spyder3
 git
+shellcheck
+stow
+mesa-opencl-icd
+ocl-icd-dev
+opencl-headers
+clinfo
+vainfo
+vdpauinfo
+opencl-clhpp-headers
+opencl-c-headers
+ocl-icd-libopencl1
