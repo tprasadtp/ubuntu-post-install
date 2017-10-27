@@ -52,7 +52,7 @@ function _init_script_variables()
     _log_and_show "${_error} This architeture is not supported by this script!"
     set_default;
     _line_fill;
-    _log_and_exit "Unsupported Architeture." "103"
+    _log_and_exit "Unsupported Architeture. $(uname -m)" "103"
   fi
   readonly SOURCES_FILE_DIR=/etc/apt/sources.list.d
 
@@ -77,7 +77,7 @@ function _init_script_variables()
   readonly add_docker_repo=true
 
   #Fix Repo not available for latest release
-  readonly fix_repo_not_available_for_latest="true"
+  fix_repo_not_available_for_latest="false"
   readonly code_name_latest_release="artful"
   readonly codename_previous_release="zesty"
   code_name_fix_latest="$code_name_latest_release"
@@ -118,8 +118,9 @@ function _init_script_variables()
   readonly    _downloading="[  Downloading  ]"
   readonly           _info="[     Info      ]"
   readonly         _failed="[     Failed    ]"
-  readonly   _google_cloud="[ Google  Cloud ]"
+  readonly   _google_cloud="[      GCP      ]"
   readonly       _simulate="[   Simulating  ]"
+  readonly       _fix_repo="[Fix Repo4Latest]"
 }
 
 function _init_script_initialization()
@@ -406,36 +407,37 @@ function add_repositories()
   # Add Google Chrome and Google Earth
   _log_and_show "${_adding} Google Repositories"
     _debug_log "Adding Google Package Siging Key"
-  wget -q  https://dl.google.com/linux/linux_signing_key.pub -O linux_signing_key.pub >> $"log_file"
+  wget -q  https://dl.google.com/linux/linux_signing_key.pub -O linux_signing_key.pub >> $"$log_file"
   _debug_log "Adding Google Key to Trusted Keys list"
   apt-key add linux_signing_key.pub >> "$log_file" 2>&1  || _log_and_show "Adding Trusted Keys for Google failed."
   _log_and_show "${_adding} Google Chrome Repository"
-  echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > ${SOURCES_FILE_DIR}/google.list || _log_and_show "Adding Google Chrome Repository failed"
+  echo "deb http://dl.google.com/linux/chrome/deb/ stable main #Google-Chrome" > ${SOURCES_FILE_DIR}/google-chrome.list || _log_and_show "Adding Google Chrome Repository failed"
   _log_and_show "${_adding} Google Earth Repository"
-  echo "deb [arch=amd64] http://dl.google.com/linux/earth/deb/ stable main" > ${SOURCES_FILE_DIR}/google-earth.list || _log_and_show "Adding Google Chrome Repository failed"
+  echo "deb [arch=amd64] http://dl.google.com/linux/earth/deb/ stable main #Google-Earth" > ${SOURCES_FILE_DIR}/google-earth.list || _log_and_show "Adding Google Chrome Repository failed"
 
 
   # Spotify client
   _log_and_show "${_adding} Spotify repository"
   _debug_log "Adding Spotify Keys"
   apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys BBEBDCB318AD50EC6865090613B00F1FD2C19886 >> "$log_file" 2>&1  || _log_and_show "Adding Spotify Repository failed"
-  echo "deb http://repository.spotify.com stable non-free" > ${SOURCES_FILE_DIR}/spotify.list || _log_and_show "Adding Spotify Repository Failed"
+  echo "deb http://repository.spotify.com stable non-free #Spotify For Linux" > ${SOURCES_FILE_DIR}/spotify.list || _log_and_show "Adding Spotify Repository Failed"
 
    # Insync
   _log_and_show "${_adding} Insync repository"
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ACCAF35C  >> "$log_file" 2>&1
-  echo "deb http://apt.insynchq.com/ubuntu $code_name_fix_latest non-free contrib" > ${SOURCES_FILE_DIR}/insync.list || _log_and_show "Adding Insync Repository failed"
+  echo "deb http://apt.insynchq.com/ubuntu $code_name_fix_latest non-free contrib #Insync Client" > ${SOURCES_FILE_DIR}/insync.list || _log_and_show "Adding Insync Repository failed"
 
   # Google Cloud SDK and GCS-FUSE
   CLOUD_SDK_REPO="cloud-sdk-$code_name_fix_latest"
   GCSFUSE_REPO="gcsfuse-$code_name_fix_latest"
   _log_and_show "${_google_cloud} Repositories"
   _debug_log "Adding Google Cloud repository sigining key"
-  curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - >> "$log_file"  2>&1
+  wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg >> ${log_file}
+  apt-key add apt-key.gpg >> "$log_file"  2>&1
   _log_and_show "${_adding} Google-Cloud-SDK repository"
-  echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  || _log_and_show "Adding GCSFUSE Repository failed"
+  echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main #Google Cloud SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  || _log_and_show "Adding GCSFUSE Repository failed"
   _log_and_show "${_adding} GCSFUSE repository"
-  echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main" > ${SOURCES_FILE_DIR}/gcsfuse.list  || _log_and_show "Adding Google Cloud SDK Repository failed"
+  echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list  || _log_and_show "Adding Google Cloud SDK Repository failed"
   #AWS
   # Handled by pip
 
@@ -448,7 +450,7 @@ function add_repositories()
     _debug_log "Adding WineHQ Key"
     apt-key add wine-hq-sigining-key.key >> "$log_file"  2>&1 || _log_and_show "Adding WineHQ keys failed"
     _debug_log "Adding WineHQ Repository"
-    echo "deb https://dl.winehq.org/wine-builds/ubuntu/ $code_name_fix_latest main" > ${SOURCES_FILE_DIR}/winehq.list || _log_and_show "Adding WineHQ repository failed"
+    echo "deb https://dl.winehq.org/wine-builds/ubuntu/ $code_name_fix_latest main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list || _log_and_show "Adding WineHQ repository failed"
   else
     _log_and_show "${_adding} WineHQ is set to false. Skipping."
   fi
@@ -461,7 +463,7 @@ function add_repositories()
     _debug_log "Adding Docker repository key"
     apt-key add docker-key.gpg >> "$log_file"  2>&1 || _log_and_show "Adding Docker-CE keys failed"
     _debug_log "${_added} Docker-CE"
-    echo "deb [arch=$ARCH] https://download.docker.com/linux/ubuntu  $code_name_fix_latest stable" > ${SOURCES_FILE_DIR}/docker.list || _log_and_show "Adding Docker-CE repository failed"
+    echo "deb [arch=$ARCH] https://download.docker.com/linux/ubuntu  $code_name_fix_latest stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list || _log_and_show "Adding Docker-CE repository failed"
   else
     _debug_log "Adding Docekr-CE is set to false. Skipping."
   fi
@@ -472,7 +474,7 @@ function add_repositories()
   wget -q https://repo.skype.com/data/SKYPE-GPG-KEY -O skype-linux-key.gpg >> "$log_file"
   _debug_log "Adding Skype keys to trusted list"
   apt-key add skype-linux-key.gpg >> "$log_file"  2>&1 || _log_and_show "Adding Skype for linux key failed"
-  echo "deb [arch=$ARCH] https://repo.skype.com/deb stable main" > $SOURCES_FILE_DIR/skype-stable.list || _log_and_show "Adding Skype for linux repository failed"
+  echo "deb [arch=$ARCH] https://repo.skype.com/deb stable main #Skype for Linux" > $SOURCES_FILE_DIR/skype-stable.list || _log_and_show "Adding Skype for linux repository failed"
 
 
   #Visual Studio Code
@@ -675,7 +677,7 @@ function install_apps()
 function install_debs ()
 {
 
-  #Function to get the deb files from UR_DEB_URL in the ./data/deb_files.list
+  # Function to get the deb files from DEB_URL in the ./data/deb_files.list
   # The list fine has following format
   #  URL to get the deb file  <space or tab> NAME_OF_THE_APP
 
@@ -700,13 +702,15 @@ function install_debs ()
            # Check if simulate is true
            if [ "$simulate_apt_install" == "true" ]; then
              set_yellow
-             _log_and_show "${_simulate} DEB file will not be installed!!"
+             _log_and_show "${_simulate} $deb_name will not be installed!!"
              set_default
              dpkg -i --dry-run "$deb_name" | _add_timestamp_to_dpkg_logs >> "$log_file" 2>&1
              _debug_log "$_installing missing packages"
-             apt-get -y install -f >> "$log_file"
+             apt-get -y install -f | _add_timestamp_to_apt_logs >> "$log_file"
             else
               dpkg -i "$deb_name" | _add_timestamp_to_dpkg_logs >> "$log_file" 2>&1
+             _debug_log "$_installing missing packages"
+              apt-get -y install -f | _add_timestamp_to_apt_logs >> "$log_file"
            fi
 
             # shellcheck disable=SC2181
@@ -784,6 +788,8 @@ function _process_opts
 
 function main()
 {
+  _init_script_variables;
+  _init_script_initialization;
 
   if [[ $EUID -ne 0 ]]; then
     _debug_log "[ Whoopsie ] Insufficinet privilages!!"
@@ -793,8 +799,7 @@ function main()
     exit 100;
   fi
 
-    _init_script_variables;
-    _init_script_initialization;
+
 
   # Process command line arguments.
   while [ "$1" != "" ]; do
@@ -802,6 +807,11 @@ function main()
           -s | --simulate )       simulate_apt_install=true;
                                   set_yellow;
                                   _log_and_show "${_simulate} is set to true";
+                                  set_default;
+                                  ;;
+          -f | --fix )            fix_repo_not_available_for_latest="true";
+                                  set_yellow;
+                                  _log_and_show "${_fix_repo} is set to true. Using codename: $codename_previous_release";
                                   set_default;
                                   ;;
           * )                     printf "\n${BLUE}Invalid argument(s)${NC}\n"
