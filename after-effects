@@ -350,12 +350,28 @@ function _confirmation_dialogue()
 {
   # Function to confirm whether action selected should be perfromed or not.
   # Accepts 3 arguments
-  # ARG-1 Name of the function selected
-  # ARG 2 Message to be displayed
+  # ARG-1 Name of the task/function selected
+  # ARG-2 Message to be displayed in confirm box
+  # ARG-3 name of the function to execute
   # Depends on whiptail
   # To overide and say yes to all dialogues pass -y as command line option while running the script
-  if (whiptail --title "Install DEB Files" --yesno "Proceed with install?" 10 60) then
-    _log_and_show "${_downloading} DEB files :)"
+  local name_of_task="$1"
+  local confirm_msg="$2"
+  local exec_function="$3"
+
+  if [ "$say_yes_to_all" != "true" ]; then
+    _debug_log "Confirmation dialogue is Necessary to get user approval to make changes"
+    if (whiptail --title "$name_of_task" --yesno "$confirm_msg" 10 60) then
+        _debug_log "User selected yes, Proceed with $name_of_task"
+        # execute the function
+        exec_function;
+    else
+        _debug_log "Selected No for $name_of_task , Returning to Main menu"
+        _process_opts;
+    fi
+  else
+    _debug_log "Yes to all: No confirm dialogues displayed"
+  fi
 }
 
 
@@ -851,7 +867,7 @@ function _process_opts
       upgrade_system         'Upgrade packages to latest' \
       all_in_one             'Install all apps and configure, I am in control' \
       add_repositories       'Add Common Repositories' \
-      add_ppas                'Add PPAs from file' \
+      add_ppas               'Add PPAs from file' \
       install_apps           'Install most common tools' \
       install_debs           'Install DEBS not available in Repositories' \
       disable_external_repos 'Reset Repositories for cleanup' \
