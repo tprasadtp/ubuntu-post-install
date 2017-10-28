@@ -639,7 +639,7 @@ function disable_external_repos()
       do
            _log_and_show "${_purging} $line"
            _debug_log "Purging: $line"
-           if ppa-purge  "$line" | _add_timestamp_to_apt_logs >> "$log_file"  2>&1 ; then
+           if ppa-purge -y "$line" | _add_timestamp_to_apt_logs >> "$log_file"  2>&1 ; then
              sleep 10 #wait sometimes apt lock isnt released soon.
              _log_and_show "${_purged} $line."
            else
@@ -674,7 +674,7 @@ function disable_external_repos()
     apt-key del 0EBFCD88 | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  Docker-CE keys failed."
     _log_and_show "${_removing} External Repositoris"
     _debug_log "${_removing} *.list and *.save files from ${SOURCES_FILE_DIR}"
-    cd /etc/apt/sources.list.d && rm  -f google.* google-earth.* skype-stable.* spotify.* insync.* google-cloud-sdk.* gcsfuse.* docker.* winehq.* vscode.*
+    cd /etc/apt/sources.list.d && rm  -f google-chrome.* google-earth.* skype-stable.* spotify.* insync.* google-cloud-sdk.* gcsfuse.* docker.* winehq.* vscode.*
     local exit_status
     exit_status=$?
     set_yellow;
