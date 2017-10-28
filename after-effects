@@ -19,6 +19,8 @@
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 # Requirements - Bash v4.4 and above
+#              - Ubuntu 14.04, 16.04, 17.04, 17.10, Elementary Freya, Mint 17.X or 18.X
+#              - whiptail
 
 
 #Constants
@@ -42,14 +44,14 @@ function _init_script_variables()
   code_name=$(lsb_release -cs)
   readonly architeture=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
   if [ "$architeture" == "64" ];then
-    _debug_log "Architeture is 64 bit."
+    _debug_log "Architecture is 64 bit."
     readonly ARCH=amd64
   elif [[ "$architeture" == "32" ]]; then
-    _debug_log "Architeture is 32 bit."
+    _debug_log "Architecture is 32 bit."
     readonly ARCH=i386
   else
     set_yellow;
-    _log_and_show "${_error} This architeture is not supported by this script!"
+    _log_and_show "${_error} This architecture is not supported by this script!"
     set_default;
     _line_fill;
     _log_and_exit "Unsupported Architeture. $(uname -m)" "103"
@@ -63,9 +65,10 @@ function _init_script_variables()
   readonly MAGNATA=$(tput setaf 5)
 
   # Package list files
-  readonly DEB_FILES_LIST="$dir"/data/deb_files.list
-  readonly PPA_LIST="$dir"/data/ppa.list
+  readonly deb_files_list="$dir"/data/deb-files.list
+  readonly ppa_list="$dir"/data/ppa.list
   readonly app_list_list="$dir"/data/app-list.list
+  readonly purge_list="$dir"/data/purge.list
 
 
 
@@ -83,8 +86,21 @@ function _init_script_variables()
   code_name_fix_latest="$code_name_latest_release"
 
   # Simulate apt-get install by default its false
-  # can be set to true if an argument -s or --simulate is passed ehile running the script
+  # can be set to true if an argument -s or --simulate is passed while running the script
   simulate_apt_install="false"
+
+  # purge packages not required
+  # default is false
+  # requires -d to be passed via command line otherwise it will not work
+  # set this to true if you dont want to pass -d every time
+  purge_not_required_pkgs="false"
+
+  # Say yes to all (No whiptail dialogues)
+  # Default is false
+  # can be set to true and dialogue boxes will be skipped if a command line option -y is passed
+  # set this to true if you dont want to pass -y every time
+   say_yes_to_all="false";
+
 
   #================ Because I care about Beauty of Output Logs =================
   readonly         _adding="[     Adding    ]"
@@ -105,7 +121,7 @@ function _init_script_variables()
   readonly         _purged="[    Purged     ]"
   readonly           _done="[     Done!     ]"
   readonly          _error="[     Error!    ]"
-  readonly     _aptrunning="[ She's Running ]"
+  readonly     _aptrunning="[ I'm not Alone ]"
   readonly       _internet="[    Internet   ]"
   readonly             _ok="[      OK!      ]"
   readonly       _updating="[    Updating   ]"
@@ -121,6 +137,11 @@ function _init_script_variables()
   readonly   _google_cloud="[      GCP      ]"
   readonly       _simulate="[   Simulating  ]"
   readonly       _fix_repo="[Fix Repo4Latest]"
+  readonly        _deboalt="[    Deboalt    ]"
+  readonly           _warn="[    WARNING    ]"
+  readonly         _whoops="[   Whoopsie!   ]"
+  #readonly           _falg="[     Flag      ]"
+
 }
 
 function _init_script_initialization()
@@ -236,22 +257,22 @@ function  _add_timestamp_to_cat_logs()
   # This function adds time stamp to cat without using external utilities
   # Pipe the output to this function before redirecting to file.
   # Usage command | _add_timestamp_to_cat_logs >> file
-  echo "" >> "$log_file"
   while IFS= read -r line; do printf "[$(date)] [  CAT  ]\t%s\n" "$line"; done
 }
 
 
 function _fix_ubuntu_derivatives()
 {
-  # Ubuntu derivatives use their own codename (Linux mint, Elementary) some repository functions require
-  # That ubuntu codename is used.
+  # Some Ubuntu based distributions use their own codename (Linux mint, Elementary)
+  # some repositories require that ubuntu codename is used.
   # This function fixes that for
   # Linux mint 17.X : Ubuntu 14.04 Trusty,
   # Linux mint 18.x : Ubuntu 16.04 Xenial,
   # Elementary OS Loki : Ubuntu 14.04 Trusty,
   # Elementary OS Freya and Juno : Ubuntu 16.04 Xenial
   # POP_OS! uses Ubuntu codenames (No need to apply fix)
-  # IF the release is not known exits the script for safety.
+  # IF the release is not known this function exits the script for safety.
+
   _log_and_show "${_derivatives} Checking for Ubuntu based Distributions"
   set_yellow;
         _debug_log "Variable code_name is : $code_name"
@@ -265,11 +286,11 @@ function _fix_ubuntu_derivatives()
                                             code_name="xenial"
                                             ;;
       loki | juno )                         _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 16.04 Xenial."
-                                            _log_and_show "${_notice} External repositories will use 16.04."
+                                            _log_and_show "${_notice} External repositories will use Ubuntu 16.04."
                                             code_name="xenial"
                                             ;;
       freya )                               _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 14.04 Trusty."
-                                            _log_and_show "${_notice} External repositories will use 14.04."
+                                            _log_and_show "${_notice} External repositories will use Ubuntu 14.04."
                                             code_name="trusty"
                                             ;;
       xenial | trusty | artful | zesty )    _log_and_show "${_canonical} No known derivative of Ubuntu found."
@@ -292,7 +313,7 @@ function _test_internet_connection ()
 {
   # Function to check internet connection
   _log_and_show "${_internet} Checking..."
-  if wget --tries=10 --timeout=15 www.google.com -O /tmp/testinternet &>/dev/null 2>&1; then
+  if wget --tries=3 --timeout=15 www.google.com -O /tmp/testinternet &>/dev/null 2>&1; then
     _log_and_show "${_internet} Connected"
     rm -f /tmp/testinternet
   else
@@ -323,6 +344,18 @@ function _test_conflicting_apps ()
    done
    _log_and_show "${_conflicts} None detected."
    sleep 5
+}
+
+function _confirmation_dialogue()
+{
+  # Function to confirm whether action selected should be perfromed or not.
+  # Accepts 3 arguments
+  # ARG-1 Name of the function selected
+  # ARG 2 Message to be displayed
+  # Depends on whiptail
+  # To overide and say yes to all dialogues pass -y as command line option while running the script
+  if (whiptail --title "Install DEB Files" --yesno "Proceed with install?" 10 60) then
+    _log_and_show "${_downloading} DEB files :)"
 }
 
 
@@ -377,12 +410,12 @@ function add_ppas()
            _log_and_show "${_adding_ppa} $line"
            _debug_log "Adding $line"
            _debug_log "PPA Log Below"
-           if add-apt-repository -y "$line"  >> "$log_file" 2>&1; then
+           if add-apt-repository -y "$line" | _add_timestamp_to_apt_logs  >> "$log_file" 2>&1; then
              _log_and_show "${_added_ppa} $line."
            else
              _log_and_show "${_oh_no} Some Error occured while adding $line. Ignoring and moving on.\n"
            fi
-      done < "$PPA_LIST"
+      done < "$ppa_list"
       set_yellow;
       _log_and_show "${_added} PPAs in the list file."
       set_default;
@@ -432,7 +465,7 @@ function add_repositories()
   GCSFUSE_REPO="gcsfuse-$code_name_fix_latest"
   _log_and_show "${_google_cloud} Repositories"
   _debug_log "Adding Google Cloud repository sigining key"
-  wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg >> ${log_file}
+  wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg >> "$log_file"
   apt-key add apt-key.gpg >> "$log_file"  2>&1
   _log_and_show "${_adding} Google-Cloud-SDK repository"
   echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main #Google Cloud SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  || _log_and_show "Adding GCSFUSE Repository failed"
@@ -620,6 +653,63 @@ function disable_external_repos()
 
 }
 
+function purge_not_required()
+{
+  # This function purges not required packages from the list /data/purge.list
+  # A flag -d MUST be passed for this option to work
+  # Not passing a flag and choosing purge will result in errors
+  # Simulate is not properly tested and use it with caution
+  # combination of simulate and purge is UNSTABLE
+  # You can modify -d requirement by setting the d_flag_passed=true
+  # No validation/checks are done on the list file, if you are stupid and remove say sudo (why would you??)
+  # It script will not check!
+
+  local exit_status
+  local packages
+  if [ "$purge_not_required_pkgs" == "true" ]; then
+    # check if the file exists
+    if [ -e "$purge_list" ]; then
+      _debug_log "purge_list exists"
+           _log_and_show "${_purging} packages from list :$purge_list:"
+           # shellcheck disable=SC2002
+           # just to print it in logs so ignore shellcheck
+           cat "$purge_list" | _add_timestamp_to_cat_logs >> "$log_file"
+           packages=$(cat "$purge_list")
+           # Check if simulate is true
+           if [ "$simulate_apt_install" == "true" ]; then
+             set_yellow;
+             _log_and_show "${_simulate} No packages will be purged!!"
+             set_default;
+             # disable shellcheck for quoted variable as its an exception
+             # quoting $packages leads to errors.
+             # shellcheck disable=SC2086
+             apt-get -y purge -s $packages | _add_timestamp_to_apt_logs >> "$log_file" 2>&1
+           else
+           # shellcheck disable=SC2086
+             apt-get -y purge $packages | _add_timestamp_to_apt_logs >> "$log_file" 2>&1
+           fi
+           exit_status=$?
+           set_yellow
+           if [ "$exit_status" -eq 0 ]; then
+             _log_and_show "${_purged} packages in the list $purge_list"
+           else
+             _log_and_show "${_oh_no} Something went wrong while purging packages in $purge_list"
+             set_blue;
+             _log_and_show "${_notice} Please see the log file for more details."
+         fi
+      else
+      _log_and_show "${_error} Purge list file not found!"
+    fi
+  else
+    set_yellow
+    _log_and_show "${_error} Purge switch is set to false. Did you pass -d along wth the command?"
+  fi
+set_default
+
+}
+
+
+
 function install_apps()
 
 {
@@ -686,8 +776,6 @@ function install_debs ()
 
   _debug_log "Option: Install DEB Files, Function name: install_debs"
 
-  if (whiptail --title "Install DEB Files" --yesno "Proceed with install?" 10 60) then
-    _log_and_show "${_downloading} DEB files :)"
     while IFS= read -r line
       do
            _debug_log "$line"
@@ -720,11 +808,8 @@ function install_debs ()
                 _log_and_show "${_oh_no} Some error occured during downloading and installing $line."
                 $?="0"
           fi
-      done < "$DEB_FILES_LIST"
-  else
-      _debug_log "Selected No for DEB installing, Returning to Main menu"
-      _process_opts;
-  fi
+      done < "$deb_files_list"
+
 }
 
 function all_in_one()
@@ -769,18 +854,20 @@ function _process_opts
       add_ppas                'Add PPAs from file' \
       install_apps           'Install most common tools' \
       install_debs           'Install DEBS not available in Repositories' \
-      disable_external_repos 'Reset Repositories for cleanup or another test run' \
+      disable_external_repos 'Reset Repositories for cleanup' \
+      purge_not_required     'Purge not required Packages' \
       delete_log_file        "Delete Script logs from $log_file" \
       3>&1 1>&2 2>&3)
 
     # Run the task
     #$MAIN
-
-    exitstatus=$?
-    if [ $exitstatus = 0 ]; then
+    local whiptail_exitstatus
+    whiptail_exitstatus=$?
+    if [ $whiptail_exitstatus = 0 ]; then
         $MAIN
     else
-        _script_exit_log
+      _debug_log "Whiptail Exit code : $whiptail_exitstatus"
+      _log_and_exit "Exiting because user selected Quit or Whiptail has non zero exit code." "99"
     fi
 }
 
@@ -792,9 +879,10 @@ function main()
   _init_script_initialization;
 
   if [[ $EUID -ne 0 ]]; then
-    _debug_log "[ Whoopsie ] Insufficinet privilages!!"
+    _debug_log "${_whoops} Insufficinet privilages!!"
     set_yellow;
-    _log_and_show "[ Whoopsie ] This script must be run as root.\nPlease use sudo %s to run as root.\n" "$SCRIPT"
+    _log_and_show "${_whoops} This script must be run as root."
+    _log_and_show "${_notice} Please use sudo ./$SCRIPT to run this as root.\n"
     set_default;
     exit 100;
   fi
@@ -814,8 +902,16 @@ function main()
                                   _log_and_show "${_fix_repo} is set to true. Using codename: $codename_previous_release";
                                   set_default;
                                   ;;
-          * )                     printf "\n${BLUE}Invalid argument(s)${NC}\n"
-                                  exit -1
+          -d | --deboalt )        purge_not_required_pkgs="true";
+                                  set_yellow;
+                                  _log_and_show "${_purging} is set to true. Packages in the list $purge_list will be purged!!";
+                                  _log_and_show "${_warn} No checks are being made on the Packages in the list. Use carefully!. Purging something like sudo is stupid idea!";
+                                  set_default
+                                  ;;
+          -y | --yes )            say_yes_to_all="true";
+                                  set_yellow;
+                                  _log_and_show "${_warn} Will automatically assume yes for all the options available in the script!";
+                                  set_default;
                                   ;;
       esac
     shift

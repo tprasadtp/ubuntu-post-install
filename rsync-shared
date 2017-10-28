@@ -5,7 +5,7 @@ BLUE=$(tput setaf 6)
 #RED=$(tput setaf 1)
 NC=$(tput sgr 0)
 #default config-files directory
-SHARED_DIR="/home/$USER/Virtual Machines/Shared"
+SHARED_DIR="/home/$USER/Desktop"
 
 if command -v rsync >&/dev/null; then
   printf "${BLUE}Copying files to ${SHARED_DIR}...${NC}\n"
