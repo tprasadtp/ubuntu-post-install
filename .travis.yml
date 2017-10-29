@@ -1,11 +1,21 @@
-sudo: false
+sudo: required
 language: bash
-addons:
-  apt:
-    sources:
-    - shellcheck
-script:
-- "./tests/test-shell-scripts"
+services:
+  - docker
+before_install:
+  - docker pull ubuntu:artful
+  - docker pull ubuntu:16.04
+  - docker pull docker pull vcatechnology/linux-mint-ci
+install:
+    - sudo apt-get -y install shellcheck
+jobs:
+  include:
+    - stage: Shellcheck-Scripts
+      script: ./tests/test-shell-scripts
+    - stage: Test-in-Trusty-Host
+      script: sudo ./after-effects -y -s
+    - stage: Test-Script-in-Artful-Container
+      script: ./tests/test-artful
 matrix:
   fast_finish: true
 notifications:
@@ -15,3 +25,7 @@ notifications:
     on_success: always # default: always
     on_failure: always # default: always
     on_start: always
+    template:
+      - "Build: <%{build_url}|#%{build_number}> has %{result}, Duration: %{duration}"
+      - "Repository: %{repository} Branch : %{branch}"
+      - "Commit: <%{compare_url}|%{commit}> - %{commit_message}"

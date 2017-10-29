@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# This is a bash utility to test the script in docker container
+# Version:1.0
+# Author: Prasad Tengse
+# Licence: MIT
+# Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
+
+set -e
+set -o pipefail
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo "Download Ubuntu Docker Image"
+docker pull ubuntu:artful
+echo "Running in Docker Artful"
+docker run -v "$HOME":"$HOME" ubuntu:artful /bin/bash -c "TRAVIS=$TRAVIS; sudo ./after-effects -y -s"
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
