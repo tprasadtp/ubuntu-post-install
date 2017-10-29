@@ -451,7 +451,7 @@ function add_ppas()
     # Function Reads the file ./data/ppa.list and adds the ppa one by one
     # install dependencies required
     _install_pre_requisites;
-    
+
     while IFS= read -r line
       do
            _log_and_show "${_adding_ppa} $line"
@@ -649,6 +649,7 @@ function  upgrade_system()
 
 function disable_external_repos()
 {
+  local exit_status
   _log_and_show "${_deleting} External repositoris"
   _install_pre_requisites;
   # Function to disable external repositoris added by this script.
@@ -785,7 +786,7 @@ function install_apps()
   echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true |  debconf-set-selections
   #Install starts here
   local packages
-
+  local exit_status
 
   while IFS= read -r line
     do
@@ -834,7 +835,7 @@ function install_debs ()
 
   local deb_url
   local deb_name
-
+  local exit_status
   _debug_log "Option: Install DEB Files, Function name: install_debs"
     while IFS= read -r line
       do
@@ -852,17 +853,17 @@ function install_debs ()
              set_yellow
              _log_and_show "${_simulate} $deb_name Installation!!"
              set_default
-             dpkg -i --dry-run "$deb_name" | _add_timestamp_to_dpkg_logs >> "$log_file" 2>&1
+             dpkg -i --dry-run "$deb_name" 2>&1 | _add_timestamp_to_dpkg_logs
              _debug_log "$_installing missing packages"
-             apt-get -y install -f | _add_timestamp_to_apt_logs >> "$log_file"
+             apt-get -y install -f 2>&1 | _add_timestamp_to_apt_logs
             else
-              dpkg -i "$deb_name" | _add_timestamp_to_dpkg_logs >> "$log_file" 2>&1
+              dpkg -i "$deb_name" 2>&1 | _add_timestamp_to_dpkg_logs
              _debug_log "$_installing missing packages"
-              apt-get -y install -f | _add_timestamp_to_apt_logs >> "$log_file"
+              apt-get -y install -f 2>&1 | _add_timestamp_to_apt_logs
            fi
 
             # shellcheck disable=SC2181
-           if [ "$?" = "0" ]; then
+           if [ "$exit_status" = "0" ]; then
                 _log_and_show "${_installed} $deb_name successfully"
            else
                 _log_and_show "${_oh_no} Some error occured during downloading and installing $line."
