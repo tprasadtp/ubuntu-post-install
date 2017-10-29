@@ -70,6 +70,14 @@ function _init_script_variables()
   readonly app_list_list="$dir"/data/app-list.list
   readonly purge_list="$dir"/data/purge.list
 
+  #============================ CI and Container Cheks =========================
+  if grep docker /proc/1/cgroup -qa; then
+     _log_and_show "${_docker} I'm in MATRIX :("
+  fi
+
+  if [ "$TRAVIS" == "true" ]; then
+    _log_and_show "${_travis} I'm in a CI :("
+  fi
 
 
   #============================ Switches/ bools ================================
@@ -148,6 +156,7 @@ function _init_script_variables()
   readonly           _warn="[    WARNING    ]"
   readonly         _whoops="[   Whoopsie!   ]"
   readonly         _travis="[   TRAVIS-CI   ]"
+  readonly         _docker="[     Docker    ]"
   #readonly           _falg="[     Flag      ]"
 
 }
@@ -779,7 +788,7 @@ function install_apps()
   # If a package is not available entire collection in the file *.list will not be installed!!
   # Accept some EULA
   update_repos;
-  echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
+  echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true |  debconf-set-selections
   #Install starts here
   local packages
 
@@ -1017,7 +1026,6 @@ function main()
     set_default;
     cat "$log_file"
     delete_log_file;
-    _script_exit_log;
   else
   _process_opts;
   fi

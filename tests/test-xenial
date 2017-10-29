@@ -9,10 +9,8 @@
 set -e
 set -o pipefail
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-echo "Building Artful Docker Image"
-docker build -t ubuntu:ae-artful ./dockerfiles/artful
-echo "Adding Xenial and above list to app-list.list"
-echo "./data/xenial-above.list" >> ./data/app-list.list
-echo "Running in Docker Artful"
-docker run -t -v $(pwd):/shared ubuntu:ae-artful /bin/bash -c "TRAVIS=true /shared/after-effects --yes --simulate --fix"
+echo "Building Xenial Docker Image"
+docker build -t ubuntu:ae-xenial ./dockerfiles/xenial
+echo "Running in Docker Xenial"
+docker run -t -v $(pwd):/shared ubuntu:ae-xenial /bin/bash -c "TRAVIS=true /shared/after-effects -y -s"
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"

@@ -9,7 +9,7 @@ jobs:
   include:
     - stage: Shellcheck-Scripts
       script: ./tests/test-shell-scripts
-    - stage: Test-Scripts-In-Containers(Except-Trusty) #No need to use container as we are running on trusty
+    - stage: Test-Scripts-In-Containers (Except-Trusty) #No need to use container as we are running on trusty
       script: ./tests/test-trusty
     - # Test in Artful Container (Ubuntu 17.10)
       script: ./tests/test-artful
