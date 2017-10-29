@@ -3,15 +3,12 @@ language: bash
 services:
   - docker
 
-install:
-    - sudo apt-get -y install shellcheck
 jobs:
   include:
     - stage: Shellcheck-Scripts
       script: ./tests/test-shell-scripts
-    - stage: Test-in-Trusty-Host
-      script: sudo ./after-effects -y -s
-    - stage: Test-Script-in-Artful-Container
+    - stage: Test-Scripts-In-Containers(Except-Trusty)
+      script: ./tests/test-trusty
       script: ./tests/test-artful
 matrix:
   fast_finish: true

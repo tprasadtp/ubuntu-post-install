@@ -9,6 +9,10 @@
 set -e
 set -o pipefail
 
+echo "Installing shellcheck"
+sudo apt-get -y install shellcheck
+
+echo "Testing ShellScripts"
 ERRORS=()
 
 # find all executables and run `shellcheck`
