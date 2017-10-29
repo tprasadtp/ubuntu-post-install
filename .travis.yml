@@ -13,6 +13,10 @@ jobs:
       script: ./tests/test-trusty
     - # Test in Artful Container (Ubuntu 17.10)
       script: ./tests/test-artful
+    - # Test in Xenial Container (Ubuntu 16.04)
+      script: ./tests/test-xenial
+    - # Test in Zesty Container (Ubuntu 17.04)
+      script: ./tests/test-zesty
 matrix:
   fast_finish: true
 notifications:
