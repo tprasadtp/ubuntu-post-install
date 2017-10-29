@@ -449,6 +449,9 @@ function add_ppas()
   # ppa:ppa:<author>/<ppa> for example, ppa:mozillateam/firefox-nex for adding firefox next/Beta PPA
     _debug_log "Adding PPA Fucntion"
     # Function Reads the file ./data/ppa.list and adds the ppa one by one
+    # install dependencies required
+    _install_pre_requisites;
+    
     while IFS= read -r line
       do
            _log_and_show "${_adding_ppa} $line"
