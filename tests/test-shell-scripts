@@ -9,10 +9,12 @@
 set -e
 set -o pipefail
 
-echo "Installing shellcheck"
-echo ""
-sudo apt-get -y install shellcheck
-echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+if [ "$TRAVIS" == "true" ]; then
+	echo "Installing shellcheck"
+	echo ""
+	sudo apt-get -y install shellcheck
+fi
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "Testing ShellScripts"
 ERRORS=()
 
@@ -37,4 +39,4 @@ else
 	echo "These files failed shellcheck: ${ERRORS[*]}"
 	exit 1
 fi
-echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"

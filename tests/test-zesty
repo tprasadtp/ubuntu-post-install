@@ -8,11 +8,11 @@
 
 set -e
 set -o pipefail
-echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "Building Zesty Docker Image"
 docker build -t ubuntu:ae-zesty ./dockerfiles/zesty
 echo "Adding Xenial and above list to app-list.list"
 echo "./data/xenial-above.list" >> ./data/app-list.list
 echo "Running in Docker Zesty"
-docker run -t -v $(pwd):/shared ubuntu:ae-zesty /bin/bash -c "TRAVIS=true /shared/after-effects -y -s"
-echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+docker run -t -v "$(pwd)":/shared ubuntu:ae-zesty /bin/bash -c "TRAVIS=true /shared/after-effects -y -s"
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"

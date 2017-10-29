@@ -8,9 +8,9 @@
 
 set -e
 set -o pipefail
-echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "Building Xenial Docker Image"
 docker build -t ubuntu:ae-xenial ./dockerfiles/xenial
 echo "Running in Docker Xenial"
-docker run -t -v $(pwd):/shared ubuntu:ae-xenial /bin/bash -c "TRAVIS=true /shared/after-effects -y -s"
-echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+docker run -t -v "$(pwd)":/shared ubuntu:ae-xenial /bin/bash -c "TRAVIS=true /shared/after-effects -y -s"
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
