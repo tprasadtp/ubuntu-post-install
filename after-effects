@@ -243,12 +243,20 @@ function delete_log_file()
 }
 
 
+function  _add_timestamp_to_ppa_logs()
+{
+  # This function adds time stamp to apt-logs without using external utilities
+  # Log will be automatically written to $log_file
+  # Usage command | _add_timestamp_to_apt_logs
+  while IFS= read -r line; do printf "[$(date)] [  PPA  ]\t%s\n" "$line" &>> "$log_file"; done
+}
+
 function  _add_timestamp_to_apt_logs()
 {
   # This function adds time stamp to apt-logs without using external utilities
   # Pipe the output to this dunction before redirecting to file.
   # Usage command | _add_timestamp_to_apt_logs >> file
-  while IFS= read -r line; do printf "[$(date)] [  APT  ]\t%s\n" "$line"; done
+  while IFS= read -r line; do printf "[$(date)] [  APT  ]\t%s\n" "$line" &>> "$log_file"; done
 }
 
 function  _add_timestamp_to_dpkg_logs()
@@ -256,7 +264,7 @@ function  _add_timestamp_to_dpkg_logs()
   # This function adds time stamp to dpkg-logs without using external utilities
   # Pipe the output to this function before redirecting to file.
   # Usage command | _add_timestamp_to_dpkg_logs >> file
-  while IFS= read -r line; do printf "[$(date)] [  PKG  ]\t%s\n" "$line"; done
+  while IFS= read -r line; do printf "[$(date)] [  PKG  ]\t%s\n" "$line" &>> "$log_file"; done
 }
 
 function  _add_timestamp_to_cat_logs()
@@ -264,7 +272,7 @@ function  _add_timestamp_to_cat_logs()
   # This function adds time stamp to cat without using external utilities
   # Pipe the output to this function before redirecting to file.
   # Usage command | _add_timestamp_to_cat_logs >> file
-  while IFS= read -r line; do printf "[$(date)] [  CAT  ]\t%s\n" "$line"; done
+  while IFS= read -r line; do printf "[$(date)] [  CAT  ]\t%s\n" "$line" &>> "$log_file"; done
 }
 
 
@@ -368,14 +376,14 @@ function _show_confirmation_dialogue_for_tasks()
   # ARG-3 name of the function to execute
   # Depends on whiptail
   # To overide and say yes to all dialogues pass -y as command line option while running the script
-  local name_of_task="$1"
-  local confirm_msg="$2"
-  local exec_function="$3"
+  local name_of_task="$1" #Name of the task to be perfromed
+  local confirm_msg="$2" #Message shoen in Confirmation dialogue
+  local exec_function="$3" #Function to run if user selected yes
   COLUMNS=$(tput cols)
   LINES=$(tput lines)
   export COLUMNS LINES
   if [ "$bool_say_yes_to_all" != "true" ]; then
-    _debug_log "Confirmation dialogue is Necessary to get user approval to make changes"
+    _debug_log "Confirmation dialogue is Necessary to get user approval to make changes for: $exec_function"
     # shellcheck disable=SC2086
     if (whiptail  --title "$name_of_task" --yesno "$confirm_msg" $LINES $COLUMNS $(( LINES - 12 ))) then
         _debug_log "User selected yes, Proceed with $name_of_task"
@@ -409,7 +417,7 @@ function _install_pre_requisites()
     ca-certificates \
     curl \
     ppa-purge\
-    software-properties-common | _add_timestamp_to_apt_logs >> "$log_file" || _log_and_exit "${_failed} Installing dependencies. Script cannot continue!!" "102"
+    software-properties-common 2>&1 | _add_timestamp_to_apt_logs  || _log_and_exit "${_failed} Installing dependencies. Script cannot continue!!" "102"
   _log_and_show "${_installed} Dependencies."
 }
 
@@ -445,10 +453,12 @@ function add_ppas()
       do
            _log_and_show "${_adding_ppa} $line"
            _debug_log "Adding $line"
-           _debug_log "PPA Log Below"
-           if add-apt-repository -y "$line" | _add_timestamp_to_apt_logs  >> "$log_file" 2>&1; then
+           _debug_log "Add PPA Log Below"
+           if add-apt-repository -y "$line" 2>&1 | _add_timestamp_to_ppa_logs ; then
+             _line_fill >> "$log_file"
              _log_and_show "${_added_ppa} $line."
            else
+             _line_fill >> "$log_file"
              _log_and_show "${_oh_no} Some Error occured while adding $line. Ignoring and moving on.\n"
            fi
       done < "$ppa_list"
@@ -595,8 +605,8 @@ function upgrade_apps()
   _log_and_show "${_upgrading} packages"
   _debug_log "Listing Upgradable packages"
   _line_fill;
-  # upgradable is not availabel in apt-get ignore warning about apt being unstable
-  apt list --upgradable | _add_timestamp_to_apt_logs | tee -a "$log_file"  || _log_and_show "Something went wrong while listing upgradable packages. Please see the log file for more details."
+  # upgradable is not available in apt-get ignore warning about apt being unstable
+  apt list --upgradable 2>&1 | _add_timestamp_to_apt_logs  || _log_and_show "Something went wrong while listing upgradable packages. Please see the log file for more details."
   set_yellow;
   _log_and_show "${_notice} The above list of packages will be upgraded!"
   sleep 5;
@@ -606,12 +616,17 @@ function upgrade_apps()
   _debug_log "${_upgrading} packages..."
   # only do upgrades if simulate is set to false
   if [ "$simulate_apt_install" == "false" ]; then
-    apt-get -y upgrade | _add_timestamp_to_apt_logs >> "$log_file"
-    apt-get -y dist-upgrade | _add_timestamp_to_apt_logs >> "$log_file"
+    apt-get -y upgrade 2>&1 | _add_timestamp_to_apt_logs
+    apt-get -y dist-upgrade 2>&1 | _add_timestamp_to_apt_logs
     exit_status=$?
+  else
+    # if it is not simulate set exit status as 0
+    # Simulate flag skips the section above. No point in Checking for exit status
+    _debug_log "${_simulate} is set to True. Not doinf upgrade!"
+    exit_status=0
   fi
   set_yellow;
-  if [ $exit_status -eq 0 ]; then
+  if [ "$exit_status" -eq 0 ]; then
     _log_and_show "${_upgraded} Successfully!"
   else
     _log_and_show "${_oh_no} Something went wrong in upgrading packages."
@@ -639,7 +654,7 @@ function disable_external_repos()
       do
            _log_and_show "${_purging} $line"
            _debug_log "Purging: $line"
-           if ppa-purge -y "$line" | _add_timestamp_to_apt_logs >> "$log_file"  2>&1 ; then
+           if ppa-purge -y "$line"  2>&1 | _add_timestamp_to_apt_logs  ; then
              sleep 10 #wait sometimes apt lock isnt released soon.
              _log_and_show "${_purged} $line."
            else
@@ -653,25 +668,25 @@ function disable_external_repos()
     local old_path
     old_path=$(pwd)
     _log_and_show "${_deleting} Google signing key -1"
-    apt-key del 7FAC5991 | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  Google signing key -1 failed."
+    apt-key del 7FAC5991  2>&1 | _add_timestamp_to_apt_logs  || _log_and_show "${_deleting}  Google signing key -1 failed."
     _log_and_show "${_deleting} Google signing key -2"
-    apt-key del D38B4796 | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  Google signing key -2 failed."
+    apt-key del D38B4796  2>&1 | _add_timestamp_to_apt_logs  || _log_and_show "${_deleting}  Google signing key -2 failed."
     _log_and_show "${_deleting} Webupd8 signing key"
-    apt-key del 4C9D234C | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  Webupd8 failed."
+    apt-key del 4C9D234C  2>&1 | _add_timestamp_to_apt_logs  || _log_and_show "${_deleting}  Webupd8 failed."
     _log_and_show "${_deleting} Spotify signing key"
-    apt-key del D2C19886 | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  Spotify signing key -2 failed."
+    apt-key del D2C19886  2>&1 | _add_timestamp_to_apt_logs  || _log_and_show "${_deleting}  Spotify signing key -2 failed."
     _log_and_show "${_deleting} Spotify signing key"
-    apt-key del 341D9410 | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  Spotify signing key -2 failed."
+    apt-key del 341D9410  2>&1 | _add_timestamp_to_apt_logs  || _log_and_show "${_deleting}  Spotify signing key -2 failed."
     _log_and_show "${_deleting} Skype for Linux signing key"
-    apt-key del DF7587C3 | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  Skype for Linux keys failed."
+    apt-key del DF7587C3  2>&1 | _add_timestamp_to_apt_logs  || _log_and_show "${_deleting}  Skype for Linux keys failed."
     _log_and_show "${_deleting} WineHQ signing key"
-    apt-key del 5FCBF54A | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  WineHQ keys failed."
+    apt-key del 5FCBF54A  2>&1 | _add_timestamp_to_apt_logs  || _log_and_show "${_deleting}  WineHQ keys failed."
     _log_and_show "${_deleting} Google Cloud signing key"
-    apt-key del A73170BF | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  Google Cloud keys failed."
+    apt-key del A73170BF  2>&1 | _add_timestamp_to_apt_logs  || _log_and_show "${_deleting}  Google Cloud keys failed."
     _log_and_show "${_deleting} InSync signing key"
-    apt-key del ACCAF35C | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  InSync keys failed."
+    apt-key del ACCAF35C  2>&1 | _add_timestamp_to_apt_logs  || _log_and_show "${_deleting}  InSync keys failed."
     _log_and_show "${_deleting} Docker-CE signing key"
-    apt-key del 0EBFCD88 | _add_timestamp_to_apt_logs >> "$log_file" 2>&1 || _log_and_show "${_deleting}  Docker-CE keys failed."
+    apt-key del 0EBFCD88  2>&1 | _add_timestamp_to_apt_logs  || _log_and_show "${_deleting}  Docker-CE keys failed."
     _log_and_show "${_removing} External Repositoris"
     _debug_log "${_removing} *.list and *.save files from ${SOURCES_FILE_DIR}"
     cd /etc/apt/sources.list.d && rm  -f google-chrome.* google-earth.* skype-stable.* spotify.* insync.* google-cloud-sdk.* gcsfuse.* docker.* winehq.* vscode.*
@@ -723,10 +738,10 @@ function purge_not_required()
              # disable shellcheck for quoted variable as its an exception
              # quoting $packages leads to errors.
              # shellcheck disable=SC2086
-             apt-get -y purge -s $packages | _add_timestamp_to_apt_logs >> "$log_file" 2>&1
+             apt-get -y purge -s $packages 2>&1 | _add_timestamp_to_apt_logs
            else
            # shellcheck disable=SC2086
-             apt-get -y purge $packages | _add_timestamp_to_apt_logs >> "$log_file" 2>&1
+             apt-get -y purge $packages 2>&1 | _add_timestamp_to_apt_logs
            fi
            exit_status=$?
            set_yellow
@@ -775,8 +790,9 @@ function install_apps()
          _debug_log "$line\n"
          # shellcheck disable=SC2002
          # just to print it in logs so ignore shellcheck
-         cat "$line" | _add_timestamp_to_cat_logs >> "$log_file"
+         cat "$line" 2>&1 | _add_timestamp_to_cat_logs
          packages=$(cat "$line")
+         [[ -z "$packages" ]] && _log_and_show "package list to install is empty!!" && continue;
          # Check if simulate is true
          if [ "$simulate_apt_install" == "true" ]; then
            set_yellow;
@@ -784,11 +800,12 @@ function install_apps()
            set_default;
            # disable shellcheck for quoted variable as its an exception
            # quoting $packages leads to errors.
+           # we need user to see errors, dont redirect stderr
            # shellcheck disable=SC2086
-           apt-get -y install -s $packages | _add_timestamp_to_apt_logs >> "$log_file" 2>&1
+           apt-get -y install -s $packages | _add_timestamp_to_apt_logs
          else
            # shellcheck disable=SC2086
-           apt-get -y install $packages | _add_timestamp_to_apt_logs >> "$log_file" 2>&1
+           apt-get -y install $packages | _add_timestamp_to_apt_logs
          fi
          exit_status=$?
          if [ "$exit_status" -eq 0 ]; then
@@ -800,6 +817,7 @@ function install_apps()
            _log_and_show "${_notice} Please see the log file for more details."
        fi
          set_default;
+         unset packages;
     done < "$app_list_list"
 
 }
@@ -829,7 +847,7 @@ function install_debs ()
            # Check if simulate is true
            if [ "$simulate_apt_install" == "true" ]; then
              set_yellow
-             _log_and_show "${_simulate} $deb_name will not be installed!!"
+             _log_and_show "${_simulate} $deb_name Installation!!"
              set_default
              dpkg -i --dry-run "$deb_name" | _add_timestamp_to_dpkg_logs >> "$log_file" 2>&1
              _debug_log "$_installing missing packages"
@@ -975,6 +993,10 @@ function main()
                                   set_yellow;
                                   _log_and_show "${_warn} Will automatically assume yes for all the options available in the script!";
                                   set_default;
+                                  ;;
+          -l | --log )            bool_say_yes_to_all="true";
+                                  set_default;
+                                  delete_log_file;
                                   ;;
       esac
     shift
