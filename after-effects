@@ -856,10 +856,12 @@ function install_debs ()
              dpkg -i --dry-run "$deb_name" 2>&1 | _add_timestamp_to_dpkg_logs
              _debug_log "$_installing missing packages"
              apt-get -y install -f 2>&1 | _add_timestamp_to_apt_logs
+             exit_status=$?
             else
               dpkg -i "$deb_name" 2>&1 | _add_timestamp_to_dpkg_logs
              _debug_log "$_installing missing packages"
               apt-get -y install -f 2>&1 | _add_timestamp_to_apt_logs
+              exit_status=$?
            fi
 
             # shellcheck disable=SC2181
