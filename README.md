@@ -1,6 +1,6 @@
 # Ubuntu After Effects
 
-A bash script to setup your fresh install of ubuntu. Please read the FAQ before trying out.
+A bash script to setup your fresh install of Ubuntu. Please read the FAQ before trying out.
 
 
 ###  Build Status
@@ -135,10 +135,21 @@ You might see ans error like this,
 * Install `lsb-release` package using `apt-get -y install lsb-release`
 * In the case above you are probably missing other dependencies as well. It might be a good idea to install those dependencies first.
 
+### Linux Mint 17.X and PPA priorities
+> This applies only for Linux Mint 17, 17.1 17.2
+
+* For some reason, The Mint Team decided to make their repository packages set with a priority of 700 in order to overwrite Ubuntu’s priorities. PPAs typically issue a priority of 500, so due to the priority that Mint set, packages provided by the PPA which are already in the official mint repository (upstream Ubuntu as well) are completely ignored. workaround is to set the priorities to lower for default repositories say 500 in /etc/apt/preferences.d/ or to increase priorities of PPAs to higher (more than 700).
+* This was changed in Linux Mint 17.3 and no need to change the priorities unless it provides upstream Linux Mint packages.
+The release notes for mint 17.3 says
+
+> * The "upstream" component of the Linux Mint repositories was kept at priority 700.
+
+> * All other components ("main", "import", "backport", "romeo") as well as the "extra"  
+> repository, had their priority lowered to 500.
 
 ## What all command line options do I have and how do I use them?
 ### Simulating package installation
-> `-s ` or ` --simulate`
+  > `-s ` or ` --simulate`
 
 * This will simulate installing packages mentioned in the lists (More on that later) using the apt-get inbuilt dry-run option `apt-get install -s ` to simulate the installation of packages. Nothing will be downloaded except repository metadata and the packages will not be installed.
 * This option can be used to check if the files in the lists are compatible/available in the repository.
@@ -147,8 +158,8 @@ You might see ans error like this,
 * Its a very good idea to simulate installation when you have reconfigured the apps and packages in the list to check what might be error prone.
 * However, in case of DEB files, they **WILL** be downloaded unlike apt-get package installs.
 
-> * **Simulate flag will not simulate Adding Repositories or PPAs.**
-> * If you want to revert them please use Reset Repositories option.
+  > * **Simulate flag will not simulate Adding Repositories or PPAs.**
+  > * If you want to revert them please use Reset Repositories option.
 
 ### Fix for latest Ubuntu Releases
 > `-f` or `--fix`
