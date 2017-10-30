@@ -156,7 +156,7 @@ function _init_script_initialization()
 {
   # This function logs the Necessary details which hel--dry-run--dry-runps in debugging.
   # Should be used after _init_script_variables function
-  _log_and_show "${_notice} Following details were recognised by the Script."
+  _log_and_show "${_notice} Following details are recognised by the Script."
   _log_and_show "${_info} Distro: ${OS_DISTRIBUTION}"
   _log_and_show "${_info} Version: ${VERSION}"
   _log_and_show "${_info} Code Name: ${code_name}"
