@@ -20,6 +20,7 @@ jobs:
 matrix:
   fast_finish: true
 notifications:
+  email: false
   slack:
     rooms:
       - secure: "i8WqqSQDZg3FbYwh0jpkw9ZEV4AqqAq9j1NzTZnD2YDm6P188eaaQ3nJaV67lavFSCkivg/Ar5hGNpQuojtdGAZ8wOEy+Wwk7iOkgItU6PucL8AmDNQ0LLTGXNbS87a36OSWfRvbzHvhIEPK9s6RNV2upNMglwNbco+BFDIG8Zng0gJS8n2UpGtq7RDUIfIQ1bYUNg5h+16fR/3tmDX0NAnevTu9J+mXRIZS/W8fGl4XPW6RpeNS3Lk/WqhmUHy1Wc7JXl9VU/ZoTmPAHWZxYnU9UNYExOY5ATVa5jEEtidUFMK+r4DPcVtG5RBpnZO8SiFRvaTuqRUX9CjJraZ/X3YedDOehre5R89g7lstJtlN5rUgiW0oIcuAxlaj0sNYVu8rDq/fYryR72sTlQAnO5CA3A4jjO1B5HOzVece4NoMJ1B/5GcYf1EJ3sSUyONClO/Mh/Ubsfg1d02fgDDSenm/zZJEB86kt3rkylg5V1eHK60+ycLhoTX+xIJKiUFHHRgMmgzKnHqyF+52z3bYRV1uVjhdi6q4I3H/cDx3fBts5eoQtjl+hDaArsaXlANz3oLd89g0sAqBrKgO++EcxgqeeWukSomgmJtPBivqnbg1RpAIK9zl9fjetD58FYL5i5gnYKpWTsICpZjgWqwqRmhnonkTdUbMnBsHol2HvQw="

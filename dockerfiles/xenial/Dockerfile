@@ -1,6 +1,6 @@
 # Base docker image
 FROM ubuntu:xenial
-LABEL maintainer "Prasad Tengse <https://github.com/tprasadtp/minchu>"
+LABEL maintainer "Prasad Tengse <code@prasadt.com>"
 ENV DEBIAN_FRONTEND noninteractive
 # Install essentials
 RUN dpkg --add-architecture i386
