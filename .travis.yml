@@ -1,11 +1,22 @@
-sudo: false
+sudo: required
 language: bash
-addons:
-  apt:
-    sources:
-    - shellcheck
-script:
-- "./tests/test-shell-scripts"
+services:
+  - docker
+before_install:
+  - chmod +x ./after-effects
+  - chmod +x ./tests/*
+jobs:
+  include:
+    - stage: Shellcheck-Scripts
+      script: ./tests/test-shell-scripts
+    - stage: Test-Scripts-In-Containers (Except-Trusty) #No need to use container as we are running on trusty
+      script: ./tests/test-trusty
+    - # Test in Artful Container (Ubuntu 17.10)
+      script: ./tests/test-artful
+    - # Test in Xenial Container (Ubuntu 16.04)
+      script: ./tests/test-xenial
+    - # Test in Zesty Container (Ubuntu 17.04)
+      script: ./tests/test-zesty
 matrix:
   fast_finish: true
 notifications:
@@ -15,3 +26,7 @@ notifications:
     on_success: always # default: always
     on_failure: always # default: always
     on_start: always
+    template:
+      - "Build: <%{build_url}|#%{build_number}> has %{result}, Duration: %{duration}"
+      - "Repository: %{repository} Branch : %{branch}"
+      - "Commit: <%{compare_url}|%{commit}> - %{commit_message}"

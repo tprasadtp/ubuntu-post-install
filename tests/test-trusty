@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# This is a bash utility to test the script in docker container
+# Version:1.0
+# Author: Prasad Tengse
+# Licence: MIT
+# Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
+
+set -e
+set -o pipefail
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo "Testing On HOST"
+sudo ./after-effects -y -s
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"

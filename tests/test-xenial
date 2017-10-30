@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# This is a bash utility to test the script in docker container
+# Version:1.0
+# Author: Prasad Tengse
+# Licence: MIT
+# Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
+
+set -e
+set -o pipefail
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo "Building Xenial Docker Image"
+docker build -t ubuntu:ae-xenial ./dockerfiles/xenial
+echo "Running in Docker Xenial"
+docker run -t -v "$(pwd)":/shared ubuntu:ae-xenial /bin/bash -c "cd /shared; TRAVIS=true ./after-effects -y -s"
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"

@@ -6,12 +6,9 @@ nautilus-dropbox
 p7zip-full
 nautilus-admin
 playonlinux
-arc-theme
 dconf-editor
 flashplugin-installer
 bleachbit
-icedtea-8-plugin
-openjdk-8-jre
 gdebi
 imwheel
 gufw
@@ -25,7 +22,6 @@ gnome-music
 gnome-photos
 htop
 intel-microcode
-neofetch
 chrome-gnome-shell
 gnome-shell-extensions
 gnome-tweak-tool
