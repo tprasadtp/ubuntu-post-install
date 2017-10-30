@@ -129,7 +129,7 @@ You might see ans error like this,
 [     Error!    ] Unknown Distribution/Release.
 [    Notice     ] This Script is not designed to run on this () distro/release.
 ```
-* It means that you do not have _lsb-release_ package installed. It happens usually on docker containers. See [What are its dependencies? What do I need on my system to run this?](#What-are-its-dependencies?-What-do-I-need-on-my-system-to-run-this?)
+* It means that you do not have _lsb-release_ package installed. It happens usually on docker containers. See [What are its dependencies? What do I need on my system to run this?](#what-are-its-dependencies-what-do-i-need-on-my-system-to-run-this)
 * Install `lsb-release` package using `apt-get -y install lsb-release`
 * In the case above you are probably missing other dependencies as well. It might be a good idea to install those dependencies first.
 
@@ -218,7 +218,7 @@ This will add the following repositories.
 * Google-Cloud-SDK
 * Google-Cloud GCSFUSE
 * Docker-CE (default add repository)
-> Please note that the above repositories are sometimes not updated for latest Ubuntu release. It might take some time till the repositories are available for the latest release. Use -f or --fix command line option to revert using latest available version of repositories (usually previous Ubuntu release). [For more info see command line options.](#Fix-for-latest-Ubuntu-Releases)
+> Please note that the above repositories are sometimes not updated for latest Ubuntu release. It might take some time till the repositories are available for the latest release. Use -f or --fix command line option to revert using latest available version of repositories (usually previous Ubuntu release). [For more info see command line options.](#fix-for-latest-ubuntu-releases)
 
 
 Following repositories are conditional and are determined based on the flags or conditions set.
@@ -278,7 +278,7 @@ first part is the URL to the deb file separated by a tab name of the file.
 This will purge Unwanted packages from the system.
 * The packages mentioned in the list purge.list will be purged
 * The format of the purge.list is similar to that of packages, one packages per line of the file and no comments or anything else.
-* It is necessary to pass command line argument `-d` or `--deboalt` to run this task. Otherwise task will be aborted.
+> It is necessary to pass command line argument `-d` or `--deboalt` to run this task. Otherwise task will be aborted.
 
 #### Reset repositories
 * This will reset the repositories added by this script, and purge ppas added by this script in the list ppa.list.
