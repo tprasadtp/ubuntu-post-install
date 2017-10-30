@@ -912,23 +912,21 @@ function _process_opts
       --notags \
       --backtitle "$SCRIPT" \
       --title "Ubuntu Post-Install Script" \
-      --menu "\nWhat would you like me to do?\nLogs will be written to ${log_file}. Check the logs if you need details on what's been done." \
+      --menu "\nWhat would you like me to do?\nLogs will be written to ./minchu-logs/after-effects.log.\nCheck the logs for details and errors." \
       --cancel-button "Quit" \
       $LINES $COLUMNS $(( LINES - 12 )) \
       update_repos           'Update Repositories' \
       upgrade_system         'Upgrade packages to latest' \
-      all_in_one             'Install all apps and configure, I am in control' \
+      all_in_one             'Add Repositories and PPAs, Install Apps, DEBs' \
       add_repositories       'Add Common Repositories' \
       add_ppas               'Add PPAs from file' \
       install_apps           'Install most common tools' \
       install_debs           'Install DEBS not available in Repositories' \
       disable_external_repos 'Reset Repositories for cleanup' \
       purge_not_required     'Purge not required Packages' \
-      delete_log_file        "Delete Script logs from $log_file" \
+      delete_log_file        "Delete Script logs" \
       3>&1 1>&2 2>&3)
 
-    # Run the task
-    #$MAIN
 
     whiptail_exitstatus=$?
     _debug_log "Whiptail Exit status is : $whiptail_exitstatus"
