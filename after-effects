@@ -652,8 +652,9 @@ function upgrade_apps()
   _debug_log "${_upgrading} packages..."
   # only do upgrades if simulate is set to false
   if [ "$simulate_apt_install" == "false" ]; then
-    apt-get -y upgrade 2>&1 | _add_timestamp_to_apt_logs
-    apt-get -y dist-upgrade 2>&1 | _add_timestamp_to_apt_logs
+
+    DEBIAN_FRONTEND=noninteractive apt-get -y upgrade | _add_timestamp_to_apt_logs
+    DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::='--force-confold' --force-yes -fuy dist-upgrade | _add_timestamp_to_apt_logs
     exit_status=$?
   else
     # if it is not simulate set exit status as 0
@@ -1000,6 +1001,18 @@ function _process_opts
 
 function main()
 {
+
+  if [[ $EUID -ne 0 ]]; then
+    set_yellow;
+    printf "[    Whoops!    ] Insufficinet privilages!!"
+    printf "[    Whoops!    ] This script must be run as root."
+    printf "[    Notice     ] Please use sudo ./$SCRIPT to run this as root.\n"
+    set_default;
+    exit 100;
+  else
+    _debug_log "OK! running as root."
+  fi
+
   _script_launch_log
   _init_script_variables;
   _init_script_initialization;
@@ -1013,17 +1026,7 @@ function main()
     _log_and_show "${_travis} I'm running in  CI :("
   fi
 
-  _debug_log "Checking if running as root..."
-  if [[ $EUID -ne 0 ]]; then
-    _debug_log "${_whoops} Insufficinet privilages!!"
-    set_yellow;
-    _log_and_show "${_whoops} This script must be run as root."
-    _log_and_show "${_notice} Please use sudo ./$SCRIPT to run this as root.\n"
-    set_default;
-    exit 100;
-  else
-    _debug_log "OK! running as root."
-  fi
+
 
   # Process command line arguments.
   while [ "$1" != "" ]; do
