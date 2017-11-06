@@ -8,14 +8,19 @@ before_install:
 jobs:
   include:
     - stage: Shellcheck-Scripts
+      env: TEST_ENV="Shellcheck"
       script: ./tests/test-shell-scripts
-    - stage: Test-Scripts-In-Containers (Except-Trusty) #No need to use container as we are running on trusty
+    - stage: Test-Scripts-In-Containers (Except-Trusty)
+      env: TEST_ENV="Trusty" #No need to use container as we are running on trusty
       script: ./tests/test-trusty
     - # Test in Artful Container (Ubuntu 17.10)
+      env: TEST_ENV="Artful-Docker"
       script: ./tests/test-artful
     - # Test in Xenial Container (Ubuntu 16.04)
+      env: TEST_ENV="Xenial-Docker"
       script: ./tests/test-xenial
     - # Test in Zesty Container (Ubuntu 17.04)
+      env: TEST_ENV="Zesty-Docker"
       script: ./tests/test-zesty
 matrix:
   fast_finish: true
