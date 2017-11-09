@@ -987,6 +987,8 @@ function _process_opts
                               ;;
     install_debs )            _show_confirmation_dialog_for_tasks "Download & Install DEB files" "DEB Files in the list deb-files.list will be Download and installed. Proceed with the task?" "$task"
                               ;;
+    set_gsettings )           _show_confirmation_dialog_for_tasks "Apply Custom gsettings" "Gsettings mentioned in the file gsettings.list will be Applied. \n Proceed?" "$task"
+                              ;;
     delete_log_file )         _debug_log "Delete log selected"
                               delete_log_file;
                               ;;
