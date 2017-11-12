@@ -3,7 +3,7 @@
 # This is a bash utility to test the script in docker container
 # Version:1.0
 # Author: Prasad Tengse
-# Licence: MIT
+# Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
 set -e

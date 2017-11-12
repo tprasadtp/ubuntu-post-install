@@ -25,7 +25,7 @@
 #              - whiptail, lsb-release, wget
 
 #
-set -eo pipefail
+set -o pipefail
 #Constants
 DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
