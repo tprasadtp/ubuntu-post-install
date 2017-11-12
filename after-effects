@@ -356,12 +356,10 @@ function _fix_ubuntu_derivatives()
                                             _log_and_show "${_notice} If installation fails or errors out, please report.";
                                             ;;
       bionic )                              set_magenta
+                                            _log_and_show "${_canonical} No known derivative of Ubuntu found."
                                             _log_and_show "${_pre_release} This is Ubuntu 18.04 Bionic Beaver"
                                             _log_and_show "${_warn} This is a pre release of Ubuntu Which is in development. USe with caution"
                                             _log_and_show "${_warn} Packages and PPAs might not work with this release!"
-                                            set_default
-                                            # Apply repositories not available fix
-                                            _fix_repo_not_available_upcoming_release
                                             ;;
       *)                                    _log_and_show "${_error} Unknown Distribution/Release."
                                             _log_and_show "${_notice} This Script is not designed to run on this ($code_name) distro/release."
@@ -568,6 +566,7 @@ function add_repositories()
   _install_pre_requisites;
   # if repository is not available for latest ubuntu release, use previous release
   # Be careful, things might not be compatible
+  _fix_repo_not_available_upcoming_release;
   _fix_repo_not_available;
   _debug_log "Adding External Repositories"
 
