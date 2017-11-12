@@ -15,7 +15,7 @@ date_numeric=$(date '+%Y%m%d')
 # Subtract one from above result because travis uses GMT and sometimes images are not available at GMT
 # on ubuntu daily images server. Testing on a image which might be one day older than current does not harm anything usually.
 base_image_date=$((date_numeric-1))
-echo "USing Daily image: $base_image_date
+echo "Using Daily image: $base_image_date"
 wget http://cdimage.ubuntu.com/ubuntu-base/daily/${base_image_date}/bionic-base-amd64.tar.gz
 echo "$base_image_date" > base_image_date.txt
 docker build -t ubuntu:ae-bionic ./dockerfiles/bionic
