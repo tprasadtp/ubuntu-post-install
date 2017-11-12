@@ -26,6 +26,8 @@ echo "./data/xenial-above.list" >> ./data/app-list.list
 # Remove ppas (Make file empty) Since we have a check for empty lines script will ignore ppas.
 echo "Empty ppa.list file"
 echo "" > ./data/ppa.list
+echo "Remove peek"
+sed -i '$ d' ./data/extern-repo.list
 echo "Running in Docker Bionic"
 docker run -t -v "$(pwd)":/shared ubuntu:ae-bionic /bin/bash -c "cd /shared; TRAVIS=true ./after-effects --yes --simulate --pre-release --fix"
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
