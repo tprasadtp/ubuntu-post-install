@@ -594,7 +594,7 @@ function add_repositories()
   # Spotify client
   _log_and_show "${_adding} Spotify repository"
   _debug_log "Adding Spotify keys"
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys BBEBDCB318AD50EC6865090613B00F1FD2C19886  2>&1 |_add_timestamp_to_aptkey_logs  || _log_and_show "Adding Spotify repository failed"
+  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0DF731E45CE24F27EEEB1450EFDC8610341D9410  2>&1 |_add_timestamp_to_aptkey_logs  || _log_and_show "Adding Spotify repository failed"
   echo "deb http://repository.spotify.com stable non-free #Spotify For Linux" > ${SOURCES_FILE_DIR}/spotify.list || _log_and_show "Adding Spotify Repository Failed"
 
    # Insync

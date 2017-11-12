@@ -10,5 +10,7 @@ set -e
 set -o pipefail
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "Testing On HOST"
+echo "Remove peek PPA"
+sed -i '$ d' ./data/ppa.list
 sudo ./after-effects -y -s
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"

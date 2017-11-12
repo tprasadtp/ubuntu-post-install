@@ -279,6 +279,10 @@ readonly add_docker_repo=true
 in the format ppa:<author>/ppa for example `ppa:mozillateam/firefox-next`
 The file will be read and the PPAs will be added from the list.
 * Logs will  show entry in the format `[<date and time>] [  PPA  ] <log>`
+###### Note:
+* PPAs should be checked before they are added to the list. Sometimes PPAs listed in the file may not be available for all releases
+* Peek ppa is not available for trusty and is not included in tests.
+* **PPAs are not added on travis tests on Pre-Release/Beta/Daily builds of Ubuntu.**
 
 #### Install Apps
 * Packages can be installed by using configuration lists in the data directory. This works similar to ppa list However its slightly different.
@@ -366,7 +370,7 @@ Following Tests are done on travis-ci.
 * Test on Zesty  container (Job #build.5) (Will be deprecated in January 2018)
 * Test on Bionic Beaver daily images (Job #build.6) from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
 * Dockerfiles used for building the image are in `/dockerfiles` directory, they use official Ubuntu base images with script dependencies.
-* Dockerfile for Bionic is using `http://cdimage.ubuntu.com/ubuntu-base/daily` root file system, as official images are not available yet. 
+* Dockerfile for Bionic is using `http://cdimage.ubuntu.com/ubuntu-base/daily` root file system, as official images are not available yet.
 * Test scripts are located in `/tests` directory.
 > Since its a time consuming process only simulated install is done on CI. Linux mint and Elementary are not tested in containers as of now, but will be in the future.
 > It is possible that there might be some errors specific to your setup. Please report if so. It is **Strongly** advised to try install apps and deb files in simulate mode first before proceeding with actual installation.
