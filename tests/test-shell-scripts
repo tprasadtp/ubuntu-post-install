@@ -3,7 +3,7 @@
 # This is a bash utility to test the shellscripts in this repo using shellcheck
 # Version:0.1
 # Author: Prasad Tengse
-# Licence: MIT
+# Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
 set -e

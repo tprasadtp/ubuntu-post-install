@@ -23,6 +23,19 @@ Github URL: https://github.com/tprasadtp/after-effects-ubuntu
 
 ### Changelogs
 
+#### _v3.1_
+ ##### Added Support for Ubuntu Bionic Beaver
+  - Added Support for Upcoming Ubuntu release bionic.
+  - Added an option to use repository for last stable release on bionic.
+  - Use Ubuntu Base 18.04 LTS (Bionic Beaver) daily build to build docker image.
+  - Allow Bionic tests to fail on Travis CI.
+  - Dockerfiles & tests for bionic.
+  - Inform in script if running on Upcoming release.
+  - Drop google-cloud-sdk from fix_repo_not_available. Use `--pre-release` if using beta/alpha Ubuntu release.
+
+
+
+
 
 #### _v3.0_
  Following Changes are in v3.0
@@ -90,8 +103,9 @@ They will be installed if necessary, without confirmation.
 * Currently Supported Ubuntu versions and their Linux Mint and Elementary counterparts are supported. But Travis CI tests are run only on Ubuntu versions.
 * Following is the list of distributions/versions supported.
 ```
-Ubuntu 17.04        Zesty Zapus
 Ubuntu 17.10        Artful Aardvark
+Ubuntu 18.04        Bionic Beaver (Experimental Support for Upcoming Release)  
+Ubuntu 17.04        Zesty Zapus
 Ubuntu 16.04        Xenial Xerus
 Ubuntu 14.04        Trusty Thar
 Linux Mint 17       Quina
@@ -108,6 +122,8 @@ Elementary-OS       Juno (Upcoming Release)
 Official Ubuntu Flavors for above mentioned Ubuntu releases.
 ```
 * Though 32 bit is supported, Testing in Travis CI, containers and locally all are done using 64 bit machine, host, vm and containers. If something breaks please report it and use it with caution.  
+* Support for Ubuntu 18.04 Daily builds, Elementary OS Juno and Mint 18.3 is **experimental** and things might break. They have not been released in stable release channels and are considered beta/ alpha or development versions of the release. It is strongly advised to use them in a chroot or a virtualized environments and not as a daily driver.
+* Tests for Bionic are done using docker images from `https://partner-images.canonical.com/core/bionic/` or `http://cdimage.ubuntu.com/ubuntu-base/daily` and are **allowed** to fail on travis CI jobs.
 
 >   **Script will exit if it does not recognize the distribution.**
 
@@ -147,26 +163,26 @@ The release notes for mint 17.3 says
 
 ## What all command line options do I have and how do I use them?
 ### Simulating package installation
-  > `-s ` or ` --simulate`
+- . **`-s` or `--simulate`**
 
-* This will simulate installing packages mentioned in the lists (More on that later) using the apt-get inbuilt dry-run option `apt-get install -s ` to simulate the installation of packages. Nothing will be downloaded except repository metadata and the packages will not be installed.
-* This option can be used to check if the files in the lists are compatible/available in the repository.
-* When this option is passed, upgrade_system will not be run. Only a list of packages upgradable will be listed in the log file.
-* Installation of DEB files also behaves similarly. It uses `dpkg -i --dry-run` to simulate installation.
-* Its a very good idea to simulate installation when you have reconfigured the apps and packages in the list to check what might be error prone.
-* However, in case of DEB files, they **WILL** be downloaded unlike apt-get package installs.
+  * This will simulate installing packages mentioned in the lists (More on that later) using the apt-get inbuilt dry-run option `apt-get install -s ` to simulate the installation of packages. Nothing will be downloaded except repository metadata and the packages will not be installed.
+  * This option can be used to check if the files in the lists are compatible/available in the repository.
+  * When this option is passed, upgrade_system will not be run. Only a list of packages upgradeable will be listed in the log file.
+  * Installation of DEB files also behaves similarly. It uses `dpkg -i --dry-run` to simulate installation.
+  * Its a very good idea to simulate installation when you have reconfigured the apps and packages in the list to check what might be error prone.
+  * However, in case of DEB files, they **WILL** be downloaded unlike apt-get package installs.
 
   > * **Simulate flag will not simulate Adding Repositories or PPAs.**
   > * If you want to revert them please use Reset Repositories option.
 
 ### Fix for latest Ubuntu Releases
-> `-f` or `--fix`
+- **`-f` or `--fix`**
 
-Usually it takes a while for additional Repositories (Docker. google cloud sdk etc) to add support for latest release of Ubuntu. However we can use the previous release for which
-packages are available. So usually using packages built for previous release works fine most of the time. This is also good fix if you are running a alpha or beta release of Ubuntu.
-Following repositories  which use this fix.
-* By default this option is disabled.
-* Use `sudo ./after-effects -f` or `sudo ./after-effects --fix` to enable this.
+  Usually it takes a while for additional Repositories (Docker. google cloud sdk etc) to add support for latest release of Ubuntu. However we can use the previous release for which
+  packages are available. So usually using packages built for previous release works fine most of the time. This is also good fix if you are running a alpha or beta release of Ubuntu.
+  Following repositories  which use this fix.
+  * By default this option is disabled.
+  * Use `sudo ./after-effects -f` or `sudo ./after-effects --fix` to enable this.
 ```
 google-cloud-sdk
 gcsfuse
@@ -174,34 +190,40 @@ insync
 Docker-CE
 WineHQ
 ```
-* Repositories like Spotify and google chrome do not use codenames in their repository urls. So the above workaround is not necessary.
-* Derivatives of Ubuntu will use the codename of ubuntu on which they are based. for example Linux mint 18.2 Serena will use codename xenial since it is based on Ubuntu 16.04 Xenial Xerus
-* This option applies only for the latest release mentioned in the variable `code_name_latest_release`. and will be ignored if the release is not latest.
-* Variables in current version are
+  * Repositories like Spotify and google chrome do not use codenames in their repository urls. So the above workaround is not necessary.
+  * Derivatives of Ubuntu will use the codename of ubuntu on which they are based. for example Linux mint 18.2 Serena will use codename xenial since it is based on Ubuntu 16.04 Xenial Xerus
+  * This option applies only for the latest release mentioned in the variable `code_name_latest_release`. and will be ignored if the release is not latest.
+  * Variables in current version are
 ```
 readonly code_name_latest_release="artful"
 readonly codename_previous_release="zesty"
+readonly codename_upcoming_release="bionic"
 ```
-change them if necessary.
+  change them if necessary.
+
+  > If you are using a pre release version of Ubuntu, you can use --pre-release falg to apply the above mentioned fix to pre-release version of ubuntu. This flag can be used independent of `--fix`. IF both are used together then both flags will be applied if the release is upcoming-release. otherwise if the release is stable only `--fix` flag will be valif and --pre-release is ignored.
+  This is how it works:  If the repositories are  not available for latest stable release as well, go back a release.
+  Eg. If the pre-release is 18.04 and the repo is not available for 17.10 as well, we use 17.04 repositories.
+  Usually happens in first few days of development cycle of 18.04.
+
 
 ### Say Yes To All
-> `-y` or `--yes`
+- **`-y` or `--yes`**
 
-From v3.0 onwards you will be asked for confirmation before performing the task selected. If you would like to bypass this on a CI environments like TRAVIS or for any other reason, you can do so by running the script with `sudo ./after-effects -y` or `sudo ./after-effects --yes`
+  From v3.0 onwards you will be asked for confirmation before performing the task selected. If you would like to bypass this on a CI environments like TRAVIS or for any other reason, you can do so by running the script with `sudo ./after-effects -y` or `sudo ./after-effects --yes`
 
 ### Purge not required pacakges
-> `-d` or `--deboalt`
+- **`-d` or `--deboalt`**
 
-Usually Ubuntu comes with some pre-installed games, packages which you sometimes do not need. This option is a switch to used in purging these packages mentioned in the subsequent sections. Since it is possible that user might purge necessary packages like sudo or other core system componetnts, these just acts like a barrier from accidentally doing so.
-> This flag **MUST** be passed if you intend to purge packages from system. Otherwise you will receive an error.
+  Usually Ubuntu comes with some pre-installed games, packages which you sometimes do not need. This option is a switch to used in purging these packages mentioned in the subsequent sections. Since it is possible that user might purge necessary packages like sudo or other core system componetnts, these just acts like a barrier from accidentally doing so.
+
+  > This flag **MUST** be passed if you intend to purge packages from system. Otherwise you will receive an error.
 
 ### Delete log file
-> `-l` or `--log`
+- **`-l` or `--log`**
 
-Just a quick way to delete logs generated by this script.
->  **WARNING**
-
-> If you pass -l in the beginning rest of the commands will be ignored, as the script exits it after Deleting the log!
+  Just a quick way to delete logs generated by this script.
+  > If you pass -l in the beginning rest of the commands will be ignored, as the script exits it after Deleting the log!
 
 
 ## What all This Script can do? and How Can I configure it for my needs?
@@ -224,7 +246,7 @@ This will add the following repositories.
 * Google-Cloud GCSFUSE
 * Docker-CE (default add repository)
 * WineHQ (Latest wine builds): By default this repository is not added.
-> Please note that the above repositories are sometimes not updated for latest Ubuntu release. It might take some time till the repositories are available for the latest release. Use -f or --fix command line option to revert using latest available version of repositories (usually previous Ubuntu release). [For more info see command line options.](#fix-for-latest-ubuntu-releases)
+> Please note that the above repositories are sometimes not updated for latest Ubuntu release and most certainly will not be available for upcoming release of Ubuntu(Alpha/Beta). It might take some time till the repositories are available for the latest release. Use -f or --fix command line option or --pre-release in case you are using a Development version of ubuntu to revert using latest available version of repositories (usually previous Ubuntu release or in case of Beta/Alpha latest stable release of ubuntu). [For more info see command line options.](#fix-for-latest-ubuntu-releases)
 
 * Google Chrome
   > Please note that Google Chrome doesn't support 32 bit architecture.
@@ -257,6 +279,10 @@ readonly add_docker_repo=true
 in the format ppa:<author>/ppa for example `ppa:mozillateam/firefox-next`
 The file will be read and the PPAs will be added from the list.
 * Logs will  show entry in the format `[<date and time>] [  PPA  ] <log>`
+###### Note:
+* PPAs should be checked before they are added to the list. Sometimes PPAs listed in the file may not be available for all releases
+* Peek ppa is not available for trusty and is not included in tests.
+* **PPAs are not added on travis tests on Pre-Release/Beta/Daily builds of Ubuntu.**
 
 #### Install Apps
 * Packages can be installed by using configuration lists in the data directory. This works similar to ppa list However its slightly different.
@@ -331,7 +357,7 @@ A log file is generated containing all the output generated by the apt and other
 
 
 ## Logs
-Logs are written to a file `<current-dir>/minchu-logs/after-effects.log`. Timestamps in the logs may not be accurate because some commands buffer stdout
+Logs are written to a file `<current-dir>/minchu-logs/after-effects.log`. Timestamps in the logs may not be accurate because some commands buffer outputs.
 
 ## CI and Testing
 Following Tests are done on travis-ci.
@@ -341,8 +367,10 @@ Following Tests are done on travis-ci.
 * Run the Script in simulate mode on Travis CI in docker image built using Dockerfiles in `/dockerfiles` directory
 * Test on Artful container (Job #build.3)
 * Test on Xenial container (Job #build.4)
-* Test on Zesty  container (Job #build.5)
+* Test on Zesty  container (Job #build.5) (Will be deprecated in January 2018)
+* Test on Bionic Beaver daily images (Job #build.6) from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
 * Dockerfiles used for building the image are in `/dockerfiles` directory, they use official Ubuntu base images with script dependencies.
+* Dockerfile for Bionic is using `http://cdimage.ubuntu.com/ubuntu-base/daily` root file system, as official images are not available yet.
 * Test scripts are located in `/tests` directory.
 > Since its a time consuming process only simulated install is done on CI. Linux mint and Elementary are not tested in containers as of now, but will be in the future.
 > It is possible that there might be some errors specific to your setup. Please report if so. It is **Strongly** advised to try install apps and deb files in simulate mode first before proceeding with actual installation.

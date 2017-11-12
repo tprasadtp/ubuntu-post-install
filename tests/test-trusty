@@ -3,12 +3,14 @@
 # This is a bash utility to test the script in docker container
 # Version:1.0
 # Author: Prasad Tengse
-# Licence: MIT
+# Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
 set -e
 set -o pipefail
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "Testing On HOST"
+echo "Remove peek PPA"
+sed -i '$ d' ./data/ppa.list
 sudo ./after-effects -y -s
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
