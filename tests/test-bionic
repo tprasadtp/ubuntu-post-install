@@ -7,6 +7,7 @@
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
 set -e
+export TRAVIS_ALLOW_FAILURE=true
 set -o pipefail
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "Building Bionic Docker Image"
@@ -16,11 +17,12 @@ date_numeric=$(date '+%Y%m%d')
 # on ubuntu daily images server. Testing on a image which might be one day older than current does not harm anything usually.
 base_image_date=$((date_numeric-1))
 echo "Using Daily image: $base_image_date"
-wget http://cdimage.ubuntu.com/ubuntu-base/daily/${base_image_date}/bionic-base-amd64.tar.gz
+wget http://cdimage.ubuntu.com/ubuntu-base/daily/${base_image_date}/bionic-base-amd64.tar.gz -O ./dockerfiles/bionic/bionic-base-amd64.tar.gz
 echo "$base_image_date" > base_image_date.txt
+ls -a
 docker build -t ubuntu:ae-bionic ./dockerfiles/bionic
 echo "Adding Xenial and above list to app-list.list"
 echo "./data/xenial-above.list" >> ./data/app-list.list
-echo "Running in Docker Artful"
-docker run -t -v "$(pwd)":/shared ubuntu:ae-artful /bin/bash -c "cd /shared; TRAVIS=true ./after-effects --yes --simulate --pre-release --fix"
+echo "Running in Docker Bionic"
+docker run -t -v "$(pwd)":/shared ubuntu:ae-bionic /bin/bash -c "cd /shared; TRAVIS=true ./after-effects --yes --simulate --pre-release --fix"
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
