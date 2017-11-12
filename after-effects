@@ -20,6 +20,8 @@
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 # Requirements - Bash v4.4 and above
 #              - Ubuntu 14.04/16.04/17.04/17.10 or Elementary Freya/Loki/Juno or Mint 17.X or 18.X
+#              - Support for Ubuntu 18.04 Bionic is Experimental. Since it is still under development
+#              - it is advised not to use it as daily driver and should be considered buggy.
 #              - whiptail, lsb-release, wget
 
 
@@ -62,7 +64,7 @@ function _init_script_variables()
   readonly BLUE=$(tput setaf 6)
   readonly YELLOW=$(tput setaf 3)
   readonly NC=$(tput sgr 0)
-  readonly MAGNATA=$(tput setaf 5)
+  readonly MAGENTA=$(tput setaf 5)
 
   # Package list files
   readonly deb_files_list="$dir"/data/deb-files.list
@@ -79,9 +81,13 @@ function _init_script_variables()
   readonly add_docker_repo=true
 
   #Fix Repo not available for latest release
-  fix_repo_not_available_for_latest="false"
+  bool_fix_repo_not_available_for_latest="false"
   readonly code_name_latest_release="artful"
   readonly codename_previous_release="zesty"
+
+  # Allow repo fixes for Upcoming releases of ubuntu and its derivatives.
+  bool_fix_repo_not_available_for_upcoming_release="false"
+  readonly codename_upcoming_release="bionic"
 
   # Simulate apt-get install by default its false
   # can be set to true if an argument -s or --simulate is passed while running the script
@@ -148,6 +154,7 @@ function _init_script_variables()
   readonly         _whoops="[   Whoopsie!   ]"
   readonly         _travis="[   TRAVIS-CI   ]"
   readonly         _docker="[     Docker    ]"
+  readonly    _pre_release="[  Pre Release  ]"
   #readonly           _falg="[     Flag      ]"
 
 }
@@ -182,6 +189,12 @@ function set_yellow()
 {
   tput setaf 3
 }
+
+function set_magenta()
+{
+  tput setaf 5
+}
+
 function set_default()
 {
   tput sgr 0
@@ -340,6 +353,14 @@ function _fix_ubuntu_derivatives()
                                             _log_and_show "${_info} Keeping the codename as: $code_name."
                                             _log_and_show "${_notice} If installation fails or errors out, please report.";
                                             ;;
+      bionic )                              set_magenta
+                                            _log_and_show "${_pre_release} This is Ubuntu 18.04 Bionic Beaver"
+                                            _log_and_show "${_warn} This is a pre release of Ubuntu Which is in development. USe with caution"
+                                            _log_and_show "${_warn} Packages and PPAs might not work with this release!"
+                                            set_default
+                                            # Apply repositories not available fix
+                                            _fix_repo_not_available_upcoming_release
+                                            ;;
       *)                                    _log_and_show "${_error} Unknown Distribution/Release."
                                             _log_and_show "${_notice} This Script is not designed to run on this ($code_name) distro/release."
                                             _script_exit_log;
@@ -451,10 +472,10 @@ function _fix_repo_not_available()
 {
   # If repository is not available for latest ubuntu release, this uses last stable release
   # (may not be LTS) for adding repository
-  if [ "$fix_repo_not_available_for_latest" == "true" ]; then
+  if [ "$bool_fix_repo_not_available_for_latest" == "true" ]; then
     # Only do this on latest releases
     if [ "$code_name" == "$code_name_latest_release" ]; then
-      _debug_log "Sometimes repositories are not available for latest ubuntu release.\nUsing last known stabel release: $code_name_latest_release."
+      _debug_log "Sometimes repositories are not available for latest ubuntu release.\nUsing last known stable release: $code_name_latest_release."
       printf "${YELLOW}Previously available repositories from an older release: $codename_previous_release is being used.\n"
       printf "You need to modify this in Software and updates when it becomes available for ${code_name_latest_release}.\n${NC}"
       code_name_fix_latest="$codename_previous_release"
@@ -463,6 +484,40 @@ function _fix_repo_not_available()
     fi
   else
     _debug_log "Feature fix_repo_not_available is disabled."
+fi
+}
+
+
+function _fix_repo_not_available_upcoming_release()
+{
+  # If repository is not available for upcoming ubuntu release, this uses last stable release or one release before that
+  # Aka if the pre-release release is 18.04 it might use 17.04 (Only for first month or two) till repositories become available for the release 17.10)
+  # (may not be LTS) for adding repository.
+
+  # Only do this on upcoming-release
+  if [ "$code_name" == "$codename_upcoming_release" ]; then
+
+    # check for fix-pre-release flag
+    if [ "$bool_fix_repo_not_available_for_upcoming_release" == "true" ]; then
+      _log_and_show "${_pre_release} Previously available repositories from an older release is being used."
+      printf "You need to modify this in Software and Updates when it becomes available for ${codename_upcoming_release}.\n${NC}"
+        # If the repositories are  not available for latest stable release as well, go back a release.
+        # Eg. If the pre-release is 18.04 and the repo is not available for 17.10 as well, we use 17.04 repositories.
+        # Usually happens in first few days of development cycle of 18.04.
+        if [ "$bool_fix_repo_not_available_for_latest" == "true" ]; then
+          # We need to use repositories for previous stable release.
+          _log_and_show "${pre-release} Both falgs for --pre-release and -fix are set. Using codename: $codename_previous_release"
+          code_name_fix_latest="$codename_previous_release"
+        else
+          # No need to apply fix for latest release, We can use latest stable release repositories
+          _log_and_show "${pre-release} Using repositories for current stable release: $code_name_latest_release"
+          code_name_fix_latest="$code_name_latest_release"
+        fi
+    else
+        _debug_log "Feature fix_repo_not_available_upcoming_release is disabled."
+    fi
+  else
+    _debug_log "This release is not an upcoming-release. Flag --pre-release as well as --fix will be ignored."
 fi
 }
 
@@ -542,7 +597,7 @@ function add_repositories()
   echo "deb http://apt.insynchq.com/ubuntu $code_name_fix_latest non-free contrib #Insync Client" > ${SOURCES_FILE_DIR}/insync.list || _log_and_show "Adding Insync Repository failed"
 
   # Google Cloud SDK and GCS-FUSE
-  CLOUD_SDK_REPO="cloud-sdk-$code_name_fix_latest"
+  CLOUD_SDK_REPO="cloud-sdk-$code_name"
   GCSFUSE_REPO="gcsfuse-$code_name_fix_latest"
   _log_and_show "${_google_cloud} Repositories"
   _debug_log "Adding Google-Cloud repository sigining key"
@@ -1019,13 +1074,16 @@ function main()
   _init_script_variables;
   _init_script_initialization;
 
-  #============================ CI and Container Cheks =========================
+  #============================ CI and Container Checks =========================
   if grep docker /proc/1/cgroup -qa; then
      _log_and_show "${_docker} I'm in MATRIX :("
   fi
 
   if [ "$TRAVIS" == "true" ]; then
     _log_and_show "${_travis} I'm running in  CI :("
+    if [ -e base_image_date.txt ]; then
+      _log_and_show "${_pre_release} Docker image is using Build $(cat base_image_date.txt)"
+    fi
   fi
 
 
@@ -1038,9 +1096,14 @@ function main()
                                   _log_and_show "${_simulate} is set to true";
                                   set_default;
                                   ;;
-          -f | --fix )            fix_repo_not_available_for_latest="true";
+          -f | --fix )            bool_fix_repo_not_available_for_latest="true";
                                   set_yellow;
                                   _log_and_show "${_fix_repo} is set to true. Using codename: $codename_previous_release.";
+                                  set_default;
+                                  ;;
+          --pre-release )         bool_fix_repo_not_available_for_upcoming_release="true";
+                                  set_magenta;
+                                  _log_and_show "${_fix_repo} for upcoming release is set to true.";
                                   set_default;
                                   ;;
           -d | --deboalt )        bool_purge_not_required_pkgs="true";
@@ -1054,8 +1117,7 @@ function main()
                                   _log_and_show "${_warn} Will automatically assume yes, for all the confirmation dialogs.";
                                   set_default;
                                   ;;
-          -l | --log )            bool_say_yes_to_all="true";
-                                  set_default;
+          -l | --log )            set_default;
                                   delete_log_file;
                                   ;;
       esac
