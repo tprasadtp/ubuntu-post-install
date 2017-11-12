@@ -23,6 +23,8 @@ ls -a
 docker build -t ubuntu:ae-bionic ./dockerfiles/bionic
 echo "Adding Xenial and above list to app-list.list"
 echo "./data/xenial-above.list" >> ./data/app-list.list
+# Remove ppas (Make file empty) Since we have a check for empty lines script will ignore ppas.
+echo "" > ./data/ppa.list
 echo "Running in Docker Bionic"
 docker run -t -v "$(pwd)":/shared ubuntu:ae-bionic /bin/bash -c "cd /shared; TRAVIS=true ./after-effects --yes --simulate --pre-release --fix"
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"

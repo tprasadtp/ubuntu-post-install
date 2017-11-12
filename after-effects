@@ -24,7 +24,8 @@
 #              - it is advised not to use it as daily driver and should be considered buggy.
 #              - whiptail, lsb-release, wget
 
-
+#
+set -eo pipefail
 #Constants
 DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
@@ -537,6 +538,11 @@ function add_ppas()
            _line_fill >> "$log_file"
            _log_and_show "${_adding_ppa} $line"
            _debug_log "Adding: $line"
+           # Check for empty lines
+           if [ "$line" == "" ]; then
+             _log_and_show "${_warn} Found and empty line in ppa.list. Moving on to next line"
+             continue
+           fi
            _debug_log "Add PPA Log Below"
            if add-apt-repository -y "$line" 2>&1 | _add_timestamp_to_ppa_logs ; then
              _log_and_show "${_added_ppa} $line successfully."
@@ -598,7 +604,7 @@ function add_repositories()
   echo "deb http://apt.insynchq.com/ubuntu $code_name_fix_latest non-free contrib #Insync Client" > ${SOURCES_FILE_DIR}/insync.list || _log_and_show "Adding Insync Repository failed"
 
   # Google Cloud SDK and GCS-FUSE
-  CLOUD_SDK_REPO="cloud-sdk-$code_name"
+  CLOUD_SDK_REPO="cloud-sdk-$code_name_fix_latest"
   GCSFUSE_REPO="gcsfuse-$code_name_fix_latest"
   _log_and_show "${_google_cloud} Repositories"
   _debug_log "Adding Google-Cloud repository sigining key"
@@ -622,7 +628,7 @@ function add_repositories()
     _debug_log "Adding WineHQ repository"
     echo "deb https://dl.winehq.org/wine-builds/ubuntu/ $code_name_fix_latest main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list || _log_and_show "Adding WineHQ repository failed"
   else
-    _log_and_show "${_adding}WineHQ repository is set to false. Skipping."
+    _log_and_show "${_adding} WineHQ repository is set to false. Skipping."
   fi
   # Docker CE
   if [ "$add_docker_repo" == "true" ]; then
