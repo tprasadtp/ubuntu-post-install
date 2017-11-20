@@ -658,7 +658,7 @@ function add_repositories()
   if [ "$ARCH" == "amd64" ]; then
     _log_and_show "${_adding} Visual Studio Code repository"
     _debug_log "Getting GPG keys for repository"
-    curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+    wget -q https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
     _debug_log "Adding Key to trusted GPG keys directory"
     apt-key add skype-linux-key.gpg 2>&1 | _add_timestamp_to_aptkey_logs || _log_and_show "Adding Visual Studio Code key failed"
     echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main" > ${SOURCES_FILE_DIR}/vscode.list
@@ -676,7 +676,7 @@ function add_repositories()
   fi
   # Remove artifacts and keys
   _debug_log "Removing keys and converted files from current directory"
-  rm  -f ./*.gpg ./*.asc ./*.pub ./Release ./*.pub.* ./*.asc.* ./*.key.* ./*.gpg.*
+  rm  -f ./*.gpg ./*.asc ./*.pub ./Release ./*.pub.* ./*.asc.* ./*.key.* ./*.gpg.* >> "$log_file"
 
 }
 
