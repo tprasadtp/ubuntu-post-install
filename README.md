@@ -253,6 +253,7 @@ This will add the following repositories.
 
 * Google Earth
 * Spotify
+* Visual Studio Code
 
 Following repositories are conditional and are determined based on the flags or conditions set.
 * Canonical Partner repositories
@@ -319,7 +320,7 @@ This will purge Unwanted packages from the system.
 
 #### Reset repositories
 * This will reset the repositories added by this script, and purge ppas added by this script in the list ppa.list.
-* This will **NOT** reset or remove repositories added by the DEB files (Visual Studio Code does it so does Mendeley and many others)
+* This will **NOT** reset or remove repositories added by the DEB files.
 * Simulate option has no effect on this action and ppa-purge **WILL** downgrade packages if necessary.
 
   > This will **NOT** remove ppas or repositories you have added manually!
