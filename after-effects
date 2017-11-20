@@ -1068,8 +1068,9 @@ function main()
 
   if [[ $EUID -ne 0 ]]; then
     set_yellow;
-    printf "[    Whoops!    ] Insufficinet privilages!!"
-    printf "[    Whoops!    ] This script must be run as root."
+    printf "[    Whoops!    ] Insufficinet privilages!!\n"
+    set_blue;
+    printf "[    Whoops!    ] This script must be run as root.\n"
     printf "[    Notice     ] Please use sudo ./$SCRIPT to run this as root.\n"
     set_default;
     exit 100;
