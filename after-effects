@@ -585,7 +585,7 @@ function add_repositories()
     _debug_log "Adding Google key to trusted keys list"
     apt-key add linux_signing_key.pub 2>&1 | _add_timestamp_to_aptkey_logs || _log_and_show "Adding trusted keys for Google failed."
     _log_and_show "${_adding} Google Chrome repository"
-    echo "deb http://dl.google.com/linux/chrome/deb/ stable main #Google-Chrome" > ${SOURCES_FILE_DIR}/google-chrome.list || _log_and_show "Adding Google Chrome Repository failed"
+    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main #Google-Chrome" > ${SOURCES_FILE_DIR}/google-chrome.list || _log_and_show "Adding Google Chrome Repository failed"
     _log_and_show "${_adding} Google Earth repository"
     echo "deb [arch=amd64] http://dl.google.com/linux/earth/deb/ stable main #Google-Earth" > ${SOURCES_FILE_DIR}/google-earth.list || _log_and_show "Adding Google Chrome repository failed"
   else
@@ -655,12 +655,16 @@ function add_repositories()
 
 
   #Visual Studio Code
-  #_log_and_show "${_adding} Visual Studio Code repository"
-  #_debug_log "Getting GPG keys for repository"
-  #curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-  #_debug_log "Adding Key to trusted GPG keys directory"
-  #mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg >> "$log_file" 2>&1
-  #echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main" > ${SOURCES_FILE_DIR}/vscode.list
+  if [ "$ARCH" == "amd64" ]; then
+    _log_and_show "${_adding} Visual Studio Code repository"
+    _debug_log "Getting GPG keys for repository"
+    curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+    _debug_log "Adding Key to trusted GPG keys directory"
+    apt-key add skype-linux-key.gpg 2>&1 | _add_timestamp_to_aptkey_logs || _log_and_show "Adding Visual Studio Code key failed"
+    echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main" > ${SOURCES_FILE_DIR}/vscode.list
+  else
+    _log_and_show "Architecture: $ARCH is not supported by Visual studio Code."
+  fi
 
   # Enable canonical Partner repos
   if [ "$bool_config_partner_repo" != "false" ]; then
