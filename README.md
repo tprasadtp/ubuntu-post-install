@@ -376,3 +376,5 @@ Following Tests are done on travis-ci.
 > It is possible that there might be some errors specific to your setup. Please report if so. It is **Strongly** advised to try install apps and deb files in simulate mode first before proceeding with actual installation.
 
 Use this script with caution! Though I have tested it on VMs and Travis something might break in your setup. Check the logs if script appears to be stuck.
+
+[![Analytics](https://ga-beacon.prasadt.com/UA-101760811-3/github/ubuntu-post-install?flat)](https://prasadt.com/google-analytics-beacon)
