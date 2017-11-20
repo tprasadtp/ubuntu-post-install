@@ -10,8 +10,8 @@ SHARED_DIR="/home/$USER/Desktop"
 if command -v rsync >&/dev/null; then
   printf "${BLUE}Copying files to ${SHARED_DIR}...${NC}\n"
   rsync -Ea --recursive \
-  --exclude='*.md*' \
-  --exclude='*.MD*' \
+  --exclude '*.md*' \
+  --exclude '*.MD*' \
   --exclude '.git' \
   --exclude 'rsync-shared' \
   --exclude '.gitignore' \

@@ -513,6 +513,7 @@ function _fix_repo_not_available_upcoming_release()
           # No need to apply fix for latest release, We can use latest stable release repositories
           _log_and_show "${pre-release} Using repositories for current stable release: $code_name_latest_release"
           code_name_fix_latest="$code_name_latest_release"
+          code_name="$code_name_latest_release"
         fi
     else
         _debug_log "Feature fix_repo_not_available_upcoming_release is disabled."
@@ -604,7 +605,7 @@ function add_repositories()
   echo "deb http://apt.insynchq.com/ubuntu $code_name_fix_latest non-free contrib #Insync Client" > ${SOURCES_FILE_DIR}/insync.list || _log_and_show "Adding Insync Repository failed"
 
   # Google Cloud SDK and GCS-FUSE
-  CLOUD_SDK_REPO="cloud-sdk-$code_name_fix_latest"
+  CLOUD_SDK_REPO="cloud-sdk-$code_name"
   GCSFUSE_REPO="gcsfuse-$code_name_fix_latest"
   _log_and_show "${_google_cloud} Repositories"
   _debug_log "Adding Google-Cloud repository sigining key"
@@ -1037,7 +1038,7 @@ function _process_opts
                               ;;
     add_ppas )                _show_confirmation_dialog_for_tasks "Add Additional PPAs" "This task will add PPAs specified in $ppa_list file. Would you like to continue?" "$task"
                               ;;
-    add_repositories )        _show_confirmation_dialog_for_tasks "Add Additional Repositories" "Following additional Repositories:\nGoogle Chrome & Maps, Google Cloud SDK\nDocker\nInsync\nSpotify\nWineHQ\n will be added.\nShall I do it?" "$task"
+    add_repositories )        _show_confirmation_dialog_for_tasks "Add Additional Repositories" "Following additional Repositories:\nGoogle Chrome & Google Earth, Google Cloud SDK\nDocker(If set to true, Default: true)\nInsync\nSpotify\nWineHQ(If set to true, Default: false)\nwill be added.\nShall I do it?" "$task"
                               ;;
     install_apps )            _show_confirmation_dialog_for_tasks "Install Apps" "I can Install the packages listed in lists files mentioned in app-list.list.\nNo checks are being made on the validity of the list. Be careful while installing graphic drivers and core system componetnts. Shall I do it?" "$task"
                               ;;
@@ -1069,7 +1070,7 @@ function main()
   if [[ $EUID -ne 0 ]]; then
     set_yellow;
     printf "[    Whoops!    ] Insufficinet privilages!!\n"
-    set_blue;
+    set_default;
     printf "[    Whoops!    ] This script must be run as root.\n"
     printf "[    Notice     ] Please use sudo ./$SCRIPT to run this as root.\n"
     set_default;
