@@ -24,7 +24,7 @@ Github URL: https://github.com/tprasadtp/after-effects-ubuntu
 ### Changelogs
 
 #### _v3.1.1_
-  - Drop CI tests on Trusty Its painful to maintain lists for Trusty as many PPAs and packages are not available or have a different name. Trusty is still supported but Travis CI tests will not be run on Trusty as host or in container. So use it with caution. End user will probably change the list anyway so it doen't matter.  
+  - Drop CI tests on Trusty Its painful to maintain lists for Trusty as many PPAs and packages are not available or have a different name. Trusty is still supported but Travis CI tests will not be run on Trusty as host or in container. So use it with caution. End user will probably change the list anyway so it doesn't matter.  
 
 #### _v3.1_
  ##### Added Support for Ubuntu Bionic Beaver
