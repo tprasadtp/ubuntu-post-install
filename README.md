@@ -32,20 +32,24 @@ Github URL: https://github.com/tprasadtp/after-effects-ubuntu
   - Dockerfiles & tests for bionic.
   - Inform in script if running on Upcoming release.
   - Drop google-cloud-sdk from fix_repo_not_available. Use `--pre-release` if using beta/alpha Ubuntu release.
+  - Add Visual studio to repos instead of deb files
+  - Rename logging directory to after-effects
 
 
 
 
 
 #### _v3.0_
- Following Changes are in v3.0
+
+**Following Changes are in v3.0**
+
 * ##### Confirmation dialogs
   - Add Confirmation dialog using whiptail for Actions like Adding PPA, Repositories, Installing Apps, and Deb files
   - Provide an option via command line to bypass the confirmation dialog for ci and automated environments or when its too annoying
 
 * #### Improvements to Simulate option
   - If the simulate option is selected then Only calculate the upgrade but do not perform upgrade.
-  - Added Simulation options. Helpful when just want to change somethings and test scripts without really downloading and installing packages
+  - Added improved Simulate options. Helpful when just want to change somethings and test scripts without really downloading and installing packages
   - Simulate option is by default false and can be toggled by passing `-s` or `--simulate` while running the script via command line
 * #### Partner repositories and Derivatives
   - Do not Enable Canonical Partner repositories in Ubuntu derivatives as they are enabled in installer or are different than Ubuntu. This leaves Partner repositories as they were before
@@ -115,14 +119,15 @@ Linux-Mint 17.3     Rosa
 Linux Mint 18       Sarah
 Linux-Mint 18.1     Serena
 Linux-Mint 18.2     Sonya
-Linux-Mint 18.3     Sylvia (Upcoming Release)
+Linux-Mint 18.3     Sylvia
 Elementary-OS       Freya
 Elementary-OS       Loki
 Elementary-OS       Juno (Upcoming Release)
 Official Ubuntu Flavors for above mentioned Ubuntu releases.
 ```
-* Though 32 bit is supported, Testing in Travis CI, containers and locally all are done using 64 bit machine, host, vm and containers. If something breaks please report it and use it with caution.  
+* Though 32 bit is supported, Testing in Travis CI, containers and locally all are done using 64 bit machine, host, vm and containers. If something breaks please report it and use it with caution.
 * Support for Ubuntu 18.04 Daily builds, Elementary OS Juno and Mint 18.3 is **experimental** and things might break. They have not been released in stable release channels and are considered beta/ alpha or development versions of the release. It is strongly advised to use them in a chroot or a virtualized environments and not as a daily driver.
+* Linux mint 18.3 uses a new appstore from which you can directly install Chrome and other popular tools. There may be some conflicts in the `/etc/apt/sources.list.d` where single repository is configured multiple times with same priority. Use it with caution. The scripts are not tested on Travis on Linux Mint. However in most cases it should be fine as it works well with Xenial.
 * Tests for Bionic are done using docker images from `https://partner-images.canonical.com/core/bionic/` or `http://cdimage.ubuntu.com/ubuntu-base/daily` and are **allowed** to fail on travis CI jobs.
 
 >   **Script will exit if it does not recognize the distribution.**
@@ -165,12 +170,12 @@ The release notes for mint 17.3 says
 ### Simulating package installation
 - . **`-s` or `--simulate`**
 
-  * This will simulate installing packages mentioned in the lists (More on that later) using the apt-get inbuilt dry-run option `apt-get install -s ` to simulate the installation of packages. Nothing will be downloaded except repository metadata and the packages will not be installed.
+  * This will simulate installing packages mentioned in the lists (More on that later) using the apt-get inbuilt dry-run option `apt-get install -s ` to simulate the installation of packages. Nothing will be downloaded except repository metadata  (deb files if option is chosen). Packages will not be installed.
   * This option can be used to check if the files in the lists are compatible/available in the repository.
   * When this option is passed, upgrade_system will not be run. Only a list of packages upgradeable will be listed in the log file.
   * Installation of DEB files also behaves similarly. It uses `dpkg -i --dry-run` to simulate installation.
   * Its a very good idea to simulate installation when you have reconfigured the apps and packages in the list to check what might be error prone.
-  * However, in case of DEB files, they **WILL** be downloaded unlike apt-get package installs.
+  * In case of DEB files, they **WILL** be downloaded unlike apt-get package installs.
 
   > * **Simulate flag will not simulate Adding Repositories or PPAs.**
   > * If you want to revert them please use Reset Repositories option.
@@ -181,19 +186,20 @@ The release notes for mint 17.3 says
   Usually it takes a while for additional Repositories (Docker. google cloud sdk etc) to add support for latest release of Ubuntu. However we can use the previous release for which
   packages are available. So usually using packages built for previous release works fine most of the time. This is also good fix if you are running a alpha or beta release of Ubuntu.
   Following repositories  which use this fix.
+  ```
+  google-cloud-sdk
+  gcsfuse
+  insync
+  Docker-CE
+  WineHQ
+  ```
   * By default this option is disabled.
   * Use `sudo ./after-effects -f` or `sudo ./after-effects --fix` to enable this.
-```
-google-cloud-sdk
-gcsfuse
-insync
-Docker-CE
-WineHQ
-```
+
   * Repositories like Spotify and google chrome do not use codenames in their repository urls. So the above workaround is not necessary.
-  * Derivatives of Ubuntu will use the codename of ubuntu on which they are based. for example Linux mint 18.2 Serena will use codename xenial since it is based on Ubuntu 16.04 Xenial Xerus
+  * Derivatives of Ubuntu will use the codename of ubuntu on which they are based. For example Linux mint 18.2 Serena will use codename xenial since it is based on Ubuntu 16.04 Xenial Xerus
   * This option applies only for the latest release mentioned in the variable `code_name_latest_release`. and will be ignored if the release is not latest.
-  * Variables in current version are
+  * Variables in current version are (As of Dec 2017)
 ```
 readonly code_name_latest_release="artful"
 readonly codename_previous_release="zesty"
@@ -201,7 +207,7 @@ readonly codename_upcoming_release="bionic"
 ```
   change them if necessary.
 
-  > If you are using a pre release version of Ubuntu, you can use --pre-release falg to apply the above mentioned fix to pre-release version of ubuntu. This flag can be used independent of `--fix`. IF both are used together then both flags will be applied if the release is upcoming-release. otherwise if the release is stable only `--fix` flag will be valif and --pre-release is ignored.
+  > If you are using a pre release version of Ubuntu, you can use `--pre-release` falg to apply the above mentioned fix to pre-release version of ubuntu. This flag can be used independent of `--fix`. If both are used together then both flags will be applied if the release is upcoming-release. otherwise if the release is stable only `--fix` flag will be valid and `--pre-release` is ignored.
   This is how it works:  If the repositories are  not available for latest stable release as well, go back a release.
   Eg. If the pre-release is 18.04 and the repo is not available for 17.10 as well, we use 17.04 repositories.
   Usually happens in first few days of development cycle of 18.04.
@@ -220,10 +226,10 @@ readonly codename_upcoming_release="bionic"
   > This flag **MUST** be passed if you intend to purge packages from system. Otherwise you will receive an error.
 
 ### Delete log file
-- **`-l` or `--log`**
+- **`-l` or `--delete-log`**
 
   Just a quick way to delete logs generated by this script.
-  > If you pass -l in the beginning rest of the commands will be ignored, as the script exits it after Deleting the log!
+  > If you pass -l in the beginning rest of the commands will be ignored, as the script exits after deleting the log!
 
 
 ## What all This Script can do? and How Can I configure it for my needs?
@@ -231,8 +237,8 @@ readonly codename_upcoming_release="bionic"
 This Script is written to be as flexible as possible. The script itself does not contain any packages or ppas to be added or deb files to installed. Configurations live in directory /data. There are .list files for each purpose containing the necessary data and are easy to configure for your needs.
 
 ##### Update Repositories
-This will update Repositories metadata. Errors might occur if there is missing key or misconfigured Repositories.
-> Sometimes it is possible that some errors might occur even though the log says successfully updated. Its because script checks for exit status of the apt-get update command and its zero in spite of those errors use caution.
+This will update repository metadata. Errors might occur if there is missing key or mis-configured repositories.
+> Sometimes it is possible that some errors might occur even though the log says successfully updated. Its because script checks for exit status of the apt-get update command and its zero even if there are some errors. So use it with caution.
 
 ##### Upgrade packages to Latest
 This will perform Update repositories as well as it will upgrade all the upgradeable packages on the system.
@@ -249,7 +255,7 @@ This will add the following repositories.
 > Please note that the above repositories are sometimes not updated for latest Ubuntu release and most certainly will not be available for upcoming release of Ubuntu(Alpha/Beta). It might take some time till the repositories are available for the latest release. Use -f or --fix command line option or --pre-release in case you are using a Development version of ubuntu to revert using latest available version of repositories (usually previous Ubuntu release or in case of Beta/Alpha latest stable release of ubuntu). [For more info see command line options.](#fix-for-latest-ubuntu-releases)
 
 * Google Chrome
-  > Please note that Google Chrome doesn't support 32 bit architecture.
+  > Please note that Google Chrome doesn't support 32 bit architecture use Chromium.
 
 * Google Earth
 * Spotify
@@ -280,6 +286,7 @@ readonly add_docker_repo=true
 in the format ppa:<author>/ppa for example `ppa:mozillateam/firefox-next`
 The file will be read and the PPAs will be added from the list.
 * Logs will  show entry in the format `[<date and time>] [  PPA  ] <log>`
+
 ###### Note:
 * PPAs should be checked before they are added to the list. Sometimes PPAs listed in the file may not be available for all releases
 * Peek ppa is not available for trusty and is not included in tests.
@@ -292,10 +299,10 @@ The file will be read and the PPAs will be added from the list.
 * packages in the files will not be installed if that file does not appear in the master list.
 * It helps keeping things separate for separate machines or needs. Minimal edit is required to switch from one list to another than rewriting the entire list file.
 * The Master list is named `app-list.list` and **MUST** only contain the list files one entry per line. **NO** comments or anything else is allowed.
-* individual list files for different needs are to be written in similar way containing name of the package to be installed in one package per line format as before. similar to all the lists there **SHOULD NOT** be any comments or text or empty lines in those list files.
+* Individual list files for different needs are to be written in similar way containing name of the package to be installed in one package per line format as before. similar to all the lists there **SHOULD NOT** be any comments or text or empty lines in those list files.
 * You can split files according to your needs and write your list of packages to be installed and only include the lists in the master list file which you intend to install.
 * It is a good idea to include packages from external repositories in a different list than others because they might fail sometimes.
-* Make sure that all the packages in the lists are avail for your release. Using -s command line option helps. Also check for the logs for any errors or Conflicts.
+* Make sure that all the packages in the lists are available for your release. Using `-s` command line option helps. Also check for the logs for any errors or conflicts.
 
 #### Install DEB files
 This will install deb files specified in the list deb-files.list
@@ -310,7 +317,7 @@ This will install deb files specified in the list deb-files.list
 https://atom-installer.github.com/v1.21.1/atom-amd64.deb  ATOM-Editor.deb
 ```
 first part is the URL to the deb file separated by a tab name of the file.
-> Please note that deb file will be  saved with the name mentioned in the file (Exactly as mentioned in the second field. So if you want them to be named with extension .deb include that in the second field and avoid illegal chars)
+> Please note that deb file will be  saved with the name mentioned in the file. (DEB file is named **exactly** as mentioned in the second field. So if you want them to be named with extension .deb include that in the second field and avoid illegal chars)
 
 #### Purge Unwanted Packages
 This will purge Unwanted packages from the system.
@@ -323,12 +330,12 @@ This will purge Unwanted packages from the system.
 * This will **NOT** reset or remove repositories added by the DEB files.
 * Simulate option has no effect on this action and ppa-purge **WILL** downgrade packages if necessary.
 
-  > This will **NOT** remove ppas or repositories you have added manually!
+  > This will **NOT** remove PPAs or repositories you have added manually or those added while installing DEB files.
 
 #### All In one
-This will perform Following actions
+This will perform Following actions. (In the following order)
 * Update repository metadata
-* Upgrade pacakges
+* Upgrade packages
 * Add repositories
 * Add PPAs in the list file
 * Install Apps
@@ -338,19 +345,24 @@ This option will honor --yes and --simulate options as individual tasks would do
 
 #### Delete log file
 A log file is generated containing all the output generated by the apt and other commands and contain generic information and errors .
-* This task will delete the log file.
-* Log file is located in the directory `minchu-logs` in folder which you ran thin script.
+* This task will delete the log file `after-effects.log`.
+* Log file is located in the directory `after-effects-logs` in folder which you ran thin script.
 * Sometimes errors might not be written to log file but displayed on screen and vice-versa.
-* Please verify that everything went okay by Checking the log file.
+* Please verify that everything went okay by checking the log file.
 
 
 ## How to use this?
 * Install Your choice of Ubuntu/Derivative as you would( If you wish to automate that too, you can use preseed.cfg file)
-* Download this repository `wget https://github.com/tprasadtp/ubuntu-post-install/archive/master.zip`
-* Unzip this file
-* change your current directory to the extracted folder
+* Without Git
+  * Download this repository `wget https://github.com/tprasadtp/ubuntu-post-install/archive/master.zip`
+  * Unzip this file `unzip master.zip -d ubuntu-post-install`
+  * Change your current directory to the extracted folder `cd ubuntu-post-install-master`
+* With Git
+  * If you already have git on your system you can use `git clone --depth 1 https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install`
+
 * Run the script as root `sudo ./after-effects`
   > It is essential to run this script as root since most actions performed by the script require root privileges. However if you are running this in a docker container, you probably are root and its possible that you might be missing `sudo` as well. So In that case just run it as `./after-effects`
+
 
 ## Screenshots
 ![Details](/screenshots/details.png)
@@ -358,7 +370,7 @@ A log file is generated containing all the output generated by the apt and other
 
 
 ## Logs
-Logs are written to a file `<current-dir>/minchu-logs/after-effects.log`. Timestamps in the logs may not be accurate because some commands buffer outputs.
+Logs are written to a file `<current-dir>/after-effects-logs/after-effects.log`. Timestamps in the logs may not be accurate because some commands buffer outputs.
 
 ## CI and Testing
 Following Tests are done on travis-ci.

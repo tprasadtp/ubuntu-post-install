@@ -30,8 +30,8 @@ set -o pipefail
 DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-log_file="$dir"/minchu-logs/after-effects.log
-mkdir -p "$dir"/minchu-logs
+log_file="$dir"/after-effects-logs/after-effects.log
+mkdir -p "$dir"/after-effects-logs
 readonly version="3.1.0 Beta"
 
 function _init_script_variables()
@@ -660,7 +660,7 @@ function add_repositories()
     _debug_log "Getting GPG keys for repository"
     wget -q https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
     _debug_log "Adding Key to trusted GPG keys directory"
-    apt-key add skype-linux-key.gpg 2>&1 | _add_timestamp_to_aptkey_logs || _log_and_show "Adding Visual Studio Code key failed"
+    apt-key add microsoft.gpg 2>&1 | _add_timestamp_to_aptkey_logs || _log_and_show "Adding Visual Studio Code key failed"
     echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main" > ${SOURCES_FILE_DIR}/vscode.list
   else
     _log_and_show "Architecture: $ARCH is not supported by Visual studio Code."
@@ -724,7 +724,7 @@ function upgrade_apps()
     DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::='--force-confold' --force-yes -fuy dist-upgrade | _add_timestamp_to_apt_logs
     exit_status=$?
   else
-    # if it is not simulate set exit status as 0
+    # if it is simulate is true, set exit status as 0
     # Simulate flag skips the section above. No point in Checking for exit status
     _log_and_show "${_simulate} is set to True. Not performing upgrade!"
     exit_status=0
@@ -1116,7 +1116,7 @@ function main()
                                   _log_and_show "${_fix_repo} is set to true. Using codename: $codename_previous_release.";
                                   set_default;
                                   ;;
-          --pre-release )         bool_fix_repo_not_available_for_upcoming_release="true";
+          -p | --pre-release )    bool_fix_repo_not_available_for_upcoming_release="true";
                                   set_magenta;
                                   _log_and_show "${_fix_repo} for upcoming release is set to true.";
                                   set_default;
@@ -1132,7 +1132,7 @@ function main()
                                   _log_and_show "${_warn} Will automatically assume yes, for all the confirmation dialogs.";
                                   set_default;
                                   ;;
-          -l | --log )            set_default;
+          -l | --delete-log )     set_default;
                                   delete_log_file;
                                   ;;
       esac
@@ -1156,11 +1156,10 @@ function main()
   else
   _process_opts;
   fi
-
+  #Logs exit and exit code of script
+  _script_exit_log
 }
 
 
 #Initialze main
 main "$@"
-#Logs exit and exit code of script
-_script_exit_log
