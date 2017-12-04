@@ -23,6 +23,9 @@ Github URL: https://github.com/tprasadtp/after-effects-ubuntu
 
 ### Changelogs
 
+#### _v3.1.1_
+  - Drop CI tests on Trusty Its painful to maintain lists for Trusty as many PPAs and packages are not available or have a different name. Trusty is still supported but Travis CI tests will not be run on Trusty as host or in container. So use it with caution. End user will probably change the list anyway so it doen't matter.  
+
 #### _v3.1_
  ##### Added Support for Ubuntu Bionic Beaver
   - Added Support for Upcoming Ubuntu release bionic.
@@ -376,12 +379,12 @@ Logs are written to a file `<current-dir>/after-effects-logs/after-effects.log`.
 Following Tests are done on travis-ci.
 
 * shellcheck every executable script (Job #build.1)
-* Run the Script in simulate mode on Travis CI in Ubuntu Trusty image (Job #build.2)
+* Run the Script in simulate mode on Travis CI in Ubuntu Trusty image (Not since Version 3.1)
 * Run the Script in simulate mode on Travis CI in docker image built using Dockerfiles in `/dockerfiles` directory
-* Test on Artful container (Job #build.3)
-* Test on Xenial container (Job #build.4)
-* Test on Zesty  container (Job #build.5) (Will be deprecated in January 2018)
-* Test on Bionic Beaver daily images (Job #build.6) from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
+* Test on Artful container (Job #build.2)
+* Test on Xenial container (Job #build.3)
+* Test on Zesty  container (Job #build.4) (Will be deprecated in January 2018)
+* Test on Bionic Beaver daily images (Job #build.5) from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
 * Dockerfiles used for building the image are in `/dockerfiles` directory, they use official Ubuntu base images with script dependencies.
 * Dockerfile for Bionic is using `http://cdimage.ubuntu.com/ubuntu-base/daily` root file system, as official images are not available yet.
 * Test scripts are located in `/tests` directory.
