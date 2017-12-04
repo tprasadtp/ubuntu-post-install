@@ -251,6 +251,7 @@ function _log_and_exit()
     if [ "$TRAVIS" == "true" ]; then
       cat "$log_file"
     fi
+    set_default
     exit "$2";
 }
 
@@ -658,7 +659,7 @@ function add_repositories()
   if [ "$ARCH" == "amd64" ]; then
     _log_and_show "${_adding} Visual Studio Code repository"
     _debug_log "Getting GPG keys for repository"
-    wget -q https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+    curl -s https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
     _debug_log "Adding Key to trusted GPG keys directory"
     apt-key add microsoft.gpg 2>&1 | _add_timestamp_to_aptkey_logs || _log_and_show "Adding Visual Studio Code key failed"
     echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main" > ${SOURCES_FILE_DIR}/vscode.list
@@ -868,7 +869,7 @@ function purge_not_required()
     fi
   else
     set_yellow
-    _log_and_show "${_error} Purge switch is set to false. Did you pass -d along wth the command?"
+    _log_and_exit "${_error} Purge switch is set to false. Did you pass -d along wth the command?" "1"
   fi
 set_default
 
