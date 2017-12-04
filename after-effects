@@ -606,7 +606,7 @@ function add_repositories()
   echo "deb http://apt.insynchq.com/ubuntu $code_name_fix_latest non-free contrib #Insync Client" > ${SOURCES_FILE_DIR}/insync.list || _log_and_show "Adding Insync Repository failed"
 
   # Google Cloud SDK and GCS-FUSE
-  CLOUD_SDK_REPO="cloud-sdk-$code_name"
+  CLOUD_SDK_REPO="cloud-sdk-$code_name_fix_latest"
   GCSFUSE_REPO="gcsfuse-$code_name_fix_latest"
   _log_and_show "${_google_cloud} Repositories"
   _debug_log "Adding Google-Cloud repository sigining key"
