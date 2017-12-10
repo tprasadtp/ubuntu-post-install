@@ -1069,6 +1069,30 @@ function _process_opts
 }
 
 
+function _check_dependencies()
+{
+  #statements
+  local after_effects_core_dependencies=(wget lsb_release whiptail iputils-ping)
+  local dependency_check_failed_count dep_res
+  dependency_check_failed_count=0;
+  printf "[ INFO ] Checking dependencies\n"
+  for dep in "${after_effects_core_dependencies[@]}"
+  do
+   :
+   command -v "$dep" > /dev/null
+   dep_res=$?
+   if [ "$dep_res" -eq 1 ]; then
+     _log_and_show "${YELLOW}[ ERROR ] $dep is not installed!${NC}\n"
+     dependency_check_failed_count=$((dependency_check_failed_count+1))
+   fi
+  done
+
+  if [ "$dependency_check_failed_count" -gt 0 ]; then
+    set_magenta
+    _log_and_show "One or more dependencies not installed. Check logs or above message."
+    _log_and_exit "Sorry! $SCRIPT cannot continue!" "-1"
+  fi
+}
 
 function main()
 {
@@ -1086,6 +1110,7 @@ function main()
   fi
 
   _script_launch_log
+  _check_dependencies
   _init_script_variables;
   _init_script_initialization;
 
