@@ -1,4 +1,4 @@
-# Ubuntu After Effects
+# Ubuntu Post Installation Script : after-effects
 
 A bash script to setup your fresh install of Ubuntu. Please read the FAQ before trying out.
 
@@ -21,72 +21,48 @@ Github URL: https://github.com/tprasadtp/after-effects-ubuntu
 ```
 
 
-### Changelogs
 
-#### _v3.2_
-  - Drop CI tests on Trusty Its painful to maintain lists for Trusty as many PPAs and packages are not available or have a different name. Trusty is still supported but Travis CI tests will not be run on Trusty as host or in container. So use it with caution. End user will probably change the list anyway so it doesn't matter.  
-  - Switch to submodules for data directory
-  - List files have their own repo now.
+## How to use this?
+### Step 0: Install Ubuntu
+* Install (if you haven't already) your choice of Ubuntu/Derivative as you would( If you wish to automate that too, you can use preseed.cfg file)
 
-#### _v3.1_
- ##### Added Support for Ubuntu Bionic Beaver
-  - Added Support for Upcoming Ubuntu release bionic.
-  - Added an option to use repository for last stable release on bionic.
-  - Use Ubuntu Base 18.04 LTS (Bionic Beaver) daily build to build docker image.
-  - Allow Bionic tests to fail on Travis CI.
-  - Dockerfiles & tests for bionic.
-  - Inform in script if running on Upcoming release.
-  - Drop google-cloud-sdk from fix_repo_not_available. Use `--pre-release` if using beta/alpha Ubuntu release.
-  - Add Visual studio to repos instead of deb files
-  - Rename logging directory to after-effects
+### Step 1: Get the script
+#### CLI way (Git not required)
+  * Run this in Terminal
 
+  ```sh
+  wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash
+  ```
 
+#### With Git
+  * If you already have git on your system you can use
+  ```sh
+  git clone --recursive --depth 1 https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install
+  ```
 
-
-
-#### _v3.0_
-
-**Following Changes are in v3.0**
-
-* ##### Confirmation dialogs
-  - Add Confirmation dialog using whiptail for Actions like Adding PPA, Repositories, Installing Apps, and Deb files
-  - Provide an option via command line to bypass the confirmation dialog for ci and automated environments or when its too annoying
-
-* #### Improvements to Simulate option
-  - If the simulate option is selected then Only calculate the upgrade but do not perform upgrade.
-  - Added improved Simulate options. Helpful when just want to change somethings and test scripts without really downloading and installing packages
-  - Simulate option is by default false and can be toggled by passing `-s` or `--simulate` while running the script via command line
-* #### Partner repositories and Derivatives
-  - Do not Enable Canonical Partner repositories in Ubuntu derivatives as they are enabled in installer or are different than Ubuntu. This leaves Partner repositories as they were before
-* #### Purge Unwanted Packages
-  - Fix a bug in PPA purge function where it would wait for user confirmation
-  - Add a feature to purge not required packages, usually games and boaltware which comes preloaded  with the install. It is necessary to pass a flag `-d` via command line to purge them while running the script since its dangerous
-* ##### Logs & Console messages
-  - Improved logging . Redirecting errors and adding time-stamps works better.
-* ##### Travis CI and Docker Testing
-  - Added Dockerfiles used for test cases since base Ubuntu image does not have few necessary packages (`ping, wget, lsb-release, whiptail, iputils-ping`) and configuration required. Since most of these are bound to present on Ubuntu/Ubuntu Server/ Ubuntu derivatives it is not necessary to add them in the script.
-  - Added Docker and Travis CI detection . Now the logs will indicate if the script is running in Container or Travis CI
-  - Test Script on Travis CI in parallel using jobs.
-  - Test Script on Trusty using Travis Host
-  - Test Script on Xenial, Artful and Zesty using Docker image build using Dockerfiles.
-* #### Others
-  - Fixed Bugs
-  - Fixed Typos and spell errors
-  - Fixed a bug where exiting script via pressing escape would cause message to be printed twice
-  - Improved exit status handling
-
-#### _v2.0_
-  - Complete rewrite from scratch
-  - Improvements in logging and console output
-  - Reduced verbosity in terminal output
-  - Flexible with packages and deb files
-  - Reduced complex dependencies
-  - Easy to configure
-  - Add Simulate install option for installing deb files and apps. Easier to test scripts now .
+#### Without Git GUI way (mostly)
+  * Use git or the command line way it's much much easier trust me!!
+  * Download this repository [here](https://github.com/tprasadtp/ubuntu-post-install/archive/master.zip)
+  * Download the list files from [here](https://github.com/tprasadtp/ubuntu-post-install-data/archive/master.zip)
+  * Unzip these files.
+  * Move all the .list files in `ubuntu-post-install-data-master` to `ubuntu-post-install-master/data/` directory.
+  * make sure that `after-effects` is executable.
+  * Open Terminal in current directory and execute after-effects as root. `sudo ./after-effects`
 
 
-#### _v1.0_
-  * Initial upload.
+### Step 2: Update the lists to suit your needs (Optional)
+Update the list files to suit your needs. Change PPAs, add or delete packges to list, tweak booleans etc.
+
+> First time you might want to use simulate flag. `sudo ./after-effects -s`
+
+### Step 3: Run the script
+Run the script as **root**
+```sh
+sudo ./after-effects
+```
+
+> It is essential to run this script as root since most actions performed by the script require root privileges. However if you are running this in a docker container, you probably are root and its possible that you might be missing `sudo`. So In that case just run it as `./after-effects` Be warned! You might be missing several other dependencies as well!!
+
 
 
 ## FAQ
@@ -356,47 +332,6 @@ A log file is generated containing all the output generated by the apt and other
 * Please verify that everything went okay by checking the log file.
 
 
-## How to use this?
-### Step 0: Install Ubuntu
-* Install (if you haven't already) your choice of Ubuntu/Derivative as you would( If you wish to automate that too, you can use preseed.cfg file)
-
-### Step 1: Get the script
-#### CLI way (Git not required)
-  * Run this in Terminal
-
-  ```sh
-  wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash
-  ```
-
-#### Without Git GUI way (mostly)
-  * Use git or the command line way it's much much easier trust me!!
-  * Download this repository [here](https://github.com/tprasadtp/ubuntu-post-install/archive/master.zip)
-  * Download the list files from [here](https://github.com/tprasadtp/ubuntu-post-install-data/archive/master.zip)
-  * Unzip these files.
-  * Move all the .list files in `ubuntu-post-install-data-master` to `ubuntu-post-install-master/data/` directory.
-  * make sure that `after-effects` has executable permission.
-  * Open Terminal in current directory and execute after-effects as root. `sudo ./after-effects`
-
-#### With Git
-  * If you already have git on your system you can use
-  ```sh
-  git clone --recursive --depth 1 https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install
-  ```
-
-### Step 2: Update the lists to suit your needs (Optional)
-Update the list files to suit your needs. Change PPAs, add or delete packges to list, tweak booleans etc.
-
-> First time you might want to use simulate flag. `sudo ./after-effects -s`
-
-### Step 3: Run the script
-Run the script as **root**
-```sh
-sudo ./after-effects
-```
-
-> It is essential to run this script as root since most actions performed by the script require root privileges. However if you are running this in a docker container, you probably are root and its possible that you might be missing `sudo`. So In that case just run it as `./after-effects` Be warned! You might be missing several other dependencies as well!!
-
-
 ## Screenshots
 ![Details](/screenshots/details.png)
 ![Whiptail-Options](/screenshots/whiptail.png)
@@ -422,5 +357,73 @@ Following Tests are done on travis-ci.
 > It is possible that there might be some errors specific to your setup. Please report if so. It is **Strongly** advised to try install apps and deb files in simulate mode first before proceeding with actual installation.
 
 Use this script with caution! Though I have tested it on VMs and Travis something might break in your setup. Check the logs if script appears to be stuck.
+
+
+### Changelogs
+
+#### _v3.2_
+  - Drop CI tests on Trusty Its painful to maintain lists for Trusty as many PPAs and packages are not available or have a different name. Trusty is still supported but Travis CI tests will not be run on Trusty as host or in container. So use it with caution. End user will probably change the list anyway so it doesn't matter.  
+  - Switch to submodules for data directory
+  - List files have their own repo now.
+
+#### _v3.1_
+ ##### Added Support for Ubuntu Bionic Beaver
+  - Added Support for Upcoming Ubuntu release bionic.
+  - Added an option to use repository for last stable release on bionic.
+  - Use Ubuntu Base 18.04 LTS (Bionic Beaver) daily build to build docker image.
+  - Allow Bionic tests to fail on Travis CI.
+  - Dockerfiles & tests for bionic.
+  - Inform in script if running on Upcoming release.
+  - Drop google-cloud-sdk from fix_repo_not_available. Use `--pre-release` if using beta/alpha Ubuntu release.
+  - Add Visual studio to repos instead of deb files
+  - Rename logging directory to after-effects
+
+
+
+
+
+#### _v3.0_
+
+**Following Changes are in v3.0**
+
+* ##### Confirmation dialogs
+  - Add Confirmation dialog using whiptail for Actions like Adding PPA, Repositories, Installing Apps, and Deb files
+  - Provide an option via command line to bypass the confirmation dialog for ci and automated environments or when its too annoying
+
+* #### Improvements to Simulate option
+  - If the simulate option is selected then Only calculate the upgrade but do not perform upgrade.
+  - Added improved Simulate options. Helpful when just want to change somethings and test scripts without really downloading and installing packages
+  - Simulate option is by default false and can be toggled by passing `-s` or `--simulate` while running the script via command line
+* #### Partner repositories and Derivatives
+  - Do not Enable Canonical Partner repositories in Ubuntu derivatives as they are enabled in installer or are different than Ubuntu. This leaves Partner repositories as they were before
+* #### Purge Unwanted Packages
+  - Fix a bug in PPA purge function where it would wait for user confirmation
+  - Add a feature to purge not required packages, usually games and boaltware which comes preloaded  with the install. It is necessary to pass a flag `-d` via command line to purge them while running the script since its dangerous
+* ##### Logs & Console messages
+  - Improved logging . Redirecting errors and adding time-stamps works better.
+* ##### Travis CI and Docker Testing
+  - Added Dockerfiles used for test cases since base Ubuntu image does not have few necessary packages (`ping, wget, lsb-release, whiptail, iputils-ping`) and configuration required. Since most of these are bound to present on Ubuntu/Ubuntu Server/ Ubuntu derivatives it is not necessary to add them in the script.
+  - Added Docker and Travis CI detection . Now the logs will indicate if the script is running in Container or Travis CI
+  - Test Script on Travis CI in parallel using jobs.
+  - Test Script on Trusty using Travis Host
+  - Test Script on Xenial, Artful and Zesty using Docker image build using Dockerfiles.
+* #### Others
+  - Fixed Bugs
+  - Fixed Typos and spell errors
+  - Fixed a bug where exiting script via pressing escape would cause message to be printed twice
+  - Improved exit status handling
+
+#### _v2.0_
+  - Complete rewrite from scratch
+  - Improvements in logging and console output
+  - Reduced verbosity in terminal output
+  - Flexible with packages and deb files
+  - Reduced complex dependencies
+  - Easy to configure
+  - Add Simulate install option for installing deb files and apps. Easier to test scripts now .
+
+
+#### _v1.0_
+  * Initial upload.
 
 [![Analytics](https://ga-beacon.prasadt.com/UA-101760811-3/github/ubuntu-post-install?flat)](https://prasadt.com/google-analytics-beacon)
