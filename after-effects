@@ -1075,7 +1075,7 @@ function _check_dependencies()
   local after_effects_core_dependencies=(wget lsb_release whiptail ping)
   local dependency_check_failed_count dep_res
   dependency_check_failed_count=0;
-  printf "[ INFO ] Checking dependencies\n"
+  printf "${_info} Checking dependencies\n"
   for dep in "${after_effects_core_dependencies[@]}"
   do
    :
