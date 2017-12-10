@@ -14,10 +14,9 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see <https://www.gnu.org/licenses/gpl-3.0.txt>
 
-# Version:2.0
 # Author: Prasad Tengse
 # Licence: GPLv3
-# Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
+# Github Repository: https://github.com/tprasadtp/ubuntu-post-install
 # Requirements - Bash v4.4 and above
 #              - Ubuntu 14.04/16.04/17.04/17.10 or Elementary Freya/Loki/Juno or Mint 17.X or 18.X
 #              - Support for Ubuntu 18.04 Bionic is Experimental. Since it is still under development
@@ -32,7 +31,7 @@ readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 log_file="$dir"/after-effects-logs/after-effects.log
 mkdir -p "$dir"/after-effects-logs
-readonly version="3.1.0 Beta"
+readonly version="3.2 Alpha"
 
 function _init_script_variables()
 {

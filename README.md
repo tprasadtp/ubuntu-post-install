@@ -25,7 +25,7 @@ Github URL: https://github.com/tprasadtp/after-effects-ubuntu
 
 #### _v3.2_
   - Drop CI tests on Trusty Its painful to maintain lists for Trusty as many PPAs and packages are not available or have a different name. Trusty is still supported but Travis CI tests will not be run on Trusty as host or in container. So use it with caution. End user will probably change the list anyway so it doesn't matter.  
-  - Switch to submodules for data diractory
+  - Switch to submodules for data directory
   - List files have their own repo now.
 
 #### _v3.1_
