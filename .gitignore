@@ -96,3 +96,7 @@ Release*
 *.AppImage
 *.bundle
 *.run
+
+## Custom ignores for git hooks
+.noupdate
+.update
