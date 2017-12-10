@@ -54,7 +54,7 @@ function get-after-effects()
 {
   # Function to get after-effects main module
   printf "${YELLOW}Removing old files...${NC}\n"
-  rm -f after-effects get.mlist .data/*.list get.mlist.* README.md README.md.* ./data/*.list ./data/*.list.*
+  rm -f after-effects after-effects.* get.mlist .data/*.list get.mlist.* README.md README.md.* ./data/*.list ./data/*.list.*
   echo "Getting: README.md"
   wget -q https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/README.md
   echo "Getting: after-effects"

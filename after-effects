@@ -33,6 +33,68 @@ log_file="$dir"/after-effects-logs/after-effects.log
 mkdir -p "$dir"/after-effects-logs
 readonly version="3.2 Alpha"
 
+function _init_printf_variables()
+{
+  #Initialize printf variables
+
+    #================ Because I care about Beauty of Output Logs =================
+    readonly         _adding="[     Adding    ]"
+    readonly          _added="[     Added     ]"
+    readonly     _adding_ppa="[   Adding PPA  ]"
+    readonly      _added_ppa="[   Added  PPA  ]"
+    readonly          _oh_no="[     Oh No!    ]"
+    readonly     _installing="[   Installing  ]"
+    readonly      _installed="[   Installed   ]"
+    readonly       _removing="[    Removing   ]"
+    readonly        _removed="[    Removed    ]"
+    readonly       _deleting="[    Deleting   ]"
+    readonly        _deleted="[    Deleted    ]"
+    readonly      _linuxmint="[  Linux - Mint ]"
+    readonly     _elementary="[ Elementary-OS ]"
+    readonly      _canonical="[  Canonical-y  ]"
+    readonly        _purging="[    Purging    ]"
+    readonly         _purged="[    Purged     ]"
+    readonly           _done="[     Done!     ]"
+    readonly          _error="[     Error!    ]"
+    readonly     _aptrunning="[ I'm not Alone ]"
+    readonly       _internet="[    Internet   ]"
+    readonly             _ok="[      OK!      ]"
+    readonly       _updating="[    Updating   ]"
+    readonly        _updated="[    Updated    ]"
+    readonly      _upgrading="[   Upgrading   ]"
+    readonly       _upgraded="[   Upgraded    ]"
+    readonly    _derivatives="[  Derivatives  ]"
+    readonly      _conflicts="[   Conflicts   ]"
+    readonly         _notice="[    Notice     ]"
+    readonly    _downloading="[  Downloading  ]"
+    readonly           _info="[     Info      ]"
+    readonly         _failed="[     Failed    ]"
+    readonly   _google_cloud="[      GCP      ]"
+    readonly       _simulate="[   Simulating  ]"
+    readonly       _fix_repo="[Fix Repo4Latest]"
+    readonly        _deboalt="[    Deboalt    ]"
+    readonly           _warn="[    WARNING    ]"
+    readonly         _whoops="[   Whoopsie!   ]"
+    readonly         _travis="[   TRAVIS-CI   ]"
+    readonly         _docker="[     Docker    ]"
+    readonly    _pre_release="[  Pre Release  ]"
+    readonly        _version="[    Version    ]"
+    readonly       _checking="[    Checking   ]"
+    readonly        _checked="[    Checked    ]"
+
+
+    #readonly           _falg="[     Flag      ]"
+
+    #colors for display
+    readonly BLUE=$(tput setaf 6)
+    readonly YELLOW=$(tput setaf 3)
+    readonly NC=$(tput sgr 0)
+    readonly MAGENTA=$(tput setaf 5)
+
+
+}
+
+
 function _init_script_variables()
 {
   # Function defines Script variables
@@ -58,13 +120,9 @@ function _init_script_variables()
     _line_fill;
     _log_and_exit "Unsupported Architeture. $(uname -m)" "103"
   fi
-  readonly SOURCES_FILE_DIR=/etc/apt/sources.list.d
 
-  #colors for display
-  readonly BLUE=$(tput setaf 6)
-  readonly YELLOW=$(tput setaf 3)
-  readonly NC=$(tput sgr 0)
-  readonly MAGENTA=$(tput setaf 5)
+  # etc sources list dir
+  readonly SOURCES_FILE_DIR=/etc/apt/sources.list.d
 
   # Package list files
   readonly deb_files_list="$dir"/data/deb-files.list
@@ -112,51 +170,6 @@ function _init_script_variables()
   # _fix_ubuntu_derivatives will take care of this variable and set it to false if
   # derivative of ubuntu is found.
   bool_config_partner_repo="true"
-
-
-  #================ Because I care about Beauty of Output Logs =================
-  readonly         _adding="[     Adding    ]"
-  readonly          _added="[     Added     ]"
-  readonly     _adding_ppa="[   Adding PPA  ]"
-  readonly      _added_ppa="[   Added  PPA  ]"
-  readonly          _oh_no="[     Oh No!    ]"
-  readonly     _installing="[   Installing  ]"
-  readonly      _installed="[   Installed   ]"
-  readonly       _removing="[    Removing   ]"
-  readonly        _removed="[    Removed    ]"
-  readonly       _deleting="[    Deleting   ]"
-  readonly        _deleted="[    Deleted    ]"
-  readonly      _linuxmint="[  Linux - Mint ]"
-  readonly     _elementary="[ Elementary-OS ]"
-  readonly      _canonical="[  Canonical-y  ]"
-  readonly        _purging="[    Purging    ]"
-  readonly         _purged="[    Purged     ]"
-  readonly           _done="[     Done!     ]"
-  readonly          _error="[     Error!    ]"
-  readonly     _aptrunning="[ I'm not Alone ]"
-  readonly       _internet="[    Internet   ]"
-  readonly             _ok="[      OK!      ]"
-  readonly       _updating="[    Updating   ]"
-  readonly        _updated="[    Updated    ]"
-  readonly      _upgrading="[   Upgrading   ]"
-  readonly       _upgraded="[   Upgraded    ]"
-  readonly    _derivatives="[  Derivatives  ]"
-  readonly      _conflicts="[   Conflicts   ]"
-  readonly         _notice="[    Notice     ]"
-  readonly    _downloading="[  Downloading  ]"
-  readonly           _info="[     Info      ]"
-  readonly         _failed="[     Failed    ]"
-  readonly   _google_cloud="[      GCP      ]"
-  readonly       _simulate="[   Simulating  ]"
-  readonly       _fix_repo="[Fix Repo4Latest]"
-  readonly        _deboalt="[    Deboalt    ]"
-  readonly           _warn="[    WARNING    ]"
-  readonly         _whoops="[   Whoopsie!   ]"
-  readonly         _travis="[   TRAVIS-CI   ]"
-  readonly         _docker="[     Docker    ]"
-  readonly    _pre_release="[  Pre Release  ]"
-  readonly        _version="[    Version    ]"
-  #readonly           _falg="[     Flag      ]"
 
 }
 
@@ -1075,7 +1088,7 @@ function _check_dependencies()
   local after_effects_core_dependencies=(wget lsb_release whiptail ping)
   local dependency_check_failed_count dep_res
   dependency_check_failed_count=0;
-  printf "${_info} Checking dependencies\n"
+  _log_and_show "${_info} Checking dependencies\n"
   for dep in "${after_effects_core_dependencies[@]}"
   do
    :
@@ -1098,17 +1111,18 @@ function _check_dependencies()
 
 function main()
 {
-
+  _init_printf_variables
+  printf "${_checking} Root permissions"
   if [[ $EUID -ne 0 ]]; then
     set_yellow;
-    printf "[    Whoops!    ] Insufficinet privilages!!\n"
+    printf "${_whoops} Insufficinet privilages!!\n"
     set_default;
-    printf "[    Whoops!    ] This script must be run as root.\n"
-    printf "[    Notice     ] Please use sudo ./$SCRIPT to run this as root.\n"
+    printf "${_whoops} This script must be run as root.\n"
+    printf "${_notice} Please use sudo ./$SCRIPT to run this as root.\n"
     set_default;
     exit 100;
   else
-    _debug_log "OK! running as root."
+    _debug_log "${_checked} OK! running as root."
   fi
 
   _script_launch_log
