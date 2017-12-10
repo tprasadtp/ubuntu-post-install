@@ -1082,15 +1082,17 @@ function _check_dependencies()
    command -v "$dep" > /dev/null
    dep_res=$?
    if [ "$dep_res" -eq 1 ]; then
-     _log_and_show "${YELLOW}[ ERROR ] $dep is not installed!${NC}\n"
+     set_yellow
+     _log_and_show "${_error} $dep is not installed!${NC}\n"
+     set_default
      dependency_check_failed_count=$((dependency_check_failed_count+1))
    fi
   done
 
   if [ "$dependency_check_failed_count" -gt 0 ]; then
-    set_magenta
-    _log_and_show "One or more dependencies not installed. Check logs or above message."
-    _log_and_exit "Sorry! $SCRIPT cannot continue!" "-1"
+    set_yellow
+    _log_and_show "${_error} One or more dependencies not installed. Check logs or above message."
+    _log_and_exit "${_error} Sorry! $SCRIPT cannot continue!" "-1"
   fi
 }
 
