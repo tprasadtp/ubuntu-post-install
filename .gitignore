@@ -100,3 +100,4 @@ Release*
 ## Custom ignores for git hooks
 .noupdate
 .update
+.gitmodules
