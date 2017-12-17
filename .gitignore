@@ -101,3 +101,4 @@ Release*
 .noupdatets
 .updatets
 .gitmodules
+test-pre-commit.sh
