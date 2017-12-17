@@ -73,8 +73,7 @@ to put required _.list_ files in /data.
   - To have your list files in a repository, fork the submodule as well, otherwise
   skip step 2.
 
-**2. Fork [data submodule](https://github.com/tprasadtp/ubuntu-post-install-data)
-** (Optional)
+**2. Fork [data submodule](https://github.com/tprasadtp/ubuntu-post-install-data)** (Optional)
   - If you do not intend to keep .list files in your own repo, this step is not
   necessary. But its a very good idea to do so.
   - Clone the forked data repository.
