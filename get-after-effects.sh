@@ -35,7 +35,7 @@ readonly NC=$(tput sgr 0)
 function check_dependencies()
 {
   #Function to check is dependencies are available
-  local get_after_effects_dependencies=(wget unzip)
+  local get_after_effects_dependencies=(wget)
   local dep_res
   printf "${YELLOW}Checking dependencies${NC}\n"
   for dep in "${get_after_effects_dependencies[@]}"
