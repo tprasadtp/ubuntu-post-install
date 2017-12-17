@@ -72,7 +72,7 @@ Contribute tweaks, improvements ideas back upstream. No matter how small the cha
 I really appreciate feedback and contributions.
 
 ## Contributing & Forks
-See [Contributing and forks](./.github/CONTRIBUTING.md)
+See [Contributing and forks](./.github/README.md)
 
 # FAQ
 ## What this script/repository for?
