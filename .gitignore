@@ -98,6 +98,6 @@ Release*
 *.run
 
 ## Custom ignores for git hooks
-.noupdate
-.update
+.noupdatets
+.updatets
 .gitmodules
