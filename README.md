@@ -431,7 +431,6 @@ Use this script with caution! Though I have tested it on VMs and Travis somethin
   - Easy to configure
   - Add Simulate install option for installing deb files and apps. Easier to test scripts now .
 
-
 ## _v1.0_
   - Initial upload.
 
