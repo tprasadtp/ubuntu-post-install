@@ -94,7 +94,7 @@ to put required _.list_ files in /data.
    	path = data
    	url = https://github.com/tprasadtp/ubuntu-post-install-data.git
    ```
-   - Nuke everything inside `/data` (If you Enjoy the hair you didn’t want to rip
+   - Nuke everything inside `/data` (If you didn’t want to rip
     from your scalp)
    - Update submodules.
 
