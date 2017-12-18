@@ -257,7 +257,8 @@ function _log_and_exit()
   # ARG-1 log msg
   # ARG-2 exit code int
     local msg="$1"
-    printf "[$(date)] [  LOG  ]\t$msg \n" | tee -a "$log_file"
+    printf "$msg \n"
+    printf "[$(date)] [  LOG  ]\t$msg \n" >> "$log_file"
     printf "\nFinished %s on %s.\nLast exit code was: %d\n" "$SCRIPT" "$(date)" "$?" >> "$log_file"
     _line_fill >> "$log_file"
     if [ "$TRAVIS" == "true" ]; then
@@ -1088,7 +1089,7 @@ function _check_dependencies()
   local after_effects_core_dependencies=(wget lsb_release whiptail ping)
   local dependency_check_failed_count dep_res
   dependency_check_failed_count=0;
-  _log_and_show "${_info} Checking dependencies\n"
+  _log_and_show "${_info} Checking dependencies"
   for dep in "${after_effects_core_dependencies[@]}"
   do
    :
@@ -1112,7 +1113,7 @@ function _check_dependencies()
 function main()
 {
   _init_printf_variables
-  printf "${_checking} Root permissions"
+  printf "${_checking} permissions\n"
   if [[ $EUID -ne 0 ]]; then
     set_yellow;
     printf "${_whoops} Insufficinet privilages!!\n"
