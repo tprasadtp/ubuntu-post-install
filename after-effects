@@ -257,9 +257,10 @@ function _log_and_exit()
   # ARG-1 log msg
   # ARG-2 exit code int
     local msg="$1"
-    printf "$msg \n"
-    printf "[$(date)] [  LOG  ]\t$msg \n" >> "$log_file"
-    printf "\nFinished %s on %s.\nLast exit code was: %d\n" "$SCRIPT" "$(date)" "$?" >> "$log_file"
+    printf "$msg\n";
+    #shellcheck disable=SC2129
+    printf "[$(date)] [  LOG  ]\t$msg \n" >> "$log_file";
+    printf "\nFinished %s on $(date).\nLast exit code was: %d\n" "$SCRIPT" "$?" >> "$log_file";
     _line_fill >> "$log_file"
     if [ "$TRAVIS" == "true" ]; then
       cat "$log_file"
