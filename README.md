@@ -53,6 +53,14 @@ Github URL: https://github.com/tprasadtp/ubuntu-post-install-data
 
 ## Step 2: Update the lists to suit your needs (Optional)
 Update the list files to suit your needs. Change PPAs, add or delete packges to list, tweak booleans etc.
+### If you are using default lists,
+Please remove the lines
+```
+./data/linux-mint.list
+./data/gnome-online-accounts.list
+./data/github-bot-essentials.list
+```
+as they are specific to my setup and are intended to be used on linux mint installation. (Specifically Linux Mint 18.3)
 
 > First time you might want to use simulate flag. `sudo ./after-effects -s`
 
