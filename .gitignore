@@ -97,8 +97,14 @@ Release*
 *.bundle
 *.run
 
+
 ## Custom ignores for git hooks
 .noupdatets
 .updatets
 .gitmodules
 test-pre-commit.sh
+
+## Project specific
+## .synaptic is synapyic package lists file
+*.old
+*.synaptic
