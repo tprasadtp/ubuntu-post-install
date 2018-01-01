@@ -256,7 +256,7 @@ Following repositories are conditional and are determined based on the flags or 
 
   Canonical partner repositories are not configured or enabled for derivatives of Ubuntu because they have their own config file.
 
-- WineHQ & Docker-Community-Edition (default do not add)
+- WineHQ & Docker-Community-Edition (default adds repositories)
 
   WineHQ and Docker-CE have a boolean switch mentioned in beginning of the script and by default are as follows. Change according to your needs. If you re using 16.04 and above leaving this unchanged is the best option.
 
@@ -264,7 +264,7 @@ Following repositories are conditional and are determined based on the flags or 
 ```
 #============================ Switches/ bools ================================
 # Latest wine builds
-readonly add_winehq_repo=false
+readonly add_winehq_repo=true
 
 #Docker community edition
 readonly add_docker_repo=true

@@ -133,7 +133,7 @@ function _init_script_variables()
 
   #============================ Switches/ bools ================================
   # Latest wine builds
-  readonly add_winehq_repo=false
+  readonly add_winehq_repo=true
 
   #Docker community edition
   readonly add_docker_repo=true
