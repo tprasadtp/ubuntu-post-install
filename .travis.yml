@@ -11,6 +11,8 @@ jobs:
       env: TEST_ENV="Shellcheck"
       script: ./tests/test-shell-scripts
     - stage: Test-Scripts-In-Containers
+       env: TEST_ENV="Artful-Docker"
+       script: ./tests/test-artful
     - # Test in Xenial Container (Ubuntu 16.04)
       env: TEST_ENV="Xenial-Docker"
       script: ./tests/test-xenial

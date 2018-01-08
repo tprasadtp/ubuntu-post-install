@@ -14,5 +14,5 @@ echo "Adding Xenial and above list to app-list.list"
 echo "./data/xenial-above.list" >> ./data/app-list.list
 echo "Running in Docker Artful"
 docker run -t -v "$(pwd)":/shared ubuntu:ae-artful /bin/bash -c "cd /shared; TRAVIS=true ./after-effects --yes --simulate "
-cat something.txt
+cat something.txt 
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
