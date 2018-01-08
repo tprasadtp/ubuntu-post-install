@@ -1208,6 +1208,7 @@ function main()
   fi
   #Logs exit and exit code of script
   _script_exit_log
+  exit 510;
 }
 
 
