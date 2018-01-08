@@ -41,7 +41,7 @@ Github URL: https://github.com/tprasadtp/ubuntu-post-install-data
   git clone --recursive --depth 1 https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install
   ```
 
-### Without Git GUI way (mostly)
+### Without Git
   - Use git or the command line way! It's much much easier trust me!!
   - Download this repository [here](https://github.com/tprasadtp/ubuntu-post-install/archive/master.zip)
   - Download the list files from [here](https://github.com/tprasadtp/ubuntu-post-install-data/archive/master.zip)
@@ -90,7 +90,7 @@ This Script is for automating the installation and configuration of a Fresh Ubun
 Usually nothing extra! Your base Ubuntu install comes with all the commands/utilities this script uses, unless you are running this on Ubuntu docker image.
 - The script itself depends on following utilities which are usually present on a typical Ubuntu/Ubuntu based installation.
 `lsb-release, whiptail, wget, iputils-ping, bash`
-- Some functions of the script (Add, Remove PPAs and add Repositoris) depend on following dependencies.
+- Some functions of the script (Add, Remove PPAs and add Repositories) depend on following dependencies.
 ```
 apt-transport-https
 ca-certificates
@@ -136,7 +136,7 @@ You might see ans error like this,
 ./after-effects: line 42: lsb_release: command not found
 ./after-effects: line 43: lsb_release: command not found
 ./after-effects: line 44: lsb_release: command not found
-[    Notice     ] Following details were recognised by the Script.
+[    Notice     ] Following details were recognized by the Script.
 [     Info      ] Distro:
 [     Info      ] Version:
 [     Info      ] Code Name:
@@ -151,6 +151,16 @@ You might see ans error like this,
 - It means that you do not have _lsb-release_ package installed. It happens usually on docker containers. See [What are its dependencies? What do I need on my system to run this?](#what-are-its-dependencies-what-do-i-need-on-my-system-to-run-this)
 - Install `lsb-release` package using `apt-get -y install lsb-release`
 - In the case above you are probably missing other dependencies as well. It might be a good idea to install those dependencies first.
+
+## What if I get an error saying this release of Ubuntu is no longer supported.?
+```
+[      EOL      ] This release of Ubuntu is no longer supported.
+[    Notice     ] zesty reached EOL on January 13th, 2018.
+[    Notice     ] Please use a supported version of Ubuntu.
+[     Info      ] You can upgrade EOL releases to supported using the link below
+```
+This Simply means that you are using a version of Ubuntu that is no longer supported.
+Please visit https://help.ubuntu.com/community/EOLUpgrades to see how to Upgrade. If its a fresh install, It is recommended that you re-install latest supported version of Ubuntu(LTS or otherwise)
 
 ## Linux Mint 17.X and PPA priorities
 > This applies only for Linux Mint 17, 17.1 17.2
@@ -179,7 +189,7 @@ All other components ("main", "import", "backport", "romeo") as well as the "ext
 ## Fix for latest Ubuntu Releases
 - **`-f` or `--fix`**
 
-  Usually it takes a while for additional Repositories (Docker. google cloud sdk etc) to add support for latest release of Ubuntu. However we can use the previous release for which
+  Usually it takes a while for additional Repositories (Docker. Google cloud SDK etc) to add support for latest release of Ubuntu. However we can use the previous release for which
   packages are available. So usually using packages built for previous release works fine most of the time. This is also good fix if you are running a alpha or beta release of Ubuntu.
   Following repositories  which use this fix.
   ```
@@ -192,8 +202,8 @@ All other components ("main", "import", "backport", "romeo") as well as the "ext
   - By default this option is disabled.
   - Use `sudo ./after-effects -f` or `sudo ./after-effects --fix` to enable this.
 
-  - Repositories like Spotify and google chrome do not use codenames in their repository urls. So the above workaround is not necessary.
-  - Derivatives of Ubuntu will use the codename of ubuntu on which they are based. For example Linux mint 18.2 Serena will use codename xenial since it is based on Ubuntu 16.04 Xenial Xerus
+  - Repositories like Spotify and Google chrome do not use code names in their repository urls. So the above workaround is not necessary.
+  - Derivatives of Ubuntu will use the codename of Ubuntu on which they are based. For example Linux mint 18.2 Serena will use codename xenial since it is based on Ubuntu 16.04 Xenial Xerus
   - This option applies only for the latest release mentioned in the variable `code_name_latest_release`. and will be ignored if the release is not latest.
   - Variables in current version are (As of Dec 2017)
   ```
@@ -203,9 +213,9 @@ All other components ("main", "import", "backport", "romeo") as well as the "ext
   ```
   change them if necessary.
 
-  > If you are using a pre release version of Ubuntu, you can use `--pre-release` falg to apply the above mentioned fix to pre-release version of ubuntu. This flag can be used independent of `--fix`. If both are used together then both flags will be applied if the release is upcoming-release. otherwise if the release is stable only `--fix` flag will be valid and `--pre-release` is ignored.
+  > If you are using a pre release version of Ubuntu, you can use `--pre-release` falg to apply the above mentioned fix to pre-release version of Ubuntu. This flag can be used independent of `--fix`. If both are used together then both flags will be applied if the release is upcoming-release. otherwise if the release is stable only `--fix` flag will be valid and `--pre-release` is ignored.
   This is how it works:  If the repositories are  not available for latest stable release as well, go back a release.
-  Eg. If the pre-release is 18.04 and the repo is not available for 17.10 as well, we use 17.04 repositories.
+  Ex. If the pre-release is 18.04 and the repo is not available for 17.10 as well, we use 17.04 repositories.
   Usually happens in first few days of development cycle of 18.04.
 
 
@@ -217,7 +227,7 @@ All other components ("main", "import", "backport", "romeo") as well as the "ext
 ## Purge not required pacakges
 - **`-d` or `--deboalt`**
 
-  Usually Ubuntu comes with some pre-installed games, packages which you sometimes do not need. This option is a switch to used in purging these packages mentioned in the subsequent sections. Since it is possible that user might purge necessary packages like sudo or other core system componetnts, these just acts like a barrier from accidentally doing so.
+  Usually Ubuntu comes with some pre-installed games, packages which you sometimes do not need. This option is a switch to used in purging these packages mentioned in the subsequent sections. Since it is possible that user might purge necessary packages like sudo or other core system components, these just acts like a barrier from accidentally doing so.
 
   > This flag **MUST** be passed if you intend to purge packages from system. Otherwise you will receive an error.
 
@@ -355,14 +365,13 @@ A log file is generated containing all the output generated by the apt and other
 ## Logs
 Logs are written to a file `<current-dir>/after-effects-logs/after-effects.log`. Timestamps in the logs may not be accurate because some commands buffer outputs.
 
-
 ## What if script or Ubuntu crashes?
 Simple. Reboot (Force it if you wish). If you know where it was stuck/crashed, just re-run the task(s) which were not completed. If you dont know, go and check log file. Each task is labelled and is clearly logged before starting and after completing. Just run the tasks which did not complete. You dont have to re-download the packages you have already downloaded, because they are already cached by apt-get.
 
-Remember, some operations of the script can be very lengthy and can involve lots of downloads (If you used default list files, expect upto 2 GB of traffic). So, it might appear that script is stuck because cursor stops blinking. However it is not the case. If you are unsure please check the logs. In rare cases where your Ubuntu crashed while installing a DEB file which has unmet dependencies, you might see broken packages error. In that case run `sudo apt-get install -f` to fux the broken packages and re run the script. If you see any errors or script crashes please do not hesitate to open an issue on Github.
+Remember, some operations of the script can be very lengthy and can involve lots of downloads (If you used default list files, expect up to 2 GB of traffic). So, it might appear that script is stuck because cursor stops blinking. However it is not the case. If you are unsure please check the logs. In rare cases where your Ubuntu crashed while installing a DEB file which has unmet dependencies, you might see broken packages error. In that case run `sudo apt-get install -f` to fix the broken packages and re run the script. If you see any errors or script crashes please do not hesitate to open an issue on Github.
 
 ## Support for Fedora/ Scientific Linux / Open SUSE / Debian / <put your favorite distro>
-Its in the pipeline, but I cannot gurantee anything. Since I do not use anything other than Open SUSE very often, so it might take a while. But you can modify this repository very easily to achieve that. You need to do these things
+Its in the pipeline, but I cannot guarantee anything. Since I do not use anything other than Open SUSE very often, so it might take a while. But you can modify this repository very easily to achieve that. You need to do these things
 - Replace apt-get with their equivalents (dnf or zypper or yum etc)
 - Replace/Modify package names
 - Change add-repositories function to point to .repo files
@@ -373,7 +382,7 @@ On the way!
 
 ## Windows?
 I thought you would never ask. This script itself should run fine on WSL. However I have not tested it extensively. Use caution. Since WSL supports running windows executables, you might be able to use choco to install windows apps.
-I have a really crude script for windows which has zero options to configure it easily. But it gets the job done in my case. Please check [My Scripts](https://github.com/tprasad/my-scripts). Its a modified version of Jessica Frezelle's gist. Details on any of these is beyond scope of this readme.
+I have a really crude script for windows which has zero options to configure it easily. But it gets the job done in my case. Please check [My Scripts](https://github.com/tprasad/my-scripts). Its a modified version of Jessica Frezelle's gist. Details on any of these are beyond scope of this readme.
 
 
 
@@ -389,12 +398,10 @@ I have a really crude script for windows which has zero options to configure it 
 Following Tests are done on travis-ci.
 
 - shellcheck every executable script (Job #build.1)
-- Run the Script in simulate mode on Travis CI in Ubuntu Trusty image (Not since Version 3.1)
 - Run the Script in simulate mode on Travis CI in docker image built using Dockerfiles in `/dockerfiles` directory
 - Test on Artful container (Job #build.2)
 - Test on Xenial container (Job #build.3)
-- Test on Zesty  container  (Deprecated in January 2018)
-- Test on Bionic Beaver daily images (Job #build.5) from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
+- Test on Bionic Beaver daily images (Job #build.4) from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
 - Dockerfiles used for building the image are in `/dockerfiles` directory, they use official Ubuntu base images with script dependencies.
 - Dockerfile for Bionic is using `http://cdimage.ubuntu.com/ubuntu-base/daily` root file system, as official images are not available yet.
 - Test scripts are located in `/tests` directory.
@@ -410,6 +417,8 @@ Use this script with caution! Though I have tested it on VMs and Travis somethin
   - Drop CI tests on Trusty Its painful to maintain lists for Trusty as many PPAs and packages are not available or have a different name. Trusty is still supported but Travis CI tests will not be run on Trusty as host or in container. So use it with caution. End user will probably change the list anyway so it doesn't matter.
   - Switch to submodules for data directory
   - List files have their own repo now.
+  - Zesty reaches EOL soon. Remove it.
+  - Use daily images for bionic
 
 ## _v3.1_
  ##### Added Support for Ubuntu Bionic Beaver

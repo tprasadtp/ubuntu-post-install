@@ -379,10 +379,10 @@ function _fix_ubuntu_derivatives()
                                             _log_and_show "${_notice} $code_name reached EOL on $_eol_date_zesty."
                                             set_yellow
                                             _log_and_show "${_notice} Please use a supported version of Ubuntu."
-                                            _log_and_show "${_info} You can upgrade EOL releases to supported using the link below"
+                                            _log_and_show "${_info} You can upgrade EOL releases to supported using the link below."
                                             set_blue;
+                                            _log_and_show "${_info} https://help.ubuntu.com/community/EOLUpgrades."
                                             _log_and_exit "EOL Release : $code_name" "999";
-                                            _log_and_show "${_info} https://help.ubuntu.com/community/EOLUpgrades"
                                             ;;
       bionic )                              set_magenta
                                             _log_and_show "${_canonical} No known derivative of Ubuntu found."
