@@ -157,7 +157,7 @@ You might see ans error like this,
 [      EOL      ] This release of Ubuntu is no longer supported.
 [    Notice     ] zesty reached EOL on January 13th, 2018.
 [    Notice     ] Please use a supported version of Ubuntu.
-[     Info      ] You can upgrade EOL releases to supported using the link below
+[     Info      ] Please visit the link below for information on how to upgrade.
 ```
 This Simply means that you are using a version of Ubuntu that is no longer supported.
 Please visit https://help.ubuntu.com/community/EOLUpgrades to see how to Upgrade. If its a fresh install, It is recommended that you re-install latest supported version of Ubuntu(LTS or otherwise)
@@ -189,7 +189,7 @@ All other components ("main", "import", "backport", "romeo") as well as the "ext
 ## Fix for latest Ubuntu Releases
 - **`-f` or `--fix`**
 
-  Usually it takes a while for additional Repositories (Docker. Google cloud SDK etc) to add support for latest release of Ubuntu. However we can use the previous release for which
+  Usually it takes a while for additional Repositories (Docker, Google Cloud SDK etc) to add support for latest release of Ubuntu. However we can use the previous release for which
   packages are available. So usually using packages built for previous release works fine most of the time. This is also good fix if you are running a alpha or beta release of Ubuntu.
   Following repositories  which use this fix.
   ```
@@ -202,7 +202,7 @@ All other components ("main", "import", "backport", "romeo") as well as the "ext
   - By default this option is disabled.
   - Use `sudo ./after-effects -f` or `sudo ./after-effects --fix` to enable this.
 
-  - Repositories like Spotify and Google chrome do not use code names in their repository urls. So the above workaround is not necessary.
+  - Repositories like Spotify and Google Chrome do not use code names in their repository URLs. So the above workaround is not necessary.
   - Derivatives of Ubuntu will use the codename of Ubuntu on which they are based. For example Linux mint 18.2 Serena will use codename xenial since it is based on Ubuntu 16.04 Xenial Xerus
   - This option applies only for the latest release mentioned in the variable `code_name_latest_release`. and will be ignored if the release is not latest.
   - Variables in current version are (As of Dec 2017)
