@@ -7,8 +7,8 @@
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
 set -eo pipefail
-export TRAVIS_ALLOW_FAILURE=true
-set -o pipefail
+readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+log_file="$dir"/after-effects-logs/after-effects.log
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "Building Bionic Docker Image"
 echo "Getting Bionic Daily Image"
@@ -19,4 +19,11 @@ echo "Adding Xenial and above list to app-list.list"
 echo "./data/xenial-above.list" >> ./data/app-list.list
 echo "Running in Docker Bionic"
 docker run -t -v "$(pwd)":/shared ubuntu:ae-bionic /bin/bash -c "cd /shared; TRAVIS=true ./after-effects --yes --simulate --pre-release"
-echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo "Exit code from docker run is: $?"
+echo "Print Logs is set to: $PRINT_LOGS"
+if [ "$PRINT_LOGS" == "true" ]; then
+  echo " "
+  echo " "
+  echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  cat "$log_file"
+fi

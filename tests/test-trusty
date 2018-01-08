@@ -7,9 +7,18 @@
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
 set -eo pipefail
+readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+log_file="$dir"/after-effects-logs/after-effects.log
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "Testing On HOST"
 echo "Remove peek PPA"
 sed -i '$ d' ./data/ppa.list
 sudo ./after-effects -y -s
-echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo "Exit code from  run is: $?"
+echo "Print Logs is set to: $PRINT_LOGS"
+if [ "$PRINT_LOGS" == "true" ]; then
+  echo " "
+  echo " "
+  echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  cat "$log_file"
+fi

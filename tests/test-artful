@@ -7,6 +7,8 @@
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
 set -eo pipefail
+readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+log_file="$dir"/after-effects-logs/after-effects.log
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "Building Artful Docker Image"
 docker build -t ubuntu:ae-artful ./dockerfiles/artful
@@ -14,5 +16,11 @@ echo "Adding Xenial and above list to app-list.list"
 echo "./data/xenial-above.list" >> ./data/app-list.list
 echo "Running in Docker Artful"
 docker run -t -v "$(pwd)":/shared ubuntu:ae-artful /bin/bash -c "cd /shared; TRAVIS=true ./after-effects --yes --simulate "
-cat something.txt 
-echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo "Exit code from docker run is: $?"
+echo "Print Logs is set to: $PRINT_LOGS"
+if [ "$PRINT_LOGS" == "true" ]; then
+  echo " "
+  echo " "
+  echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  cat "$log_file"
+fi

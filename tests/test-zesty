@@ -8,6 +8,8 @@
 
 set -e
 set -o pipefail
+readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+log_file="$dir"/after-effects-logs/after-effects.log
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "Building Zesty Docker Image"
 docker build -t ubuntu:ae-zesty ./dockerfiles/zesty
@@ -15,4 +17,11 @@ echo "Adding Xenial and above list to app-list.list"
 echo "./data/xenial-above.list" >> ./data/app-list.list
 echo "Running in Docker Zesty"
 docker run -t -v "$(pwd)":/shared ubuntu:ae-zesty /bin/bash -c "cd /shared; TRAVIS=true /shared/after-effects -y -s"
-echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo "Exit code from docker run is: $?"
+echo "Print Logs is set to: $PRINT_LOGS"
+if [ "$PRINT_LOGS" == "true" ]; then
+  echo " "
+  echo " "
+  echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  cat "$log_file"
+fi
