@@ -105,6 +105,6 @@ Release*
 test-pre-commit.sh
 
 ## Project specific
-## .synaptic is synapyic package lists file
+## .synaptic is synaptic package lists file
 *.old
 *.synaptic
