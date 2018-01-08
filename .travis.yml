@@ -7,18 +7,16 @@ before_install:
   - chmod +x ./tests/*
 jobs:
   include:
-    - stage: shellcheck
-      env: TEST_ENV="Shellcheck"
-      script: ./tests/test-shell-scripts
-    - stage: docker-containers
-      env: TEST_ENV="Artful-Docker"
-      script: ./tests/test-artful
-    - # Test in Xenial Container (Ubuntu 16.04)
-      env: TEST_ENV="Xenial-Docker"
-      script: ./tests/test-xenial
-    - # Test in Bionic Container (Ubuntu 18.04)
-      env: TEST_ENV="Bionic-Docker"
-      script: ./tests/test-bionic
+  - stage: shellcheck
+    env: TEST_ENV="Shellcheck"
+    script: ./tests/test-shell-scripts
+  - stage: docker
+    env: TEST_ENV="Artful-Docker"
+    script: "./tests/test-artful"
+  - env: TEST_ENV="Xenial-Docker"
+    script: "./tests/test-xenial"
+  - env: TEST_ENV="Bionic-Docker"
+    script: "./tests/test-bionic"
 matrix:
   fast_finish: true
   allow_failures:
