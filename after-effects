@@ -380,10 +380,10 @@ function _fix_ubuntu_derivatives()
                                             set_yellow
                                             _log_and_show "${_notice} Please use a supported version of Ubuntu."
                                             _log_and_show "${_info} You can upgrade EOL releases to supported using the link below"
-                                            set_blue
-                                            _log_and_exit "EOL Release : $codename" "999"
-                                            ;;
+                                            set_blue;
+                                            _log_and_exit "EOL Release : $code_name" "999";
                                             _log_and_show "${_info} https://help.ubuntu.com/community/EOLUpgrades"
+                                            ;;
       bionic )                              set_magenta
                                             _log_and_show "${_canonical} No known derivative of Ubuntu found."
                                             _log_and_show "${_pre_release} This is Ubuntu 18.04 Bionic Beaver"
