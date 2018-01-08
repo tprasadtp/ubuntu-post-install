@@ -6,8 +6,7 @@
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
-set -e
-set -o pipefail
+set -eo pipefail
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "Building Artful Docker Image"
 docker build -t ubuntu:ae-artful ./dockerfiles/artful

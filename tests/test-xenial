@@ -6,8 +6,7 @@
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
-set -e
-set -o pipefail
+set -eo pipefail
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "Building Xenial Docker Image"
 docker build -t ubuntu:ae-xenial ./dockerfiles/xenial

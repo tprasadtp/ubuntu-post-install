@@ -6,7 +6,8 @@
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
-set -e
+set -eo pipefail
+exit 1 # remove later
 export TRAVIS_ALLOW_FAILURE=true
 set -o pipefail
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
