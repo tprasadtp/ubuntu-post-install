@@ -107,7 +107,6 @@ They will be installed if necessary, without confirmation.
 ```
 Ubuntu 17.10        Artful Aardvark
 Ubuntu 18.04        Bionic Beaver (Experimental Support for Upcoming Release)
-Ubuntu 17.04        Zesty Zapus (Soon will reach EOL Jan-2018 )
 Ubuntu 16.04        Xenial Xerus
 Ubuntu 14.04        Trusty Thar
 Linux Mint 17       Quina
@@ -120,7 +119,6 @@ Linux-Mint 18.2     Sonya
 Linux-Mint 18.3     Sylvia
 Elementary-OS       Freya
 Elementary-OS       Loki
-Elementary-OS       Juno (Upcoming Release)
 Official Ubuntu Flavors for above mentioned Ubuntu releases.
 ```
 - Though 32 bit is supported, Testing in Travis CI, containers and locally all are done using 64 bit machine, host, vm and containers. If something breaks please report it and use it with caution.
@@ -395,7 +393,7 @@ Following Tests are done on travis-ci.
 - Run the Script in simulate mode on Travis CI in docker image built using Dockerfiles in `/dockerfiles` directory
 - Test on Artful container (Job #build.2)
 - Test on Xenial container (Job #build.3)
-- Test on Zesty  container (Job #build.4) (Will be deprecated in January 2018)
+- Test on Zesty  container  (Deprecated in January 2018)
 - Test on Bionic Beaver daily images (Job #build.5) from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
 - Dockerfiles used for building the image are in `/dockerfiles` directory, they use official Ubuntu base images with script dependencies.
 - Dockerfile for Bionic is using `http://cdimage.ubuntu.com/ubuntu-base/daily` root file system, as official images are not available yet.

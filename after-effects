@@ -81,6 +81,9 @@ function _init_printf_variables()
     readonly        _version="[    Version    ]"
     readonly       _checking="[    Checking   ]"
     readonly        _checked="[    Checked    ]"
+    readonly            _eol="[      EOL      ]"
+    readonly _eol_date_zesty="January 13th, 2018"
+    readonly        eol_upgrade_url="https://help.ubuntu.com/community/EOLUpgrades"
 
 
     #readonly           _falg="[     Flag      ]"
@@ -366,11 +369,21 @@ function _fix_ubuntu_derivatives()
                                             _log_and_show "${_elementary} Changed codename to $code_name"
                                             bool_config_partner_repo="false"
                                             ;;
-      xenial | trusty | artful | zesty )    _log_and_show "${_canonical} No known derivative of Ubuntu found."
+      xenial | trusty | artful )            _log_and_show "${_canonical} No known derivative of Ubuntu found."
                                             set_default;
                                             _log_and_show "${_info} Keeping the codename as: $code_name."
                                             _log_and_show "${_notice} If installation fails or errors out, please report.";
                                             ;;
+      zesty )                               set_magenta
+                                            _log_and_show "${_eol} This release of Ubuntu is no longer supported."
+                                            _log_and_show "${_notice} $code_name reached EOL on $_eol_date_zesty."
+                                            set_yellow
+                                            _log_and_show "${_notice} Please use a supported version of Ubuntu."
+                                            _log_and_show "${_info} You can upgrade EOL releases to supported using the link below"
+                                            set_blue
+                                            _log_and_exit "EOL Release : $codename" "999"
+                                            ;;
+                                            _log_and_show "${_info} https://help.ubuntu.com/community/EOLUpgrades"
       bionic )                              set_magenta
                                             _log_and_show "${_canonical} No known derivative of Ubuntu found."
                                             _log_and_show "${_pre_release} This is Ubuntu 18.04 Bionic Beaver"
