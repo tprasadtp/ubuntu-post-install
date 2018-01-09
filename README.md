@@ -427,6 +427,9 @@ Following Tests are done on travis-ci.
 - Run the Script in simulate mode on Travis CI in docker image built using Dockerfiles in `/dockerfiles` directory
 - Test on Artful container (Job #build.2)
 - Test on Xenial container (Job #build.3)
+- Test on Trusty (Host) (Job #build.4)
+> Trusty tests not install indicator-kdeconnect, peek, openjdk-8-jdk, gnome-todo , gnome-calendar, polari and their PPAs (if available) as they are not available for trusty . Please modify your lists accordingly.
+
 - Test on Bionic Beaver daily images (Job #build.4) from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
 - Dockerfiles used for building the image are in `/dockerfiles` directory, they use official Ubuntu base images with script dependencies.
 - Dockerfile for Bionic is using `http://cdimage.ubuntu.com/ubuntu-base/daily` root file system, as official images are not available yet.
@@ -440,7 +443,9 @@ Use this script with caution! Though I have tested it on VMs and Travis somethin
 # Changelogs
 
 ## _v3.2_
-  - Drop CI tests on Trusty Its painful to maintain lists for Trusty as many PPAs and packages are not available or have a different name. Trusty is still supported but Travis CI tests will not be run on Trusty as host or in container. So use it with caution. End user will probably change the list anyway so it doesn't matter.
+  - Allow Bionic test to fail
+  - Better handling of exit status. Tests will fail if any command in script fails.
+  - Only print logs if there is an error or a flag is pased.
   - Switch to submodules for data directory
   - List files have their own repo now.
   - Zesty reaches EOL soon. Remove it.
@@ -457,9 +462,6 @@ Use this script with caution! Though I have tested it on VMs and Travis somethin
   - Drop google-cloud-sdk from fix_repo_not_available. Use `--pre-release` if using beta/alpha Ubuntu release.
   - Add Visual studio to repos instead of deb files
   - Rename logging directory to after-effects
-
-
-
 
 
 ## _v3.0_
