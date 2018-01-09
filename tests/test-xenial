@@ -13,7 +13,7 @@ echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo "Building Xenial Docker Image"
 docker build -t ubuntu:ae-xenial ./dockerfiles/xenial
 echo "Running in Docker Xenial"
-docker run -it -e TRAVIS="$TRAVIS" -v "$(pwd)":/shared ubuntu:ae-artful /shared/after-effects --simulate --yes
+docker run -it -e TRAVIS="$TRAVIS" -v "$(pwd)":/shared ubuntu:ae-xenial /shared/after-effects --simulate --yes
 echo "Exit code from docker run is: $?"
 echo "Print Logs is set to: $PRINT_LOGS"
 if [ "$PRINT_LOGS" == "true" ]; then

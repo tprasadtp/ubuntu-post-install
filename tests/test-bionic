@@ -18,7 +18,7 @@ docker build -t ubuntu:ae-bionic ./dockerfiles/bionic
 echo "Adding Xenial and above list to app-list.list"
 echo "./data/xenial-above.list" >> ./data/app-list.list
 echo "Running in Docker Bionic"
-docker run -it -e TRAVIS="$TRAVIS" -v "$(pwd)":/shared ubuntu:ae-artful /shared/after-effects --simulate --yes --pre-release
+docker run -it -e TRAVIS="$TRAVIS" -v "$(pwd)":/shared ubuntu:ae-bionic /shared/after-effects --simulate --yes --pre-release
 echo "Exit code from docker run is: $?"
 echo "Print Logs is set to: $PRINT_LOGS"
 if [ "$PRINT_LOGS" == "true" ]; then
