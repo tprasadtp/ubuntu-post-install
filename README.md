@@ -430,7 +430,7 @@ Following Tests are done on travis-ci.
 - Test on Trusty (Host) (Job #build.4)
 > Trusty tests not install indicator-kdeconnect, peek, openjdk-8-jdk, gnome-todo , gnome-calendar, polari and their PPAs (if available) as they are not available for trusty . Please modify your lists accordingly.
 
-- Test on Bionic Beaver daily images (Job #build.4) from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
+- Test on Bionic Beaver daily images (Job #build.5) from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
 - Dockerfiles used for building the image are in `/dockerfiles` directory, they use official Ubuntu base images with script dependencies.
 - Dockerfile for Bionic is using `http://cdimage.ubuntu.com/ubuntu-base/daily` root file system, as official images are not available yet.
 - Test scripts are located in `/tests` directory.
@@ -445,7 +445,7 @@ Use this script with caution! Though I have tested it on VMs and Travis somethin
 ## _v3.2_
   - Allow Bionic test to fail
   - Better handling of exit status. Tests will fail if any command in script fails.
-  - Only print logs if there is an error or a flag is pased.
+  - Only print logs if there is an error or a flag is passed.
   - Switch to submodules for data directory
   - List files have their own repo now.
   - Zesty reaches EOL soon. Remove it.
