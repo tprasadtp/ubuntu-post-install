@@ -6,7 +6,7 @@
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
-set -eo pipefail
+set -o pipefail
 function main()
 {
   dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
@@ -34,6 +34,7 @@ function main()
   exit_code_from_container=$?
   echo "Exit code from docker run is: $exit_code_from_container"
   echo "Print Logs is set to: $PRINT_LOGS"
+  echo "Print Pre Release Logs is set to: $PRINT_PRE_RELEASE_LOGS"
   if [ "$PRINT_LOGS" == "true" ] || [ "$PRINT_PRE_RELEASE_LOGS" == "true" ]; then
     echo " "
     echo " "

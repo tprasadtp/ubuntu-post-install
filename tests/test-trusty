@@ -6,7 +6,7 @@
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
-set -eo pipefail
+set -o pipefail
 function main()
 {
   dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
