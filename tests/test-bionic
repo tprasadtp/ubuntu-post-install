@@ -6,9 +6,12 @@
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
-set -eo pipefail
-readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+set -o pipefail
+dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+dir=$(echo ${dir/tests/})
 log_file="$dir"/after-effects-logs/after-effects.log
+# set eo on script.
+sed -i 's/set -o pipefail/set -eo pipefail/g' $dir/after-effects
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "Building Bionic Docker Image"
 echo "Getting Bionic Daily Image"
@@ -18,10 +21,18 @@ docker build -t ubuntu:ae-bionic ./dockerfiles/bionic
 echo "Adding Xenial and above list to app-list.list"
 echo "./data/xenial-above.list" >> ./data/app-list.list
 echo "Running in Docker Bionic"
-docker run -it -e TRAVIS="$TRAVIS" -v "$(pwd)":/shared ubuntu:ae-bionic /shared/after-effects --simulate --yes --pre-release
-echo "Exit code from docker run is: $?"
+
+docker run -it -e TRAVIS="$TRAVIS" \
+-e PRINT_LOGS="$PRINT_LOGS" \
+--hostname=Docker-Bionic \
+-v "$(pwd)":/shared \
+ubuntu:ae-bionic \
+/shared/after-effects --simulate --yes --pre-release
+
+exit_code_from_container=$?
+echo "Exit code from docker run is: $exit_code_from_container"
 echo "Print Logs is set to: $PRINT_LOGS"
-if [ "$PRINT_LOGS" == "true" ]; then
+if [ "$PRINT_LOGS" == "true" ] || [[ "$exit_code_from_container" -gt 0 ]]; then
   echo " "
   echo " "
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"

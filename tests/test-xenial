@@ -6,17 +6,26 @@
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
-set -eo pipefail
-readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+set -o pipefail
+dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+dir=$(echo ${dir/tests/})
 log_file="$dir"/after-effects-logs/after-effects.log
+# set eo on script.
+sed -i 's/set -o pipefail/set -eo pipefail/g' $dir/after-effects
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "Building Xenial Docker Image"
-docker build -t ubuntu:ae-xenial ./dockerfiles/xenial
-echo "Running in Docker Xenial"
-docker run -it -e TRAVIS="$TRAVIS" -v "$(pwd)":/shared ubuntu:ae-xenial /shared/after-effects --simulate --yes
-echo "Exit code from docker run is: $?"
+
+docker run -it -e TRAVIS="$TRAVIS" \
+-e PRINT_LOGS="$PRINT_LOGS" \
+--hostname=Docker-Xenial \
+-v "$(pwd)":/shared \
+ubuntu:ae-xenial \
+/shared/after-effects --simulate --yes
+
+exit_code_from_container=$?
+echo "Exit code from docker run is: $exit_code_from_container"
 echo "Print Logs is set to: $PRINT_LOGS"
-if [ "$PRINT_LOGS" == "true" ]; then
+if [ "$PRINT_LOGS" == "true" ] || [[ "$exit_code_from_container" -gt 0 ]]; then
   echo " "
   echo " "
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"

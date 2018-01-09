@@ -6,9 +6,12 @@
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
-set -eo pipefail
-readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+set -o pipefail
+dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+dir=$(echo ${dir/tests/})
 log_file="$dir"/after-effects-logs/after-effects.log
+# set eo on script.
+sed -i 's/set -o pipefail/set -eo pipefail/g' $dir/after-effects
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "Testing On HOST"
 echo "Remove peek PPA"
@@ -16,7 +19,7 @@ sed -i '$ d' ./data/ppa.list
 sudo ./after-effects --yes --simulate
 echo "Exit code from  run is: $?"
 echo "Print Logs is set to: $PRINT_LOGS"
-if [ "$PRINT_LOGS" == "true" ]; then
+if [ "$PRINT_LOGS" == "true" ] || [[ "$exit_code_from_container" -gt 0 ]]; then
   echo " "
   echo " "
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
