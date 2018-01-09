@@ -1211,7 +1211,7 @@ function main()
     set_blue;
     _log_and_show "${_travis} RUNNING in TRAVIS CI"
     set_default
-    _log_and_exit "Because I can" "255"
+    #_log_and_exit "Because I can" "255"
     all_in_one;
     _line_fill;
 
