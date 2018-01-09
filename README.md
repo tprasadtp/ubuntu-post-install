@@ -327,7 +327,7 @@ The file will be read and the PPAs will be added from the list.
 ## Install Apps
 - Packages can be installed by using configuration lists in the data directory. This works similar to ppa list However its slightly different.
 - There is one master list or list of lists which contains the path to the list files from which the packages are to be installed.
-- This master list should contain the full path/ relative to the root of the project to the file containing the list.
+- This master list should contain the path to list files relative to script in following manner, `<dir-relative-to-script>/<list file>`. For example if you have a list file security.list in data directory, then entry should look exactly like `data/security.list`
 - packages in the files will not be installed if that file does not appear in the master list.
 - It helps keeping things separate for separate machines or needs. Minimal edit is required to switch from one list to another than rewriting the entire list file.
 - The Master list is named `app-list.list` and **MUST** only contain the list files one entry per line. **NO** comments or anything else is allowed.
