@@ -32,7 +32,7 @@ ubuntu:ae-bionic \
 exit_code_from_container=$?
 echo "Exit code from docker run is: $exit_code_from_container"
 echo "Print Logs is set to: $PRINT_LOGS"
-if [ "$PRINT_LOGS" == "true" ] || [[ "$exit_code_from_container" -gt 0 ]]; then
+if [ "$PRINT_LOGS" == "true" ] || [ "$PRINT_PRE_RELEASE_LOGS" == "true" ]; then
   echo " "
   echo " "
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
