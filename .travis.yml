@@ -17,6 +17,8 @@ jobs:
     script: "./tests/test-xenial"
   - env: TEST_ENV="Bionic-Docker"
     script: "./tests/test-bionic"
+  - env: TEST_ENV="Trusty"
+    script: "./tests/test-trusty"
 matrix:
   fast_finish: true
   allow_failures:
