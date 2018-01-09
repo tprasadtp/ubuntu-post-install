@@ -52,17 +52,9 @@ Github URL: https://github.com/tprasadtp/ubuntu-post-install-data
 
 
 ## Step 2: Update the lists to suit your needs (Optional)
-Update the list files to suit your needs. Change PPAs, add or delete packges to list, tweak booleans etc.
-### If you are using default lists,
-Please remove the lines
-```
-./data/linux-mint.list
-./data/gnome-online-accounts.list
-./data/github-bot-essentials.list
-```
-as they are specific to my setup and are intended to be used on linux mint installation. (Specifically Linux Mint 18.3)
+Update the list files to suit your needs. Change PPAs, add or delete packages to list, tweak booleans etc.
 
-> First time you might want to use simulate flag. `sudo ./after-effects -s`
+
 
 ## Step 3: Run the script
 Run the script as **root**
@@ -242,6 +234,40 @@ All other components ("main", "import", "backport", "romeo") as well as the "ext
 
 This Script is written to be as flexible as possible. The script itself does not contain any packages or ppas to be added or deb files to installed. Configurations live in directory /data. There are .list files for each purpose containing the necessary data and are easy to configure for your needs.
 
+### Package lists
+
+| File | Contents | Present in app-list |
+|:-----|:---------|:--------|
+| linux-mint.list | Specific for Linux Mint | No |
+| gnome-online-accounts.list | Specific for 16.04. For 17.04 and above use `goa.list` | No |
+| basic | List of packages which usually come pre-installed. Please don't add if you are not sure what you are doing. | No |
+| github-bot-essentials.list | Project specific | No |
+| administration | Administration Tools like Synaptic | Yes |
+| development | Used for development tasks eg: rake | Yes |
+| exten-repo | Packages from PPAs or External repositories. eg : Google Chrome, Spotify, Visual Studio Code, Google Cloud SDKs | Yes |
+| goa | Gnome online accounts specific packages. These are necessary to get goa working properly in Empathy. Use only on 17.04 and above. For 16.04 use gnome-online-accounts | Yes |
+| multimedia | Tools to edit photos and videos, video players and editors and downloaders. Tools like mpv, darktable, kdenlive. | Yes |
+| productivity | Email, Chat, Office tools, Document converters etc. | Yes |
+| security | Security related tools | Yes |
+| utilities | Utilities and Tools | Yes |
+| wine | Wine related packages like winetricks | Yes |
+| xenial-above | Packages re not available in xenial or below in Ubuntu repositories, but are available in 16.10 and later. | No (But is added during travis tests) |
+| latex | Latex related packages | Yes |
+
+---
+Non package related lists (settings, deb files, delete packages list). The use and format is explained in individual sections.
+
+| File | Contents | Used by function | Link to section |
+|:-----|:---------|:-----------------|:----------------|
+| gsettings | Various gsettings | None Yet | NA |
+| purge | List of packages to be purged | `purge_not_required` | [Link](#purge-unwanted-packages) |
+| ppa | List of ppas to be added | `add_ppas` | [Link](#l#add-ppas) |
+| deb-files | List of DEB files to be installed | `install_debs` | [Link](#l#add-ppas) |
+| get.mlist | Used by get-after-effects.sh to download required list files | [get-after-effects.sh](https://github.com/tprasadtp/ubuntu-post-install/blob/master/get-after-effects.sh) | --- |
+
+
+> After you customize, might want to use simulate flag. `sudo ./after-effects -s`
+
 ## Update Repositories
 This will update repository metadata. Errors might occur if there is missing key or mis-configured repositories.
 > Sometimes it is possible that some errors might occur even though the log says successfully updated. Its because script checks for exit status of the apt-get update command and its zero even if there are some errors. So use it with caution.
@@ -301,7 +327,7 @@ The file will be read and the PPAs will be added from the list.
 ## Install Apps
 - Packages can be installed by using configuration lists in the data directory. This works similar to ppa list However its slightly different.
 - There is one master list or list of lists which contains the path to the list files from which the packages are to be installed.
-- This master list should contain the full path/ relative to the root of the project to the file containing the list.
+- This master list should contain the path to list files relative to script in following manner, `<dir-relative-to-script>/<list file>`. For example if you have a list file security.list in data directory, then entry should look exactly like `data/security.list`
 - packages in the files will not be installed if that file does not appear in the master list.
 - It helps keeping things separate for separate machines or needs. Minimal edit is required to switch from one list to another than rewriting the entire list file.
 - The Master list is named `app-list.list` and **MUST** only contain the list files one entry per line. **NO** comments or anything else is allowed.
@@ -401,7 +427,10 @@ Following Tests are done on travis-ci.
 - Run the Script in simulate mode on Travis CI in docker image built using Dockerfiles in `/dockerfiles` directory
 - Test on Artful container (Job #build.2)
 - Test on Xenial container (Job #build.3)
-- Test on Bionic Beaver daily images (Job #build.4) from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
+- Test on Trusty (Host) (Job #build.4)
+> Trusty tests not install indicator-kdeconnect, peek, openjdk-8-jdk, gnome-todo , gnome-calendar, polari and their PPAs (if available) as they are not available for trusty . Please modify your lists accordingly.
+
+- Test on Bionic Beaver daily images (Job #build.5) from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
 - Dockerfiles used for building the image are in `/dockerfiles` directory, they use official Ubuntu base images with script dependencies.
 - Dockerfile for Bionic is using `http://cdimage.ubuntu.com/ubuntu-base/daily` root file system, as official images are not available yet.
 - Test scripts are located in `/tests` directory.
@@ -414,7 +443,9 @@ Use this script with caution! Though I have tested it on VMs and Travis somethin
 # Changelogs
 
 ## _v3.2_
-  - Drop CI tests on Trusty Its painful to maintain lists for Trusty as many PPAs and packages are not available or have a different name. Trusty is still supported but Travis CI tests will not be run on Trusty as host or in container. So use it with caution. End user will probably change the list anyway so it doesn't matter.
+  - Allow Bionic test to fail
+  - Better handling of exit status. Tests will fail if any command in script fails.
+  - Only print logs if there is an error or a flag is passed.
   - Switch to submodules for data directory
   - List files have their own repo now.
   - Zesty reaches EOL soon. Remove it.
@@ -431,9 +462,6 @@ Use this script with caution! Though I have tested it on VMs and Travis somethin
   - Drop google-cloud-sdk from fix_repo_not_available. Use `--pre-release` if using beta/alpha Ubuntu release.
   - Add Visual studio to repos instead of deb files
   - Rename logging directory to after-effects
-
-
-
 
 
 ## _v3.0_
