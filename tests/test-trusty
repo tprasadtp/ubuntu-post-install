@@ -19,6 +19,7 @@ function main()
   echo "Testing On HOST"
   echo "Remove peek, kdeconnect-indicator PPAs"
   sed -i '/peek-developers\|indicator-kdeconnect/d' ./data/ppa.list
+  sed -i '/openjdk-8-jdk/d' ./data/development.list
   sudo ./after-effects --yes --simulate
 
   exit_code_from_script=$?
