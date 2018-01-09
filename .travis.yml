@@ -7,9 +7,9 @@ before_install:
   - chmod +x ./tests/*
 jobs:
   include:
-  - stage: shellcheck
-    env: TEST_ENV="Shellcheck"
-    script: ./tests/test-shell-scripts
+  #- stage: shellcheck
+  #  env: TEST_ENV="Shellcheck"
+  #  script: ./tests/test-shell-scripts
   - stage: docker
     env: TEST_ENV="Artful-Docker"
     script: "./tests/test-artful"
