@@ -12,4 +12,3 @@ iputils-ping \
 apt-transport-https \
 ca-certificates curl \
 ppa-purge > /dev/null
-CMD ["/shared/after-effects" --yes --simulate ]

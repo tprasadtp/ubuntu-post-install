@@ -13,7 +13,7 @@ echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo "Testing On HOST"
 echo "Remove peek PPA"
 sed -i '$ d' ./data/ppa.list
-sudo ./after-effects -y -s
+sudo ./after-effects --yes --simulate
 echo "Exit code from  run is: $?"
 echo "Print Logs is set to: $PRINT_LOGS"
 if [ "$PRINT_LOGS" == "true" ]; then
