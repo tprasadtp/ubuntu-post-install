@@ -8,10 +8,11 @@
 
 set -o pipefail
 dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-dir=$(echo ${dir/tests/})
+#shellcheck disable=SC2116
+dir=$(echo "${dir/tests/}")
 log_file="$dir"/after-effects-logs/after-effects.log
 # set eo on script.
-sed -i 's/set -o pipefail/set -eo pipefail/g' $dir/after-effects
+sed -i 's/set -o pipefail/set -eo pipefail/g' "$dir"/after-effects
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "Building Artful Docker Image"
 docker build -t  ubuntu:ae-artful ./dockerfiles/artful
