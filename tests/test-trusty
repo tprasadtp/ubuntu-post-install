@@ -18,7 +18,7 @@ function main()
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo "Testing On HOST"
   echo "Remove peek PPA"
-  sed -i 's/ppa:peek-developers/stable/ /g' ./data/ppa.list
+  sed '/peek-developers/d' ./data/ppa.list
   sudo ./after-effects --yes --simulate
 
   exit_code_from_script=$?
