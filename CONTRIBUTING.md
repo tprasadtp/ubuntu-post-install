@@ -21,7 +21,7 @@ The main repository requires following list files to function properly.
 5. All the files mentioned in app-list.list
 
 It can be safely assumed that end user will modify these files according to their
-requirements. That creates a problem if someone wishes to push something back to
+requirements. That creates a problem if someone wishes to push something back
 upstream from their forks. Because data and code live in same repository, it
 creates a problem. So to solve it I chose to turn `/data` into a git submodule,
 which now becomes a dependency of main repository. This handles the problem of
@@ -33,7 +33,7 @@ when you fork & clone this repository.
 2. Changes you make to `/data` are not committed to main repository or submodule
 repository and you cannot get benefits of having it on github.
 3. To overcome the above problem you might also have to fork submodule too.
-100. You have to use --recursive to clone /data directory without which
+4. You have to use --recursive to clone /data directory without which
 `after-effects` wont run.
 
 But I believe that these are minor issues and can be overcome easily.
@@ -93,7 +93,7 @@ to put required _.list_ files in /data.
    	path = data
    	url = https://github.com/tprasadtp/ubuntu-post-install-data.git
    ```
-   - Nuke everything inside `/data` (If you dodn’t want to rip hair from your scalp)
+   - Nuke everything inside `/data` (If you don’t want to rip hair from your scalp)
    - Update submodules.
 
 
@@ -115,4 +115,4 @@ git submodule update
 ```
 
 ## Note
-You can also create a branch which tracks your own submodule and keep the master branch track the upstream ubuntu-post-install-data submodule. It helps you keep a clean copy of upstream in a separate branch. 
+You can also create a branch which tracks your own submodule and keep the master branch track the upstream ubuntu-post-install-data submodule. It helps you keep a clean copy of upstream in a separate branch.

@@ -3,13 +3,8 @@
 A bash script to setup your fresh install of Ubuntu. Please read the [FAQ](#fix-for-latest-ubuntu-releases)
  before trying out.
 
-# Project Status Data
-##  Build Status
 [![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.png?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
-
-## Releases
-[![Latest Version](https://img.shields.io/github/release/tprasadtp/ubuntu-post-install/all.png?label=Latest)](https://github.com/tprasadtp/ubuntu-post-install/releases) [![Latest Version](https://img.shields.io/github/release/tprasadtp/ubuntu-post-install.png?label=Stable)](https://github.com/tprasadtp/ubuntu-post-install/releases) [![Maintenance](https://img.shields.io/maintenance/yes/2017.png)](https://github.com/tprasadtp/ubuntu-post-install/commits/master)
-
+[![Latest Version](https://img.shields.io/github/release/tprasadtp/ubuntu-post-install/all.png?label=Latest)](https://github.com/tprasadtp/ubuntu-post-install/releases) [![Latest Version](https://img.shields.io/github/release/tprasadtp/ubuntu-post-install.png?label=Stable)](https://github.com/tprasadtp/ubuntu-post-install/releases)
 
 ## URLs
 ```sh
@@ -24,7 +19,7 @@ Github URL: https://github.com/tprasadtp/ubuntu-post-install-data
 
 
 # How to use this?
-## Step 0: Install Ubuntu
+## Step 0: Install Ubuntu/Linux-Mint/Elementary/Ubuntu Derivative
 - Install (if you haven't already) your choice of Ubuntu/Derivative as you would( If you wish to automate that too, you can use preseed.cfg file)
 
 ## Step 1: Get the script
@@ -48,7 +43,6 @@ Github URL: https://github.com/tprasadtp/ubuntu-post-install-data
   - Unzip these files.
   - Move all the .list files in `ubuntu-post-install-data-master` to `ubuntu-post-install-master/data/` directory.
   - make sure that `after-effects` is executable.
-  - Open Terminal in current directory and execute after-effects as root. `sudo ./after-effects`
 
 
 ## Step 2: Update the lists to suit your needs (Optional)
@@ -68,7 +62,7 @@ sudo ./after-effects
 Contribute tweaks, improvements ideas back upstream. No matter how small the change is
 I really appreciate feedback and contributions.
 
-## Script/Ubuntu crashed in between?
+## Did Script or Ubuntu crashed in between?
 See [Script Crashes](#what-if-script-or-ubuntu-crashes)
 
 ## Contributing & Forks
@@ -76,13 +70,13 @@ See [Contributing and forks](./.github/CONTRIBUTING)
 
 # FAQ
 ## What this script/repository for?
-This Script is for automating the installation and configuration of a Fresh Ubuntu/Linux-Mint/Elementary installation.
+This Script is for automating the installation and configuration of a fresh Ubuntu/Linux-Mint/Elementary installation.
 
 ## What are its dependencies? What do I need on my system to run this?
 Usually nothing extra! Your base Ubuntu install comes with all the commands/utilities this script uses, unless you are running this on Ubuntu docker image.
 - The script itself depends on following utilities which are usually present on a typical Ubuntu/Ubuntu based installation.
 `lsb-release, whiptail, wget, iputils-ping, bash`
-- Some functions of the script (Add, Remove PPAs and add Repositories) depend on following dependencies.
+- Some functions of the script (Add, Remove PPAs and add Repositories) depend on following packages.
 ```
 apt-transport-https
 ca-certificates
@@ -92,9 +86,9 @@ software-properties-common
 ```
 They will be installed if necessary, without confirmation.
 
-## What all distributions are supported/recognized by this script?
-- In short? Ubuntu, its official flavors (Kubuntu,Ubuntu Mate etc) and Linux Mint and Elementary derivatives of the supported Ubuntu release.
-- Currently Supported Ubuntu versions and their Linux Mint and Elementary counterparts are supported. But Travis CI tests are run only on Ubuntu versions.
+## What all distributions are supported?
+- In short? Ubuntu, its official flavors (Kubuntu,Ubuntu Mate etc), Linux Mint and Elementary derivatives of the supported Ubuntu release.
+- But Travis CI tests are run only on Ubuntu versions.
 - Following is the list of distributions/versions supported.
 ```
 Ubuntu 17.10        Artful Aardvark
@@ -111,10 +105,18 @@ Linux-Mint 18.2     Sonya
 Linux-Mint 18.3     Sylvia
 Elementary-OS       Freya
 Elementary-OS       Loki
+Budgie Remix        Unofficial flavor based on Ubuntu 16.04
+PoP!_OS             17.10 (Based on Ubuntu 17.10)
 Official Ubuntu Flavors for above mentioned Ubuntu releases.
+(Kubuntu, Ubuntu MATE, Ubuntu Budgie, Ubuntu GNOME, Lubuntu, Xubuntu, Ubuntu Studio
+  Edubuntu,)
+---- The below distributions should work but haven't been tested. -----
+Linux-Lite          3.X (Based on Ubuntu 16.04)
+Zorin-OS            12.X (Based on Ubuntu 16.04)
+Bodhi Linux         4 (Based on Ubuntu 16.04)
 ```
 - Though 32 bit is supported, Testing in Travis CI, containers and locally all are done using 64 bit machine, host, vm and containers. If something breaks please report it and use it with caution.
-- Support for Ubuntu 18.04 Daily builds, Elementary OS Juno and Mint 18.3 is **experimental** and things might break. They have not been released in stable release channels and are considered beta/ alpha or development versions of the release. It is strongly advised to use them in a chroot or a virtualized environments and not as a daily driver.
+- Support for Ubuntu 18.04 Daily builds, Elementary OS Juno are **experimental** and things might break. They have not been released in stable release channels and are considered development versions of the release. It is strongly advised to use them in a chroot or a virtualized environments and not as a daily driver.
 - Linux mint 18.3 uses a new appstore from which you can directly install Chrome and other popular tools. There may be some conflicts in the `/etc/apt/sources.list.d` where single repository is configured multiple times with same priority. Use it with caution. The scripts are not tested on Travis on Linux Mint. However in most cases it should be fine as it works well with Xenial.
 - Tests for Bionic are done using docker images from `https://partner-images.canonical.com/core/bionic/` or `http://cdimage.ubuntu.com/ubuntu-base/daily` and are **allowed*- to fail on travis CI jobs.
 
@@ -157,7 +159,7 @@ Please visit https://help.ubuntu.com/community/EOLUpgrades to see how to Upgrade
 ## Linux Mint 17.X and PPA priorities
 > This applies only for Linux Mint 17, 17.1 17.2
 
-- For some reason, The Mint Team decided to make their repository packages set with a priority of 700 in order to overwrite Ubuntu’s priorities. PPAs typically issue a priority of 500, so due to the priority that Mint set, packages provided by the PPA which are already in the official mint repository (upstream Ubuntu as well) are completely ignored. workaround is to set the priorities to lower for default repositories say 500 in /etc/apt/preferences.d/ or to increase priorities of PPAs to higher (more than 700).
+- For some reason, The Mint team decided to make their repository packages set with a priority of 700 in order to overwrite Ubuntu’s priorities. PPAs typically issue a priority of 500, so due to the priority that Mint set, packages provided by the PPA which are already in the official mint repository (upstream Ubuntu as well) are completely ignored. workaround is to set the priorities to lower for default repositories say 500 in /etc/apt/preferences.d/ or to increase priorities of PPAs to higher (more than 700).
 - This was changed in Linux Mint 17.3 and no need to change the priorities unless it provides upstream Linux Mint packages.
 The release notes for mint 17.3 says
 
