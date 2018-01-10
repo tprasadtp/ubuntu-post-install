@@ -342,7 +342,7 @@ function _fix_ubuntu_derivatives()
   # POP_OS! uses Ubuntu codenames (No need to apply fix)
   # If the release is not known this function exits the script for safety.
 
-  _log_and_show "${_derivatives} Checking for Ubuntu based Distributions"
+  _log_and_show "${_derivatives} Checking for Ubuntu based distributions which use different codename"
   set_yellow;
         _debug_log "Variable code_name is : $code_name"
   case ${code_name} in
@@ -370,7 +370,7 @@ function _fix_ubuntu_derivatives()
                                             _log_and_show "${_elementary} Changed codename to $code_name"
                                             bool_config_partner_repo="false"
                                             ;;
-      xenial | trusty | artful )            _log_and_show "${_canonical} No known derivative of Ubuntu found."
+      xenial | trusty | artful )            _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
                                             set_default;
                                             _log_and_show "${_info} Keeping the codename as: $code_name."
                                             _log_and_show "${_notice} If installation fails or errors out, please report.";
