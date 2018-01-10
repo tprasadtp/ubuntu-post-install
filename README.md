@@ -62,8 +62,8 @@ sudo ./after-effects
 Contribute tweaks, improvements ideas back upstream. No matter how small the change is
 I really appreciate feedback and contributions.
 
-## Did Script or Ubuntu crashed in between?
-See [Script Crashes](#what-if-script-or-ubuntu-crashes)
+## Oh no! it crashed :(
+Well that shouldn't happen. If it does, see [Script Crashes](#what-if-script-or-ubuntu-crashes) and consider opening an issue on Github. 
 
 ## Contributing & Forks
 See [Contributing and forks](./.github/CONTRIBUTING)
