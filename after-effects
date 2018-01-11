@@ -238,7 +238,7 @@ function _goodbye_msg ()
 
 function _script_exit_log()
 {
-
+    _goodbye_msg
     _debug_log "Exiting Script"
     printf "\nFinished %s on %s.\nLast exit code was: %d\n" "$SCRIPT" "$(date)" "$?" >> "$log_file"
     _line_fill >> "$log_file"
@@ -373,7 +373,6 @@ function _fix_ubuntu_derivatives()
       xenial | trusty | artful )            _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
                                             set_default;
                                             _log_and_show "${_info} Keeping the codename as: $code_name."
-                                            _log_and_show "${_notice} If installation fails or errors out, please report.";
                                             ;;
       zesty )                               set_magenta
                                             _log_and_show "${_eol} This release of Ubuntu is no longer supported."
@@ -386,15 +385,15 @@ function _fix_ubuntu_derivatives()
                                             _log_and_exit "EOL Release : $code_name" "12";
                                             ;;
       bionic )                              set_magenta
-                                            _log_and_show "${_canonical} No known derivative of Ubuntu found."
+                                            _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
                                             _log_and_show "${_pre_release} This is Ubuntu 18.04 Bionic Beaver"
-                                            _log_and_show "${_warn} This is a pre release of Ubuntu Which is in development. USe with caution"
+                                            _log_and_show "${_warn} This is a pre release of Ubuntu Which is in development. Use with caution"
                                             _log_and_show "${_warn} Packages and PPAs might not work with this release!"
                                             ;;
       *)                                    _log_and_show "${_error} Unknown Distribution/Release."
                                             _log_and_show "${_notice} This Script is not designed to run on this ($code_name) distro/release."
                                             _script_exit_log;
-                                            exit 500;
+                                            exit 16;
                                             ;;
   esac
   # Assign code_name to code_name_fix_latest used in _fix_repo_not_available
@@ -510,7 +509,7 @@ function _fix_repo_not_available()
       printf "You need to modify this in Software and updates when it becomes available for ${code_name_latest_release}.\n${NC}"
       code_name_fix_latest="$codename_previous_release"
     else
-      _debug_log "This release has repositories available. No need to apply fix repo not available"
+      _debug_log "This release has repositories available. Flag --fix will be ignored."
     fi
   else
     _debug_log "Feature fix_repo_not_available is disabled."
@@ -548,7 +547,7 @@ function _fix_repo_not_available_upcoming_release()
         _debug_log "Feature fix_repo_not_available_upcoming_release is disabled."
     fi
   else
-    _debug_log "This release is not an upcoming-release. Flag --pre-release as well as --fix will be ignored."
+    _debug_log "This release is not an upcoming-release. Flag --pre-release will be ignored."
 fi
 }
 
