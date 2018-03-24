@@ -330,7 +330,7 @@ Following repositories are conditional and are determined based on the flags or 
 ### Add PPAs
 
 - PPAs can be added using the configuration file in data directory `./data/ppa.list`
-- This file **SHOULD** contain only one ppa entry per line (NO comments or anything else anywhere in the file) in the format ppa:<author>/ppa for example `ppa:mozillateam/firefox-next` The file will be read and the PPAs will be added from the list.
+- This file **SHOULD** contain only one ppa entry per line (No comments or anything else anywhere in the file) in the format ppa:<author>/ppa for example `ppa:mozillateam/firefox-next` The file will be read and the PPAs will be added from the list.
 - Logs will  show entry in the format `[<date and time>] [  PPA  ] <log>`
 
 #### Note:
@@ -361,10 +361,10 @@ This will install deb files specified in the list deb-files.list
 - **Simulate** option will use `--dry-run` option in dpkg to Simulate DEB installation.
 - Configuration file is similar to that of PPA and package lists, but with one difference.
 - Each DEB file to be installed should have following entry.
-- URL to the deb file which can be accessed using wget <tab or space> Name of the deb file without any spaces or special chars except hyphen.
+- URL to the deb file which can be accessed using wget  [ tab or space ] Name of the deb file without any spaces or special chars except hyphen.
 - For example to install Atom Editor the deb-files.list should look like below.
 
-```bash
+```text
 https://atom-installer.github.com/v1.21.1/atom-amd64.deb  ATOM-Editor.deb
 ```
 
@@ -441,11 +441,11 @@ On the way!
 
 ## To-Do
 
-- [ ] Create a script chain to execute other scripts once all the tasks are complete. [In Progress]
-- [ ] Gsettings and dotfiles [Almost done, will add to repo soon]
+- [ ] Create a script chain to execute other scripts once all the tasks are complete.
+- [ ] Gsettings and dotfiles
 - [ ] Option to upload log file to pastebin
-- [ ] Fork and add Open SUSE support [In Progress]
-- [ ] Send an mail/some other notification after tasks are complete. Helpful if you are using ssh (as of now this has low priority)
+- [ ] Fork and add Open SUSE support
+- [ ] Send an e-mail/notification (Slack? Hipchat? Hangouts Chat?) after tasks are complete. Helpful if you are using ssh.
 
 ## CI and Testing
 
@@ -469,11 +469,17 @@ Use this script with caution! Though I have tested it on VMs and Travis somethin
 
 ## Changelogs
 
+### _v3.3_
+
+- Add Signal Desktop repository
+- Better way to handle EOL error messages
+- Fix: Visual Studio Code GPG key not deleted while removing repos.
+- Lint Readme Markdown
+
 ### _v3.2_
 
-- Allow Bionic test to fail
-- Better handling of exit status. Tests will fail if any command in script fails.
-- Only print logs if there is an error or a flag is passed.
+- Allow Bionic test to fail on Travis.
+- Only print logs in Travis if there is an error or a flag is passed.
 - Switch to submodules for data directory
 - List files have their own repo now.
 - Zesty reaches EOL soon. Remove it.
@@ -535,6 +541,5 @@ Use this script with caution! Though I have tested it on VMs and Travis somethin
 ### _v1.0_
 
 - Initial upload.
-
 
 [![Analytics](https://ga-beacon.prasadt.com/UA-101760811-3/github/ubuntu-post-install?flat)](https://prasadt.com/google-analytics-beacon)
