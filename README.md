@@ -12,9 +12,6 @@ before trying out.
 # Main repository
 Github URL: https://github.com/tprasadtp/ubuntu-post-install
 Github URL: https://github.com/tprasadtp/after-effects-ubuntu
-
-# Data Submodule
-Github URL: https://github.com/tprasadtp/ubuntu-post-install-data
 ```
 
 ## How to use this?
@@ -38,7 +35,7 @@ wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master
 If you already have git on your system you can use,
 
 ```bash
-git clone --recursive --depth 1 https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install
+git clone --depth 1 https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install
 ```
 
 ### Step 2: Update the lists to suit your needs (Optional)
@@ -475,6 +472,7 @@ Use this script with caution! Though I have tested it on VMs and Travis somethin
 - Better way to handle EOL error messages
 - Fix: Visual Studio Code GPG key not deleted while removing repos.
 - Lint Readme Markdown
+- Nuke Submodules
 
 ### _v3.2_
 

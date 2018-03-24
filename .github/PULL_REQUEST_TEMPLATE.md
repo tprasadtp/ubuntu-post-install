@@ -1,14 +1,10 @@
 # Title:
 
-# Changes Proposed:
+## Changes Proposed:
 
+## Description:
 
+## Checklist
 
-# Description:
-
-
-
-# Checklist
-
-- [ ] Requires External packages other than `lsb-release, whiptail, wget, iputils-ping, bash`?
+- [ ] Requires External packages other than `lsb-release, whiptail, wget, iputils-ping, bash`
 - [ ] Have you tested it locally? If yes please provide Ubuntu Version info, architecture.

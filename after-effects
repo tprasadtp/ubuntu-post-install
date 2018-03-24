@@ -235,7 +235,7 @@ function _script_launch_log()
 
 function _goodbye_msg ()
 {
-    printf "\n$(tput setaf 3)It was nice helping you,\nHave a great time with this Linux Machine.\nWith loads of love,\n$(tput setaf 6)${SCRIPT} running on $(uname -n) as ${USER} $(tput sgr 0)\n"
+    printf "\n$(tput setaf 3)It was nice helping you,\nHave a great time with this Linux Machine.\nWith loads of love,\n$(tput setaf 6)${SCRIPT} running on $(uname -n)$(tput sgr 0)\n"
 }
 
 function _script_exit_log()
