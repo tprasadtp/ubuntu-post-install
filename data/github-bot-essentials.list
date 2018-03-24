@@ -1,0 +1,15 @@
+python-magic
+openjdk-8-jdk
+google-cloud-sdk-datastore-emulator
+google-cloud-sdk-pubsub-emulator
+putty
+s3cmd
+python3-pip
+google-cloud-sdk-app-engine-python
+openjdk-8-jdk-headless
+python-dateutil
+python-pip-whl
+python-pip
+putty-tools
+google-cloud-sdk
+gcsfuse
