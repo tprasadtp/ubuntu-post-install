@@ -395,7 +395,7 @@ function _fix_ubuntu_derivatives()
                                             set_default;
                                             _log_and_show "${_info} Keeping the codename as: $code_name."
                                             ;;
-      zesty )                               _eol_message "$code_name" "$eol_date_zesty"
+      zesty )                               _eol_message "$code_name" "$_eol_date_zesty"
                                             ;;
       #artful )                              _eol_message "$code_name" "July 2018"
       #                                      ;;
