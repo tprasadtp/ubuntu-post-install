@@ -108,3 +108,4 @@ test-pre-commit.sh
 ## .synaptic is synaptic package lists file
 *.old
 *.synaptic
+*.list
