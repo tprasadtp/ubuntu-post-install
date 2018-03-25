@@ -379,6 +379,13 @@ function _fix_ubuntu_derivatives()
                                             _log_and_show "${_linuxmint} Changed codename to $code_name"
                                             bool_config_partner_repo="false"
                                             ;;
+      tara )                                _log_and_show "${_linuxmint} Release is Linux mint 19.X."
+                                            _log_and_show "${_notice} Setting additional repositoris to follow Ubuntu 18.04."
+                                            code_name="bionic"
+                                            _log_and_show "${_linuxmint} Changed codename to $code_name"
+                                            bool_config_partner_repo="false"
+                                            _log_and_exit "${_error} Unfortunately, this release of Linux Mint not yet supported." "17"
+                                            ;;
       loki | juno )                         _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 16.04 Xenial."
                                             _log_and_show "${_notice} External repositories will use Ubuntu 16.04."
                                             code_name="xenial"

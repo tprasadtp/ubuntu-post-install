@@ -91,7 +91,6 @@ They will be installed if necessary, without confirmation.
 
 - In short? Ubuntu, its official flavors (Kubuntu,Ubuntu Mate etc), Linux Mint and Elementary derivatives of the supported Ubuntu release.
 - But Travis CI tests are run only on Ubuntu versions.
-- Following is the list of distributions/versions supported.
 
 ```none
 Ubuntu 17.10        Artful Aardvark
@@ -106,6 +105,7 @@ Linux Mint 18       Sarah
 Linux-Mint 18.1     Serena
 Linux-Mint 18.2     Sonya
 Linux-Mint 18.3     Sylvia
+Linux Mint 19       Tara [Not Yet Supported]
 Elementary-OS       Freya
 Elementary-OS       Loki
 Budgie Remix        Unofficial flavor based on Ubuntu 16.04
@@ -332,9 +332,8 @@ Following repositories are conditional and are determined based on the flags or 
 
 #### Note:
 
-- PPAs should be checked before they are added to the list. Sometimes PPAs listed in the file may not be available for all releases
+- PPAs should be checked before they are added to the list. Sometimes PPAs listed in the file may not be available for all releases.
 - Peek ppa is not available for trusty and is not included in tests.
-- **PPAs are not added on travis tests on Pre-Release/Beta/Daily builds of Ubuntu.**
 
 ### Install Apps
 
