@@ -80,6 +80,7 @@ function _init_printf_variables()
     readonly         _travis="[   Travis-CI   ]"
     readonly         _docker="[     Docker    ]"
     readonly    _pre_release="[  Pre Release  ]"
+    readonly    _new_release="[  New Release  ]"
     readonly        _version="[    Version    ]"
     readonly       _checking="[    Checking   ]"
     readonly        _checked="[    Checked    ]"
@@ -530,8 +531,8 @@ function _fix_repo_not_available()
     # Only do this on latest releases
     if [ "$code_name" == "$code_name_latest_release" ]; then
       _debug_log "Sometimes repositories are not available for latest ubuntu release.\nUsing last known stable release: $code_name_latest_release."
-      printf "${YELLOW}Previously available repositories from an older release: $codename_previous_release is being used.\n"
-      printf "You need to modify this in Software and updates when it becomes available for ${code_name_latest_release}.\n${NC}"
+      printf "${YELLOW}${_new_release} Using repositories from an older release: $codename_previous_release is being used.\n"
+      printf "${YELLOW}${_new_release} You need to modify this in Software and updates when it becomes available for ${code_name_latest_release}.\n${NC}"
       code_name_fix_latest="$codename_previous_release"
     else
       _debug_log "This release has repositories available. Flag --fix will be ignored."
@@ -554,17 +555,17 @@ function _fix_repo_not_available_upcoming_release()
     # check for fix-pre-release flag
     if [ "$bool_fix_repo_not_available_for_upcoming_release" == "true" ]; then
       _log_and_show "${_pre_release} Previously available repositories from an older release is being used."
-      printf "You need to modify this in Software and Updates when it becomes available for ${codename_upcoming_release}.\n${NC}"
+      printf "${_pre_release}You need to modify this in Software and Updates when it becomes available for ${codename_upcoming_release}${NC}\n"
         # If the repositories are  not available for latest stable release as well, go back a release.
         # Eg. If the pre-release is 18.04 and the repo is not available for 17.10 as well, we use 17.04 repositories.
         # Usually happens in first few days of development cycle of 18.04.
         if [ "$bool_fix_repo_not_available_for_latest" == "true" ]; then
           # We need to use repositories for previous stable release.
-          _log_and_show "${pre-release} Both falgs for --pre-release and -fix are set. Using codename: $codename_previous_release"
+          _log_and_show "${_pre_release} Both falgs for --pre-release and -fix are set. Using codename: $codename_previous_release"
           code_name_fix_latest="$codename_previous_release"
         else
           # No need to apply fix for latest release, We can use latest stable release repositories
-          _log_and_show "${pre-release} Using repositories for current stable release: $code_name_latest_release"
+          _log_and_show "${_pre_release} Using repositories for current stable release: $code_name_latest_release"
           code_name_fix_latest="$code_name_latest_release"
           code_name="$code_name_latest_release"
         fi
@@ -743,7 +744,7 @@ function add_repositories()
 
   # Remove artifacts and keys
   _debug_log "Removing keys and converted files from current directory"
-  rm  -f ./*.gpg ./*.asc ./*.pub ./Release  *.Release *.key ./*.pub.* ./*.asc.* ./*.key.* ./*.gpg.* >> "$log_file"
+  rm  -f ./*.gpg ./*.asc ./*.pub ./Release  ./*.Release ./*.key ./*.pub.* ./*.asc.* ./*.key.* ./*.gpg.* >> "$log_file"
 
 }
 
@@ -1060,8 +1061,8 @@ function install_debs ()
 
       # Delete DEBs
       if [ "$bool_preserve_debs" == "true" ];then
-        _log_and_show "${_deleting}Downloaded DEB Packages"
-        rm -f ./*.deb ./*.DEB ./*.deb.* ./*.DEB.*
+        _log_and_show "${_deleting} Downloaded DEB Packages"
+        rm -f ./*.deb ./*.DEB ./*.deb.* ./*.DEB.* >> "$log_file"
       else
         _debug_log "Keeping Downloaded DEB Packages"
       fi
