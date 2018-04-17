@@ -33,7 +33,7 @@ readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 log_file="$dir"/after-effects-logs/after-effects.log
 mkdir -p "$dir"/after-effects-logs
-readonly version="3.3 Beta"
+readonly version="3.4 Beta"
 
 function _init_printf_variables()
 {
@@ -73,11 +73,11 @@ function _init_printf_variables()
     readonly         _failed="[     Failed    ]"
     readonly   _google_cloud="[      GCP      ]"
     readonly       _simulate="[   Simulating  ]"
-    readonly       _fix_repo="[Fix Repo4Latest]"
+    readonly       _fix_repo="[      Fix      ]"
     readonly        _deboalt="[    Deboalt    ]"
     readonly           _warn="[    WARNING    ]"
     readonly         _whoops="[   Whoopsie!   ]"
-    readonly         _travis="[   TRAVIS-CI   ]"
+    readonly         _travis="[   Travis-CI   ]"
     readonly         _docker="[     Docker    ]"
     readonly    _pre_release="[  Pre Release  ]"
     readonly        _version="[    Version    ]"
@@ -176,6 +176,9 @@ function _init_script_variables()
   # derivative of ubuntu is found.
   bool_config_partner_repo="true"
 
+
+  # Keep Downloaded DEB packages
+  bool_preserve_debs="false"
 }
 
 function _init_script_initialization()
@@ -473,7 +476,7 @@ function _show_confirmation_dialog_for_tasks()
   # Depends on whiptail
   # To overide and say yes to all dialog pass -y as command line option while running the script.
   local name_of_task="$1" #Name of the task to be perfromed
-  local confirm_msg="$2" #Message shoen in Confirmation dialogue
+  local confirm_msg="$2" #Message shown in Confirmation dialogue
   local exec_function="$3" #Function to run if user selected yes
   COLUMNS=$(tput cols)
   LINES=$(tput lines)
@@ -740,7 +743,7 @@ function add_repositories()
 
   # Remove artifacts and keys
   _debug_log "Removing keys and converted files from current directory"
-  rm  -f ./*.gpg ./*.asc ./*.pub ./Release ./*.pub.* ./*.asc.* ./*.key.* ./*.gpg.* >> "$log_file"
+  rm  -f ./*.gpg ./*.asc ./*.pub ./Release  *.Release *.key ./*.pub.* ./*.asc.* ./*.key.* ./*.gpg.* >> "$log_file"
 
 }
 
@@ -998,6 +1001,14 @@ function install_apps()
          unset packages;
     done < "$app_list_list"
 
+    # Delete DEBs
+    if [ "$bool_preserve_debs" == "true" ];then
+      _log_and_show "${_deleting}APT Cached Packages"
+      apt clean | _add_timestamp_to_apt_logs
+    else
+      _debug_log "Keeping cahed APT Packages"
+    fi
+
 }
 
 function install_debs ()
@@ -1046,6 +1057,14 @@ function install_debs ()
                 $?="0"
           fi
       done < "$deb_files_list"
+
+      # Delete DEBs
+      if [ "$bool_preserve_debs" == "true" ];then
+        _log_and_show "${_deleting}Downloaded DEB Packages"
+        rm -f ./*.deb ./*.DEB ./*.deb.* ./*.DEB.*
+      else
+        _debug_log "Keeping Downloaded DEB Packages"
+      fi
 
 }
 
@@ -1232,6 +1251,10 @@ function main()
                                   ;;
           -l | --delete-log )     set_default;
                                   delete_log_file;
+                                  ;;
+          -k | --keep-debs )      set_default;
+                                  bool_preserve_debs="true";
+                                  _log_and_show "${_info} Will keep downloaded DEB packages."
                                   ;;
            * )                    set_yellow
                                   _log_and_exit "${_error} Invalid option: $1" "22"
