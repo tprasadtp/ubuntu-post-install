@@ -239,7 +239,7 @@ function _script_launch_log()
 
 function _goodbye_msg ()
 {
-    printf "\n$(tput setaf 3)It was nice helping you,\nHave a great time with this Linux Machine.\nWith loads of love,\n$(tput setaf 6)${SCRIPT} running on $(uname -n)$(tput sgr 0)\n"
+    printf "\n$(tput setaf 3)It was a pleasure helping you,\nHave a great time with this Linux Machine.\nWith loads of love,\n$(tput setaf 6)${SCRIPT} running on $(uname -n)$(tput sgr 0)\n"
 }
 
 function _script_exit_log()
@@ -726,7 +726,7 @@ function add_repositories()
   if [ "$ARCH" == "amd64" ]; then
     _log_and_show "${_adding} Signal repository"
     wget -q https://updates.signal.org/desktop/apt/keys.asc -O signal.asc >> "$log_file"
-    apt-key add signal.asc | _add_timestamp_to_aptkey_logs || _log_and_show "Adding Signal Key Failed"
+    apt-key add signal.asc  2>&1 | _add_timestamp_to_aptkey_logs || _log_and_show "Adding Signal Key Failed"
     echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main"  > ${SOURCES_FILE_DIR}/signal-xenial.list
   else
       _log_and_show "Architecture: $ARCH is not supported by Signal"
@@ -755,7 +755,7 @@ function update_repos()
   set_yellow
   _log_and_show "${_updating} Repository index/metadata..."
   set_default
-  apt-get update | _add_timestamp_to_apt_logs
+  apt-get update 2>&1 | _add_timestamp_to_apt_logs
   exit_status=$?
   set_yellow;
   if [ "$exit_status" -eq 0 ]; then
@@ -774,7 +774,7 @@ function upgrade_apps()
   # This function will list upgradable apps and upgrade it.
   # IF Simulate is set to true this will only list the apps but no upgrade action will be performed.
   local exit_status
-  _log_and_show "${_upgrading} packages"
+  _log_and_show "${_upgrading} Packages"
   _debug_log "Listing Upgradable packages"
   _line_fill;
   # upgradable is not available in apt-get ignore warning about apt being unstable
@@ -792,7 +792,7 @@ function upgrade_apps()
     DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::='--force-confold' --force-yes -fuy dist-upgrade | _add_timestamp_to_apt_logs
     exit_status=$?
   else
-    # if it is simulate is true, set exit status as 0
+    # If  simulate is true, set exit status as 0
     # Simulate flag skips the section above. No point in Checking for exit status
     _log_and_show "${_simulate} is set to True. Not performing upgrade!"
     exit_status=0
@@ -1076,7 +1076,7 @@ function all_in_one()
   _debug_log "Option: ALL IN ONE, function name: all_in_one"
   _line_fill;
   set_blue;
-  _log_and_show "${_info} Apps will be installed, Upgrades and repositoris and will be added, deb files will be downloaded and installed!\nThis action is not reversible in all cases."
+  _log_and_show "${_info} Apps will be installed, Upgrades and repositoris and will be added, deb files will be downloaded and installed!\n ${_info} This action is not reversible in all cases."
   _debug_log "All in One initialized"
   set_default;
   update_repos;

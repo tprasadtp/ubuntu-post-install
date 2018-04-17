@@ -4,8 +4,7 @@ A bash script to setup your fresh install of Ubuntu. Please read the [FAQ](#fix-
 before trying out.
 
 [![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.png?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
-[![Latest Version](https://img.shields.io/github/release/tprasadtp/ubuntu-post-install/all.png?label=Latest)](https://github.com/tprasadtp/ubuntu-post-install/releases) [![Latest Version](https://img.shields.io/github/release/tprasadtp/ubuntu-post-install.png?label=Stable)](https://github.com/tprasadtp/ubuntu-post-install/releases)
-
+[![Latest Version](https://img.shields.io/github/release/tprasadtp/ubuntu-post-install/all.png?label=Latest)](https://github.com/tprasadtp/ubuntu-post-install/releases)
 ## URLs
 
 ```bash
@@ -94,7 +93,7 @@ They will be installed if necessary, without confirmation.
 
 ```none
 Ubuntu 17.10        Artful Aardvark
-Ubuntu 18.04        Bionic Beaver (Experimental Support for Upcoming Release)
+Ubuntu 18.04        Bionic Beaver
 Ubuntu 16.04        Xenial Xerus
 Ubuntu 14.04        Trusty Thar
 Linux Mint 17       Quina
