@@ -1103,16 +1103,16 @@ function _process_opts
       --notags \
       --backtitle "$SCRIPT" \
       --title "Ubuntu Post-Install Script" \
-      --menu "\nWhat would you like me to do?\nLogs will be written to ./minchu-logs/after-effects.log.\nCheck the logs for details and errors." \
+      --menu "\nWhat would you like me to do?\nLogs will be written to ./after-effects-logs/after-effects.log.\nCheck the logs for details and errors." \
       --cancel-button "Quit" \
       $LINES $COLUMNS $(( LINES - 12 )) \
-      update_repos           'Update Repositories' \
-      upgrade_system         'Upgrade packages to latest' \
+      update_repos           'Update Repository Metadata' \
+      upgrade_system         'Upgrade packages' \
       all_in_one             'Add Repositories and PPAs, Install Apps, DEBs' \
       add_repositories       'Add Common Repositories' \
       add_ppas               'Add PPAs from file' \
-      install_apps           'Install most common tools' \
-      install_debs           'Install DEBS not available in Repositories' \
+      install_apps           'Install Packages from Lists' \
+      install_debs           'Install deb packages' \
       disable_external_repos 'Reset Repositories for cleanup' \
       purge_not_required     'Purge not required Packages' \
       delete_log_file        "Delete Script logs" \
