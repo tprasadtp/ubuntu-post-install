@@ -720,7 +720,7 @@ function add_repositories()
     curl -s https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
     _debug_log "Adding Key to trusted GPG keys directory"
     apt-key add microsoft.gpg 2>&1 | _add_timestamp_to_aptkey_logs || _log_and_show "Adding Visual Studio Code key failed"
-    echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main #Visual Studio Code" > ${SOURCES_FILE_DIR}/vscode.list
+    echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list
   else
     _log_and_show "Architecture: $ARCH is not supported by Visual studio Code."
   fi
@@ -730,7 +730,7 @@ function add_repositories()
     _log_and_show "${_adding} Signal repository"
     wget -q https://updates.signal.org/desktop/apt/keys.asc -O signal.asc >> "$log_file"
     apt-key add signal.asc  2>&1 | _add_timestamp_to_aptkey_logs || _log_and_show "Adding Signal Key Failed"
-    echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main #Signal for Desktop"  > ${SOURCES_FILE_DIR}/signal-xenial.list
+    echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/signal-xenial.list
   else
       _log_and_show "Architecture: $ARCH is not supported by Signal"
   fi
@@ -739,7 +739,7 @@ function add_repositories()
   if [ "$add_mendeley_repo" == "true" ]; then
     _log_and_show "${_adding} Mendeley repository"
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 | _add_timestamp_to_aptkey_logs || _log_and_show "Adding Mendeley Desktop Key Failed"
-    echo "https://desktop-download.mendeley.com/download/apt stable main #Mendeley Desktop"  > ${SOURCES_FILE_DIR}/mendeleydesktop.list
+    echo "deb https://desktop-download.mendeley.com/download/apt stable main #Mendeley-Desktop"  > ${SOURCES_FILE_DIR}/mendeleydesktop.list
   else
       _log_and_show "${YELLOW}${_adding} Mendeley Desktop is set to false.${NC}"
   fi
