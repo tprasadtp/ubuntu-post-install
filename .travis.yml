@@ -33,5 +33,5 @@ notifications:
     on_start: always
     template:
       - "Build: <%{build_url}|#%{build_number}> has %{result}, Duration: %{duration}"
-      - "Repository: %{repository} Branch : %{branch}"
+      - "Branch : %{branch}"
       - "Commit: <%{compare_url}|%{commit}> - %{commit_message}"

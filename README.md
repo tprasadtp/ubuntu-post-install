@@ -311,6 +311,7 @@ This will add the following repositories.
 - Spotify
 - Visual Studio Code
 - Signal Desktop
+- Mendeley Desktop
 
 Following repositories are conditional and are determined based on the flags or conditions set.
 
@@ -329,6 +330,9 @@ Following repositories are conditional and are determined based on the flags or 
 
   #Docker community edition
   readonly add_docker_repo=true
+
+  #Mendeley Desktop 
+  readonly add_mendeley_repo=true
   ```
 
 ### Add PPAs

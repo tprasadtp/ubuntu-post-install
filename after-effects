@@ -144,6 +144,9 @@ function _init_script_variables()
   #Docker community edition
   readonly add_docker_repo=true
 
+  #Mendeley Desktop 
+  readonly add_mendeley_repo=true
+
   #Fix Repo not available for latest release
   bool_fix_repo_not_available_for_latest="false"
   readonly code_name_latest_release="artful"
@@ -717,7 +720,7 @@ function add_repositories()
     curl -s https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
     _debug_log "Adding Key to trusted GPG keys directory"
     apt-key add microsoft.gpg 2>&1 | _add_timestamp_to_aptkey_logs || _log_and_show "Adding Visual Studio Code key failed"
-    echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main" > ${SOURCES_FILE_DIR}/vscode.list
+    echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main #Visual Studio Code" > ${SOURCES_FILE_DIR}/vscode.list
   else
     _log_and_show "Architecture: $ARCH is not supported by Visual studio Code."
   fi
@@ -727,10 +730,20 @@ function add_repositories()
     _log_and_show "${_adding} Signal repository"
     wget -q https://updates.signal.org/desktop/apt/keys.asc -O signal.asc >> "$log_file"
     apt-key add signal.asc  2>&1 | _add_timestamp_to_aptkey_logs || _log_and_show "Adding Signal Key Failed"
-    echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main"  > ${SOURCES_FILE_DIR}/signal-xenial.list
+    echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main #Signal for Desktop"  > ${SOURCES_FILE_DIR}/signal-xenial.list
   else
       _log_and_show "Architecture: $ARCH is not supported by Signal"
   fi
+
+    # Mendeley Desktop App
+  if [ "$add_mendeley_repo" == "true" ]; then
+    _log_and_show "${_adding} Mendeley repository"
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 | _add_timestamp_to_aptkey_logs || _log_and_show "Adding Mendeley Desktop Key Failed"
+    echo "https://desktop-download.mendeley.com/download/apt stable main #Mendeley Desktop"  > ${SOURCES_FILE_DIR}/mendeleydesktop.list
+  else
+      _log_and_show "${YELLOW}${_adding} Mendeley Desktop is set to false.${NC}"
+  fi
+
 
   # Enable Canonical Partner repos
   if [ "$bool_config_partner_repo" != "false" ]; then
@@ -845,33 +858,35 @@ function disable_external_repos()
     _log_and_show "${_deleting} Keys and external repositoris"
     set_default
     old_path=$(pwd)
-    _log_and_show "${_deleting} Google signing key  7FAC5991"
+    _log_and_show "${_deleting} Google signing key   7FAC5991"
     apt-key del 7FAC5991  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  Google signing key -1 failed."
-    _log_and_show "${_deleting} Google signing key  D38B4796"
+    _log_and_show "${_deleting} Google signing key   D38B4796"
     apt-key del D38B4796  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  Google signing key -2 failed."
-    _log_and_show "${_deleting} Webupd8 signing key 4C9D234C"
+    _log_and_show "${_deleting} Webupd8 signing key  4C9D234C"
     apt-key del 4C9D234C  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  Webupd8 failed."
-    _log_and_show "${_deleting} Spotify signing key 4C9D234C"
+    _log_and_show "${_deleting} Spotify signing key  4C9D234C"
     apt-key del D2C19886  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  Spotify signing key -2 failed."
-    _log_and_show "${_deleting} Spotify signing key 341D9410"
+    _log_and_show "${_deleting} Spotify signing key  341D9410"
     apt-key del 341D9410  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  Spotify signing key -2 failed."
-    _log_and_show "${_deleting} Skype signing key   DF7587C3"
+    _log_and_show "${_deleting} Skype signing key    DF7587C3"
     apt-key del DF7587C3  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  Skype for Linux keys failed."
-    _log_and_show "${_deleting} WineHQ signing key  5FCBF54A"
+    _log_and_show "${_deleting} WineHQ signing key   5FCBF54A"
     apt-key del 5FCBF54A  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  WineHQ keys failed."
-    _log_and_show "${_deleting} Google Cloud key    A73170BF"
+    _log_and_show "${_deleting} Google Cloud key     A73170BF"
     apt-key del A73170BF  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  Google Cloud keys failed."
-    _log_and_show "${_deleting} InSync signing key  ACCAF35C"
+    _log_and_show "${_deleting} InSync signing key   ACCAF35C"
     apt-key del ACCAF35C  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  InSync keys failed."
-    _log_and_show "${_deleting} Docker signing key  0EBFCD88" 
+    _log_and_show "${_deleting} Docker signing key   0EBFCD88" 
     apt-key del 0EBFCD88  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  Docker-CE keys failed."
-    _log_and_show "${_deleting} VS-Code signing key BE1229CF"
+    _log_and_show "${_deleting} VS-Code signing key  BE1229CF"
     apt-key del BE1229CF  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  Visual Studio Code keys failed."
-    _log_and_show "${_deleting} Signal signing key  57F6FB06"
-    apt-key del 57F6FB06  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  Visual Studio Code keys failed."
+    _log_and_show "${_deleting} Signal signing key   57F6FB06"
+    apt-key del 57F6FB06  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  Signal keys failed."
+    _log_and_show "${_deleting} Mendeley signing key 6F036044"
+    apt-key del 57F6FB06  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  Mendeley Desktop keys failed."
     _log_and_show "${_removing} External Repositoris"
     _debug_log "${_removing} *.list and *.save files from ${SOURCES_FILE_DIR}"
-    cd /etc/apt/sources.list.d && rm  -f google-chrome.* google-earth.* skype-stable.* spotify.* insync.* google-cloud-sdk.* gcsfuse.* docker.* winehq.* vscode.* signal-xenial.*
+    cd /etc/apt/sources.list.d && rm  -f google-chrome.* google-earth.* skype-stable.* spotify.* insync.* google-cloud-sdk.* gcsfuse.* docker.* winehq.* vscode.* signal-xenial.* mendeleydesktop.*
     exit_status=$?
     set_yellow;
     if [ "$exit_status" -eq 0 ]; then
