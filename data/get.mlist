@@ -17,3 +17,7 @@ security.list
 administration.list
 linux-mint.list
 goa.list
+pip.list
+pip-dep.apt
+pip3.list
+pip3-dep.apt
