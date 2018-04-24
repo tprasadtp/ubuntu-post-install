@@ -33,7 +33,7 @@ readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 log_file="$dir"/after-effects-logs/after-effects.log
 mkdir -p "$dir"/after-effects-logs
-readonly version="3.4 Beta"
+readonly version="3.5 Beta"
 
 function _init_printf_variables()
 {
@@ -85,6 +85,8 @@ function _init_printf_variables()
     readonly       _checking="[    Checking   ]"
     readonly        _checked="[    Checked    ]"
     readonly            _eol="[      EOL      ]"
+    readonly   _pip_python_2="[      PIP2     ]"
+    readonly   _pip_python_3="[      PIP3     ]"
     readonly _eol_date_zesty="January 13th, 2018"
     #readonly           _falg="[     Flag      ]"
 
@@ -336,6 +338,15 @@ function  _add_timestamp_to_cat_logs()
   # Output will be automatically written to $log_file
   # Usage command | _add_timestamp_to_cat_logs
   while IFS= read -r line; do printf "[$(date)] [  CAT  ]\t%s\n" "$line" &>> "$log_file"; done
+}
+
+function  _add_timestamp_to_pip_logs()
+{
+  # This function adds time stamp to cat output without using external utilities
+  # Pipe the output to this function
+  # Output will be automatically written to $log_file
+  # Usage command | _add_timestamp_to_cat_logs
+  while IFS= read -r line; do printf "[$(date)] [  PIP  ]\t%s\n" "$line" &>> "$log_file"; done
 }
 
 function _eol_message()
@@ -1027,6 +1038,103 @@ function install_apps()
 
 }
 
+
+function _install_pip_python()
+
+{
+  # Function to install python pip packages
+  # This function reads from File ./data/pip.list contains list python packages to be installed system wide.
+  # Arguments : Two
+  # ARG1 : pip list
+  # ARG2 : 2 for python 2 and 
+  #      : 3 for Python 3.
+
+  update_repos;
+  #Install starts here
+  local pip_packages
+  local pip_list="${1}"
+  local pip_ver="${2}"
+  local exit_status
+  _debug_log "Option: Install Python Packaes via PIP, Function name: _install_pip_pythons"
+  _debug_log "pip Version : ${pip_ver}, List File : ${pip_list}"
+  while IFS= read -r line
+    do
+      _log_and_show "${_pip_ver} packages from pip.list"
+       # shellcheck disable=SC2002
+       # just to print it in logs so ignore shellcheck
+       cat "$dir/$pip_list" 2>&1 | _add_timestamp_to_cat_logs
+       pip_packages=$(cat "$dir/$line")
+       if [[ -z "$pip_packages" ]] && _log_and_show "${_warn} ${pip_list} is empty!!" && continue;
+       # Check if simulate is true
+        if [ "$simulate_apt_install" == "true" ]; then
+          set_yellow;
+          _log_and_show "${_simulate} PIP does not support simulated installs. Not performing install."
+          set_default;
+        else
+          # shellcheck disable=SC2086
+          pip install -r "${pip_list}" | _add_timestamp_to_pip_logs
+        fi
+        exit_status=$?
+        if [ "$exit_status" -eq 0 ]; then
+          set_yellow
+         _log_and_show "${_pip_ver} Installed packages from ${pip_list}"
+        else
+          _log_and_show "${YELLOW}${_oh_no} Something went wrong while installing packages in $pip_list.${NC}"
+          set_blue;
+          _log_and_show "${_notice} Please see the log file for more details."
+        fi
+        set_default;
+        unset pip_packages;
+    done < "$pip_list"
+
+}
+
+
+function _check_and_install_pre_requisites()
+{
+  # This function installs required packages by other modules
+  # Checks if a command is not available and then installs the related package
+  # These should be present in your base ubuntu instal. If not present then, this function
+  # will install them. 
+  # Accepts two agruments 
+  # ARG 1 : list file (in dat folder) with apt packages which are dependencies. (Use quote if ther are multiple packags)
+  # ARG 2 & later : Commands to check if a package is installed already.
+
+  local apt_deps="${1}" # apt dependencies
+  local command_to_check="${2}" # command to check
+  local dependency_check_failed_count=0;
+  _log_and_show "${_info} Checking dependencies..."
+  for dep in "${dependencies[@]}"
+  do
+   :
+   command -v "$dep" > /dev/null
+   dep_res=$?
+   if [ "$dep_res" -eq 1 ]; then
+     set_red
+     _log_and_show "${_error} $dep is not installed!${NC}"
+     set_default
+     dependency_check_failed_count=$((dependency_check_failed_count+1))
+   fi
+  done
+
+  if [ "$dependency_check_failed_count" -gt 0 ]; then
+    set_yellow
+    _log_and_show "${_error} One or more dependencies not installed. Check logs or above message."
+    _log_and_exit "${_error} Sorry! $SCRIPT cannot continue!" "1"
+    set_default
+  fi
+}
+
+
+function install_pip_packages_2()
+{
+  # Install Python 2 packages
+  update_repos;
+  _install_pre_requisites
+
+}
+
+
 function install_debs ()
 {
 
@@ -1084,6 +1192,9 @@ function install_debs ()
 
 }
 
+
+
+
 function all_in_one()
 {
   #Wrapper for all options
@@ -1128,6 +1239,8 @@ function _process_opts
       add_ppas               'Add PPAs from file' \
       install_apps           'Install Packages from Lists' \
       install_debs           'Install deb packages' \
+      install_pip_packages_2 'Install Python 2 packages via pip' \
+      install_pip_packages_3 'Install Python 3 packages via pip3' \
       disable_external_repos 'Reset Repositories for cleanup' \
       purge_not_required     'Purge not required Packages' \
       delete_log_file        "Delete Script logs" \
@@ -1158,6 +1271,10 @@ function _process_opts
     install_debs )            _show_confirmation_dialog_for_tasks "Download & Install DEB files" "DEB Files in the list deb-files.list will be Download and installed. Proceed with the task?" "$task"
                               ;;
     set_gsettings )           _show_confirmation_dialog_for_tasks "Apply Custom gsettings" "Gsettings mentioned in the file gsettings.list will be Applied. \n Proceed?" "$task"
+                              ;;
+    install_pip_packages_2 )  _show_confirmation_dialog_for_tasks "Install Python2 packages" "Python packaes for Python 2 mentioned in pip.list will be installed via pip. If necessary python-pip packaes will be installed from apt. \n Proceed?" "$task"
+                              ;;
+    install_pip_packages_3 )  _show_confirmation_dialog_for_tasks "Install Python3 packages" "Python packaes for Python 3 mentioned in pip3.list will be installed via pip. If necessary python-pip packaes will be installed from apt. \n Proceed?" "$task"
                               ;;
     delete_log_file )         _debug_log "Delete log selected"
                               delete_log_file;

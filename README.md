@@ -5,10 +5,10 @@ before trying out.
 
 [![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.png?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
 [![Latest Version](https://img.shields.io/github/release/tprasadtp/ubuntu-post-install/all.png?label=Latest)](https://github.com/tprasadtp/ubuntu-post-install/releases)
+
 ## URLs
 
 ```bash
-# Main repository
 Github URL: https://github.com/tprasadtp/ubuntu-post-install
 Github URL: https://github.com/tprasadtp/after-effects-ubuntu
 ```
@@ -281,6 +281,8 @@ Non package related lists (settings, deb files, delete packages list). The use a
 | ppa | List of ppas to be added | `add_ppas` | [Link](#l#add-ppas) |
 | deb-files | List of DEB files to be installed | `install_debs` | [Link](#l#add-ppas) |
 | get.mlist | Used by get-after-effects.sh to download required list files | [get-after-effects.sh](https://github.com/tprasadtp/ubuntu-post-install/blob/master/get-after-effects.sh) | --- |
+|pip.list| pip system wide packages | install_pip_packages | [Link](#install-pip-packages)
+
 
 > After you customize, might want to use simulate flag. `sudo ./after-effects -s`
 
@@ -377,6 +379,13 @@ https://atom-installer.github.com/v1.21.1/atom-amd64.deb  ATOM-Editor.deb
 
 - First part is the URL to the deb file separated by a tab name of the file.
   > Please note that deb file will be  saved with the name mentioned in the file. (DEB file is named **exactly** as mentioned in the second field. So if you want them to be named with extension .deb include that in the second field and avoid illegal chars)
+
+### Install pip packages
+
+This will install system wide python packages using pip. There are two lists. `pip.list` and `pip3.list` for python 2.7 and python 3 respectively.
+Pre requisite is that python-pip package is pre installed, If not , will be installed anyway.
+
+- The list files follow similar configuration as package list files. One item per line. 
 
 ### Purge Unwanted Packages
 
