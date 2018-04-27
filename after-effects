@@ -33,7 +33,7 @@ readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 log_file="$dir"/after-effects-logs/after-effects.log
 mkdir -p "$dir"/after-effects-logs
-readonly version="3.4 Beta"
+readonly version="3.6 Beta"
 
 function _init_printf_variables()
 {
@@ -85,6 +85,9 @@ function _init_printf_variables()
     readonly       _checking="[    Checking   ]"
     readonly        _checked="[    Checked    ]"
     readonly            _eol="[      EOL      ]"
+    readonly   _pip_python_2="[      PIP2     ]"
+    readonly   _pip_python_3="[      PIP3     ]"
+    readonly   _dependencies="[  Dependencies ]"
     readonly _eol_date_zesty="January 13th, 2018"
     #readonly           _falg="[     Flag      ]"
 
@@ -149,12 +152,12 @@ function _init_script_variables()
 
   #Fix Repo not available for latest release
   bool_fix_repo_not_available_for_latest="false"
-  readonly code_name_latest_release="artful"
-  readonly codename_previous_release="zesty"
+  readonly code_name_latest_release="bionic"
+  readonly codename_previous_release="artful"
 
   # Allow repo fixes for Upcoming releases of ubuntu and its derivatives.
   bool_fix_repo_not_available_for_upcoming_release="false"
-  readonly codename_upcoming_release="bionic"
+  readonly codename_upcoming_release="c"
 
   # Simulate apt-get install by default its false
   # can be set to true if an argument -s or --simulate is passed while running the script
@@ -338,6 +341,15 @@ function  _add_timestamp_to_cat_logs()
   while IFS= read -r line; do printf "[$(date)] [  CAT  ]\t%s\n" "$line" &>> "$log_file"; done
 }
 
+function  _add_timestamp_to_pip_logs()
+{
+  # This function adds time stamp to cat output without using external utilities
+  # Pipe the output to this function
+  # Output will be automatically written to $log_file
+  # Usage command | _add_timestamp_to_cat_logs
+  while IFS= read -r line; do printf "[$(date)] [  PIP  ]\t%s\n" "$line" &>> "$log_file"; done
+}
+
 function _eol_message()
 {
   # Display EOL Message and upgrade instruction URLs.
@@ -413,9 +425,14 @@ function _fix_ubuntu_derivatives()
                                             ;;
       #artful )                              _eol_message "$code_name" "July 2018"
       #                                      ;;
-      bionic )                              set_magenta
+      bionic )                              set_yellow
                                             _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
-                                            _log_and_show "${_pre_release} This is Ubuntu 18.04 Bionic Beaver"
+                                            _log_and_show "${_pre_release} Please use --fix flag if your choice of repos are not available.\n${_warn} There's no fix for PPAs."
+                                            ;;
+      c       )                             set_magenta
+                                            _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
+                                            _log_and_show "${_pre_release} Please use --fix flag if you cannot add repos yet. There's no fix for PPAs."
+                                            _log_and_show "${_pre_release} This is Ubuntu 18.10 Bionic"
                                             _log_and_show "${_warn} This is a pre-release of Ubuntu Which is in development. Use with caution"
                                             _log_and_show "${_warn} Packages and PPAs might not work with this release!"
                                             ;;
@@ -738,7 +755,7 @@ function add_repositories()
     # Mendeley Desktop App
   if [ "$add_mendeley_repo" == "true" ]; then
     _log_and_show "${_adding} Mendeley repository"
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 | _add_timestamp_to_aptkey_logs || _log_and_show "Adding Mendeley Desktop Key Failed"
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 2>&1 | _add_timestamp_to_aptkey_logs || _log_and_show "Adding Mendeley Desktop Key Failed"
     echo "deb https://desktop-download.mendeley.com/download/apt stable main #Mendeley-Desktop"  > ${SOURCES_FILE_DIR}/mendeleydesktop.list
   else
       _log_and_show "${YELLOW}${_adding} Mendeley Desktop is set to false.${NC}"
@@ -1027,6 +1044,134 @@ function install_apps()
 
 }
 
+
+function _install_pip_python()
+
+{
+  # Function to install python pip packages
+  # This function reads from File ./data/pip.list contains list python packages to be installed system wide.
+  # Arguments : Two
+  # ARG1 : pip package list
+  # ARG2 : 2 for python 2 and 
+  #      : 3 for Python 3.
+
+  #Check args
+  if [ $# -lt 2 ] ||  [ $# -gt 2 ] ; then
+    _log_and_show "\n${BLUE}${_error} Not enough arguments. \n${-info} Usage: _check_and_install_pre_requisites <list.apt> <commands to check>${NC}\n" && \
+    _log_and_exit "Internal Function Error. Invalid number of Arguments: $#." "18";
+  fi;
+
+  update_repos;
+  #Install starts here
+  local pip_dependency_list exit_status _disp_pip_ver pip_command dependency_packages pip_loc
+  local pip_list="${1}"
+  local pip_ver="${2}"
+  _debug_log "Option: Install Python Packaes via PIP, Function name: _install_pip_python"
+  _debug_log "pip Version : ${pip_ver}, List File : ${pip_list}"
+
+  # Check Python Version
+  case ${pip_ver} in
+              2 | 2.7 | python2 )         _disp_pip_ver="${_pip_python_2}"; pip_dependency_list="pip-dep.apt"; pip_command="pip";;
+        3 | 3.6 | 3.5 | python3 )         _disp_pip_ver="${_pip_python_3}"; pip_dependency_list="pip3-dep.apt"; pip_command="pip3";;
+                              * )         _log_and_exit "Internal Function Error. Arguments for python version." "19";;
+  esac
+
+  _log_and_show "${_checking} Dependencies for Python: ${pip_ver}"
+  # Check if `python-pip` is installed, if not install it
+  if ! pip_loc="$(type -p "$pip_command")" || [[ -z $pip_loc ]]; then
+      set_red
+      _log_and_show "${_warn} $pip_command is not installed!${NC}"
+      set_default
+      _log_and_show "${_installing} packages from list : $pip_dependency_list"
+      # shellcheck disable=SC2002
+      cat "$dir/data/$pip_dependency_list" 2>&1 | _add_timestamp_to_cat_logs
+      dependency_packages=$(cat "$dir/data/$pip_dependency_list")
+
+      # If Dependency list is empty exit the script
+      if [[ -z "$dependency_packages" ]]; then
+        set_red;
+        _log_and_exit "${_error} PIP dependency list: $pip_dependency_list is empty." "19";
+      fi
+
+      # Check if simulate flag is set
+      if [ "$simulate_apt_install" == "true" ] && [ "$TRAVIS" != "true" ]; then
+        set_yellow;
+        _log_and_show "${_simulate} No Dependencies will be installed!!"
+        set_default;
+        # shellcheck disable=SC2086
+        apt-get -y install -s $dependency_packages 2>&1 | _add_timestamp_to_apt_logs
+      else
+        # shellcheck disable=SC2086
+        apt-get -y install $dependency_packages 2>&1 | _add_timestamp_to_apt_logs
+      fi
+      exit_status=$?
+      
+      if [ "$exit_status" -eq 0 ]; then
+        set_yellow
+        _log_and_show "${_installed} packages in the list $pip_dependency_list."
+      else
+        set_yellow;
+        _log_and_show "${_oh_no} Something went wrong while installing dependencies."
+        _log_and_show "${_error} Python packages cannot be installed without dependencies."
+        set_red;
+        _log_and_exit "${_notice} Please see the log file for more details." "23"
+      fi
+  else 
+    _log_and_show "${_info} Dependency already satisfied."
+  fi
+  # reset exit status
+  exit_status=0
+
+
+  _log_and_show "${_disp_pip_ver} Installing python packages from : ${pip_list}"
+  # shellcheck disable=SC2002
+  # just to print it in logs so ignore shellcheck
+  cat "$dir/data/$pip_list" 2>&1 | _add_timestamp_to_cat_logs
+  # Check if pip package list is empty
+  pip_packages=$(cat "$dir/data/$pip_list")
+  if [[ -z "$pip_packages" ]]; then
+    set_yellow;
+    _log_and_show "${_error} Package lists file ${pip-list} is empty!";
+    set_default;
+  else
+    # I package list isn't empty proceed to install pip packages
+    # Check if simulate is true
+    if [ "$simulate_apt_install" == "true" ] && [ "$TRAVIS" != "true" ]; then
+      set_yellow;
+      _log_and_show "${_disp_pip_ver} PIP does not support simulated installs. Not performing install."
+      set_default;
+    else
+      pip install -r "${dir}/data/${pip_list}" 2>&1 | _add_timestamp_to_pip_logs
+    fi
+    exit_status=$?
+    if [ "$exit_status" -eq 0 ]; then
+      set_yellow
+      _log_and_show "${_disp_pip_ver} Installed packages from ${pip_list}"
+    else
+        set_yellow;
+        _log_and_show "${_disp_pip_ver} Something went wrong while installing packages in $pip_list."
+        set_blue;
+        _log_and_show "${_notice} Please see the log file for more details."
+    fi
+  fi
+  set_default;
+}
+
+
+
+function install_pip_packages_2()
+{
+  # Install Python 2 packages
+  _install_pip_python "pip.list" "2"
+}
+
+
+function install_pip_packages_3()
+{
+  # Install Python 2 packages
+  _install_pip_python "pip3.list" "3"
+}
+
 function install_debs ()
 {
 
@@ -1084,6 +1229,9 @@ function install_debs ()
 
 }
 
+
+
+
 function all_in_one()
 {
   #Wrapper for all options
@@ -1091,7 +1239,7 @@ function all_in_one()
   _debug_log "Option: ALL IN ONE, function name: all_in_one"
   _line_fill;
   set_blue;
-  _log_and_show "${_info} Apps will be installed, Upgrades and repositoris and will be added, deb files will be downloaded and installed!\n ${_info} This action is not reversible in all cases."
+  _log_and_show "${_info} Apps will be installed, Upgrades and repositoris and will be added, deb files will be downloaded and installed!\n${_info} This action is not reversible in all cases."
   _debug_log "All in One initialized"
   set_default;
   update_repos;
@@ -1100,6 +1248,8 @@ function all_in_one()
   add_repositories;
   install_apps;
   install_debs;
+  install_pip_packages_2;
+  install_pip_packages_3;
   set_yellow;
   _line_fill;
   set_default;
@@ -1128,6 +1278,8 @@ function _process_opts
       add_ppas               'Add PPAs from file' \
       install_apps           'Install Packages from Lists' \
       install_debs           'Install deb packages' \
+      install_pip_packages_2 'Install Python 2 packages via pip' \
+      install_pip_packages_3 'Install Python 3 packages via pip3' \
       disable_external_repos 'Reset Repositories for cleanup' \
       purge_not_required     'Purge not required Packages' \
       delete_log_file        "Delete Script logs" \
@@ -1158,6 +1310,10 @@ function _process_opts
     install_debs )            _show_confirmation_dialog_for_tasks "Download & Install DEB files" "DEB Files in the list deb-files.list will be Download and installed. Proceed with the task?" "$task"
                               ;;
     set_gsettings )           _show_confirmation_dialog_for_tasks "Apply Custom gsettings" "Gsettings mentioned in the file gsettings.list will be Applied. \n Proceed?" "$task"
+                              ;;
+    install_pip_packages_2 )  _show_confirmation_dialog_for_tasks "Install Python2 packages" "Python packaes for Python 2 mentioned in pip.list will be installed via pip. If necessary python-pip package will be installed from apt. \n Proceed?" "$task"
+                              ;;
+    install_pip_packages_3 )  _show_confirmation_dialog_for_tasks "Install Python3 packages" "Python packaes for Python 3 mentioned in pip3.list will be installed via pip. If necessary python-pip package will be installed from apt. \n Proceed?" "$task"
                               ;;
     delete_log_file )         _debug_log "Delete log selected"
                               delete_log_file;

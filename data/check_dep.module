@@ -1,0 +1,80 @@
+
+#  Stashed here.MEant to check if a dependency is installed and if not install it.
+# Not using now.
+function _check_and_install_pre_requisites()
+{
+  # This function installs required packages by other modules
+  # Checks if a command is not available and then installs the related package
+  # These should be present in your base ubuntu instal. If not present then, this function
+  # will install them. 
+  # Accepts two agruments 
+  # ARG 1 : list file (in data folder) with apt packages which are dependencies. (Use quote if ther are multiple packags)
+  # ARG 2 & later : Commands to check if a package is installed already.
+
+  #check if no args
+  if [ $# -lt 0 ]; then
+    printf "\n${BLUE}Not enough arguments. \nUsage: _check_and_install_pre_requisites <list.apt> <commands to check>${NC}\n" && \
+    _log_and_exit "Internal Function Error. Invalid number of Arguments" "18";
+  fi;
+
+  # Check for dep list
+  local dependency_check_failed_count=0;
+  _log_and_show "${_info} Checking dependencies..."
+  while [ "$1" != "" ]; do
+    dep="${1}"
+    _debug_log "Command to Check: $dep"
+    command -v "$dep" > /dev/null
+    dep_res=$?
+    _debug_log "Command Check Result for $dep: $dep_res"
+    if [ "$dep_res" -eq 1 ]; then
+      set_red
+      _log_and_show "${_error} $dep is not installed!${NC}"
+      set_default
+      dependency_check_failed_count=$((dependency_check_failed_count+1))
+      _debug_log "Dependency fail count is: dependency_check_failed_count"
+    fi
+    shift
+  done
+
+  if [ "$dependency_check_failed_count" -gt 0 ]; then
+    set_yellow
+    _log_and_show "${_info} One or more dependencies not installed. Installing dependencies..."
+    set_default
+    while IFS= read -r line
+      do
+          _log_and_show "${_installing} packages from list :$line:"
+          _debug_log "$line\n"
+          # shellcheck disable=SC2002
+          # just to print it in logs so ignore shellcheck
+          cat "$dir/$line" 2>&1 | _add_timestamp_to_cat_logs
+          packages=$(cat "$dir/$line")
+          [[ -z "$packages" ]] && _log_and_show "package list to install is empty!!" && continue;
+          # Check if simulate is true
+          if [ "$simulate_apt_install" == "true" ]; then
+            set_yellow;
+            _log_and_show "${_simulate} No packages will be installed!!"
+            set_default;
+            # disable shellcheck for quoted variable as its an exception
+            # quoting $packages leads to errors.
+            # we need user to see errors, dont redirect stderr
+            # shellcheck disable=SC2086
+            apt-get -y install -s $packages | _add_timestamp_to_apt_logs
+          else
+            # shellcheck disable=SC2086
+            apt-get -y install $packages | _add_timestamp_to_apt_logs
+          fi
+          exit_status=$?
+          if [ "$exit_status" -eq 0 ]; then
+            set_yellow
+            _log_and_show "${_installed} packages in the list $line."
+          else
+            _log_and_show "${_oh_no} Something went wrong while installing packages in $line."
+            set_blue;
+            _log_and_show "${_notice} Please see the log file for more details."
+        fi
+          set_default;
+          unset packages;
+      done < "$app_list_list"
+  fi
+
+}

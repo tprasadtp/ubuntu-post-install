@@ -30,3 +30,4 @@ Non package related lists (settings, deb files, delete packages list). The use a
 | ppa | List of ppas to be added | `add_ppas` | [Link](#l#add-ppas) |
 | deb-files | List of DEB files to be installed | `install_debs` | [Link](#l#add-ppas) |
 | get.mlist | Used by get-after-effects.sh to download required list files | [get-after-effects.sh](https://github.com/tprasadtp/ubuntu-post-install/blob/master/get-after-effects.sh) | --- |
+|pip.list| pip system wide packages | install_pip_packages | [Link](#install-pip-packages)
