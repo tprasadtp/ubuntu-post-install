@@ -1080,6 +1080,7 @@ function _install_pip_python()
       _log_and_show "${_warn} $dep is not installed!${NC}"
       set_default
       _log_and_show "${_installing} packages from list : $pip_dependency_list"
+      # shellcheck disable=SC2002
       cat "$dir/data/$pip_dependency_list" 2>&1 | _add_timestamp_to_cat_logs
       dependency_packages=$(cat "$dir/data/$pip_dependency_list")
 
