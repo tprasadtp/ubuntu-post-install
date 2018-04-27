@@ -25,7 +25,7 @@ function main()
   sudo ./after-effects --yes --simulate
 
   exit_code_from_script=$?
-  echo "Exit code from docker run is: $exit_code_from_script"
+  echo "Exit code from  run is: $exit_code_from_script"
   echo "Print Logs is set to: $PRINT_LOGS"
   if [ "$PRINT_LOGS" == "true" ] || [[ "$exit_code_from_script" -gt 0 ]]; then
     echo " "

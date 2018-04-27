@@ -1080,7 +1080,7 @@ function _install_pip_python()
   # Check if `python-pip` is installed, if not install it
   echo "Bin Check"
   which command
-  command -v "$pip_command" > /dev/null
+  which "$pip_command" > /dev/null
   pip_command_result=$?
   if [ $pip_command_result -eq 1 ]; then
       set_red
