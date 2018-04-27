@@ -152,12 +152,12 @@ function _init_script_variables()
 
   #Fix Repo not available for latest release
   bool_fix_repo_not_available_for_latest="false"
-  readonly code_name_latest_release="artful"
-  readonly codename_previous_release="zesty"
+  readonly code_name_latest_release="bionic"
+  readonly codename_previous_release="artful"
 
   # Allow repo fixes for Upcoming releases of ubuntu and its derivatives.
   bool_fix_repo_not_available_for_upcoming_release="false"
-  readonly codename_upcoming_release="bionic"
+  readonly codename_upcoming_release="c"
 
   # Simulate apt-get install by default its false
   # can be set to true if an argument -s or --simulate is passed while running the script
@@ -425,9 +425,14 @@ function _fix_ubuntu_derivatives()
                                             ;;
       #artful )                              _eol_message "$code_name" "July 2018"
       #                                      ;;
-      bionic )                              set_magenta
+      bionic )                              set_yellow
                                             _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
-                                            _log_and_show "${_pre_release} This is Ubuntu 18.04 Bionic Beaver"
+                                            _log_and_show "${_pre_release} Please use --fix flag if your choice of repos are not available.\n${_warn} There's no fix for PPAs."
+                                            ;;
+      c       )                             set_magenta
+                                            _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
+                                            _log_and_show "${_pre_release} Please use --fix flag if you cannot add repos yet. There's no fix for PPAs."
+                                            _log_and_show "${_pre_release} This is Ubuntu 18.10 Bionic"
                                             _log_and_show "${_warn} This is a pre-release of Ubuntu Which is in development. Use with caution"
                                             _log_and_show "${_warn} Packages and PPAs might not work with this release!"
                                             ;;
@@ -1091,7 +1096,7 @@ function _install_pip_python()
       fi
 
       # Check if simulate flag is set
-      if [ "$simulate_apt_install" == "true" ]; then
+      if [ "$simulate_apt_install" == "true" ] && [ "$TRAVIS" != "true" ]; then
         set_yellow;
         _log_and_show "${_simulate} No Dependencies will be installed!!"
         set_default;
@@ -1133,7 +1138,7 @@ function _install_pip_python()
   else
     # I package list isn't empty proceed to install pip packages
     # Check if simulate is true
-    if [ "$simulate_apt_install" == "true" ]; then
+    if [ "$simulate_apt_install" == "true" ] && [ "$TRAVIS" != "true" ]; then
       set_yellow;
       _log_and_show "${_disp_pip_ver} PIP does not support simulated installs. Not performing install."
       set_default;
@@ -1245,6 +1250,8 @@ function all_in_one()
   add_repositories;
   install_apps;
   install_debs;
+  install_pip_packages_2;
+  install_pip_packages_3;
   set_yellow;
   _line_fill;
   set_default;
