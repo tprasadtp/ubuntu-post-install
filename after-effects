@@ -1063,7 +1063,7 @@ function _install_pip_python()
 
   update_repos;
   #Install starts here
-  local pip_dependency_list exit_status _disp_pip_ver pip_command dependency_packages pip_command_result
+  local pip_dependency_list exit_status _disp_pip_ver pip_command dependency_packages pip_loc
   local pip_list="${1}"
   local pip_ver="${2}"
   _debug_log "Option: Install Python Packaes via PIP, Function name: _install_pip_python"
@@ -1078,11 +1078,7 @@ function _install_pip_python()
 
   _log_and_show "${_checking} Dependencies for Python: ${pip_ver}"
   # Check if `python-pip` is installed, if not install it
-  echo "Bin Check"
-  which command
-  which "$pip_command" > /dev/null
-  pip_command_result=$?
-  if [ $pip_command_result -eq 1 ]; then
+  if ! pip_loc="$(type -p "$pip_command")" || [[ -z $pip_loc ]]; then
       set_red
       _log_and_show "${_warn} $pip_command is not installed!${NC}"
       set_default
