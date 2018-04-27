@@ -33,7 +33,7 @@ readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 log_file="$dir"/after-effects-logs/after-effects.log
 mkdir -p "$dir"/after-effects-logs
-readonly version="3.5 Beta"
+readonly version="3.6 Beta"
 
 function _init_printf_variables()
 {
@@ -755,7 +755,7 @@ function add_repositories()
     # Mendeley Desktop App
   if [ "$add_mendeley_repo" == "true" ]; then
     _log_and_show "${_adding} Mendeley repository"
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 | _add_timestamp_to_aptkey_logs || _log_and_show "Adding Mendeley Desktop Key Failed"
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 2>&1 | _add_timestamp_to_aptkey_logs || _log_and_show "Adding Mendeley Desktop Key Failed"
     echo "deb https://desktop-download.mendeley.com/download/apt stable main #Mendeley-Desktop"  > ${SOURCES_FILE_DIR}/mendeleydesktop.list
   else
       _log_and_show "${YELLOW}${_adding} Mendeley Desktop is set to false.${NC}"
@@ -1082,7 +1082,7 @@ function _install_pip_python()
   pip_command_result=$?
   if [ $pip_command_result -eq 1 ]; then
       set_red
-      _log_and_show "${_warn} $dep is not installed!${NC}"
+      _log_and_show "${_warn} $pip_command is not installed!${NC}"
       set_default
       _log_and_show "${_installing} packages from list : $pip_dependency_list"
       # shellcheck disable=SC2002
@@ -1241,15 +1241,15 @@ function all_in_one()
   _debug_log "Option: ALL IN ONE, function name: all_in_one"
   _line_fill;
   set_blue;
-  _log_and_show "${_info} Apps will be installed, Upgrades and repositoris and will be added, deb files will be downloaded and installed!\n ${_info} This action is not reversible in all cases."
+  _log_and_show "${_info} Apps will be installed, Upgrades and repositoris and will be added, deb files will be downloaded and installed!\n${_info} This action is not reversible in all cases."
   _debug_log "All in One initialized"
   set_default;
-  update_repos;
-  upgrade_apps;
-  add_ppas;
-  add_repositories;
-  install_apps;
-  install_debs;
+  #update_repos;
+  #upgrade_apps;
+  #add_ppas;
+  #add_repositories;
+  #install_apps;
+  #install_debs;
   install_pip_packages_2;
   install_pip_packages_3;
   set_yellow;
