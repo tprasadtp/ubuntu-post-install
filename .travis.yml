@@ -19,10 +19,13 @@ jobs:
     script: "./tests/test-bionic"
   - env: TEST_ENV="Trusty"
     script: "./tests/test-trusty"
+ # - env: TEST_ENV="C-Docker"
+ #   script: script: "./tests/test-prerelease"
 matrix:
   fast_finish: true
   allow_failures:
     - env: TEST_ENV="Bionic-Docker"
+#    - env: TEST_ENV="C-Docker"
 notifications:
   email: false
   slack:
