@@ -1066,11 +1066,12 @@ function _install_pip_python()
 
   # Check Python Version
   case ${pip_ver} in
-              2 | 2.7 | python2 )         _disp_pip_ver="${_pip_python_2}"; pip_dependency_list="pip2.apt"; pip_command="pip";;
-        3 | 3.6 | 3.5 | python3 )         _disp_pip_ver="${_pip_python_3}"; pip_dependency_list="pip3.apt"; pip_command="pip3";;
+              2 | 2.7 | python2 )         _disp_pip_ver="${_pip_python_2}"; pip_dependency_list="pip-dep.apt"; pip_command="pip";;
+        3 | 3.6 | 3.5 | python3 )         _disp_pip_ver="${_pip_python_3}"; pip_dependency_list="pip3-dep.apt"; pip_command="pip3";;
                               * )         _log_and_exit "Internal Function Error. Arguments for python version." "19";;
   esac
 
+  _log_and_show "${_checking} Dependencies for Python: ${pip_ver}"
   # Check if `python-pip` is installed, if not install it
   command -v "$pip_command" > /dev/null
   pip_command_result=$?
@@ -1079,7 +1080,8 @@ function _install_pip_python()
       _log_and_show "${_warn} $dep is not installed!${NC}"
       set_default
       _log_and_show "${_installing} packages from list : $pip_dependency_list"
-      dependency_packages=$(cat "$dir/$pip_dependency_list")
+      cat "$dir/data/$pip_dependency_list" 2>&1 | _add_timestamp_to_cat_logs
+      dependency_packages=$(cat "$dir/data/$pip_dependency_list")
 
       # If Dependency list is empty exit the script
       if [[ -z "$dependency_packages" ]]; then
@@ -1111,7 +1113,7 @@ function _install_pip_python()
         _log_and_exit "${_notice} Please see the log file for more details." "23"
       fi
   else 
-    _log_and_show "{_info} Dependency already satisfied."
+    _log_and_show "${_info} Dependency already satisfied."
   fi
   # reset exit status
   exit_status=0
@@ -1120,9 +1122,9 @@ function _install_pip_python()
   _log_and_show "${_disp_pip_ver} Installing python packages from : ${pip_list}"
   # shellcheck disable=SC2002
   # just to print it in logs so ignore shellcheck
-  cat "$dir/$pip_list" 2>&1 | _add_timestamp_to_cat_logs
+  cat "$dir/data/$pip_list" 2>&1 | _add_timestamp_to_cat_logs
   # Check if pip package list is empty
-  pip_packages=$(cat "$dir/$pip_list")
+  pip_packages=$(cat "$dir/data/$pip_list")
   if [[ -z "$pip_packages" ]]; then
     set_yellow;
     _log_and_show "${_error} Package lists file ${pip-list} is empty!";
@@ -1135,7 +1137,7 @@ function _install_pip_python()
       _log_and_show "${_disp_pip_ver} PIP does not support simulated installs. Not performing install."
       set_default;
     else
-      pip install -r "${pip_list}" 2>&1 | _add_timestamp_to_pip_logs
+      pip install -r "${dir}/data/${pip_list}" 2>&1 | _add_timestamp_to_pip_logs
     fi
     exit_status=$?
     if [ "$exit_status" -eq 0 ]; then

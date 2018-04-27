@@ -1,3 +1,5 @@
+# Exit Codes
+
 | Exit Codes | Reason |
 |:----------:|:-------|
 | 1- 10 | Script cannot run on the system |
