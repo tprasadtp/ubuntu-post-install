@@ -1135,7 +1135,7 @@ function _install_pip_python()
     set_default;
   else
     # I package list isn't empty proceed to install pip packages
-    # Check if simulate is true
+    # Check if simulate is true & is not running on TRAVIS.
     if [ "$simulate_apt_install" == "true" ] && [ "$TRAVIS" != "true" ]; then
       set_yellow;
       _log_and_show "${_disp_pip_ver} PIP does not support simulated installs. Not performing install."

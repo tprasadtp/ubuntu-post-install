@@ -1,5 +1,3 @@
-# Title:
-
 ## Changes Proposed:
 
 ## Description:
