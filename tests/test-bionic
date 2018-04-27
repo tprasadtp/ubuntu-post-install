@@ -31,9 +31,8 @@ function main()
 
   exit_code_from_container=$?
   echo "Exit code from docker run is: $exit_code_from_container"
-  PRINT_LOGS=false
   echo "Print Logs is set to: $PRINT_LOGS"
-  if [ "$PRINT_LOGS" == "true" ] && [[ "$exit_code_from_container" -gt 0 ]]; then
+  if [ "$PRINT_LOGS" == "true" ] || [[ "$exit_code_from_container" -gt 0 ]]; then
     echo " "
     echo " "
     echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
