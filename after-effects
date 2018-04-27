@@ -1106,7 +1106,7 @@ function _install_pip_python()
       else
         set_yellow;
         _log_and_show "${_oh_no} Something went wrong while installing dependencies."
-        _log_and_show "${error} Python packages cannot be installed without dependencies."
+        _log_and_show "${_error} Python packages cannot be installed without dependencies."
         set_red;
         _log_and_exit "${_notice} Please see the log file for more details." "23"
       fi
@@ -1117,12 +1117,12 @@ function _install_pip_python()
   exit_status=0
 
 
-  _log_and_show "${_pip_ver} Installing python packages from : ${pip_list}"
+  _log_and_show "${_disp_pip_ver} Installing python packages from : ${pip_list}"
   # shellcheck disable=SC2002
   # just to print it in logs so ignore shellcheck
   cat "$dir/$pip_list" 2>&1 | _add_timestamp_to_cat_logs
   # Check if pip package list is empty
-  
+  pip_packages=$(cat "$dir/$pip_list")
   if [[ -z "$pip_packages" ]]; then
     set_yellow;
     _log_and_show "${_error} Package lists file ${pip-list} is empty!";
@@ -1147,6 +1147,7 @@ function _install_pip_python()
         set_blue;
         _log_and_show "${_notice} Please see the log file for more details."
     fi
+  fi
   set_default;
 }
 
