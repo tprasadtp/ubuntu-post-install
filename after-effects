@@ -157,7 +157,7 @@ function _init_script_variables()
 
   # Allow repo fixes for Upcoming releases of ubuntu and its derivatives.
   bool_fix_repo_not_available_for_upcoming_release="false"
-  readonly codename_upcoming_release="c"
+  readonly codename_upcoming_release="cosmic"
 
   # Simulate apt-get install by default its false
   # can be set to true if an argument -s or --simulate is passed while running the script
@@ -429,11 +429,12 @@ function _fix_ubuntu_derivatives()
                                             _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
                                             _log_and_show "${_pre_release} Please use --fix flag if your choice of repos are not available.\n${_warn} There's no fix for PPAs."
                                             ;;
-      c       )                             set_magenta
+      cosmic  )                             set_magenta
                                             _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
+                                            set_default
                                             _log_and_show "${_pre_release} Please use --fix flag if you cannot add repos yet. There's no fix for PPAs."
-                                            _log_and_show "${_pre_release} This is Ubuntu 18.10 Bionic"
-                                            _log_and_show "${_warn} This is a pre-release of Ubuntu Which is in development. Use with caution"
+                                            _log_and_show "${_pre_release} This is Ubuntu 18.10 Cosmic Canimal"
+                                            _log_and_show "${_warn} This is a pre-release of Ubuntu Which is in early stages of development. Use with caution"
                                             _log_and_show "${_warn} Packages and PPAs might not work with this release!"
                                             ;;
       *)                                    _log_and_show "${_error} Unknown Distribution/Release."
@@ -1057,11 +1058,13 @@ function _install_pip_python()
 
   #Check args
   if [ $# -lt 2 ] ||  [ $# -gt 2 ] ; then
-    _log_and_show "\n${BLUE}${_error} Not enough arguments. \n${-info} Usage: _check_and_install_pre_requisites <list.apt> <commands to check>${NC}\n" && \
+    set_yellow;
+    _log_and_show "${_error} Not enough arguments. \n${_info} Usage: _check_and_install_pre_requisites <list.apt> <commands to check>\n" && \
     _log_and_exit "Internal Function Error. Invalid number of Arguments: $#." "18";
   fi;
 
   update_repos;
+  set_default;
   #Install starts here
   local pip_dependency_list exit_status _disp_pip_ver pip_command dependency_packages pip_loc
   local pip_list="${1}"
@@ -1113,14 +1116,15 @@ function _install_pip_python()
         set_yellow;
         _log_and_show "${_oh_no} Something went wrong while installing dependencies."
         _log_and_show "${_error} Python packages cannot be installed without dependencies."
-        set_red;
+        set_default;
         _log_and_exit "${_notice} Please see the log file for more details." "23"
       fi
   else 
     _log_and_show "${_info} Dependency already satisfied."
   fi
-  # reset exit status
+  # reset exit status & color
   exit_status=0
+  set_default;
 
 
   _log_and_show "${_disp_pip_ver} Installing python packages from : ${pip_list}"

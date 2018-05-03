@@ -19,8 +19,8 @@ jobs:
     script: "./tests/test-bionic"
   - env: TEST_ENV="Trusty"
     script: "./tests/test-trusty"
- # - env: TEST_ENV="Pre-Release"
- #   script: script: "./tests/test-prerelease"
+  - env: TEST_ENV="Pre-Release"
+    script: "./tests/test-prerelease"
 matrix:
   fast_finish: true
   allow_failures:

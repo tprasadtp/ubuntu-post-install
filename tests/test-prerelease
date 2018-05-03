@@ -5,7 +5,7 @@
 # Author: Prasad Tengse
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
-
+export PRE_REL_CODENAME="cosmic"
 set -o pipefail
 function main()
 {
@@ -16,14 +16,14 @@ function main()
   # set eo on script.
   sed -i 's/set -o pipefail/set -eo pipefail/g' "$dir"/after-effects
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-  echo "Getting Bionic Daily Image"
-  wget http://cdimage.ubuntu.com/ubuntu-base/daily/current/bionic-base-amd64.tar.gz -O ./dockerfiles/bionic/bionic-base-amd64.tar.gz
+  echo "Getting $PRE_REL_CODENAME Daily Image"
+  wget http://cdimage.ubuntu.com/ubuntu-base/daily/current/$PRE_REL_CODENAME-base-amd64.tar.gz -O ./dockerfiles/pre-release/pre-release-base-amd64.tar.gz
   ls -a
   echo "Building Bionic Docker Image"
   docker build -t ubuntu:ae-pre-release ./dockerfiles/pre-release
   echo "Adding Xenial and above list to app-list.list"
   echo "./data/xenial-above.list" >> ./data/app-list.list
-  echo "Running in Docker Ubuntu 18.10"
+  echo "Running in Docker Ubuntu $PRE_REL_CODENAME"
 
   docker run -it -e TRAVIS="$TRAVIS" \
   --hostname=Docker-Pre-Release \

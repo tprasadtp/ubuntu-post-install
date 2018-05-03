@@ -1,5 +1,12 @@
 # Changelogs
 
+## _v3.6_
+
+- Add Option to install system wide python packages using pip
+- Promote Bionic to stable and update codenames
+- Update pre-release to cosmic, rename test script for pre release
+- Remove unused dockerfiles
+
 ## _v3.4_
 
 - Delete cached and downloaded DEBs. (Can be changed with `-k` flag )
