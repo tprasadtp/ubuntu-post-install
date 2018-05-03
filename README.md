@@ -97,7 +97,12 @@ Ubuntu 17.10        Artful Aardvark
 Ubuntu 16.04        Xenial Xerus
 Ubuntu 14.04        Trusty Thar
 Ubuntu 18.10        Cosmic Canimal [Not yet supported, Only use for testing & development.]
------------------------------------------------------------------------------------
+
+Official Ubuntu Flavors for above mentioned Ubuntu releases.
+(Kubuntu, Ubuntu MATE, Ubuntu Budgie (17.10 & 18.04), Ubuntu-GNOME (14.04, 16.04) 
+Lubuntu, Xubuntu, Ubuntu Studio, Edubuntu)
+---------------------------------------------------------------------------------------
+
 Linux Mint 17       Quina
 Linux-Mint 17.1     Rebecca
 Linux-Mint 17.2     Rafaela
@@ -107,24 +112,25 @@ Linux-Mint 18.1     Serena
 Linux-Mint 18.2     Sonya
 Linux-Mint 18.3     Sylvia
 Linux Mint 19       Tara [Not Yet Supported]
------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
 Elementary-OS       Freya
 Elementary-OS       Loki
-Budgie Remix        Unofficial flavor based on Ubuntu 16.04
-PoP!_OS             17.10 (Based on Ubuntu 17.10)
-Official Ubuntu Flavors for above mentioned Ubuntu releases.
-(Kubuntu, Ubuntu MATE, Ubuntu Budgie, Ubuntu GNOME, Lubuntu, Xubuntu, Ubuntu Studio
-  Edubuntu)
+Budgie Remix        Unofficial Ubuntu flavor based on Ubuntu 16.04
+PoP!_OS             17.10 & 18.04
 
----- The below distributions should work but haven't been tested. -----
+----------------------------------------------------------------------------------------
+
 Linux-Lite          3.X (Based on Ubuntu 16.04)
 Zorin-OS            12.X (Based on Ubuntu 16.04)
 Bodhi Linux         4 (Based on Ubuntu 16.04)
+----------------------------------------------------------------------------------------
+
 ```
 
 - Though 32 bit is supported, Testing in Travis CI, containers and locally all are done using 64 bit machine, host, vm and containers. If something breaks please report it and use it with caution.
 - Support for Ubuntu Pre-release builds, Elementary OS Juno are **experimental** and things might break. They have not been released in stable release channels and are considered development versions of the release. It is strongly advised to use them in a chroot or a virtualized environments and not as a daily driver.
-- Linux mint 18.3 uses a new appstore from which you can directly install Chrome and other popular tools. There may be some conflicts in the `/etc/apt/sources.list.d` where single repository is configured multiple times with same priority. Use it with caution. The scripts are not tested on Travis on Linux Mint. However in most cases it should be fine as it works well with Xenial.
+- Linux mint 18.3 & later uses a new appstore from which you can directly install Chrome and other popular tools. There may be some conflicts in the `/etc/apt/sources.list.d` where, a single repository might be configured multiple times with same priority. Use it with caution. The scripts are not tested on Travis on Linux Mint. However in most cases it should be fine as it works well with Xenial & later releases.
 
 > **Script will exit if it cannot recognize the distribution.**
 
