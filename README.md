@@ -82,6 +82,8 @@ ca-certificates
 curl
 ppa-purge
 software-properties-common
+python-pip
+python3-pip
 ```
 
 They will be installed if necessary, without confirmation.
