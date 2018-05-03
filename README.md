@@ -92,10 +92,12 @@ They will be installed if necessary, without confirmation.
 - But Travis CI tests are run only on Ubuntu versions.
 
 ```none
-Ubuntu 17.10        Artful Aardvark
 Ubuntu 18.04        Bionic Beaver
+Ubuntu 17.10        Artful Aardvark
 Ubuntu 16.04        Xenial Xerus
 Ubuntu 14.04        Trusty Thar
+Ubuntu 18.10        Cosmic Canimal [Not yet supported, Only use for testing & development.]
+-----------------------------------------------------------------------------------
 Linux Mint 17       Quina
 Linux-Mint 17.1     Rebecca
 Linux-Mint 17.2     Rafaela
@@ -105,6 +107,7 @@ Linux-Mint 18.1     Serena
 Linux-Mint 18.2     Sonya
 Linux-Mint 18.3     Sylvia
 Linux Mint 19       Tara [Not Yet Supported]
+-----------------------------------------------------------------------------------
 Elementary-OS       Freya
 Elementary-OS       Loki
 Budgie Remix        Unofficial flavor based on Ubuntu 16.04
@@ -112,6 +115,7 @@ PoP!_OS             17.10 (Based on Ubuntu 17.10)
 Official Ubuntu Flavors for above mentioned Ubuntu releases.
 (Kubuntu, Ubuntu MATE, Ubuntu Budgie, Ubuntu GNOME, Lubuntu, Xubuntu, Ubuntu Studio
   Edubuntu)
+
 ---- The below distributions should work but haven't been tested. -----
 Linux-Lite          3.X (Based on Ubuntu 16.04)
 Zorin-OS            12.X (Based on Ubuntu 16.04)
@@ -213,7 +217,7 @@ Please visit https://help.ubuntu.com/community/EOLUpgrades to see how to Upgrade
   ```bash
   readonly code_name_latest_release="bionic"
   readonly codename_previous_release="artful"
-  readonly codename_upcoming_release="NA"
+  readonly codename_upcoming_release="cosmic"
   ```
 
   > If you are using a pre release version of Ubuntu, you can use `--pre-release` falg to apply the above mentioned fix to pre-release version of Ubuntu. This flag can be used independent of `--fix`. If both are used together then both flags will be applied if the release is upcoming-release. otherwise if the release is stable only `--fix` flag will be valid and `--pre-release` is ignored. This is how it works:  If the repositories are  not available for latest stable release as well, go back a release. Ex. If the pre-release is 18.04 and the repo is not available for 17.10 as well, we use 17.04 repositories. Usually happens in first few days of development cycle of 18.04.
@@ -471,9 +475,10 @@ Following Tests are done on travis-ci.
 - Test on Artful container (Job #build.2)
 - Test on Xenial container (Job #build.3)
 - Test on Trusty (Host) (Job #build.4) (Soon to be removed)
+- Test on Bionic Beaver (Job #build.5)
 > Trusty tests do not install indicator-kdeconnect, peek, openjdk-8-jdk, gnome-todo , gnome-calendar, polari and their PPAs (if available) as they are not available for trusty . Please modify your lists accordingly.
 
-- Test on Bionic Beaver (Job #build.5) from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
+- Test on Cosmic Canimal (Job #build.6) from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
 - Dockerfiles used for building the image are in `/dockerfiles` directory, they use official Ubuntu base images with script dependencies.
 - Dockerfile for Bionic is using `http://cdimage.ubuntu.com/ubuntu-base/daily` root file system, as official images are not available yet.
 - Test scripts are located in `/tests` directory.

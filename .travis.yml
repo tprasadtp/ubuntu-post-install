@@ -19,12 +19,13 @@ jobs:
     script: "./tests/test-bionic"
   - env: TEST_ENV="Trusty"
     script: "./tests/test-trusty"
-  - env: TEST_ENV="Pre-Release"
+  - env: TEST_ENV="Cosmic-Docker"
     script: "./tests/test-prerelease"
 matrix:
   fast_finish: true
   allow_failures:
     - env: TEST_ENV="Pre-Release"
+    - env: TEST_ENV="Cosmic-Docker"
 notifications:
   email: false
   slack:
