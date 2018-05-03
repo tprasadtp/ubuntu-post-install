@@ -1,6 +1,6 @@
 FROM scratch
 LABEL maintainer "Prasad Tengse <code@prasadt.com>"
-ADD bionic-base-amd64.tar.gz /
+ADD pre-release-base-amd64.tar.gz /
 
 # a few minor docker-specific tweaks
 # see https://github.com/docker/docker/blob/9a9fc01af8fb5d98b8eec0740716226fadb3735c/contrib/mkimage/debootstrap
