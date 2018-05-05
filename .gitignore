@@ -109,3 +109,5 @@ test-pre-commit.sh
 *.old
 *.synaptic
 *.list
+*.ignore
+var.sh
