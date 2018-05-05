@@ -21,11 +21,8 @@
 #              - whiptail, lsb-release, wget, iputils-ping
 #              - Ubuntu 14.04/16.04/17.04/17.10/18.04 or Elementary Freya/Loki/Juno 
 #              - or Mint 17.X or 18.X or 19.X
-#              - Support for Ubuntu 18.04 Bionic is Experimental.
-#              - It is advised not to use 18.04 it as daily driver and should be considered buggy.
-
-
 #
+
 set -o pipefail
 #Constants
 DATE=$(date +%Y-%m-%d:%H:%M:%S)
@@ -34,6 +31,8 @@ readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 log_file="$dir"/after-effects-logs/after-effects.log
 mkdir -p "$dir"/after-effects-logs
 readonly version="3.6 Beta"
+readonly V_NUM=42
+
 
 function _init_printf_variables()
 {
@@ -116,9 +115,13 @@ function _init_script_variables()
   if [ "$architeture" == "64" ];then
     _debug_log "Architecture is 64 bit."
     readonly ARCH=amd64
+    readonly jq_bin="vendor/jq-linux64"
+    _debug_log "JQ Binary is 64 Bit: $jq_bin"
   elif [[ "$architeture" == "32" ]]; then
     _debug_log "Architecture is 32 bit."
     readonly ARCH=i386
+    readonly jq_bin="vendor/jq-linux32"
+    _debug_log "JQ Binary is 32 Bit: $jq_bin"
   else
     set_yellow;
     _log_and_show "${_error} This architecture is not supported by this script!"
@@ -177,7 +180,7 @@ function _init_script_variables()
 
   # Configure Partner Repositoris
   # Some Releases like linux mint have their own way of enabling partner Repositoris,
-  # Disable adding partner Repositoris when using ubuntu Derivatives like Linux Mint.
+  # Disable adding partner Repositoris when using Ubuntu Derivatives like Linux Mint.
   # Default is true
   # _fix_ubuntu_derivatives will take care of this variable and set it to false if
   # derivative of ubuntu is found.
@@ -186,6 +189,15 @@ function _init_script_variables()
 
   # Keep Downloaded DEB packages
   bool_preserve_debs="false"
+
+  # Checks for Version and Changelogs via APIs
+  # Define API node endpoints
+  bool_check_version="true"
+  bool_ignore_api_error="false"
+  bool_custom_api_node="false"
+  # Define API Node name aka server name
+  api_node=after-effects.prasadt.com
+
 }
 
 function _init_script_initialization()
@@ -465,6 +477,27 @@ function _test_internet_connection ()
     set_default;
     exit 14;
   fi
+}
+
+
+function _set_custom_api_nodes ()
+{
+  # Set custom api endpoints
+  if [[ "$bool_custom_api_node" == "true" ]]; then
+
+  fi
+}
+
+
+function _version_checks ()
+{
+  # Checks if its running latest version. 
+  # Also suggest updating to latest version if current version is not latest,
+  # Allows to deprecate old version as it can be suggested.
+  # Dynamic EOL checks
+  
+    # Check if jq binary is available
+
 }
 
 
@@ -1431,6 +1464,10 @@ function main()
           -k | --keep-debs )      set_default;
                                   bool_preserve_debs="true";
                                   _log_and_show "${_info} Will keep downloaded DEB packages."
+                                  ;;
+          --api-node )            set_default;
+                                  bool_custom_api_node="true";
+                                  shift; api_node=${1};
                                   ;;
            * )                    set_yellow
                                   _log_and_exit "${_error} Invalid option: $1" "22"
