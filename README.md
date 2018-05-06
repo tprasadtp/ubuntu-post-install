@@ -1,6 +1,6 @@
 # Ubuntu Post Installation Script : after-effects
 
-A bash script to setup your fresh install of Ubuntu. Please read the [FAQ](#fix-for-latest-ubuntu-releases) 
+Effortless way to setup your Fresh ubuntu installs. Please read the [FAQ](#fix-for-latest-ubuntu-releases)
 before trying out.
 
 [![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.png?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
@@ -49,13 +49,13 @@ Run the script as **root**. You will get an error if you do not run the script a
 sudo ./after-effects
 ```
 
-> If you are running this in a docker container, you probably are root and its possible that you might be missing `sudo`. So In that case just run it as `./after-effects`. Be warned! You might be missing several other dependencies as well!!
+> If you are running this in a docker container, you probably are root and its possible that you might be missing `sudo`. So In that case just run it as `./after-effects`. Be warned! You might be missing several dependecies of the script!!
 
 ### Step 4: Contribute!
 
 Contribute tweaks, improvements ideas back upstream.
 
-## Oh no! it crashed :(
+## Oh no! It crashed :(
 
 Well that shouldn't have happened. If it does, see [Script Crashes](#what-if-script-or-ubuntu-crashes) and consider opening an issue on Github.
 
@@ -64,10 +64,6 @@ Well that shouldn't have happened. If it does, see [Script Crashes](#what-if-scr
 See [Contributing and forks](./.github/CONTRIBUTING)
 
 ## FAQ
-
-### What this script/repository for?
-
-This Script is for automating the installation and configuration of a fresh Ubuntu/Linux-Mint/Elementary installation.
 
 ### What are its dependencies? What do I need on my system to run this?
 
@@ -90,8 +86,7 @@ They will be installed if necessary, without confirmation.
 
 ### What all distributions are supported
 
-- In short? Ubuntu, its official flavors (Kubuntu,Ubuntu Mate etc), Linux Mint and Elementary derivatives of the supported Ubuntu release.
-- But Travis CI tests are run only on Ubuntu versions.
+- In short? Ubuntu, its official flavors (Kubuntu,Ubuntu Mate etc), Linux Mint and Elementary.
 
 ```none
 Ubuntu 18.04        Bionic Beaver
@@ -101,7 +96,7 @@ Ubuntu 14.04        Trusty Thar
 Ubuntu 18.10        Cosmic Canimal [Not yet supported, Only use for testing & development.]
 
 Official Ubuntu Flavors for above mentioned Ubuntu releases.
-(Kubuntu, Ubuntu MATE, Ubuntu Budgie (17.10 & 18.04), Ubuntu-GNOME (14.04, 16.04) 
+(Kubuntu, Ubuntu MATE, Ubuntu Budgie (17.10 & 18.04), Ubuntu-GNOME (14.04, 16.04)
 Lubuntu, Xubuntu, Ubuntu Studio, Edubuntu)
 ---------------------------------------------------------------------------------------
 
@@ -130,15 +125,15 @@ Bodhi Linux         4 (Based on Ubuntu 16.04)
 
 ```
 
-- Though 32 bit is supported, Testing in Travis CI, containers and locally all are done using 64 bit machine, host, vm and containers. If something breaks please report it and use it with caution.
+- Though 32 bit is supported, Testing in Travis CI, containers and locally all are done using 64 bit machine and containers. If something breaks please report it and use it with caution on 32 bit machines.
 - Support for Ubuntu Pre-release builds, Elementary OS Juno are **experimental** and things might break. They have not been released in stable release channels and are considered development versions of the release. It is strongly advised to use them in a chroot or a virtualized environments and not as a daily driver.
-- Linux mint 18.3 & later uses a new appstore from which you can directly install Chrome and other popular tools. There may be some conflicts in the `/etc/apt/sources.list.d` where, a single repository might be configured multiple times with same priority. Use it with caution. The scripts are not tested on Travis on Linux Mint. However in most cases it should be fine as it works well with Xenial & later releases.
+- Linux mint 18.3 & later uses a new App-Store, from which you can directly install Chrome and other popular tools. There may be some conflicts in the `/etc/apt/sources.list.d`. Where, a single repository might be configured multiple times with same priority. Use it with caution. The scripts are not tested on Travis on Linux Mint.
 
-> **Script will exit if it cannot recognize the distribution.**
+> **Script will exit, if it cannot recognize the distribution.**
 
 ### What if I get an error saying Unknown Distribution/Release
 
-That usually means you are running a Distribution which is not supported or too old or a derivative which is not recognized by the script. However it also might be possible that `lsb-release` package is missing from your system. Since the script depends on it for determining what is the codename of the release it will fail.
+That usually means you are running a Distribution which is not supported or too old or a derivative which is not recognized by the script. However it also might be possible that `lsb-release` package is missing from your system. Since the script depends on it for determining what is the code-name of the release it will fail.
 You might see ans error like this,
 
 ``` none
@@ -228,20 +223,20 @@ Please visit https://help.ubuntu.com/community/EOLUpgrades to see how to Upgrade
   readonly codename_upcoming_release="cosmic"
   ```
 
-  > If you are using a pre release version of Ubuntu, you can use `--pre-release` falg to apply the above mentioned fix to pre-release version of Ubuntu. This flag can be used independent of `--fix`. If both are used together then both flags will be applied if the release is upcoming-release. otherwise if the release is stable only `--fix` flag will be valid and `--pre-release` is ignored. This is how it works:  If the repositories are  not available for latest stable release as well, go back a release. Ex. If the pre-release is 18.04 and the repo is not available for 17.10 as well, we use 17.04 repositories. Usually happens in first few days of development cycle of 18.04.
+  > If you are using a pre release version of Ubuntu, you can use `--pre-release` flag to apply the above mentioned fix to pre-release version of Ubuntu. This flag can be used independent of `--fix`. If both are used together then both flags will be applied if the release is upcoming-release. otherwise if the release is stable only `--fix` flag will be valid and `--pre-release` is ignored. This is how it works:  If the repositories are  not available for latest stable release as well, go back a release. Ex. If the pre-release is 18.04 and the repo is not available for 17.10 as well, we use 17.04 repositories. Usually happens in first few days of development cycle of 18.04.
 
 #### Say Yes To All
 
 - **`-y` or `--yes`**
 
-  From v3.0 onwards you will be asked for confirmation before performing the task selected. If you would like to bypass this on a CI environments like TRAVIS or for any other reason, you can do so by running the script with `sudo ./after-effects -y` or `sudo ./after-effects --yes`
+  From v3.0 onward you will be asked for confirmation before performing the task selected. If you would like to bypass this on a CI environments like TRAVIS or for any other reason, you can do so by running the script with `sudo ./after-effects -y` or `sudo ./after-effects --yes`
 
 #### Purge not required pacakges
 
 - **`-d` or `--deboalt`**
   Usually Ubuntu comes with some pre-installed games, packages which you sometimes do not need. This option is a switch to used in purging these packages mentioned in the subsequent sections. Since it is possible that user might purge necessary packages like sudo or other core system components, these just acts like a barrier from accidentally doing so.
 
-  > This flag **MUST** be passed if you intend to purge packages from system. Otherwise you will receive an error.
+  > This flag **MUST** be passed, if you intend to purge packages from system. Otherwise you will receive an error.
 
 #### Delete log file
 
@@ -254,12 +249,15 @@ Please visit https://help.ubuntu.com/community/EOLUpgrades to see how to Upgrade
 
 - **`-k` or `--keep-debs`**
 
-Keeps cahed packages cahced by APT and downloaded DEB packages.
-Default behavior is to clean apt cache and delete downloaded DEB packages. 
+Keeps packages cached by APT and downloaded DEB packages.
+Default behavior is to clean apt cache and delete downloaded DEB packages.
+
+#### Pre and Post task hooks for scripts
+See [Link](#pre-and-post-task-hooks)
 
 ## What all This Script can do? and How Can I configure it for my needs?
 
-This Script is written to be as flexible as possible. The script itself does not contain any packages or ppas to be added or deb files to installed. Configurations live in directory /data. There are .list files for each purpose containing the necessary data and are easy to configure for your needs.
+This Script is designed to be flexible. Configurations live in directory `/data`. There are .list files for each purpose containing the necessary data and are easy to configure for your needs.
 
 ### Package lists
 
@@ -273,15 +271,15 @@ This Script is written to be as flexible as possible. The script itself does not
 | development | Used for development tasks eg: rake | Yes |
 | exten-repo | Packages from PPAs or External repositories. eg : Google Chrome, Spotify, Visual Studio Code, Google Cloud SDKs | Yes |
 | goa | Gnome online accounts specific packages. These are necessary to get goa working properly in Empathy. Use only on 17.04 and above. For 16.04 use gnome-online-accounts | Yes |
-| multimedia | Tools to edit photos and videos, video players and editors and downloaders. Tools like mpv, darktable, kdenlive. | Yes |
+| multimedia | Tools to edit photos and videos, video players and editors. | Yes |
 | productivity | Email, Chat, Office tools, Document converters etc. | Yes |
 | security | Security related tools | Yes |
 | utilities | Utilities and Tools | Yes |
 | wine | Wine related packages like winetricks | Yes |
-| xenial-above | Packages re not available in xenial or below in Ubuntu repositories, but are available in 16.10 and later. | No (But is added during travis tests) |
+| xenial-above | Packages are not available in xenial or below in Ubuntu repositories, but are available in 16.10 and later. | No (But is added during travis tests) |
 | latex | Latex related packages | Yes |
-| pip   | Python 2 pip package list | NA |
-| pip3  | Python 3 pip package list | NA |
+| pip   | Python 2 pip package list | Yes |
+| pip3  | Python 3 pip package list | Yes |
 ---
 Non package related lists (settings, deb files, delete packages list). The use and format is explained in individual sections.
 
@@ -293,6 +291,9 @@ Non package related lists (settings, deb files, delete packages list). The use a
 | deb-files | List of DEB files to be installed | `install_debs` | [Link](#l#add-ppas) |
 | get.mlist | Used by get-after-effects.sh to download required list files | [get-after-effects.sh](https://github.com/tprasadtp/ubuntu-post-install/blob/master/get-after-effects.sh) | --- |
 |pip2/3| Python packages (Installed System wide) | _install_pip_packages | [Link](#install-pip-packages)
+|pip-dep.apt | Any APT dependencies which might be required by pip packages | [Link](#install-pip-packages) |
+|pre-script | List of bash scripts to be run before any of the tasks begin | NA |
+|post-script | List of scripts which can be run after all the tasks are completed | NA |
 
 > After you customize, might want to use simulate flag. `sudo ./after-effects -s`
 
@@ -329,7 +330,7 @@ Following repositories are conditional and are determined based on the flags or 
 
 - Canonical Partner repositories
 
-  Canonical partner repositories are not configured or enabled for derivatives of Ubuntu because they have their own config file.
+  Canonical partner repositories are not configured or enabled for derivatives of Ubuntu because thee might be some conflicts.
 
 - WineHQ & Docker-Community-Edition (default is to add repositories)
 
@@ -343,7 +344,7 @@ Following repositories are conditional and are determined based on the flags or 
   #Docker community edition
   readonly add_docker_repo=true
 
-  #Mendeley Desktop 
+  #Mendeley Desktop
   readonly add_mendeley_repo=true
   ```
 
@@ -392,12 +393,12 @@ https://atom-installer.github.com/v1.21.1/atom-amd64.deb  ATOM-Editor.deb
 ### Install Python packages (pip)
 
 This will install system wide python packages using pip. There are two lists. `pip.list` and `pip3.list` for python 2 and python 3 respectively.
-Pre requisite is that python-pip package is pre installed, If not , will be installed anyway.
+Pre-requisite is that python-pip package is pre installed, If not , will be installed anyway.
 
 - The list files follow similar configuration as package list files. One item per line.
 - Simulate flag will skip installing packages, unless `TRAVIS=true`.
 
-> Dont mix Python 3 packages with Python 2 packages.
+> Don't mix Python 3 packages with Python 2 packages.
 
 ### Purge Unwanted Packages
 
@@ -414,6 +415,18 @@ This will purge Unwanted packages from the system.
 - Simulate option has no effect on this action and ppa-purge **WILL*- downgrade packages if necessary.
 
   > This will **NOT** remove PPAs or repositories you have added manually or those added while installing DEB files.
+
+### Pre and Post task hooks
+Since version 4.0, it is possible to run list of shell-scripts (listed in pre/post-script.list), before any of the tasks like installing or adding repositories begin as well as after all the tasks are completed. Please note that currently no checks are being made if all the tasks completed successfully. The scripts are executed, regardless of the exit status of the tasks.
+
+Invoking scripts requires two flags to be passed.
+
+- `--enable-pre` for pre task scripts
+- `--enable-post` for post task scripts.
+- Configurations are similar to package lists, one line per script. Please include complete path for the shell-scripts.
+- Empty lines are ignored.
+- If you wish to run python or other code, please use shell-script as wrapper.
+
 
 ### All In one
 
