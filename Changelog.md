@@ -1,5 +1,10 @@
 # Changelogs
 
+## _v4.0_
+
+- Pre and Post Hooks for scripts.
+- Custom list of scripts can be run Before and after all the tasks.
+
 ## _v3.6_
 
 - Add Option to install system wide python packages using pip
