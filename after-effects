@@ -19,7 +19,7 @@
 # Github Repository: https://github.com/tprasadtp/ubuntu-post-install
 # Requirements - Bash v4 and above
 #              - whiptail, lsb-release, wget, iputils-ping
-#              - Ubuntu 14.04/16.04/17.04/17.10/18.04 or Elementary Freya/Loki/Juno 
+#              - Ubuntu 14.04/16.04/17.04/17.10/18.04 or Elementary Freya/Loki/Juno
 #              - or Mint 17.X or 18.X or 19.X
 #
 
@@ -29,6 +29,7 @@ DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 log_file="$dir"/after-effects-logs/after-effects.log
+export log_file
 mkdir -p "$dir"/after-effects-logs
 readonly version="3.6 Beta"
 readonly V_NUM=42
@@ -248,6 +249,7 @@ function _line_fill()
 {
     printf "%-$(tput cols)s@%s\n" | sed -e "s/ /-/g" -e "s/-@/ /" -e "s/@-/ /"
 }
+
 function set_blue()
 {
   tput setaf 6
@@ -523,13 +525,13 @@ function _fix_ubuntu_derivatives()
       #                                      ;;
       bionic )                              set_yellow
                                             _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
-                                            _log_and_show "${_pre_release} Please use --fix flag if your choice of repos are not available.\n${_warn} There's no fix for PPAs."
+                                            _log_and_show "${_notice} Please use --fix flag if your choice of repos are not available.\n${_warn} There's no fix for PPAs."
                                             ;;
-      cosmic  )                             set_magenta
+      cosmic  )                             set_magenta;
                                             _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
-                                            set_default
-                                            _log_and_show "${_pre_release} Please use --fix flag if you cannot add repos yet. There's no fix for PPAs."
+                                            set_yellow;
                                             _log_and_show "${_pre_release} This is Ubuntu 18.10 Cosmic Canimal"
+                                            _log_and_show "${_pre_release} Please use --pre-release flag if you cannot add repos yet. There's no fix for PPAs."
                                             _log_and_show "${_warn} This is a pre-release of Ubuntu Which is in early stages of development. Use with caution"
                                             _log_and_show "${_warn} Packages and PPAs might not work with this release!"
                                             ;;
@@ -588,6 +590,7 @@ function _version_checks ()
 function _test_conflicting_apps ()
 {
   # Function checks if any apps like syanptic aptitude are running.
+  local lock
   _log_and_show "${_conflicts} Checking..."
   for lock in synaptic update-manager software-center apt-get dpkg aptitude
   do
@@ -722,6 +725,7 @@ function add_ppas()
   # List file should contain ppas in following format
   # ppa:ppa:<author>/<ppa> for example, ppa:mozillateam/firefox-nex for adding firefox next/Beta PPA
   _debug_log "Adding PPA Fucntion"
+  local line;
   # Function Reads the file ./data/ppa.list and adds the ppa one by one.
   # Install dependencies required
   _install_pre_requisites;
@@ -807,7 +811,7 @@ function add_repositories()
   echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main #Google Cloud SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  || _log_and_show "Adding GCSFUSE Repository failed"
   _log_and_show "${_adding} GCSFUSE repository"
   echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list  || _log_and_show "Adding Google Cloud SDK Repository failed"
-  
+
   #AWS
   # Handled by pip
 
@@ -1011,7 +1015,7 @@ function disable_external_repos()
     apt-key del A73170BF  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  Google Cloud keys failed."
     _log_and_show "${_deleting} InSync signing key   ACCAF35C"
     apt-key del ACCAF35C  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  InSync keys failed."
-    _log_and_show "${_deleting} Docker signing key   0EBFCD88" 
+    _log_and_show "${_deleting} Docker signing key   0EBFCD88"
     apt-key del 0EBFCD88  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  Docker-CE keys failed."
     _log_and_show "${_deleting} VS-Code signing key  BE1229CF"
     apt-key del BE1229CF  2>&1 | _add_timestamp_to_aptkey_logs  || _log_and_show "${_deleting}  Visual Studio Code keys failed."
@@ -1032,7 +1036,6 @@ function disable_external_repos()
       set_blue
       _log_and_show "${_notice} Please see the log file for more details."
     fi
-    _line_fill;
     set_default;
     cd "$old_path" || return
     _log_and_show "${_removed} PPAs and Repositories. Please check the logs for errors."
@@ -1051,7 +1054,7 @@ function purge_not_required()
   # Action is dangerous if used carelessly eg. If you are stupid and remove say sudo (why would you??)
 
   local exit_status
-  local packages
+  local packages line
   if [ "$bool_purge_not_required_pkgs" == "true" ]; then
     # check if the file exists
     if [ -e "$purge_list" ]; then
@@ -1114,7 +1117,7 @@ function install_apps()
   echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true |  debconf-set-selections
   #Install starts here
   local packages
-  local exit_status
+  local exit_status line
 
   while IFS= read -r line
     do
@@ -1170,7 +1173,7 @@ function _install_pip_python()
   # This function reads from File ./data/pip.list contains list python packages to be installed system wide.
   # Arguments : Two
   # ARG1 : pip package list
-  # ARG2 : 2 for python 2 and 
+  # ARG2 : 2 for python 2 and
   #      : 3 for Python 3.
 
   #Check args
@@ -1225,7 +1228,7 @@ function _install_pip_python()
         apt-get -y install $dependency_packages 2>&1 | _add_timestamp_to_apt_logs
       fi
       exit_status=$?
-      
+
       if [ "$exit_status" -eq 0 ]; then
         set_yellow
         _log_and_show "${_installed} packages in the list $pip_dependency_list."
@@ -1236,7 +1239,7 @@ function _install_pip_python()
         set_default;
         _log_and_exit "${_notice} Please see the log file for more details." "23"
       fi
-  else 
+  else
     _log_and_show "${_info} Dependency already satisfied."
   fi
   # reset exit status & color
@@ -1300,8 +1303,7 @@ function install_debs ()
   # The list file has following format
   # URL to get the deb file  <space or tab> NAME_OF_THE_APP(without spaces)
 
-  local deb_url
-  local deb_name
+  local deb_url line deb_name
   local exit_status
   _debug_log "Option: Install DEB Files, Function name: install_debs"
     while IFS= read -r line
@@ -1361,7 +1363,6 @@ function all_in_one()
   _line_fill;
   set_blue;
   _log_and_show "${_info} Apps will be installed, Upgrades and repositoris and will be added, deb files will be downloaded and installed!\n${_info} This action is not reversible in all cases."
-  _debug_log "All in One initialized"
   set_default;
   update_repos;
   upgrade_apps;
