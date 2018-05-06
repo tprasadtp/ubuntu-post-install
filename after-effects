@@ -32,7 +32,7 @@ log_file="$dir"/after-effects-logs/after-effects.log
 export log_file
 mkdir -p "$dir"/after-effects-logs
 readonly version="3.6 Beta"
-readonly V_NUM=42
+readonly REL_NUM=42
 
 
 function _init_printf_variables()
@@ -570,19 +570,20 @@ function _set_custom_api_nodes ()
 {
   # Set custom api endpoints
   if [[ "$bool_custom_api_node" == "true" ]]; then
-
+   _log_and_show "${_info} cutom API node is set."
   fi
 }
 
 
 function _version_checks ()
 {
-  # Checks if its running latest version. 
+  # Checks if its running latest version.
   # Also suggest updating to latest version if current version is not latest,
   # Allows to deprecate old version as it can be suggested.
   # Dynamic EOL checks
-  
+
     # Check if jq binary is available
+    true
 
 }
 
@@ -1508,11 +1509,7 @@ function main()
 
   if [ "$TRAVIS" == "true" ]; then
     _log_and_show "${_travis} I'm running in  CI :|"
-    if [ -e base_image_date.txt ]; then
-      _log_and_show "${_pre_release} Docker image is using Build $(cat base_image_date.txt)"
-    fi
   fi
-
 
 
   # Process command line arguments.
@@ -1553,17 +1550,17 @@ function main()
                                   ;;
           --api-node )            set_default;
                                   bool_custom_api_node="true";
-                                  shift; api_node=${1};
+                                  shift; custom_api_node=${1};
                                   ;;
-        --enable-pre )            set_default;
+          --enable-pre )          set_default;
                                   bool_enable_pre_scripts="true";
-                                  _log_and_show "${_info} custom scripts will be run before running any tasks"
+                                  _log_and_show "${_info} custom scripts will be run before running any tasks."
                                   ;;
-        --enable-post )           set_default;
+          --enable-post )         set_default;
                                   bool_enable_post_scripts="true";
-                                  _log_and_show "${_info} custom scripts will be run after running all tasks"
+                                  _log_and_show "${_info} custom scripts will be run after running all tasks."
                                   ;;
-        --disable-reporting )     set_default;
+          --no-reporting )        set_default;
                                   bool_report_stats="false";
                                   _log_and_show "${_info} Statistis will not be reported to the stats server."
                                   ;;
@@ -1585,8 +1582,6 @@ function main()
     set_default
     #_log_and_exit "Because I can" "255"
     all_in_one;
-    _line_fill;
-
   else
   _process_opts;
   fi
