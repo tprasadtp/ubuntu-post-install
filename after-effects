@@ -1575,6 +1575,10 @@ function main()
   _fix_ubuntu_derivatives;
   _test_internet_connection;
   _test_conflicting_apps;
+
+  # Run Pre Scripts
+  run_pre_scripts;
+
   # CI testing
   if [ "$TRAVIS" == "true" ]; then
     set_blue;
