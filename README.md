@@ -427,6 +427,9 @@ Invoking scripts requires two flags to be passed.
 - Empty lines are ignored.
 - If you wish to run python or other code, please use shell-script as wrapper.
 
+#### Honoring simulate flag
+Check for environment variable `AE_SIMULATE`. By default its false and is set to true, if `--simulate or -s` falg is used.
+
 
 ### All In one
 
