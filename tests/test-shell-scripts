@@ -22,7 +22,7 @@ for file in $(find . -type f -not -iwholename '*.git*' -executable | sort -u); d
 	if file "${file}" ; then
 		{
 			# ignore unused variables in pf 2059, double  quote strings  2086 2034 unused strings
-			shellcheck  "${file}" && printf " [ OK ]: sucessfully linted %s\n\n" "${file}"
+			shellcheck -e SC2034 "${file}" && printf " [ OK ]: sucessfully linted %s\n\n" "${file}"
 
 		} ||
 		{
