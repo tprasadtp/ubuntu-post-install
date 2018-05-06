@@ -29,7 +29,6 @@ DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 log_file="$dir"/after-effects-logs/after-effects.log
-export log_file
 mkdir -p "$dir"/after-effects-logs
 readonly version="3.6 Beta"
 readonly REL_NUM=42
@@ -565,6 +564,15 @@ function _test_internet_connection ()
   fi
 }
 
+
+function  _export_variables()
+{
+  # Export Variables
+  # Export Simulate flag for other scripts
+  export AE_SIMULATE="$simulate_apt_install"
+  # Export Log file name
+  export AE_LOG_FILE="$log_file"
+}
 
 function _set_custom_api_nodes ()
 {
@@ -1575,7 +1583,7 @@ function main()
   _fix_ubuntu_derivatives;
   _test_internet_connection;
   _test_conflicting_apps;
-
+  _export_variables;
   # Run Pre Scripts
   run_pre_scripts;
 
