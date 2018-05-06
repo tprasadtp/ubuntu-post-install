@@ -21,3 +21,5 @@ pip.list
 pip-dep.apt
 pip3.list
 pip3-dep.apt
+pre-script.list
+post-script.list

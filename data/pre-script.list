@@ -1,1 +1,2 @@
-data/scripts/test-pre.sh
+./data/scripts/test-pre.sh
+./data/scripts/test-pre-2.sh
