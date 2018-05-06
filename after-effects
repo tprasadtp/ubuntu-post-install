@@ -436,7 +436,6 @@ function run_pre_scripts()
           continue
         fi
         _debug_log "Making $line executable"
-        chmod a+x "$line"
         if bash "$line"  2>&1 | _add_timestamp_to_shellscript_logs  ; then
           _log_and_show "${_script} $line ran successfully."
         else
