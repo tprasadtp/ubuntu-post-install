@@ -29,7 +29,7 @@ function main()
   --hostname=Docker-Pre-Release \
   -v "$(pwd)":/shared \
   ubuntu:ae-pre-release \
-  /shared/after-effects --simulate --yes --pre-release
+  /shared/after-effects --simulate --yes --pre-release --enable-pre --enable-post
 
   exit_code_from_container=$?
   echo "Exit code from docker run is: $exit_code_from_container"

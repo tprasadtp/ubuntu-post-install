@@ -27,7 +27,7 @@ function main()
   --hostname=Docker-Bionic \
   -v "$(pwd)":/shared \
   ubuntu:ae-bionic \
-  /shared/after-effects --fix --simulate --yes
+  /shared/after-effects --fix --simulate --yes --enable-pre --enable-post
 
   exit_code_from_container=$?
   echo "Exit code from docker run is: $exit_code_from_container"

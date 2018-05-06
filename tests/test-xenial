@@ -24,7 +24,7 @@ function main()
   --hostname=Docker-Xenial \
   -v "$(pwd)":/shared \
   ubuntu:ae-xenial \
-  /shared/after-effects --simulate --yes
+  /shared/after-effects --simulate --yes --enable-pre --enable-post
 
   exit_code_from_container=$?
   echo "Exit code from docker run is: $exit_code_from_container"
