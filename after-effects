@@ -1365,14 +1365,14 @@ function all_in_one()
   set_blue;
   _log_and_show "${_info} Apps will be installed, Upgrades and repositoris and will be added, deb files will be downloaded and installed!\n${_info} This action is not reversible in all cases."
   set_default;
-  update_repos;
-  upgrade_apps;
-  add_ppas;
-  add_repositories;
-  install_apps;
-  install_debs;
-  install_pip_packages_2;
-  install_pip_packages_3;
+  #update_repos;
+  #upgrade_apps;
+  #add_ppas;
+  #add_repositories;
+  #install_apps;
+  #install_debs;
+  #install_pip_packages_2;
+  #install_pip_packages_3;
   set_yellow;
   _line_fill;
   set_default;
