@@ -25,6 +25,7 @@
 
 set -o pipefail
 #Constants
+EXEC_START=$(date +%s)
 DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
@@ -32,6 +33,7 @@ log_file="$dir"/after-effects-logs/after-effects.log
 mkdir -p "$dir"/after-effects-logs
 readonly version="3.6 Beta"
 readonly REL_NUM=42
+EXEC_TIME=0;
 
 
 function _init_printf_variables()
@@ -389,6 +391,29 @@ function  _add_timestamp_to_shellscript_logs()
   while IFS= read -r line; do printf "[$(date)] [  BSH  ]\t%s\n" "$line" &>> "$log_file"; done
 }
 
+
+function report_stats()
+{
+  # Report anonymized stats about the script.
+  # Following things are reported.
+  # A UUID generated for each execution, (its random and is not persistant across runs)
+  # sha-1 sum of Hostname, Total execution time, system architecture,
+  # Distro name, feaure selected, last exit code, flags used, if Travis or Docker flags are true,
+  # timezone and system language. Nothing else is collected. Period.
+  # If you are feaking out, its a shellscript for heaven sake!! You can literally look into it
+  # and check what's collected. Why if you ask? Just for fun and improvement of course!.
+  # Data will be stored in AWS DynamoDB and Google Firebase Realtime Database.
+  # Data will not be shared with any third party. Period. Only me or my team members will have access
+  # to it. If you run a search query on google, it probably collects more data than me.
+  # API endpoints may log IP addresses (Github, Google and AWS).
+  # But I really really don't want to report stats because I use this script at NSA.
+  # Well, 1. You should not use this script! There are better tools like Chef and
+  #          Ansible for huge deployments.
+  #       2. Okay! Okay! just pass --no-stats as an argument and be done ith it &
+  #          the script **will not** "phone home".
+  true
+}
+
 function _script_exit_log()
 {
     # Run Post Scripts
@@ -413,10 +438,15 @@ function _script_exit_log()
           done < "$post_script_list"
     fi
 
+    # Script time
+    EXEC_END=$(date +%s)
+    EXEC_TIME=$((EXEC_END-EXEC_START))
+
+    # report_stats
     # Generage Exit message & log
     _goodbye_msg
     _debug_log "Exiting Script"
-    printf "\nFinished %s on %s.\nLast exit code was: %d\n" "$SCRIPT" "$(date)" "$?" >> "$log_file"
+    printf "\nFinished %s in %d seconds, on %s.\nLast exit code was: %d\n" "$SCRIPT" "$EXEC_TIME" "$(date)" "$?" >> "$log_file"
     _line_fill >> "$log_file"
 }
 
@@ -1567,7 +1597,7 @@ function main()
                                   bool_enable_post_scripts="true";
                                   _log_and_show "${_info} custom scripts will be run after running all tasks."
                                   ;;
-          --no-reporting )        set_default;
+  --no-stats | --no-reporting )   set_default;
                                   bool_report_stats="false";
                                   _log_and_show "${_info} Statistis will not be reported to the stats server."
                                   ;;
