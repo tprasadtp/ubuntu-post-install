@@ -1,18 +1,18 @@
 # Global settings applied to the whole site.
 [build]
-  publish = "_docs/site"
+  publish = "_site/"
 
 # Production context: All deploys to the main
 # repository branch will inherit these settings.
 [context.production]
-  command = "./_docs/build-site.sh --master"
+  command = "./vendor/netlify-build.sh --master"
 
 # Deploy Preview context: All Deploy Previews
 # will inherit these settings.
 [context.deploy-preview.environment]
-  command = "./_docs/build-site.sh --pull-request"
+  command = "./vendor/netlify-build.sh --pull-request"
 
 # Branch Deploy context: All deploys that are not in
 # an active Deploy Preview will inherit these settings.
 [context.branch-deploy]
-  command = "./_docs/build-site.sh --branch"
+  command = "./vendor/netlify-build.sh --branch"
