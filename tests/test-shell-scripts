@@ -7,12 +7,6 @@
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
 set -eo pipefail
-
-if [ "$TRAVIS" == "true" ]; then
-	echo "Installing shellcheck"
-	echo ""
-	sudo apt-get -y install shellcheck
-fi
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "Testing ShellScripts"
 ERRORS=()
