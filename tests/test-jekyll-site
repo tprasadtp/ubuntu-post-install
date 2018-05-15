@@ -17,6 +17,14 @@
 #              - jekyll and bundler
 
 set -e # halt script on error
+## Install PIP
+sudo apt-get update
+pip install mkdocs mkdocs-material
+# Build Static
+echo "Building Docs"
+mkdocs build
+# Install htmlproofer
+echo "Installing bundler dependencies"
 bundle install
 # html-proofer tests
-bundle exec htmlproofer ./_docs/site --only-4xx --check-favicon
+bundle exec htmlproofer ./_site --only-4xx --check-favicon
