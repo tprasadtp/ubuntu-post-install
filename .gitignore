@@ -111,3 +111,9 @@ test-pre-commit.sh
 *.list
 *.ignore
 var.sh
+*.scssc
+**/.saas-cache/*
+credits.txt
+.jekyll-metadata
+**/_site/**
+**/site/**

@@ -7,10 +7,10 @@ before_install:
   - chmod +x ./tests/*
 jobs:
   include:
-  - stage: shellcheck
+  - stage: Shellcheck
     env: TEST_ENV="Shellcheck"
     script: ./tests/test-shell-scripts
-  - stage: docker
+  - stage: Docker
     env: TEST_ENV="Artful-Docker"
     script: "./tests/test-artful"
   - env: TEST_ENV="Xenial-Docker"
@@ -21,11 +21,15 @@ jobs:
     script: "./tests/test-trusty"
   - env: TEST_ENV="Cosmic-Docker"
     script: "./tests/test-prerelease"
+#  - stage: Documentation
+#    env: TEST_ENV="Jekyll-Builds"
+#    script: ./tests/jekyll-sites
 matrix:
   fast_finish: true
   allow_failures:
     - env: TEST_ENV="Pre-Release"
     - env: TEST_ENV="Cosmic-Docker"
+    - env: TEST_ENV="Jekyll-Deve-Site"
 notifications:
   email: false
   slack:
