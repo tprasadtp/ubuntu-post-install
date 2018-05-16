@@ -58,6 +58,7 @@ function jekyll_production()
 {
   echo "---> Building Website with Production Context"
   mkdocs build;
+  cp -R ./api/ ./_site/api/
   gen_metadata;
   html-proofer-checks;
 
@@ -67,6 +68,7 @@ function jekyll_branch()
 {
   echo "---> Building Website with Branch"
   mkdocs build;
+  cp -R ./api/ ./_site/api/
   gen_metadata;
   html-proofer-checks;
 }
