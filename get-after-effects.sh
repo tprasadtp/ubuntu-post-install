@@ -56,8 +56,6 @@ function get-after-effects()
   # Function to get after-effects main module
   printf "${YELLOW}Removing old files...${NC}\n"
   rm -f after-effects after-effects.* get.mlist .data/*.list get.mlist.* README.md README.md.* ./data/*.list ./data/*.list.*
-  echo "Getting: README.md"
-  wget -q "${GET_BASE_URL}"/README.md
   echo "Getting: after-effects"
   wget -q  "${GET_BASE_URL}"/after-effects
   printf "${YELLOW}Changing file permissions...${NC}\n"
