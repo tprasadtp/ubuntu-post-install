@@ -2,6 +2,9 @@
 [build]
   publish = "_site/"
 
+[build.environment]
+  NOKOGIRI_USE_SYSTEM_LIBRARIES="true"
+
 # Production context: All deploys to the main
 # repository branch will inherit these settings.
 [context.production]

@@ -1,4 +1,5 @@
-# Afer-Effects <small>An effortless post install script for Ubuntu </small>
+# Afer-Effects
+<small>An effortless post install script for Ubuntu </small>
 
 ## Create beautiful project documentation
 
@@ -6,7 +7,8 @@ Material is a theme for [MkDocs][1], an excellent static site generator geared
 towards project documentation. It is built using Google's [Material Design][2]
 guidelines.
 
-[![Material for MkDocs](assets/images/material.png)](assets/images/material.png)
+[![Details](assets/images/details.png)](assets/images/details.png)
+[![Details](assets/images/whiptail.png)](assets/images/whiptail.png)
 
   [1]: http://www.mkdocs.org
   [2]: https://material.io/guidelines/material-design/
