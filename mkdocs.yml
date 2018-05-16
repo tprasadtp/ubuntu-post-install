@@ -9,7 +9,7 @@ site_dir: '_site/'
 # Repository
 repo_name: ubuntu-post-install
 repo_url: https://github.com/tprasadtp/ubuntu-post-install
-edit_uri: "docs/"
+edit_uri: "blob/version_checks_api/docs/"
 
 # Copyright
 copyright: 'Copyright &copy; 2018 Prasad Tengse'
