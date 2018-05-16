@@ -93,7 +93,7 @@ Ubuntu 18.04        Bionic Beaver
 Ubuntu 17.10        Artful Aardvark
 Ubuntu 16.04        Xenial Xerus
 Ubuntu 14.04        Trusty Thar
-Ubuntu 18.10        Cosmic Canimal [Not yet supported, Only use for testing & development.]
+Ubuntu 18.10        Cosmic Cuttlefish [Not yet supported, Only use for testing & development.]
 
 Official Ubuntu Flavors for above mentioned Ubuntu releases.
 (Kubuntu, Ubuntu MATE, Ubuntu Budgie (17.10 & 18.04), Ubuntu-GNOME (14.04, 16.04)
@@ -502,9 +502,9 @@ Following Tests are done on travis-ci.
 - Test on Bionic Beaver (Job #build.5)
 > Trusty tests do not install indicator-kdeconnect, peek, openjdk-8-jdk, gnome-todo , gnome-calendar, polari and their PPAs (if available) as they are not available for trusty . Please modify your lists accordingly.
 
-- Test on Cosmic Canimal (Job #build.6) from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
+- Test on Cosmic Cuttlefish (Job #build.6) from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
 - Dockerfiles used for building the image are in `/dockerfiles` directory, they use official Ubuntu base images with script dependencies.
-- Dockerfile for Bionic is using `http://cdimage.ubuntu.com/ubuntu-base/daily` root file system, as official images are not available yet.
+- Dockerfile for Pre--Release (currently Cosmic Cuttlefish ) is using `http://cdimage.ubuntu.com/ubuntu-base/daily` root file system, as official images are not available yet.
 - Test scripts are located in `/tests` directory.
 - Since its a time consuming process only simulated install is done on CI. Linux mint and Elementary are not tested in containers as of now, but will be in the future.
 - It is possible that there might be some errors specific to your setup. Please report if so. It is **Strongly** advised to try install apps and deb files in simulate mode first before proceeding with actual installation.

@@ -9,7 +9,7 @@ site_dir: '_site/'
 # Repository
 repo_name: ubuntu-post-install
 repo_url: https://github.com/tprasadtp/ubuntu-post-install
-edit_uri: "_docs/"
+edit_uri: "docs/"
 
 # Copyright
 copyright: 'Copyright &copy; 2018 Prasad Tengse'
@@ -17,7 +17,7 @@ copyright: 'Copyright &copy; 2018 Prasad Tengse'
 # Configuration
 theme:
   name: material
-  custom_dir: '_docs/theme/'
+  custom_dir: 'docs/theme-overrides/'
 
   # 404 page
   static_templates:
@@ -97,7 +97,7 @@ pages:
   - Changelogs: changelogs.md
   - Author's notes: authors-notes.md
   - License: license.md
-  - About:
+  - More:
     - About: about/about.md
 #    - Credits: about/credits.md
 #    - Privacy: about/privacy-poclicy.md
