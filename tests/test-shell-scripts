@@ -33,16 +33,3 @@ else
 	exit 1
 fi
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-
-
-## Install PIP
-pip install --upgrade pip
-pip install -r ./dockerfiles/mkdocs/requirements.txt
-# Build Static
-echo "Building Docs"
-mkdocs build
-# Install htmlproofer
-echo "Installing bundler dependencies"
-bundle install
-# html-proofer tests
-bundle exec htmlproofer ./_site --only-4xx --check-favicon
