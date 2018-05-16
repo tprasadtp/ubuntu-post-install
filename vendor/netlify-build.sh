@@ -18,7 +18,6 @@ DEPLOY_PARAM=./_site/deploy-params.txt
 spacing_string="%-15s"
 #Constants
 DATE=$(date +%Y-%m-%d:%H:%M:%S)
-export NOKOGIRI_USE_SYSTEM_LIBRARIES=true
 
 echo "---> Building Website "
 
@@ -41,7 +40,7 @@ function gen_metadata()
 function copy_static_api_files()
 {
   echo "Copying Static Files"
-  cp -R ./api/ ./_docs/site/
+  cp -R ./api/ ./_site/api/
   #statements
 }
 
@@ -58,9 +57,9 @@ function jekyll_production()
 {
   echo "---> Building Website with Production Context"
   mkdocs build;
-  cp -R ./api/ ./_site/api/
+  copy_static_api_files;
   gen_metadata;
-  html-proofer-checks;
+  #html-proofer-checks;
 
 }
 
@@ -68,9 +67,9 @@ function jekyll_branch()
 {
   echo "---> Building Website with Branch"
   mkdocs build;
-  cp -R ./api/ ./_site/api/
+  copy_static_api_files;
   gen_metadata;
-  html-proofer-checks;
+  #html-proofer-checks;
 }
 
 
@@ -87,9 +86,10 @@ EOF
 
 function install_dependencies()
 {
+  pip install --upgrade pip
   pip install -r ./dockerfiles/mkdocs/requirements.txt
   mkdocs --version
-  bundle install
+  #bundle install
 }
 
 

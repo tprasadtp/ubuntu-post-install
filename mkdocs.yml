@@ -3,7 +3,7 @@
 site_name: Docs After Effects
 site_description: Effortless & Simple Ubuntu post-installation script
 site_author: Prasad Tengse
-site_url: 
+site_url: https://ae.prasadt.com/
 docs_dir: 'docs'
 site_dir: '_site/'
 # Repository
