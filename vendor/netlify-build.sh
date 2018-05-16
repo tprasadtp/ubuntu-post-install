@@ -18,6 +18,7 @@ DEPLOY_PARAM=./_site/deploy-params.txt
 spacing_string="%-15s"
 #Constants
 DATE=$(date +%Y-%m-%d:%H:%M:%S)
+export NOKOGIRI_USE_SYSTEM_LIBRARIES=true
 
 echo "---> Building Website "
 
