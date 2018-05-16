@@ -31,7 +31,8 @@ readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 #readonly BLUE=$(tput setaf 6)
 readonly YELLOW=$(tput setaf 3)
 readonly NC=$(tput sgr 0)
-
+GET_BASE_URL="https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master"
+GET_BASE_LIST_URL="https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master"
 function check_dependencies()
 {
   #Function to check is dependencies are available
@@ -56,22 +57,22 @@ function get-after-effects()
   printf "${YELLOW}Removing old files...${NC}\n"
   rm -f after-effects after-effects.* get.mlist .data/*.list get.mlist.* README.md README.md.* ./data/*.list ./data/*.list.*
   echo "Getting: README.md"
-  wget -q https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/README.md
+  wget -q "${GET_BASE_URL}"/README.md
   echo "Getting: after-effects"
-  wget -q  https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/after-effects
+  wget -q  "${GET_BASE_URL}"/after-effects
   printf "${YELLOW}Changing file permissions...${NC}\n"
   chmod +x ./after-effects
   printf "${YELLOW}Getting Data and Lists...${NC}\n"
-  wget -q https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install-data/master/get.mlist
+  wget -q "${GET_BASE_URL}"/data/get.mlist
   mkdir -p data
   while IFS= read -r line
     do
       echo "Getting: $line"
-      wget -q -P ./data/ https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install-data/master/"$line"
+      wget -q -P ./data/ "${GET_BASE_LIST_URL}"/"$line"
     done <get.mlist
   printf "${YELLOW}Please Run the script after-effects as root\n"
   printf "${YELLOW}sudo ./after-effects\n"
-  printf "${YELLOW}For documentation visit: https://github.com/tprasadtp/ubuntu-post-install${NC}\n"
+  printf "${YELLOW}For documentation visit: https://ae.prasadt.com${NC}\n"
 
 }
 
