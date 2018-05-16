@@ -1617,7 +1617,7 @@ function main()
   run_pre_scripts;
 
   # CI testing
-  if [ "$TRAVIS" == "true" ]; then
+  if [ "$TRAVIS" == "true" ] || [[ "$AUTOPILOT" == "true" ]]; then
     set_blue;
     _log_and_show "${_travis} RUNNING in TRAVIS CI"
     set_default
