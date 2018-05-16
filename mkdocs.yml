@@ -104,5 +104,5 @@ pages:
 
 # Google Analytics
 google_analytics:
-  - !!python/object/apply:os.getenv ["GOOGLE_ANALYTICS_KEY"]
+  - UA-101760811-5
   - auto
