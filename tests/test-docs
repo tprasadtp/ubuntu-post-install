@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# This is a bash utility to test the shellscripts in this repo using shellcheck
+# Version:0.1
+# Author: Prasad Tengse
+# Licence: GPLv3
+# Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
+## Install PIP
+pip install --upgrade pip
+pip install -r ./dockerfiles/mkdocs/requirements.txt
+# Build Static
+echo "Building Docs"
+mkdocs build
+echo "Copy API Files"
+cp -R ./api/ ./_site/api/
+# Install htmlproofer
+#echo "Installing bundler dependencies"
+#bundle install
+# html-proofer tests
+#bundle exec htmlproofer ./_site --only-4xx --check-favicon
