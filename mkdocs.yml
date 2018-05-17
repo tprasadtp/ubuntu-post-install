@@ -1,6 +1,6 @@
 
 # Project information
-site_name: Docs After Effects
+site_name: Documentaion for After Effects
 site_description: Effortless & Simple Ubuntu post-installation script
 site_author: Prasad Tengse
 site_url: https://ae.prasadt.com/
@@ -17,7 +17,7 @@ copyright: 'Copyright &copy; 2018 Prasad Tengse'
 # Configuration
 theme:
   name: material
-  custom_dir: 'docs/theme-overrides/'
+  tasks_dir: 'docs/theme-overrides/'
 
   # 404 page
   static_templates:
@@ -33,7 +33,7 @@ theme:
     tabs: true
   palette:
     primary: indigo
-    accent: indigo
+    accent: cyan
   font:
     text: Roboto
     code: Roboto Mono
@@ -41,7 +41,7 @@ theme:
   logo:
     icon: "\uE80C"
 
-# Customization
+# tasksization
 extra:
   social:
     - type: globe
@@ -84,19 +84,28 @@ markdown_extensions:
 # Page tree
 pages:
   - Introduction: index.md
-  - Getting started: getting-started.md
-  - Extensions:
-    - Admonition: extensions/admonition.md
-    - CodeHilite: extensions/codehilite.md
-    - Footnotes: extensions/footnotes.md
-    - Metadata: extensions/metadata.md
-    - Permalinks: extensions/permalinks.md
-    - PyMdown: extensions/pymdown.md
-  - Specimen: specimen.md
-  - Customization: customization.md
+  - Getting Started: getting-started.md
+  - FAQ:
+    - Dependecies: faq/dependencies.md
+    - Supported Distributions: faq/distros.md
+    - Errors: faq/errors.md
+    - Linux Mint 17.X: faq/linuxmint.md
+    - Crashes: faq/crash.md
+    - Logs: faq/logs.md
+    - CI and Testing: faq/testing.md
+  - Command line options: clioptions.md
+  - Tasks:
+    - Upgrade Packages: tasks/update.md
+    - Add Repositories: tasks/addrepo.md
+    - Install packages: tasks/apt.md
+    - Add PPAs: tasks/ppa.md
+    - Install Python packages: tasks/pip.md
+    - Install Debian packages: tasks/deb.md
+    - Pre-Post Hooks: tasks/hooks.md
+    - Cleanup: tasks/cleanup.md
+    - Delete log: tasks/log.md
   - Changelogs: changelogs.md
-  - Author's notes: authors-notes.md
-  - License: license.md
+  - License & Privacy: license.md
   - More:
     - About: about/about.md
 #    - Credits: about/credits.md
