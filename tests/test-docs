@@ -10,7 +10,7 @@ pip install --upgrade pip
 pip install -r ./dockerfiles/mkdocs/requirements.txt
 # Build Static
 echo "Building Docs"
-mkdocs build
+mkdocs -s -v build
 echo "Copy API Files"
 cp -R ./api/ ./_site/api/
 # Install htmlproofer
