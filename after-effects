@@ -1303,7 +1303,7 @@ function _install_pip_python()
       _log_and_show "${_disp_pip_ver} PIP does not support simulated installs. Not performing install."
       set_default;
     else
-      pip install -r "${dir}/data/${pip_list}" 2>&1 | _add_timestamp_to_pip_logs
+      pip install --no-cache-dir-r "${dir}/data/${pip_list}" 2>&1 | _add_timestamp_to_pip_logs
     fi
     exit_status=$?
     if [ "$exit_status" -eq 0 ]; then
