@@ -224,6 +224,9 @@ function _init_script_variables()
   bool_enable_pre_scripts="false"
   bool_enable_post_scripts="false"
 
+  # Current directory check
+  bool_pwd_check_passed="false"
+
 }
 
 function _init_print_basic_info()
@@ -329,6 +332,28 @@ function delete_log_file()
 }
 
 
+function _check_if_in_pwd()
+{
+  # Check if script is in current directory
+  local file
+  file="$(pwd)"
+  file+="/$SCRIPT"
+
+  if [ -x "$file" ]; then
+    _debug_log "Script is in current directory."
+    _debug_log "Script is $file"
+    bool_pwd_check_passed="true"
+  else
+    _debug_log "Script is Not present in current directory."
+    _debug_log "Script is $file"
+    bool_pwd_check_passed="false"
+    _log_and_show "${_warn} You are not running this script from your current directory."
+    _log_and_show "${_notice} For best results run this script from its base directory."
+    _log_and_show "${_notice} Your current directory is: $(pwd)"
+  fi
+
+}
+
 function  _add_timestamp_to_ppa_logs()
 {
   # This function adds time stamp to apt-logs without using external utilities
@@ -422,6 +447,9 @@ function _script_exit_log()
     if [[ "$bool_enable_post_scripts" == "true" ]]; then
       _log_and_show "${_info} Post Scripts in post-script.list will be run"
 
+      # Check pwd flag since script paths are relative.
+      if [[ "$bool_pwd_check_passed" == "true" ]]; then
+        _debug_log "PWD checks have passed, Proceed with hooks"
         # Function Reads the file ./data/post-script.list and purges the ppa one by one
         while IFS= read -r line
           do
@@ -437,6 +465,10 @@ function _script_exit_log()
                 _log_and_show "${_oh_no} Some Error occured while running $line."
               fi
           done < "$post_script_list"
+      else
+        _log_and_show "${_error} $SCRIPT is not in your current directory. Hooks have been disabled."
+        _log_and_exit "Not in current directory" "27"
+      fi
     fi
 
     # Script time
@@ -458,21 +490,31 @@ function run_pre_scripts()
   local line
   if [[ "$bool_enable_pre_scripts" == "true" ]]; then
     _log_and_show "${_info} Shell Scripts in pre-script.list will be run"
-    # Function Reads the file ./data/pre-script.list and purges the ppa one by one
-    while IFS= read -r line
-      do
-        _log_and_show "${_script} Script : $line..."
-        if [ "$line" == "" ]; then
-          _log_and_show "${_warn} Found an empty line in pre-script.list Moving on to next line"
-          continue
-        fi
-        _debug_log "Making $line executable"
-        if bash "$line"  2>&1 | _add_timestamp_to_shellscript_logs  ; then
-          _log_and_show "${_script} $line ran successfully."
-        else
-          _log_and_show "${_oh_no} Some Error occured while running $line."
-        fi
-      done < "$pre_script_list"
+
+    # Check pwd flag since script paths are relative.
+    if [[ "$bool_pwd_check_passed" == "true" ]]; then
+      _debug_log "PWD checks have passed, Proceed with hooks"
+
+      # Function Reads the file ./data/pre-script.list and purges the ppa one by one
+      while IFS= read -r line
+        do
+          _log_and_show "${_script} Script : $line..."
+          if [ "$line" == "" ]; then
+            _log_and_show "${_warn} Found an empty line in pre-script.list Moving on to next line"
+            continue
+          fi
+          _debug_log "Making $line executable"
+          if bash "$line"  2>&1 | _add_timestamp_to_shellscript_logs  ; then
+            _log_and_show "${_script} $line ran successfully."
+          else
+            _log_and_show "${_oh_no} Some Error occured while running $line."
+          fi
+        done < "$pre_script_list"
+
+      else
+        _log_and_show "${_error} $SCRIPT is not in your current directory. Hooks have been disabled."
+        _log_and_exit "Not in current directory" "27"
+      fi
   fi
 
 }
@@ -1556,6 +1598,7 @@ function main()
   _script_launch_log
   _check_dependencies
   _init_script_variables;
+  _check_if_in_pwd;
   _init_print_basic_info;
 
   #============================ CI and Container Checks =========================
