@@ -91,6 +91,7 @@ function _init_printf_variables()
     readonly   _dependencies="[  Dependencies ]"
     readonly        _running="[    Running    ]"
     readonly         _script="[  Shell-Script ]"
+    readonly      _autopilot="[   Autopilot   ]"
     readonly _eol_date_zesty="January 13th, 2018"
     #readonly           _falg="[     Flag      ]"
 
@@ -446,7 +447,7 @@ function _script_exit_log()
     # Generage Exit message & log
     _goodbye_msg
     _debug_log "Exiting Script"
-    printf "\nFinished %s in %d seconds, on %s.\nLast exit code was: %d\n" "$SCRIPT" "$EXEC_TIME" "$(date)" "$?" >> "$log_file"
+    printf "\nFinished %s in %d seconds, on %s.\nLast exit code was: %d\n" "$SCRIPT" "$EXEC_TIME" "$(date)" "$?" | tee -a "$log_file"
     _line_fill >> "$log_file"
 }
 
@@ -1563,6 +1564,8 @@ function main()
   fi
 
   if [ "$TRAVIS" == "true" ]; then
+    AUTOPILOT="true"
+    export AUTOPILOT
     _log_and_show "${_travis} I'm running in  CI :|"
   fi
 
@@ -1635,9 +1638,9 @@ function main()
   run_pre_scripts;
 
   # CI testing
-  if [ "$TRAVIS" == "true" ] || [[ "$AUTOPILOT" == "true" ]]; then
+  if [[ "$AUTOPILOT" == "true" ]]; then
     set_blue;
-    _log_and_show "${_travis} RUNNING in TRAVIS CI"
+    _log_and_show "${_autopilot} is Active"
     set_default
     #_log_and_exit "Because I can" "255"
     all_in_one;
