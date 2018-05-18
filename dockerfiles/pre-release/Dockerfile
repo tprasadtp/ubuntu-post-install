@@ -57,6 +57,6 @@ iputils-ping \
 apt-transport-https \
 ca-certificates curl \
 ppa-purge > /dev/null
-
+WORKDIR /shared
 # overwrite this with 'CMD []' in a dependent Dockerfile
 CMD ["/bin/bash"]

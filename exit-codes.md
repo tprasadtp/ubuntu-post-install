@@ -22,4 +22,6 @@
 | 24 | Not Running the latest version |
 | 25 | Release  has some issues and is blacklisted |
 | 26 | API Node is offline or not available or invalid |
+| 27 | `after-effects` is not in your current directory & hooks will be disabled |
+| 29 | Stat reporting failed |
 | 255 | Test Exit code |
