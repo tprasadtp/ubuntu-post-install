@@ -1316,6 +1316,15 @@ function _install_pip_python()
         _log_and_show "${_notice} Please see the log file for more details."
     fi
   fi
+
+  ## honor --keep-debs -k flags
+  # Delete DEBs
+  if [ "$bool_preserve_debs" == "true" ];then
+    _log_and_show "${_deleting}APT Cached Packages"
+    apt clean | _add_timestamp_to_apt_logs
+  else
+    _debug_log "Keeping cahed APT Packages"
+  fi
   set_default;
 }
 
