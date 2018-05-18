@@ -699,6 +699,15 @@ function _install_pre_requisites()
     ppa-purge\
     software-properties-common 2>&1 | _add_timestamp_to_apt_logs  || _log_and_exit "${_failed} Installing dependencies. Script cannot continue!!" "21"
   _log_and_show "${_installed} Necessary dependencies."
+
+  # Honor -k flag
+  # Delete DEBs
+  if [ "$bool_preserve_debs" == "true" ];then
+    _log_and_show "${_deleting}APT Cached Packages"
+    apt clean | _add_timestamp_to_apt_logs
+  else
+    _debug_log "Keeping cahed APT Packages"
+  fi
 }
 
 
