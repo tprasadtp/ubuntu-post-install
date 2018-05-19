@@ -9,7 +9,7 @@ start fresh. Beauty of Linux is almost everything is scriptable. Re-installing i
 ## How?
 What if your script could be "configured"? Just add the package you want to install to your config file. No need to search through code to do it. Separating your preferences and package lists from the script frees you from writing the script every time a new release comes around. This project helps you do just that. Its poor man's Chef. Most of your preferences and configurations are separate from script.
 
-## Really? a Shell-Script ?
+## Really? A shell-script ?
 Yes! Because it has almost zero dependencies. No need to have Python or Ruby or other dependencies. Its simple and efficient. Someone can edit it to fit their needs too.  
 
 
