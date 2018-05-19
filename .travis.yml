@@ -36,7 +36,6 @@ jobs:
       local-dir: _site
       skip-cleanup: true
       github-token: "$V_GITHUB_TOKEN"
-      keep-history: true
       target-branch: gh-pages
       email: "$V_EMAIL"
       name: "$V_NAME"
