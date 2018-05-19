@@ -1,18 +1,16 @@
-[{
-	"api_version": 1,
-	"release_number": 42,
-	"release_name": "Heisnberg",
-	"version": "4.0 Beta",
-	"blacklisted": false,
-	"blacklist_msg": "",
-	"stable_release": 42,
-	"current_lts": "bionic",
-	"current_stable": "bionic",
-	"pre_release": "cosmic",
-	"api_alt_node": "ae.prasad.com",
-	"node_healthy": true,
-	"node_error": false,
-	"report_usage": true,
-	"usage_node": "stat.ae.prasadt.com",
-	"polaris_field": "Bhairavi"
-}]
+api_version:1
+release_number:42
+release_name:4.0 Beta
+blacklisted:false
+blacklist_msg:
+stable_release:42
+current_lts:bionic
+current_stable:bionic
+pre_release:cosmic
+api_alt_node:ae.prasad.com
+node_healthy:true
+node_error:false
+report_usage:true
+usage_node:stats.ae.prasadt.com
+force_https:false
+polaris_field:Bhairavi

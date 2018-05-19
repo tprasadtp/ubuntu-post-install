@@ -1,6 +1,2 @@
-[
-    {
-    "blacklist"     :[ "41", "40"],
-    "yellowlist"    :[ "39", "43"]
-    }
-]
+blacklist:(41 40)
+yellowlist:(39 38)
