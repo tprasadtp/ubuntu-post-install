@@ -93,25 +93,14 @@ pages:
     - Errors: faq/errors.md
     - Linux Mint: faq/linuxmint.md
     - Crashes: faq/crash.md
-  - Command Line Options: clioptions.md
+  - Options: clioptions.md
+  - What can it do?: tasks.md
+  - Configuration: config.md
   - Logs: logs.md
-  - CI & Testing: testing.md
-  - Tasks:
-    - Upgrade Packages: tasks/update.md
-    - Add Repositories: tasks/addrepo.md
-    - Install packages: tasks/apt.md
-    - Add PPAs: tasks/ppa.md
-    - Install Python packages: tasks/pip.md
-    - Install Debian packages: tasks/deb.md
-    - Pre-Post Hooks: tasks/hooks.md
-    - Cleanup: tasks/cleanup.md
-    - Delete log: tasks/log.md
+  - Testing: testing.md
   - Changelogs: changelogs.md
-  - License & Privacy: license.md
-  - More:
-    - About: about/about.md
-#    - Credits: about/credits.md
-#    - Privacy: about/privacy-poclicy.md
+  - License: license.md
+  - Privacy Policy: privacy.md
 
 # Google Analytics
 google_analytics:
