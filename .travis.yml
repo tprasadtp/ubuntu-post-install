@@ -1,17 +1,17 @@
 sudo: required
 language: python
 python:
-  - "2.7"
+- '2.7'
 services:
-  - docker
+- docker
 before_install:
-  - chmod +x ./after-effects
-  - chmod +x ./tests/*
+- chmod +x ./after-effects
+- chmod +x ./tests/*
 jobs:
   include:
   - stage: Shellcheck
     env: TEST_ENV="Shellcheck"
-    script: ./tests/test-shell-scripts
+    script: "./tests/test-shell-scripts"
   - stage: Docker
     env: TEST_ENV="Artful-Docker"
     script: "./tests/test-artful"
@@ -23,23 +23,35 @@ jobs:
     script: "./tests/test-trusty"
   - env: TEST_ENV="Cosmic-Docker"
     script: "./tests/test-prerelease"
-  - stage: Documentation
+  - stage: Documentation & Deploy
     env: TEST_ENV="Docs-Build"
-    script: ./tests/test-docs
+    script: "./tests/test-docs"
+    deploy:
+      provider: pages
+      skip_cleanup: true
+      local-dir: _site
+      skip-cleanup: true
+      github-token: "$V_GITHUB_TOKEN"
+      keep-history: true
+      target-branch: gh-pages
+      email: "$V_EMAIL"
+      name: "$V_NAME"
+      on:
+        all_branches: true
 matrix:
   fast_finish: true
   allow_failures:
-    - env: TEST_ENV="Pre-Release"
-    - env: TEST_ENV="Cosmic-Docker"
-    - env: TEST_ENV="Jekyll-Deve-Site"
+  - env: TEST_ENV="Pre-Release"
+  - env: TEST_ENV="Cosmic-Docker"
 notifications:
   email: false
   slack:
     rooms:
-      - secure: "i8WqqSQDZg3FbYwh0jpkw9ZEV4AqqAq9j1NzTZnD2YDm6P188eaaQ3nJaV67lavFSCkivg/Ar5hGNpQuojtdGAZ8wOEy+Wwk7iOkgItU6PucL8AmDNQ0LLTGXNbS87a36OSWfRvbzHvhIEPK9s6RNV2upNMglwNbco+BFDIG8Zng0gJS8n2UpGtq7RDUIfIQ1bYUNg5h+16fR/3tmDX0NAnevTu9J+mXRIZS/W8fGl4XPW6RpeNS3Lk/WqhmUHy1Wc7JXl9VU/ZoTmPAHWZxYnU9UNYExOY5ATVa5jEEtidUFMK+r4DPcVtG5RBpnZO8SiFRvaTuqRUX9CjJraZ/X3YedDOehre5R89g7lstJtlN5rUgiW0oIcuAxlaj0sNYVu8rDq/fYryR72sTlQAnO5CA3A4jjO1B5HOzVece4NoMJ1B/5GcYf1EJ3sSUyONClO/Mh/Ubsfg1d02fgDDSenm/zZJEB86kt3rkylg5V1eHK60+ycLhoTX+xIJKiUFHHRgMmgzKnHqyF+52z3bYRV1uVjhdi6q4I3H/cDx3fBts5eoQtjl+hDaArsaXlANz3oLd89g0sAqBrKgO++EcxgqeeWukSomgmJtPBivqnbg1RpAIK9zl9fjetD58FYL5i5gnYKpWTsICpZjgWqwqRmhnonkTdUbMnBsHol2HvQw="
+    - secure: i8WqqSQDZg3FbYwh0jpkw9ZEV4AqqAq9j1NzTZnD2YDm6P188eaaQ3nJaV67lavFSCkivg/Ar5hGNpQuojtdGAZ8wOEy+Wwk7iOkgItU6PucL8AmDNQ0LLTGXNbS87a36OSWfRvbzHvhIEPK9s6RNV2upNMglwNbco+BFDIG8Zng0gJS8n2UpGtq7RDUIfIQ1bYUNg5h+16fR/3tmDX0NAnevTu9J+mXRIZS/W8fGl4XPW6RpeNS3Lk/WqhmUHy1Wc7JXl9VU/ZoTmPAHWZxYnU9UNYExOY5ATVa5jEEtidUFMK+r4DPcVtG5RBpnZO8SiFRvaTuqRUX9CjJraZ/X3YedDOehre5R89g7lstJtlN5rUgiW0oIcuAxlaj0sNYVu8rDq/fYryR72sTlQAnO5CA3A4jjO1B5HOzVece4NoMJ1B/5GcYf1EJ3sSUyONClO/Mh/Ubsfg1d02fgDDSenm/zZJEB86kt3rkylg5V1eHK60+ycLhoTX+xIJKiUFHHRgMmgzKnHqyF+52z3bYRV1uVjhdi6q4I3H/cDx3fBts5eoQtjl+hDaArsaXlANz3oLd89g0sAqBrKgO++EcxgqeeWukSomgmJtPBivqnbg1RpAIK9zl9fjetD58FYL5i5gnYKpWTsICpZjgWqwqRmhnonkTdUbMnBsHol2HvQw=
     on_success: change
     on_failure: always
-    template:
-      - "Build: <%{build_url}|#%{build_number}> has %{result}, Duration: %{duration}"
-      - "Branch : %{branch}"
-      - "Commit: <%{compare_url}|%{commit}> - %{commit_message}"
+env:
+  global:
+  - secure: uOHmZ2xquc+P2t3XIXqo6JdK4Vpkp+4xESQ8mYtODXNeZaaXfsTPxLa6o62Jd4pjFisOxTiOjIzzSifbgHB5Ouwt5hEOx70zKsdkikDl87lMfA8Zh+yS4R1AgwS7Z45hfXUiJZbriuLG7y2OQPrhK9Qd/BEUws6j83QOLvvvd+AfRy/FHoY9p7cx9huVgJr2aHM9VrFoi1GViUe4kQFlcWrgz5LWk1ehDD70K8TuOh6BodU4or26aHQ8c5fAMJziSBsjiv1yx6pIdUSQ4lFGhxXQhwcdewQLCUHdMgpCEbcVemUzEfUUFrulJY70DOWm4EHna/p17+Nb24d4tyY7BcFFZiNBu1bZg/JVDr5T7+Wx4e4/x9g3s0jx3dR9Q/0W/kZzIYC1vhN7yGAdpPro1KNkfYQC6JjtSro74DivQOS63Gkh9RYDadYyiKIlaZxcUgE16uNTJiRq04JrvUqrb37YTJoKbpn4lVQizyBe+KXjoX3G7rFUwi6RGJQ/+uOF2W8U8ihrfrrZ/S34CbzsfewRXudkGU1AdAQJp9l2vGjNsjma+gph4MS/s/C8Hvh5vrzak1igmfuPphr8WYzO0877NOItFCEmhsvQHh8sV/dDLOZR8YoRMa6YJCvTtWW/enQ16AmWIbNiaT02UBiywMWRiem+iuzCpr4rbQ67EWg=
+  - secure: bAT5IL5bgMl1TxFzqo4987SeufXMf9MzMTI7bBd6vYVqiq9IcFDp0mZMmHmwsqhEOMejz6qa2/mMvOuTZiu6bb106JJV7KbRTYnFw1UbbMewGvprHf8AxiDiOOBxNThT1SsBmEaLwy/eeLKp43e5mQ1IT4UQLt6ymI1glRlFYyqfTL/Swlu7W9PNZys7iJDKK58GJZhZZiPrKenRiIPG8dAxYZXzzepL+JtNnrnrQtD4IMzp2iUoYQQVRXvETlA7oYGVrBKRCTJaK7b7QWtHE1vA8jld3TQDtxVevfeT0Bq6p/BQFF8b3yHzrP8U0URmzLRwe4tD2bsrWSqyEHNNGBhPMaq1Rx2Ce/fLPIuc0DLfMoixjPrLEngCrm40nKsNQfiXs85EjxrcrigRDvdYVvs337DJv6T2JUH+KlOG2N4tUafp3Lyl6lTQfnKptjMBn7PC7OzVQQbKu/68ij1woGvff5J84jQm+ZHcHaKDOATvA5XpmIk8jySGvI6x6Oj/Kd6rVorMYemAnxsA+FW3EHvYTgB0EIShIvh+wyHhEF4mDfT4EIsBMpxXYeOKtZ167bgyx+T8u8tIIJKhvR5rr0dcN/Dz6LLKlyK3s9r5g0lNORtDWa1+0aDwJWaLTj16zww5yiksQWCf8FMbP+iIhWgKRyspf9VHH9qXDHnDzF4=
+  - secure: T74WS1ef76XD7gGzUZw6lSVT0043nYBJ9xob3BvWEAI3IWPeGTJD0rceh40DO8UjTm+S3H32JetzQ5uqAoL+YUfucTEjHEViyDo52n2RMtvmUWnT9Bu0ywcc0OnC4lmIxv6S9frYxnE00/rjhSUz4QEfVnLk0ZShVnjHfCIzOyv/vQukPgjIKwB0gjVjm0bYLO/WILgOsCMYGz6Rt3edfR3dw4+9Ja4qnZNE9HEJtodhlCSCChwysi+Yle5mATy6wiGGWHEKqo+5YjRJ7Te64Sfh9MiwFAIUPec9bhGgBb/Gz+lfC/VWa9r3MxI8hZdx9KAvXkSd4gickmB6sZSlh+UhGk/Z/09JRHKsxPXSnONjwMSmSJy9FhD37YFwJTSofp+TDswRQ7s0o8r+oR1tKKq2bXUHmLxXQD9T3dtImdkvDTkcsBUwSbe/LSR+wkYvmIEweMzJgmuKTB+o1cKWj3Ons4rwrn5UaAYsoAFAVy4sGqOxdJGwDv+xLuGir0EUC5NpmgmheQxnoFLVGfDLRptMEIhb65/uWiNKvYT0GKUSBaVi36LrVL43T0jLFCdcWhQ6VtfLPrW3hzabTmk0VWps3F3OCwNPkGyf615FB/DtHG1vxNlx2FYEAw8PkKh5hCfRaOpgK8syJh/P9zc/e1Qtu7scAIFiAyq6ce1DNCs=
