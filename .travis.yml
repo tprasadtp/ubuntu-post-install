@@ -35,6 +35,8 @@ jobs:
       skip_cleanup: true
       local-dir: _site
       skip-cleanup: true
+      keep-history: true
+      fqdn: ae.prasadt.com
       github-token: "$V_GITHUB_TOKEN"
       target-branch: gh-pages
       email: "$V_EMAIL"
