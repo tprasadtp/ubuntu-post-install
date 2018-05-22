@@ -31,8 +31,8 @@ readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 log_file="$dir"/after-effects-logs/after-effects.log
 mkdir -p "$dir"/after-effects-logs
-readonly version="3.6 Beta"
-readonly REL_NUM=42
+readonly REL_NAME="4.0 Alpha"
+readonly REL_NUM=43
 EXEC_TIME=0;
 
 
@@ -92,6 +92,15 @@ function _init_printf_variables()
     readonly        _running="[    Running    ]"
     readonly         _script="[  Shell-Script ]"
     readonly      _autopilot="[   Autopilot   ]"
+    readonly            _api="[      API      ]"
+    readonly          _debug="[     DEBUG     ]"
+    readonly       _ppa_logs="[    PPA-Logs   ]"
+    readonly       _apt_logs="[    APT-Logs   ]"
+    readonly       _cat_logs="[    CAT-Logs   ]"
+    readonly      _dpkg_logs="[    PKG-Logs   ]"
+    readonly   _apt_key_logs="[  APT-KEY-Logs ]"
+    readonly       _pip_logs="[    PIP-Logs   ]"
+    readonly     _hooks_logs="[   Hooks-Logs  ]"
     readonly _eol_date_zesty="January 13th, 2018"
     #readonly           _falg="[     Flag      ]"
 
@@ -120,13 +129,13 @@ function _init_script_variables()
   if [ "$architeture" == "64" ];then
     _debug_log "Architecture is 64 bit."
     readonly ARCH=amd64
-    readonly jq_bin="vendor/jq-linux64"
-    _debug_log "JQ Binary is 64 Bit: $jq_bin"
+    #readonly jq_bin="vendor/jq-linux64"
+    #_debug_log "JQ Binary is 64 Bit: $jq_bin"
   elif [[ "$architeture" == "32" ]]; then
     _debug_log "Architecture is 32 bit."
     readonly ARCH=i386
-    readonly jq_bin="vendor/jq-linux32"
-    _debug_log "JQ Binary is 32 Bit: $jq_bin"
+    #readonly jq_bin="vendor/jq-linux32"
+    #_debug_log "JQ Binary is 32 Bit: $jq_bin"
   else
     set_yellow;
     _log_and_show "${_error} This architecture is not supported by this script!"
@@ -209,7 +218,8 @@ function _init_script_variables()
   bool_custom_api_node="false"
 
   # Define API Node name aka server name
-  api_node="after-effects.prasadt.com"
+  api_node="ae.prasadt.com"
+  api_endpoint=${api_node}/api/
   bool_node_use_ssl="true"
 
   # Default Stats Server name & Stats reporting flag
@@ -241,7 +251,7 @@ function _init_print_basic_info()
   _log_and_show "${_info} Code Name: ${code_name}"
   _log_and_show "${_info} Architeture: ${ARCH}"
   _log_and_show "${_info} Path for sources.list.d: ${SOURCES_FILE_DIR}"
-  _log_and_show "${_version} $version"
+  _log_and_show "${_version} $REL_NAME"
   _log_and_show "${_info} Release Number: $REL_NUM"
 
   #disable hist chars  so that I can print "!!"" properly
@@ -651,7 +661,9 @@ function _set_custom_api_nodes ()
   # Set custom api endpoints
   if [[ "$bool_custom_api_node" == "true" ]]; then
    _log_and_show "${_info} cutom API node is set."
-  fi
+   api_endpoint="$custom_api_node"
+ fi
+
 }
 
 
@@ -1649,9 +1661,10 @@ function main()
                                   bool_preserve_debs="true";
                                   _log_and_show "${_info} Will keep downloaded DEB packages."
                                   ;;
-          --api-node )            set_default;
+          --api-endpoint )        set_default;
                                   bool_custom_api_node="true";
                                   shift; custom_api_node=${1};
+                                  _log_and_show "${_api} API endpoint is : ${custom_api_node}"
                                   ;;
           --enable-pre )          set_default;
                                   bool_enable_pre_scripts="true";
