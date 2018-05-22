@@ -3,14 +3,11 @@ release_number:42
 release_name:4.0 Beta
 blacklisted:false
 blacklist_msg:
-stable_release:42
+blacklist_fallback:42
+blacklist_fallback_commit:5f3bf22
 current_lts:bionic
 current_stable:bionic
 pre_release:cosmic
-api_alt_node:ae.prasad.com
-node_healthy:true
-node_error:false
-report_usage:true
+report_usage:false
 usage_node:stats.ae.prasadt.com
-force_https:false
-polaris_field:Bhairavi
+polaris_field:Gowri
