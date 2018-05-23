@@ -8,6 +8,6 @@ fallback_commit:5f3bf22
 current_lts:bionic
 current_stable:bionic
 pre_release:cosmic
-report_usage:false
+report_usage:true
 usage_node:stats.ae.prasadt.com
 polaris_field:Gowri
