@@ -306,14 +306,14 @@ function _goodbye_msg ()
 function _debug_log()
 {
     local msg="$1"
-    printf "[$(date)] [ DEBUG ]\t$msg \n" >> "$log_file"
+    printf "[$(date)] ${_debug} $msg \n" >> "$log_file"
 }
 
 function _log_and_show()
 {
     local msg="$1"
     printf "$msg\n"
-    printf "[$(date)] [  LOG  ]\t$msg \n" >> "$log_file"
+    printf "[$(date)] $msg \n" >> "$log_file"
 }
 
 function _log_and_exit()
@@ -323,7 +323,7 @@ function _log_and_exit()
     local msg="$1"
     printf "$msg\n";
     #shellcheck disable=SC2129
-    printf "[$(date)] [  LOG  ]\t$msg \n" >> "$log_file";
+    printf "[$(date)] ${_debug}\t$msg \n" >> "$log_file";
     printf "\nFinished %s on $(date).\nLast exit code was: %d\n" "$SCRIPT" "$?" >> "$log_file";
     set_yellow
     _line_fill | tee -a "$log_file"
@@ -369,7 +369,7 @@ function  _add_timestamp_to_ppa_logs()
   # This function adds time stamp to apt-logs without using external utilities
   # Output will be automatically written to $log_file
   # Usage command | _add_timestamp_to_apt_logs
-  while IFS= read -r line; do printf "[$(date)] [  PPA  ]\t%s\n" "$line" &>> "$log_file"; done
+  while IFS= read -r line; do printf "[$(date)] ${_ppa_logs}\t%s\n" "$line" &>> "$log_file"; done
 
 }
 
@@ -379,7 +379,7 @@ function  _add_timestamp_to_apt_logs()
   # Pipe the output to this function.
   # Output will be automatically written to $log_file
   # Usage command | _add_timestamp_to_apt_logs
-  while IFS= read -r line; do printf "[$(date)] [  APT  ]\t%s\n" "$line" &>> "$log_file"; done
+  while IFS= read -r line; do printf "[$(date)] ${_apt_logs}\t%s\n" "$line" &>> "$log_file"; done
 }
 
 function  _add_timestamp_to_aptkey_logs()
@@ -388,7 +388,7 @@ function  _add_timestamp_to_aptkey_logs()
   # Pipe the output to this function.
   # Output will be automatically written to $log_file
   # Usage command | _add_timestamp_to_apt_logs
-  while IFS= read -r line; do printf "[$(date)] [  KEY  ]\t%s\n" "$line" &>> "$log_file"; done
+  while IFS= read -r line; do printf "[$(date)] ${_apt_key_logs}\t%s\n" "$line" &>> "$log_file"; done
 }
 
 function  _add_timestamp_to_dpkg_logs()
@@ -397,7 +397,7 @@ function  _add_timestamp_to_dpkg_logs()
   # Pipe the output to this function
   # output will be automatically written to $log_file
   # Usage command | _add_timestamp_to_dpkg_logs
-  while IFS= read -r line; do printf "[$(date)] [  PKG  ]\t%s\n" "$line" &>> "$log_file"; done
+  while IFS= read -r line; do printf "[$(date)] ${_dpkg_logs}\t%s\n" "$line" &>> "$log_file"; done
 }
 
 function  _add_timestamp_to_cat_logs()
@@ -406,7 +406,7 @@ function  _add_timestamp_to_cat_logs()
   # Pipe the output to this function
   # Output will be automatically written to $log_file
   # Usage command | _add_timestamp_to_cat_logs
-  while IFS= read -r line; do printf "[$(date)] [  CAT  ]\t%s\n" "$line" &>> "$log_file"; done
+  while IFS= read -r line; do printf "[$(date)] ${_cat_logs}\t%s\n" "$line" &>> "$log_file"; done
 }
 
 function  _add_timestamp_to_pip_logs()
@@ -415,7 +415,7 @@ function  _add_timestamp_to_pip_logs()
   # Pipe the output to this function
   # Output will be automatically written to $log_file
   # Usage command | _add_timestamp_to_pip_logs
-  while IFS= read -r line; do printf "[$(date)] [  PIP  ]\t%s\n" "$line" &>> "$log_file"; done
+  while IFS= read -r line; do printf "[$(date)] ${_pip_logs}\t%s\n" "$line" &>> "$log_file"; done
 }
 
 function  _add_timestamp_to_shellscript_logs()
@@ -424,7 +424,7 @@ function  _add_timestamp_to_shellscript_logs()
   # Pipe the output to this function
   # Output will be automatically written to $log_file
   # Usage command | _add_timestamp_to_shellscript_logs
-  while IFS= read -r line; do printf "[$(date)] [  BSH  ]\t%s\n" "$line" &>> "$log_file"; done
+  while IFS= read -r line; do printf "[$(date)] ${_hooks_logs}\t%s\n" "$line" &>> "$log_file"; done
 }
 
 
