@@ -69,7 +69,6 @@ function jekyll_branch()
   mkdocs build;
   echo "---> Copying Static Files"
   cp -R ./api/ ./_site/api/
-  copy_static_api_files;
   gen_metadata;
 }
 
