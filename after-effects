@@ -606,7 +606,7 @@ function _fix_ubuntu_derivatives()
       #                                      ;;
       bionic )                              set_yellow
                                             _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
-                                            _log_and_show "${_notice} Please use --fix flag if your choice of repos are not available.\n${_warn} There's no fix for PPAs."
+                                            _log_and_show "${_notice} Please use --fix flag if your choice of repos are not available."
                                             ;;
       cosmic  )                             set_magenta;
                                             _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
@@ -667,16 +667,106 @@ function _set_custom_api_nodes ()
 }
 
 
+function _get_api_cfg_files()
+{
+  # Get response
+  local exit_status
+  api_resp_file="/tmp/after-effects-api-response.txt"
+  exit_status=0
+  # Get Version Metadata
+  wget -q http://"${api_endpoint}"/version -O "$api_resp_file" >> $"$log_file"
+  # Check if exit code is zero
+  exit_status="$?"
+  _debug_log "Exit code from wget  API response is : $exit_status"
+  if [ "$exit_status" -eq 0 ]; then
+    _debug_log "Successfully retrieved Version & config file."
+  else
+    _log_and_show "Something went wrong while retrieving response from API endpoint."
+    _log_and_exit "Error Getiing response." "28"
+  fi
+}
+
 function _version_checks ()
 {
   # Checks if its running latest version.
   # Also suggest updating to latest version if current version is not latest,
   # Allows to deprecate old version as it can be suggested.
   # Dynamic EOL checks
+  _get_api_cfg_files;
+  # Check if Version Checks is enabled. (Default is enabled)
+  if [ "$bool_check_version" == "true" ]; then
+  _debug_log "Version Checks are enabled."
 
-    # Check if jq binary is available
-    true
+      # Get Version Metadata
+      api_rel_num=$( grep "release_number" "$api_resp_file" | cut -f2 -d ':')
+      _debug_log "Version from API: $api_rel_num"
+      api_rel_blacklisted=$( grep "blacklisted" "$api_resp_file" | cut -f2 -d ':')
+      _debug_log "Blacklist falg: $api_rel_blacklisted"
+      api_blacklist_fallback=$( grep "blacklist_fallback" "$api_resp_file" | cut -f2 -d ':')
+      _debug_log "Blacklist fallback Version: $api_blacklist_fallback"
 
+      # Version Checks
+      # If release number is higher tahn one in the script
+      # & not is not blacklisted, throw error & ask to update.
+      if [ "$api_rel_num" -gt "$REL_NUM" ] && [ "$api_rel_blacklisted" == "false" ]; then
+        set_yellow
+        _log_and_show "${_warn} A newer release is available. Please download latest release and try again."
+        _log_and_show "${_version} You are running $REL_NUM. Latest available version is $api_rel_num."
+        _log_and_exit "${_info} You can disable version checks by passing --no-version-checks" "24"
+        set_default
+      # If Current release number is blacklisted
+      # & fallback version is higher than one in the script, throw an error.
+      elif [ "$api_blacklist_fallback" -gt "$REL_NUM" ]&& [ "$api_rel_blacklisted" == "true" ]; then
+        _log_and_show "${_warn} A newer version is available."
+        _log_and_show "${_warn} Currently there are some issues with the latest release."
+        _log_and_show "${_notice} Please use the script version ${api_blacklist_fallback} from commit: $( grep "fallback_commit" "$api_resp_file" | cut -f2 -d ':')"
+        _log_and_exit "${_info} You can disable version checks by passing --no-version-checks" "30"
+      elif [ "$api_rel_num" -eq "$REL_NUM" ]; then
+        _log_and_show "${_version} You are running the latest version of script."
+      elif [ "$api_rel_num" -lt "$REL_NUM" ]; then
+        _log_and_show "${_info} Hey Time traveller! You seem to be running a development version of script."
+        _log_and_show "${_info} You are running $REL_NUM. Latest stable version is $api_rel_num."
+      fi
+
+      # Check if Blacklist is true
+      if [ "$api_rel_blacklisted" == "true" ]; then
+        set_yellow
+        _log_and_show "${_error} This release has serious issues and has been blacklisted."
+        _log_and_show "${_warn} Reason: $( grep "blacklist_msg" "$api_resp_file" | cut -f2 -d ':')"
+        _log_and_exit "${_info} In the meantime, please use script from tree:  $( grep "fallback_commit" "$api_resp_file" | cut -f2 -d ':')" "25"
+        set_default
+      else
+        _log_and_show "${_version} Release is Good."
+      fi
+
+  # If version checks have been disabled
+  else
+    _log_and_show "${_info} Version checks have been disabled."
+  fi
+  #sleep 5
+
+}
+
+function _get_remote_config()
+{
+
+    # Server side flags
+    _get_api_cfg_files;
+    # Report usage flag
+    if [ "$bool_report_stats" == "true" ]; then
+      api_report_usage=$(grep "report_usage" "$api_resp_file" | cut -f2 -d ':')
+      if [ "$api_report_usage" == "false" ]; then
+        bool_report_stats=false;
+        _log_and_show "${_info} Usage reporting is disabled by server side flag."
+      else
+        _log_and_show "${_info} Usage reporting is defined by user flag."
+      fi
+
+      # Stats node
+    api_report_endpoint=$(grep "usage_node" "$api_resp_file" | cut -f2 -d ':')
+  else
+    _log_and_show "${_info} Report stats is set to false will also disable remote config."
+  fi
 }
 
 
@@ -1672,11 +1762,14 @@ function main()
                                   ;;
           --enable-post )         set_default;
                                   bool_enable_post_scripts="true";
-                                  _log_and_show "${_info} custom scripts will be run after running all tasks."
+                                  _log_and_show "${_info} custom scripts will be run after running all the tasks."
+                                  ;;
+    --no-version-checks )   set_default;
+                                  bool_check_version="false"
                                   ;;
   --no-stats | --no-reporting )   set_default;
                                   bool_report_stats="false";
-                                  _log_and_show "${_info} Statistis will not be reported to the stats server."
+                                  _log_and_show "${_info} Statistis will not be reported."
                                   ;;
            * )                    set_yellow
                                   _log_and_exit "${_error} Invalid option: $1" "22"
