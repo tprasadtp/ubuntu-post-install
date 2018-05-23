@@ -39,7 +39,7 @@ function gen_metadata()
   printf "${spacing_string}: $DEPLOY_PRIME_URL\n" "Prime URL" >>${DEPLOY_PARAM}
   if [ "$BRANCH" == "gh-pages" ]; then
     echo ">>----------------------------- From SRC Branch -----------------------------------<<"
-    cat ./metadata/commit.txt >> ${DEPLOY_PARAM}
+    cat ./commit.txt >> ${DEPLOY_PARAM}
   fi
   echo ">>--------------------------- End Build Metadata ----------------------------------<<" >>${DEPLOY_PARAM}
   #shellcheck disable=SC2129
