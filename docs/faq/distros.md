@@ -9,7 +9,7 @@ In short? Ubuntu, its official flavors (Kubuntu,Ubuntu Mate etc), Linux Mint and
 !!! warning "Warning!"
     **Script will exit, if it cannot recognize the distribution.**
 
-A Comple te list of supported distributions is given below.
+A Complete  list of supported distributions is given below.
 
 Distribution     | Codename/Version  |   Supported | Notes
 :----------------|:------------------|-------------|:------
