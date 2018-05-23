@@ -1454,8 +1454,8 @@ function install_debs ()
     while IFS= read -r line
       do
            _debug_log "$line"
-           deb_url=$(echo "$line" | cut -d ':' -f1 )
-           deb_name=$(echo "$line" | cut -d ':' -f2 )
+           deb_url=$(echo "$line" | cut -d ' ' -f1 )
+           deb_name=$(echo "$line" | cut -d ' ' -f2 )
            _debug_log "DEB file url: $deb_url"
            _debug_log "DEB file name: $deb_name"
            _log_and_show "${_downloading} $deb_name"
