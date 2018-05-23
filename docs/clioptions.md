@@ -33,8 +33,10 @@ Following details should explain the behavior of this flag. Please do have a loo
      - Python package installation cannot be simulated. (pip lacks support for it) The script will skip installing apt dependencies and python packages, if simulate option is used.
       it simulate option is used.
      - APT package upgrades and apt repository metadata updates cannot be simulated. Only a list of packages upgrade-able will be listed in the log file in case of upgrades.
+     - Simulate flag will not simulate installing dependencies for adding or deleting repositories and PPAs.
 
 ## Skip Version Checks
+
 !!! snippet "Usage"
     ```
     ./after-effects --no-version-check
