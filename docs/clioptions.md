@@ -34,6 +34,12 @@ Following details should explain the behavior of this flag. Please do have a loo
       it simulate option is used.
      - APT package upgrades and apt repository metadata updates cannot be simulated. Only a list of packages upgrade-able will be listed in the log file in case of upgrades.
 
+## Skip Version Checks
+!!! snippet "Usage"
+    ```
+    ./after-effects --no-version-check
+    ```
+Script will warn you and exit if you are not running latest version of the script. You can skip that by using the above option.
 
 ## Fix for latest Ubuntu releases
 
@@ -177,6 +183,9 @@ Following things are reported. (Nothing more than that)
 - Feature/Task(s) selected,
 - Flags used,
 - Timezone and system language.
+
+!!! warning
+    Disabling stat reporting will also disable remote config.
 
 ??? question "Privacy Concerns?"
     - If you are freaking out, its a shell script !! You can literally look into it and check what's collected. Why if you ask? I mostly use it on a bunch of machines and would like to keep an eye on how it did.
