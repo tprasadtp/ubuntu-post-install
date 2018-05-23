@@ -23,7 +23,7 @@
 #              - or Mint 17.X or 18.X or 19.X
 #
 
-set -eo pipefail
+set -o pipefail
 #Constants
 EXEC_START=$(date +%s)
 DATE=$(date +%Y-%m-%d:%H:%M:%S)
