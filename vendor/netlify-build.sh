@@ -33,14 +33,15 @@ function gen_metadata()
   echo "This Version of Website was Generated On ${DATE} By Netlify Build Bots." >> ${DEPLOY_PARAM}
   printf "${spacing_string}: $BRANCH\n" "Branch" >>${DEPLOY_PARAM}
   printf "${spacing_string}: $PULL_REQUEST\n" "Is Pull Request" >>${DEPLOY_PARAM}
-  printf "${spacing_string}: $COMMIT_REF\n" "Commit" >>${DEPLOY_PARAM}
+  printf "${spacing_string}: ${COMMIT_REF:0:7}\n" "Commit" >>${DEPLOY_PARAM}
   printf "${spacing_string}: $CONTEXT\n" "Deploy Type" >>${DEPLOY_PARAM}
   printf "${spacing_string}: $DEPLOY_URL\n" "Deploy URL" >>${DEPLOY_PARAM}
   printf "${spacing_string}: $DEPLOY_PRIME_URL\n" "Prime URL" >>${DEPLOY_PARAM}
   if [ "$BRANCH" == "gh-pages" ]; then
-    echo ">>----------------------------- From SRC Branch -----------------------------------<<"
+    echo ">>---------------------------- From SRC Branch ------------------------------------<<" >>${DEPLOY_PARAM}
     cat ./commit.txt >> ${DEPLOY_PARAM}
   fi
+
   echo ">>--------------------------- End Build Metadata ----------------------------------<<" >>${DEPLOY_PARAM}
   #shellcheck disable=SC2129
   cat ${DEPLOY_PARAM}
