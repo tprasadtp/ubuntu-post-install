@@ -41,7 +41,7 @@ jobs:
       email: "$V_EMAIL"
       name: "$V_NAME"
       on:
-        all_branches: true
+        branch: master
 matrix:
   fast_finish: true
   allow_failures:
