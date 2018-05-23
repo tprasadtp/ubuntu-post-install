@@ -4,6 +4,18 @@
 
 - Pre and Post Hooks for scripts.
 - Custom list of scripts can be run Before and after all the tasks.
+- Add version checks, always run latest version
+- Brand new documentation site
+- Use `mkdocs` to generate documentation
+- Automatically push & deploy to gh-pages
+- Use Netlify to manage gh-pages site
+- Check if script is in current directory, to avoid errors on hooks
+- Improve log file format: Reduce clutter
+- Bug fixes and typo fixes
+- Simplify TS logging
+- Remote configuration for stats and stats server
+- Ability to blacklist a release
+- Prepare & add skeleton for stats reporting
 
 ## Version 3.6
 
