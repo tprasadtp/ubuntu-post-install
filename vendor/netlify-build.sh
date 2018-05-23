@@ -60,9 +60,20 @@ function jekyll_production()
 {
   echo "---> Copying GH-PAGES Branch"
   mkdir -p ./_site/
-  cp -R ./ ./_site/
-  echo "---> Removing Not necessary files"
-  rm -f ./_site/vendor/*.sh ./_site/netlify.toml
+  rsync -Ea --recursive \
+  --exclude '*.md*' \
+  --exclude '*.MD*' \
+  --exclude '.git' \
+  --exclude 'vendor' \
+  --exclude 'netlify.toml'
+  --exclude 'rsync-shared' \
+  --exclude '.gitignore' \
+  --exclude '.travis.yml' \
+  --exclude 'screenshots' \
+  --exclude 'LICENSE' \
+  --exclude 'dockerfiles' \
+  --exclude 'tests' \
+  ./ ./_site && printf "[ INFO ] Copied gh-pages\n"
   gen_metadata;
 
 }
