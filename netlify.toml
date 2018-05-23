@@ -12,7 +12,8 @@
 
 # Deploy Preview context: All Deploy Previews
 # will inherit these settings.
-[context.deploy-preview.environment]
+[context.deploy-preview]
+  publish = "_site/"
   command = "./vendor/netlify-build.sh --pull-request"
 
 # Branch Deploy context: All deploys that are not in
