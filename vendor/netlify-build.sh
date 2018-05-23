@@ -13,6 +13,11 @@
 # Version:1.0
 # Author: Prasad Tengse
 
+# gh-pages is built on travis. and deploy it on netlify to production.
+# Remove .toml and scripts. & deploy the entire branch. No need to build anything as its already built.
+# If something else is pushed to any branches, deploy it as branch deploy.
+# This is a temporary fix till travis deployment and enforced https on github pages will work together.
+# Else, deploy to banches anyway for testing purposes..
 set -e # halt script on error
 DEPLOY_PARAM=./_site/deploy-params.txt
 spacing_string="%-15s"
@@ -37,12 +42,6 @@ function gen_metadata()
   cat ${DEPLOY_PARAM}
 }
 
-function copy_static_api_files()
-{
-  echo "Copying Static Files"
-  cp -R ./api/ ./_site/api/
-  #statements
-}
 
 function html-proofer-checks()
 {
@@ -55,11 +54,12 @@ echo "---------------------------------------------------------"
 
 function jekyll_production()
 {
-  echo "---> Building Website with Production Context"
-  mkdocs build;
-  copy_static_api_files;
+  echo "---> Copying GH-PAGES Branch"
+  mkdir -p ./_site/
+  cp -R ./ ./_site/
+  echo "---> Removing Not necessary files"
+  rm -f ./_site/vendor/*.sh ./_site/netlify.toml
   gen_metadata;
-  #html-proofer-checks;
 
 }
 
@@ -67,9 +67,10 @@ function jekyll_branch()
 {
   echo "---> Building Website with Branch"
   mkdocs build;
+  echo "---> Copying Static Files"
+  cp -R ./api/ ./_site/api/
   copy_static_api_files;
   gen_metadata;
-  #html-proofer-checks;
 }
 
 
@@ -106,7 +107,7 @@ function main()
       # Process command line arguments.
       while [ "$1" != "" ]; do
           case ${1} in
-              -m | --master )         jekyll_production;
+              -p | --production )     jekyll_production;
                                       exit $?
                                       ;;
               -b | --branch )         jekyll_branch;
