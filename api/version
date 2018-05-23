@@ -4,7 +4,7 @@ release_name:4.0 Beta
 blacklisted:false
 blacklist_msg:
 blacklist_fallback:42
-blacklist_fallback_commit:5f3bf22
+fallback_commit:5f3bf22
 current_lts:bionic
 current_stable:bionic
 pre_release:cosmic
