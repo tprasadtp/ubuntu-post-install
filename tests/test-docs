@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
-
-# This is a bash utility to test the shellscripts in this repo using shellcheck
+set -e pipefail
 # Version:0.1
 # Author: Prasad Tengse
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
-## Install PIP
+## Install Python packages
 pip install --upgrade pip
 pip install -r ./dockerfiles/mkdocs/requirements.txt
 # Build Static
 echo "Building Docs"
-mkdocs build -v
+mkdocs build -v -s
 echo "Copy API Files"
 cp -R ./api/ ./_site/api/
+echo "Copy Netlify Files"
+cp -R ./vendor/ ./_site/vendor/
+cp -R ./netlify.toml ./_site/netlify.toml
 # Install htmlproofer
 #echo "Installing bundler dependencies"
 #bundle install
