@@ -21,7 +21,7 @@ function main()
   sed -i '/peek-developers\|indicator-kdeconnect/d' ./data/ppa.list
   sed -i '/openjdk-8-jdk/d' ./data/development.list
   sed -i '/gnome-calendar\|gnome-todo\|polari/d' ./data/productivity.list
-  sed -i '/indicator-kdeconnect\|peek/d' ./data/extern-repo.list
+  sed -i '/indicator-kdeconnect\|peek\|yubikey-manager-qt/d' ./data/extern-repo.list
   sudo ./after-effects --yes --simulate --enable-pre --enable-post
 
   exit_code_from_script=$?
