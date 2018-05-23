@@ -20,6 +20,7 @@ echo "Copy Netlify Files"
 cp -R ./vendor/ ./_site/vendor/
 cp -R ./netlify.toml ./_site/netlify.toml
 echo "Commit Info"
+true > ./_site/metadata/commit.txt
 printf "${spacing_string}: ${TRAVIS_COMMIT:0:7}\n${spacing_string}:${TRAVIS_COMMIT_MESSAGE}\n${spacing_string}: ${TRAVIS_BRANCH}\n" "SRC Commit ID" "SRC Commit Message" "Built from" | tee ./_site/metadata/commit.txt
 # Install htmlproofer
 #echo "Installing bundler dependencies"
