@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
-set -e pipefail
+# shellcheck disable=SC2059
+
 # Version:0.1
 # Author: Prasad Tengse
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
+set -e pipefail
+spacing_string="%-15s"
+
 ## Install Python packages
 pip install --upgrade pip
 pip install -r ./dockerfiles/mkdocs/requirements.txt
@@ -15,6 +19,8 @@ cp -R ./api/ ./_site/api/
 echo "Copy Netlify Files"
 cp -R ./vendor/ ./_site/vendor/
 cp -R ./netlify.toml ./_site/netlify.toml
+echo "Commit Info"
+printf "${spacing_string}: ${TRAVIS_COMMIT:0:7}\n${spacing_string}:${TRAVIS_COMMIT_MESSAGE}\n${spacing_string}: ${TRAVIS_BRANCH}\n" "SRC Commit ID" "SRC Commit Message" "Built from" | tee ./_site/metadata/commit.txt
 # Install htmlproofer
 #echo "Installing bundler dependencies"
 #bundle install
