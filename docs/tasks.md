@@ -80,11 +80,11 @@ This will install deb files specified in the list deb-files.list
 - **Simulate** option will use `--dry-run` option in dpkg to Simulate DEB installation.
 - Configuration file is similar to that of PPA and package lists, but with one difference.
 - Each DEB file to be installed should have following entry.
-- URL to the deb file which can be accessed using wget  [ tab or space ] Name of the deb file without any spaces or special chars except hyphen.
+- URL to the deb file which can be accessed using wget < : > Name of the deb file without any spaces or special chars except hyphen.
 - For example to install Atom Editor the deb-files.list should look like below.
 
 ```text
-https://atom-installer.github.com/v1.21.1/atom-amd64.deb  ATOM-Editor.deb
+https://atom-installer.github.com/v1.21.1/atom-amd64.deb : ATOM-Editor.deb
 ```
 
 - First part is the URL to the deb file separated by a tab name of the file.
