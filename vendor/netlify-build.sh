@@ -65,7 +65,7 @@ function jekyll_production()
   --exclude '*.MD*' \
   --exclude '.git' \
   --exclude 'vendor' \
-  --exclude 'netlify.toml'\
+  --exclude 'netlify.toml' \
   --exclude 'rsync-shared' \
   --exclude '.gitignore' \
   --exclude '.travis.yml' \
