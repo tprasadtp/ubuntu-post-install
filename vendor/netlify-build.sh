@@ -69,6 +69,7 @@ function jekyll_production()
 
 function jekyll_branch()
 {
+  install_dependencies;
   echo "---> Building Website with Branch"
   mkdocs build;
   echo "---> Copying Static Files"
@@ -106,7 +107,7 @@ function main()
       		    exit 1;
       fi;
 
-      install_dependencies;
+
       # Process command line arguments.
       while [ "$1" != "" ]; do
           case ${1} in
