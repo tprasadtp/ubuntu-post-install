@@ -83,7 +83,7 @@ function usage()
   #Prints out help menu
 cat <<EOF
 Usage: netlify-deploy [OPTIONS]
-[-m --master]        [Master Deployment]
+[-p --production]        [Master Deployment]
 [-b --branch]        [Branch Deployment]
 [-pr --pull-request] [Pull request deployment(Same as branch)]
 EOF
