@@ -54,7 +54,7 @@ Following repositories are conditional and are determined based on the flags or 
 
 - PPAs can be added using the configuration file in data directory `./data/ppa.list`
 - This file **SHOULD** contain only one ppa entry per line (No comments or anything else anywhere in the file) in the format ppa:<author>/ppa for example `ppa:mozillateam/firefox-next` The file will be read and the PPAs will be added from the list.
-- Logs will  show entry in the format `[<date and time>] [  PPA  ] <log>`
+- Logs will  show entry in the format `[<date and time>] [  PPA-Logs  ] <log>`
 
 !!! warning
     - PPAs should be checked before they are added to the list. Sometimes PPAs listed in the file may not be available for all releases.
