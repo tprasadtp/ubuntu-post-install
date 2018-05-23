@@ -31,8 +31,8 @@ readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 log_file="$dir"/after-effects-logs/after-effects.log
 mkdir -p "$dir"/after-effects-logs
-readonly REL_NAME="4.0 Alpha"
-readonly REL_NUM=43
+readonly REL_NAME="4.0 Beta"
+readonly REL_NUM=42
 EXEC_TIME=0;
 
 
