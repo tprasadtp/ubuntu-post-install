@@ -466,7 +466,7 @@ Logs are written to a file `<current-dir>/after-effects-logs/after-effects.log`.
 
 ### What if script or Ubuntu crashes?
 
-Simple. Reboot (Force it if necessary). If you know where it was stuck/crashed, just re-run the task(s) which were not completed. If you dont know, go and check log file. Each task is labelled and is clearly logged before starting and after completing. Just run the tasks which did not complete. You dont have to re-download the packages you have already downloaded, because they are already cached by apt-get.
+Simple. Reboot (Force it if necessary). If you know where it was stuck/crashed, just re-run the task(s) which were not completed. If you don't know, go and check log file. Each task is labelled and is clearly logged before starting and after completing. Just run the tasks which did not complete. You dont have to re-download the packages you have already downloaded, because they are already cached by apt-get.
 
 Remember, some operations of the script can be very lengthy and can involve lots of downloads (If you used default list files, expect up to 2 GB of traffic). So, it might appear that script is stuck because cursor stops blinking. However it is not the case. If you are unsure please check the logs. In rare cases where your Ubuntu crashed while installing a DEB file which has unmet dependencies, you might see broken packages error. In that case run `sudo apt-get install -f` to fix the broken packages and re run the script. If you see any errors or script crashes please do not hesitate to open an issue on Github.
 
