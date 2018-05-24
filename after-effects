@@ -369,7 +369,7 @@ function  _add_timestamp_to_logs()
   # This function adds time stamp to ${1}-logs without using external utilities
   # Output will be automatically written to $log_file
   # Usage command | _add_timestamp_to_logs "$1"
-  while IFS= read -r line; do printf "[$(date)] ${1}\t%s\n" "$line" &>> "$log_file"; done
+  while IFS= read -r line; do printf "[$(date)] ${1} %s\n" "$line" &>> "$log_file"; done
 
 }
 
@@ -1073,7 +1073,7 @@ function upgrade_apps()
   sleep 5;
   set_default;
   sleep 5
-  _debug_log "${_upgrading} packages..."
+  _debug_log "Upgrading packages..."
   # only do upgrades if simulate is set to false
   if [ "$simulate_apt_install" == "false" ]; then
 
@@ -1507,7 +1507,7 @@ function all_in_one()
   _debug_log "Option: ALL IN ONE, function name: all_in_one"
   _line_fill;
   set_blue;
-  _log_and_show "${_info} Apps will be installed, Upgrades and repositoris and will be added, deb files will be downloaded and installed!\n${_info} This action is not reversible in all cases."
+  _log_and_show "${_info} Apps will be installed, Upgrades and repositoris and will be added, deb files will be downloaded and installed!"
   set_default;
   update_repos;
   upgrade_apps;
@@ -1637,7 +1637,7 @@ function main()
     set_default;
     exit 2;
   else
-    _debug_log "${_checked} OK! running as root."
+    _debug_log "OK! running as root."
   fi
 
   # Initialize variables and checks
@@ -1708,7 +1708,7 @@ function main()
                                   bool_enable_post_scripts="true";
                                   _log_and_show "${_info} custom scripts will be run after running all the tasks."
                                   ;;
-    --no-version-checks )   set_default;
+    --no-version-checks )         set_default;
                                   bool_check_version="false"
                                   ;;
   --no-stats | --no-reporting )   set_default;
