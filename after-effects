@@ -1056,9 +1056,7 @@ function add_repositories()
 function update_repos()
 {
   local exit_status
-  set_yellow
   _log_and_show "${_updating} Repository index/metadata..."
-  set_default
   apt-get update 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
   exit_status=$?
   if [ "$exit_status" -eq 0 ]; then
@@ -1067,8 +1065,8 @@ function update_repos()
     set_yellow;
     _log_and_show "${_oh_no} Something went wrong in upgrading packages. Please see the log file for more details."
     _log_and_show "${_notice} Most of the times its either missing repository keys or wrongly configured repositories."
+    set_default;
   fi
-  set_default;
 }
 
 
