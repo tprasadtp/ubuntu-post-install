@@ -31,7 +31,7 @@ function main()
   ubuntu:ae-pre-release \
   ./after-effects --simulate --yes --pre-release --enable-pre --enable-post
 
-  exit_code_from_container=$?
+  exit_code_from_container="$?"
   echo "Exit code from docker run is: $exit_code_from_container"
   echo "Print Logs is set to: $PRINT_LOGS"
   echo "Print Pre Release Logs is set to: $PRINT_PRE_RELEASE_LOGS"

@@ -26,7 +26,7 @@ function main()
   ubuntu:ae-xenial \
   ./after-effects --simulate --yes --enable-pre --enable-post
 
-  exit_code_from_container=$?
+  exit_code_from_container="$?"
   echo "Exit code from docker run is: $exit_code_from_container"
   echo "Print Logs is set to: $PRINT_LOGS"
   if [ "$PRINT_LOGS" == "true" ] || [[ "$exit_code_from_container" -gt 0 ]]; then

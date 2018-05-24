@@ -621,15 +621,16 @@ function _get_api_cfg_files()
   api_resp_file="/tmp/after-effects-api-response.txt"
   exit_status=0
   # Get Version Metadata
-  wget -q http://"${api_endpoint}"/version -O "$api_resp_file" >> $"$log_file"
+  wget -q "${api_endpoint}"/version -O "$api_resp_file" >> $"$log_file"
   # Check if exit code is zero
   exit_status="$?"
   _debug_log "Exit code from wget  API response is : $exit_status"
   if [ "$exit_status" -eq 0 ]; then
     _debug_log "Successfully retrieved Version & config file."
   else
-    _log_and_show "Something went wrong while retrieving response from API endpoint."
-    _log_and_exit "Error Getiing response." "28"
+    set_yellow;
+    _log_and_show "${_error} Something went wrong while retrieving response from API endpoint."
+    _log_and_exit "${_error} Error Getiing response." "28"
   fi
 }
 
