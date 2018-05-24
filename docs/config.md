@@ -14,13 +14,13 @@ These files contain list of apt packages which can be installed. Please see [Ins
 | github-bot-essentials.list | Project specific | No |
 | administration | Administration Tools like Synaptic | Yes |
 | development | Used for development tasks eg: rake | Yes |
-| exten-repo | Packages from PPAs or External repositories. eg : Google Chrome, Spotify, Visual Studio Code, Google Cloud SDKs | Yes |
+| exten-repo | Packages from PPAs or External repositories. eg : Google Chrome, Spotify, Visual Studio Code, Google Cloud SDKs | No |
 | goa | Gnome online accounts specific packages. These are necessary to get Gnome-Online-Accounts working properly in Empathy. Use only on 17.04 and above. For 16.04 use gnome-online-accounts | Yes |
 | multimedia | Tools to edit photos and videos, video players and editors. | Yes |
 | productivity | Email, Chat, Office tools, Document converters etc. | Yes |
 | security | Security related tools | Yes |
 | utilities | Utilities and Tools | Yes |
-| wine | Wine related packages like winetricks | Yes |
+| wine | Wine related packages like winetricks | No |
 | xenial-above | Packages are not available in Xenial or below in Ubuntu repositories, but are available in 16.10 and later. | No (But is added during Travis tests for supported releases) |
 | latex | Latex related packages | Yes |
 | pip.apt   | Python 2 APT dependencies | Yes |
