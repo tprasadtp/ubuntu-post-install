@@ -33,6 +33,7 @@ jobs:
     deploy:
       provider: pages
       skip_cleanup: true
+      deployment-file: true
       local-dir: _site
       skip-cleanup: true
       keep-history: true
