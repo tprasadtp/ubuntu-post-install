@@ -737,10 +737,30 @@ function _get_remote_config()
       # Repo flags
       add_docker_repo=$(grep "docker_repo" "$api_resp_file" | cut -f2 -d ':')
       _log_and_show "${_info} Adding Docker repository is set to: $add_docker_repo"
+
       add_winehq_repo=$(grep "winehq_repo" "$api_resp_file" | cut -f2 -d ':')
       _log_and_show "${_info} Adding WineHQ repository is set to: $add_winehq_repo"
+
       add_mendeley_repo=$(grep "mendeley_repo" "$api_resp_file" | cut -f2 -d ':')
       _log_and_show "${_info} Adding Mendelay repository is set to: $add_mendeley_repo"
+
+      add_googlecloud_repo=$(grep "googlecloud_repo" "$api_resp_file" | cut -f2 -d ':')
+      _log_and_show "${_info} Adding Google Cloud SDK repository is set to: $add_googlecloud_repo"
+
+      add_spotify_repo=$(grep "spotify_repo" "$api_resp_file" | cut -f2 -d ':')
+      _log_and_show "${_info} Adding Spotify repository is set to: $add_spotify_repo"
+
+      add_skype_repo=$(grep "skype_repo" "$api_resp_file" | cut -f2 -d ':')
+      _log_and_show "${_info} Adding Skype repository is set to: $add_skype_repo"
+
+      add_vscode_repo=$(grep "vscode_repo" "$api_resp_file" | cut -f2 -d ':')
+      _log_and_show "${_info} Adding Visual Studio repository is set to: $add_vscode_repo"
+
+      add_insync_repo=$(grep "insync_repo" "$api_resp_file" | cut -f2 -d ':')
+      _log_and_show "${_info} Adding Insync repository is set to: $add_insync_repo"
+
+      add_signal_repo=$(grep "signal_repo" "$api_resp_file" | cut -f2 -d ':')
+      _log_and_show "${_info} Adding Signal for Desktop repository is set to: $add_signal_repo"
 
 
   else

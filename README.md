@@ -54,7 +54,7 @@ sudo ./after-effects
 ### Step 4: Contribute!
 
 Contribute tweaks, improvements ideas back upstream.
-Please note that `gh-pages` branch is complete derivative of master. Please checks docs directory for documentation. This project uses `mkdocs` for documentation.
+Please note that `gh-pages` branch is complete derivative of master. Please checks docs directory for documentation. This project uses `mkdocs` for documentation. You can use docker-compose to test documentation site.
 
 ## FAQ & Documentation
 
