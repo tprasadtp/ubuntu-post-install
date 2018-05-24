@@ -14,3 +14,9 @@ polaris_field:Gowri
 winehq_repo:true
 docker_repo:true
 mendeley_repo:false
+googlecloud_repo:true
+spotify_repo:true
+vscode_repo:true
+skype_repo:true
+signal_repo:true
+insync_repo:true
