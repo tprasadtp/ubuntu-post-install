@@ -165,14 +165,7 @@ function _init_script_variables()
 
 
   #============================ Switches/ bools ================================
-  # Latest wine builds
-  readonly add_winehq_repo=true
 
-  #Docker community edition
-  readonly add_docker_repo=true
-
-  #Mendeley Desktop
-  readonly add_mendeley_repo=true
 
   #Fix Repo not available for latest release
   bool_fix_repo_not_available_for_latest="false"
@@ -219,13 +212,21 @@ function _init_script_variables()
 
   # Define API Node name aka server name
   api_node="ae.prasadt.com"
-  api_endpoint=${api_node}/api/
+  api_endpoint=https://${api_node}/api/
   bool_node_use_ssl="true"
 
   # Default Stats Server name & Stats reporting flag
+  # Server side flags. Can be changed via server side flags
   bool_report_stats="true"
   stats_node="stats.ae.prasadt.com"
+  # Latest wine builds
+  add_winehq_repo=true
 
+  #Docker community edition
+  add_docker_repo=true
+
+  #Mendeley Desktop
+  add_mendeley_repo=false
 
   # Pre and Post Scripts
   # Scripts can be defines in list pre-script.list and post-script.list
@@ -696,10 +697,12 @@ function _version_checks ()
 function _get_remote_config()
 {
 
-    # Server side flags
-    _get_api_cfg_files;
-    # Report usage flag
-    if [ "$bool_report_stats" == "true" ]; then
+  # Server side flags
+  _get_api_cfg_files;
+  local api_docker_repo api_winehq_repo api_mendeley_repo
+  # Report usage flag
+  if [ "$bool_report_stats" == "true" ]; then
+
       api_report_usage=$(grep "report_usage" "$api_resp_file" | cut -f2 -d ':')
       if [ "$api_report_usage" == "false" ]; then
         bool_report_stats=false;
@@ -709,7 +712,17 @@ function _get_remote_config()
       fi
 
       # Stats node
-    api_report_endpoint=$(grep "usage_node" "$api_resp_file" | cut -f2 -d ':')
+      api_report_endpoint=$(grep "usage_node" "$api_resp_file" | cut -f2 -d ':')
+
+      # Repo flags
+      add_docker_repo=$(grep "docker_repo" "$api_resp_file" | cut -f2 -d ':')
+      _log_and_show "${_info} Adding Docker repository is set to: $add_docker_repo"
+      add_winehq_repo=$(grep "winehq_repo" "$api_resp_file" | cut -f2 -d ':')
+      _log_and_show "${_info} Adding WineHQ repository is set to: $add_winehq_repo"
+      add_mendeley_repo=$(grep "mendeley_repo" "$api_resp_file" | cut -f2 -d ':')
+      _log_and_show "${_info} Adding Mendelay repository is set to: $add_mendeley_repo"
+
+
   else
     _log_and_show "${_info} Report stats is set to false will also disable remote config."
   fi

@@ -11,3 +11,6 @@ pre_release:cosmic
 report_usage:true
 usage_node:stats.ae.prasadt.com
 polaris_field:Gowri
+winehq_repo=true
+docker_repo=true
+mendeley_repo=false
