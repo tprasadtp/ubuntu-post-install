@@ -626,7 +626,7 @@ function _set_custom_api_nodes ()
 {
   # Set custom api endpoints
   if [[ "$bool_custom_api_node" == "true" ]]; then
-   _log_and_show "${_info} cutom API node is set."
+   _log_and_show "${_info} Custom API node is set."
    api_endpoint="$custom_api_node"
  fi
 
