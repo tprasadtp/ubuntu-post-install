@@ -219,6 +219,7 @@ function _init_script_variables()
   # Server side flags. Can be changed via server side flags
   bool_report_stats="true"
   stats_node="stats.ae.prasadt.com"
+
   # Latest wine builds
   add_winehq_repo=true
 
@@ -227,6 +228,24 @@ function _init_script_variables()
 
   #Mendeley Desktop
   add_mendeley_repo=false
+
+  #Spotify
+  add_spotify_repo=true
+
+  #InSync
+  add_insync_repo=true
+
+  #Google Cloud SDK
+  add_googlecloud_repo=true
+
+  #Signal
+  add_signal_repo=true
+
+  #Skype
+  add_skype_repo=true
+
+  #VS code
+  add_vscode_repo=true
 
   # Pre and Post Scripts
   # Scripts can be defines in list pre-script.list and post-script.list
@@ -941,28 +960,40 @@ function add_repositories()
   fi
 
   # Spotify client
-  _log_and_show "${_adding} Spotify repository"
-  _debug_log "Adding Spotify keys"
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0DF731E45CE24F27EEEB1450EFDC8610341D9410  2>&1 |_add_timestamp_to_logs "${_apt_key_logs}"  || _log_and_show "Adding Spotify repository failed"
-  echo "deb http://repository.spotify.com stable non-free #Spotify For Linux" > ${SOURCES_FILE_DIR}/spotify.list || _log_and_show "Adding Spotify Repository Failed"
+  if [ "$add_spotify_repo" == "true" ]; then
+    _log_and_show "${_adding} Spotify repository"
+    _debug_log "Adding Spotify keys"
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0DF731E45CE24F27EEEB1450EFDC8610341D9410  2>&1 |_add_timestamp_to_logs "${_apt_key_logs}"  || _log_and_show "Adding Spotify repository failed"
+    echo "deb http://repository.spotify.com stable non-free #Spotify For Linux" > ${SOURCES_FILE_DIR}/spotify.list || _log_and_show "Adding Spotify Repository Failed"
+  else
+    _log_and_show "${_adding} Spotify repository is set to false. Skipping."
+  fi
 
-   # Insync
-  _log_and_show "${_adding} Insync repository"
-  _debug_log "Adding Insync keys"
-  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ACCAF35C  2>&1 |_add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Insync Repository failed"
-  echo "deb http://apt.insynchq.com/ubuntu $code_name_fix_latest non-free contrib #Insync Client" > ${SOURCES_FILE_DIR}/insync.list || _log_and_show "Adding Insync Repository failed"
+  # Insync
+  if [ "$add_insync_repo" == "true" ]; then
+    _log_and_show "${_adding} Insync repository"
+    _debug_log "Adding Insync keys"
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ACCAF35C  2>&1 |_add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Insync Repository failed"
+    echo "deb http://apt.insynchq.com/ubuntu $code_name_fix_latest non-free contrib #Insync Client" > ${SOURCES_FILE_DIR}/insync.list || _log_and_show "Adding Insync Repository failed"
+  else
+    _log_and_show "${_adding} Insync repository is set to false. Skipping."
+  fi
 
   # Google Cloud SDK and GCS-FUSE
-  CLOUD_SDK_REPO="cloud-sdk-$code_name_fix_latest"
-  GCSFUSE_REPO="gcsfuse-$code_name_fix_latest"
-  _log_and_show "${_google_cloud} Repositories"
-  _debug_log "Adding Google-Cloud repository sigining key"
-  wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg >> "$log_file"
-  apt-key add apt-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"
-  _log_and_show "${_adding} Google-Cloud-SDK repository"
-  echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main #Google Cloud SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  || _log_and_show "Adding GCSFUSE Repository failed"
-  _log_and_show "${_adding} GCSFUSE repository"
-  echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list  || _log_and_show "Adding Google Cloud SDK Repository failed"
+  if [ "$add_googlecloud_repo" == "true" ]; then
+    CLOUD_SDK_REPO="cloud-sdk-$code_name_fix_latest"
+    GCSFUSE_REPO="gcsfuse-$code_name_fix_latest"
+    _log_and_show "${_google_cloud} Repositories"
+    _debug_log "Adding Google-Cloud repository sigining key"
+    wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg >> "$log_file"
+    apt-key add apt-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"
+    _log_and_show "${_adding} Google-Cloud-SDK repository"
+    echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main #Google Cloud SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  || _log_and_show "Adding GCSFUSE Repository failed"
+    _log_and_show "${_adding} GCSFUSE repository"
+    echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list  || _log_and_show "Adding Google Cloud SDK Repository failed"
+  else
+    _log_and_show "${_adding} Google Cloud SDK repository is set to false. Skipping."
+  fi
 
   #AWS
   # Handled by pip
@@ -996,37 +1027,48 @@ function add_repositories()
   fi
 
   # Skype
-  _log_and_show "${_adding} Skype for Linux repository"
-  _debug_log "Getting Skype repository key"
-  wget -q https://repo.skype.com/data/SKYPE-GPG-KEY -O skype-linux-key.gpg >> "$log_file"
-  _debug_log "Adding Skype keys to trusted list"
-  apt-key add skype-linux-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Skype for linux key failed"
-  echo "deb [arch=$ARCH] https://repo.skype.com/deb stable main #Skype for Linux" > $SOURCES_FILE_DIR/skype-stable.list || _log_and_show "Adding Skype for linux repository failed"
-
+  if [ "$add_skype_repo" == "true" ]; then
+    _log_and_show "${_adding} Skype for Linux repository"
+    _debug_log "Getting Skype repository key"
+    wget -q https://repo.skype.com/data/SKYPE-GPG-KEY -O skype-linux-key.gpg >> "$log_file"
+    _debug_log "Adding Skype keys to trusted list"
+    apt-key add skype-linux-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Skype for linux key failed"
+    echo "deb [arch=$ARCH] https://repo.skype.com/deb stable main #Skype for Linux" > $SOURCES_FILE_DIR/skype-stable.list || _log_and_show "Adding Skype for linux repository failed"
+  else
+    _log_and_show "${_adding} Skype repository is set to false. Skipping."
+  fi
 
   # Visual Studio Code
-  if [ "$ARCH" == "amd64" ]; then
-    _log_and_show "${_adding} Visual Studio Code repository"
-    _debug_log "Getting GPG keys for repository"
-    curl -s https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-    _debug_log "Adding Key to trusted GPG keys directory"
-    apt-key add microsoft.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Visual Studio Code key failed"
-    echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list
+  if [ "$add_vscode_repo" == "true" ]; then
+    if [ "$ARCH" == "amd64" ]; then
+      _log_and_show "${_adding} Visual Studio Code repository"
+      _debug_log "Getting GPG keys for repository"
+      curl -s https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+      _debug_log "Adding Key to trusted GPG keys directory"
+      apt-key add microsoft.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Visual Studio Code key failed"
+      echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list
+    else
+      _log_and_show "Architecture: $ARCH is not supported by Visual studio Code."
+    fi
   else
-    _log_and_show "Architecture: $ARCH is not supported by Visual studio Code."
+    _log_and_show "${_adding} Visual Studio repository is set to false. Skipping."
   fi
 
   # Signal App
-  if [ "$ARCH" == "amd64" ]; then
-    _log_and_show "${_adding} Signal repository"
-    wget -q https://updates.signal.org/desktop/apt/keys.asc -O signal.asc >> "$log_file"
-    apt-key add signal.asc  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Signal Key Failed"
-    echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/signal-xenial.list
+  if [ "$add_signal_repo" == "true" ]; then
+    if [ "$ARCH" == "amd64" ]; then
+      _log_and_show "${_adding} Signal repository"
+      wget -q https://updates.signal.org/desktop/apt/keys.asc -O signal.asc >> "$log_file"
+      apt-key add signal.asc  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Signal Key Failed"
+      echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/signal-xenial.list
+    else
+        _log_and_show "Architecture: $ARCH is not supported by Signal"
+    fi
   else
-      _log_and_show "Architecture: $ARCH is not supported by Signal"
+    _log_and_show "${_adding} Visual Studio repository is set to false. Skipping."
   fi
 
-    # Mendeley Desktop App
+  # Mendeley Desktop App
   if [ "$add_mendeley_repo" == "true" ]; then
     _log_and_show "${_adding} Mendeley repository"
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Mendeley Desktop Key Failed"

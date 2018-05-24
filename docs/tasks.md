@@ -17,7 +17,19 @@ This will add the following repositories.
 - Spotify
 - Visual Studio Code
 - Signal Desktop
-- Mendeley Desktop
+- Mendeley Desktop (Not added by default)
+
+!!! bug "Prefer local configuration"
+    The script uses remote config files (/api/version) to determine whether to add repository or not. It helps in disabling some repositories which are often source of trouble. They always try to reflect default choices of the script. If you wish to disable it or override it, use `--no-stats` option as it will disable remote configuration as well & local variables will determine the outcome.
+
+
+!!! tip "Your own Remote config"
+    You can use your own remote config file. You need following to do so.
+    - A Valid configuration file accessible over http/https/ftp without login.
+    - You can copy the files in api directory of this branch.
+    - Host the files on your own server/S3/website & Note the base url for that directory.
+    - Use --api-endpoint protocol://{BASE_URL}/ while running the script.
+    - Config files should be accessible over protocol://{BASEURL}/version
 
 ### Canonical partner repositories
 
@@ -34,15 +46,33 @@ Following repositories are conditional and are determined based on the flags or 
 ??? note "Default Variables"
     ```bash
     #============================ Switches/ bools ================================
-    # Latest wine builds
-    readonly add_winehq_repo=true
 
-    #Docker community edition
+      # Latest wine builds
+      add_winehq_repo=true
 
-    readonly add_docker_repo=true
+      #Docker community edition
+      add_docker_repo=true
 
-    #Mendeley Desktop
-    readonly add_mendeley_repo=true
+      #Mendeley Desktop
+      add_mendeley_repo=false
+
+      #Spotify
+      add_spotify_repo=true
+
+      #InSync
+      add_insync_repo=true
+
+      #Google Cloud SDK
+      add_googlecloud_repo=true
+
+      #Signal
+      add_signal_repo=true
+
+      #Skype
+      add_skype_repo=true
+
+      #VS code
+      add_vscode_repo=true
     ```
 
 !!! bug "Note on 32 bit Architecture"
