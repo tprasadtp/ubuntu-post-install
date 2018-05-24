@@ -21,6 +21,8 @@ function main()
   docker build -t  ubuntu:ae-artful ./dockerfiles/artful
   echo "Adding Xenial and above list to app-list.list"
   echo "./data/xenial-above.list" >> ./data/app-list.list
+  echo "Adding External Repos"
+  echo "./data/extern-repo.list" >> ./data/app-list.list
   echo "Running in Docker Artful"
 
   docker run -it -e TRAVIS="$TRAVIS" \
