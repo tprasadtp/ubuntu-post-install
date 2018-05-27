@@ -121,9 +121,9 @@ function _init_script_variables()
   # should be called first before choices are made, always.
 
   #grabbing os info
-  readonly OS_DISTRIBUTION=$(lsb_release --id | cut -f2 | tr '[:upper:]' '[:lower:]')
-  readonly VERSION=$(lsb_release --release | cut -f2)
-  readonly LONG_VERSION=$(lsb_release -d | cut -f2 | cut -d ' ' -f2)
+  readonly OS_DISTRIBUTION=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
+  readonly VERSION=$(lsb_release --rs)
+  readonly LONG_VERSION=$(lsb_release -ds)
   code_name=$(lsb_release -cs)
   readonly architeture=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
   if [ "$architeture" == "64" ];then
@@ -156,12 +156,12 @@ function _init_script_variables()
   readonly PING_URL="www.google.com"
 
   # Package list files
-  readonly deb_files_list="$dir"/data/deb-files.list
-  readonly ppa_list="$dir"/data/ppa.list
-  readonly app_list_list="$dir"/data/app-list.list
-  readonly purge_list="$dir"/data/purge.list
-  readonly post_script_list="$dir"/data/post-script.list
-  readonly pre_script_list="$dir"/data/pre-script.list
+  readonly deb_files_list="$dir/$data_dir/deb-files.list"
+  readonly ppa_list="$dir/$data_dir/ppa.list"
+  readonly app_list_list="$dir/$data_dir/app-list.list"
+  readonly purge_list="$dir/$data_dir/purge.list"
+  readonly post_script_list="$dir/$data_dir/post-script.list"
+  readonly pre_script_list="$dir/$data_dir/pre-script.list"
 
 
   #============================ Switches/ bools ================================
@@ -212,7 +212,7 @@ function _init_script_variables()
 
   # Define API Node name aka server name
   api_node="ae.prasadt.com"
-  api_endpoint=https://${api_node}/api/
+  api_endpoint=https://${api_node}/cfg/
   bool_node_use_ssl="true"
 
   # Default Stats Server name & Stats reporting flag
@@ -247,6 +247,15 @@ function _init_script_variables()
   #VS code
   add_vscode_repo=true
 
+  #Google
+  add_google_repo=true
+
+  #Kubernetes
+  add_kubernetes_repo=false
+
+  # Define Data Directory
+  data_dir="data"
+
   # Pre and Post Scripts
   # Scripts can be defines in list pre-script.list and post-script.list
   # Which will run before and after all the tasks.
@@ -256,6 +265,9 @@ function _init_script_variables()
 
   # Current directory check
   bool_pwd_check_passed="false"
+
+  # Check Debian Flags
+  bool_is_debian="false"
 
 }
 
@@ -271,8 +283,8 @@ function _init_print_basic_info()
   _log_and_show "${_info} Code Name: ${code_name}"
   _log_and_show "${_info} Architeture: ${ARCH}"
   _log_and_show "${_info} Path for sources.list.d: ${SOURCES_FILE_DIR}"
-  _log_and_show "${_version} $REL_NAME"
-  _log_and_show "${_info} Release Number: $REL_NUM"
+  _log_and_show "${_version} $REL_NUM"
+  _log_and_show "${_info} Script Version: $REL_NAME"
 
   #disable hist chars  so that I can print "!!"" properly
   histchars=
@@ -582,6 +594,9 @@ function _fix_ubuntu_derivatives()
                                             _log_and_show "${_warn} This is a pre-release of Ubuntu Which is in early stages of development. Use with caution"
                                             _log_and_show "${_warn} Packages and PPAs might not work with this release!"
                                             ;;
+      stretch | jessie )                    bool_is_debian="true";
+                                            _log_and_show "${_notice} This is Debian. PPAs are disabled."
+                                            ;;
       *)                                    _log_and_show "${_error} Unknown Distribution/Release."
                                             _log_and_show "${_notice} This Script is not designed to run on this ($code_name) distro/release."
                                             _script_exit_log;
@@ -763,6 +778,12 @@ function _get_remote_config()
       _log_and_show "${_info} Adding Signal for Desktop repository is set to: $add_signal_repo"
 
 
+      add_signal_repo=$(grep "google_repo" "$api_resp_file" | cut -f2 -d ':')
+      _log_and_show "${_info} Adding Google chrome & Earth repository is set to: $add_google_repo"
+
+      add_kubernetes_repo=$(grep "kubernetes_repo" "$api_resp_file" | cut -f2 -d ':')
+      _log_and_show "${_info} Adding Kubernetes repository is set to: $add_kubernetes_repo"
+
   else
     _log_and_show "${_info} Report stats is set to false will also disable remote config."
   fi
@@ -867,7 +888,7 @@ function _fix_repo_not_available()
       printf "${YELLOW}${_new_release} You need to modify this in Software and updates when it becomes available for ${code_name_latest_release}.\n${NC}"
       code_name_fix_latest="$codename_previous_release"
     else
-      _debug_log "This release has repositories available. Flag --fix will be ignored."
+      _debug_log "This Release/Distro does not support this flag. --fix will be ignored."
     fi
   else
     _debug_log "Feature fix_repo_not_available is disabled."
@@ -905,7 +926,7 @@ function _fix_repo_not_available_upcoming_release()
         _debug_log "Feature fix_repo_not_available_upcoming_release is disabled."
     fi
   else
-    _debug_log "This release is not an upcoming-release. Flag --pre-release will be ignored."
+    _debug_log "This Release/Distro does not support this option. Flag --pre-release will be ignored."
 fi
 }
 
@@ -919,29 +940,32 @@ function add_ppas()
   local line;
   # Function Reads the file ./data/ppa.list and adds the ppa one by one.
   # Install dependencies required
-  _install_pre_requisites;
+  if [ "$bool_is_debian" == "false" ]; then
+    _install_pre_requisites;
 
-    while IFS= read -r line
-      do
-           _line_fill >> "$log_file"
-           _log_and_show "${_adding_ppa} $line"
-           _debug_log "Adding: $line"
-           # Check for empty lines
-           if [ "$line" == "" ]; then
-             _log_and_show "${_warn} Found and empty line in ppa.list. Moving on to next line"
-             continue
-           fi
-           _debug_log "Add PPA Log Below"
-           if add-apt-repository -y "$line" 2>&1 | _add_timestamp_to_logs "${_ppa_logs}" ; then
-             _log_and_show "${_added_ppa} $line successfully."
-           else
-             _log_and_show "${_oh_no} Some Error occured while adding $line. Ignoring and moving on.\n"
-           fi
-           _line_fill >> "$log_file"
-      done < "$ppa_list"
-      set_yellow;
-      _log_and_show "${_added} PPAs in the list file."
-      set_default;
+      while IFS= read -r line
+        do
+            _line_fill >> "$log_file"
+            _log_and_show "${_adding_ppa} $line"
+            _debug_log "Adding: $line"
+            # Check for empty lines
+            if [ "$line" == "" ]; then
+              _log_and_show "${_warn} Found and empty line in ppa.list. Moving on to next line"
+              continue
+            fi
+            _debug_log "Add PPA Log Below"
+            if add-apt-repository -y "$line" 2>&1 | _add_timestamp_to_logs "${_ppa_logs}" ; then
+              _log_and_show "${_added_ppa} $line successfully."
+            else
+              _log_and_show "${_oh_no} Some Error occured while adding $line. Ignoring and moving on.\n"
+            fi
+            _line_fill >> "$log_file"
+        done < "$ppa_list"
+        set_yellow;
+        _log_and_show "${_added} PPAs in the list file."
+        set_default;
+  else
+    _log_and_show "This is Debian. PPAs are not available."
 }
 
 
@@ -965,19 +989,24 @@ function add_repositories()
   _debug_log "Adding External Repositories"
 
   # Add Google Chrome and Google Earth
-  _log_and_show "${_adding} Google repositories"
-  if [ "$ARCH" == "amd64" ]; then
-      _debug_log "Adding Google package siging Key"
-    wget -q  https://dl.google.com/linux/linux_signing_key.pub -O linux_signing_key.pub >> $"$log_file"
-    _debug_log "Adding Google key to trusted keys list"
-    apt-key add linux_signing_key.pub 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding trusted keys for Google failed."
-    _log_and_show "${_adding} Google Chrome repository"
-    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main #Google-Chrome" > ${SOURCES_FILE_DIR}/google-chrome.list || _log_and_show "Adding Google Chrome Repository failed"
-    _log_and_show "${_adding} Google Earth repository"
-    echo "deb [arch=amd64] http://dl.google.com/linux/earth/deb/ stable main #Google-Earth" > ${SOURCES_FILE_DIR}/google-earth.list || _log_and_show "Adding Google Chrome repository failed"
+  if [ "$add_google_repo" == "true" ]; then
+    _log_and_show "${_adding} Google repositories"
+    if [ "$ARCH" == "amd64" ]; then
+        _debug_log "Adding Google package siging Key"
+      wget -q  https://dl.google.com/linux/linux_signing_key.pub -O linux_signing_key.pub >> $"$log_file"
+      _debug_log "Adding Google key to trusted keys list"
+      apt-key add linux_signing_key.pub 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding trusted keys for Google failed."
+      _log_and_show "${_adding} Google Chrome repository"
+      echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main #Google-Chrome" > ${SOURCES_FILE_DIR}/google-chrome.list || _log_and_show "Adding Google Chrome Repository failed"
+      _log_and_show "${_adding} Google Earth repository"
+      echo "deb [arch=amd64] http://dl.google.com/linux/earth/deb/ stable main #Google-Earth" > ${SOURCES_FILE_DIR}/google-earth.list || _log_and_show "Adding Google Chrome repository failed"
+    else
+      _log_and_show "Architecture: $ARCH is not supported for Chrome. Please use Chromium"
+    fi
   else
-    _log_and_show "Architecture: $ARCH is not supported for Chrome. Please use Chromium"
+    _log_and_show "${_adding} Chrome repository is set to false. Skipping."
   fi
+  
 
   # Spotify client
   if [ "$add_spotify_repo" == "true" ]; then
@@ -994,7 +1023,7 @@ function add_repositories()
     _log_and_show "${_adding} Insync repository"
     _debug_log "Adding Insync keys"
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ACCAF35C  2>&1 |_add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Insync Repository failed"
-    echo "deb http://apt.insynchq.com/ubuntu $code_name_fix_latest non-free contrib #Insync Client" > ${SOURCES_FILE_DIR}/insync.list || _log_and_show "Adding Insync Repository failed"
+    echo "deb http://apt.insynchq.com/${OS_DISTRIBUTION} $code_name_fix_latest non-free contrib #Insync Client" > ${SOURCES_FILE_DIR}/insync.list || _log_and_show "Adding Insync Repository failed"
   else
     _log_and_show "${_adding} Insync repository is set to false. Skipping."
   fi
@@ -1027,7 +1056,7 @@ function add_repositories()
     _debug_log "Adding WineHQ key"
     apt-key add wine-hq-sigining-key.key 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding WineHQ keys failed"
     _debug_log "Adding WineHQ repository"
-    echo "deb https://dl.winehq.org/wine-builds/ubuntu/ $code_name_fix_latest main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list || _log_and_show "Adding WineHQ repository failed"
+    echo "deb https://dl.winehq.org/wine-builds/${OS_DISTRIBUTION}/ $code_name_fix_latest main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list || _log_and_show "Adding WineHQ repository failed"
   else
     _log_and_show "${_adding} WineHQ repository is set to false. Skipping."
   fi
@@ -1037,11 +1066,11 @@ function add_repositories()
     _debug_log "Adding Docker repository is set to true"
     _log_and_show "${_adding} Docker-CE repository"
     _debug_log "Getting Docker-CE repository Key"
-    wget -q https://download.docker.com/linux/ubuntu/gpg -O docker-key.gpg >> "$log_file"  2>&1
+    wget -q https://download.docker.com/linux/${OS_DISTRIBUTION}/gpg -O docker-key.gpg >> "$log_file"  2>&1
     _debug_log "Adding Docker repository key"
     apt-key add docker-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Docker-CE keys failed"
     _debug_log "${_added} Docker-CE"
-    echo "deb [arch=$ARCH] https://download.docker.com/linux/ubuntu  $code_name_fix_latest stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list || _log_and_show "Adding Docker-CE repository failed"
+    echo "deb [arch=$ARCH] https://download.docker.com/linux/${OS_DISTRIBUTION}  $code_name_fix_latest stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list || _log_and_show "Adding Docker-CE repository failed"
   else
     _debug_log "Adding Docekr-CE repository is set to false. Skipping."
   fi
@@ -1076,7 +1105,7 @@ function add_repositories()
 
   # Signal App
   if [ "$add_signal_repo" == "true" ]; then
-    if [ "$ARCH" == "amd64" ]; then
+   if [ "$ARCH" == "amd64" ]; then
       _log_and_show "${_adding} Signal repository"
       wget -q https://updates.signal.org/desktop/apt/keys.asc -O signal.asc >> "$log_file"
       apt-key add signal.asc  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Signal Key Failed"
@@ -1085,7 +1114,21 @@ function add_repositories()
         _log_and_show "Architecture: $ARCH is not supported by Signal"
     fi
   else
-    _log_and_show "${_adding} Visual Studio repository is set to false. Skipping."
+    _log_and_show "${_adding} Signal repository is set to false. Skipping."
+  fi
+
+
+  # Kubernetes
+  if [ "$add_kubernetes_repo" == "true" ]; then
+   if [ "$ARCH" == "amd64" ]; then
+    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg > kubernetes.gpg >> "$log_file"
+    apt-key add signal.asc  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Signal Key Failed"
+    echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > ${SOURCES_FILE_DIR}/kubernetes.list
+        else
+        _log_and_show "Architecture: $ARCH is not supported."
+    fi
+  else
+    _log_and_show "${_adding} Kubernetes repository is set to false. Skipping."
   fi
 
   # Mendeley Desktop App
@@ -1417,8 +1460,8 @@ function _install_pip_python()
       set_default
       _log_and_show "${_installing} packages from list : $pip_dependency_list"
       # shellcheck disable=SC2002
-      cat "$dir/data/$pip_dependency_list" 2>&1 | _add_timestamp_to_logs "${_cat_logs}"
-      dependency_packages=$(cat "$dir/data/$pip_dependency_list")
+      cat "$dir/$data_dir/$pip_dependency_list" 2>&1 | _add_timestamp_to_logs "${_cat_logs}"
+      dependency_packages=$(cat "$dir/$data_dir/$pip_dependency_list")
 
       # If Dependency list is empty exit the script
       if [[ -z "$dependency_packages" ]]; then
@@ -1460,9 +1503,9 @@ function _install_pip_python()
   _log_and_show "${_disp_pip_ver} Installing python packages from : ${pip_list}"
   # shellcheck disable=SC2002
   # just to print it in logs so ignore shellcheck
-  cat "$dir/data/$pip_list" 2>&1 | _add_timestamp_to_logs "${_cat_logs}"
+  cat "$dir/$data_dir/$pip_list" 2>&1 | _add_timestamp_to_logs "${_cat_logs}"
   # Check if pip package list is empty
-  pip_packages=$(cat "$dir/data/$pip_list")
+  pip_packages=$(cat "$dir/$data_dir/$pip_list")
   if [[ -z "$pip_packages" ]]; then
     set_yellow;
     _log_and_show "${_error} Package lists file ${pip-list} is empty!";

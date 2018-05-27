@@ -85,7 +85,7 @@ function jekyll_branch()
   echo "---> Building Website with Branch"
   mkdocs build;
   echo "---> Copying Static Files"
-  cp -R ./api/ ./_site/api/
+  cp -R ./cfg/ ./_site/cfg/
   gen_metadata;
 }
 

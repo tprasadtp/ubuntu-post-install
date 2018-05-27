@@ -66,13 +66,22 @@ Following repositories are conditional and are determined based on the flags or 
       add_googlecloud_repo=true
 
       #Signal
-      add_signal_repo=true
+      add_signal_repo=false
 
       #Skype
       add_skype_repo=true
 
       #VS code
       add_vscode_repo=true
+
+      #Google
+      add_google_repo=true
+
+      #Kubernetes
+      add_kubernetes_repo=false
+
+      # Define Data Directory
+      data_dir="data"
     ```
 
 !!! bug "Note on 32 bit Architecture"
@@ -88,6 +97,7 @@ Following repositories are conditional and are determined based on the flags or 
 
 !!! warning
     - PPAs should be checked before they are added to the list. Sometimes PPAs listed in the file may not be available for all releases.
+    - Debian does not support PPAs.
 
 ## Install apt packages
 

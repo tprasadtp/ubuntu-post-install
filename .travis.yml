@@ -25,6 +25,10 @@ jobs:
     script: "./tests/test-bionic"
   - env: TEST_ENV="Trusty"
     script: "./tests/test-trusty"
+  - env: TEST_ENV="Debian9-Docker"
+    script: "./tests/test-stretch.sh"
+  - env: TEST_ENV="Debian8-Docker"
+    script: "./tests/test-jessie.sh"
   - env: TEST_ENV="Cosmic-Docker"
     script: "./tests/test-prerelease"
   - stage: Documentation & Deploy
@@ -33,7 +37,7 @@ jobs:
     deploy:
       provider: pages
       skip_cleanup: true
-      deployment-file: true
+      deployment-file: false
       local-dir: _site
       skip-cleanup: true
       keep-history: true

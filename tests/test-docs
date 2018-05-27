@@ -15,7 +15,7 @@ pip install -r ./dockerfiles/mkdocs/requirements.txt
 echo "Building Docs"
 mkdocs build -v -s
 echo "Copy API Files"
-cp -R ./api/ ./_site/api/
+cp -R ./cfg/ ./_site/cfg/
 echo "Copy Netlify Files"
 cp -R ./vendor/ ./_site/vendor/
 cp -R ./netlify.toml ./_site/netlify.toml

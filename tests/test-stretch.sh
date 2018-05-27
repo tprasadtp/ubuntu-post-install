@@ -5,12 +5,12 @@
 # Author: Prasad Tengse
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
+
 set -o pipefail
 branch=master
 if [[ -v $TRAVIS_BRANCH ]]; then
   branch="$TRAVIS_BRANCH"
 fi
-
 function main()
 {
   dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
@@ -20,26 +20,31 @@ function main()
   # set eo on script.
   sed -i 's/set -o pipefail/set -eo pipefail/g' "$dir"/after-effects
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-  echo "Testing On HOST"
-  echo "Remove peek, kdeconnect-indicator PPAs"
-  sed -i '/peek-developers\|indicator-kdeconnect/d' ./data/ppa.list
-  sed -i '/openjdk-8-jdk/d' ./data/development.list
-  sed -i '/gnome-calendar\|gnome-todo\|polari/d' ./data/productivity.list
-  sed -i '/indicator-kdeconnect\|peek\|yubikey-manager-qt/d' ./data/extern-repo.list
+  echo "Building Stretch Docker Image"
+  docker build -t  ubuntu:ae-stretch ./dockerfiles/stretch
+  echo "Adding Xenial and above list to app-list.list"
+  echo "./data/xenial-above.list" >> ./data/app-list.list
   echo "Adding External Repos"
   echo "./data/extern-repo.list" >> ./data/app-list.list
-  sudo ./after-effects --yes --simulate --enable-pre --enable-post --api-endpoint https://master--ubuntu-post-install.netlify.com/api
+  echo "Running in Docker Debian Stretch"
 
-  exit_code_from_script="$?"
-  echo "Exit code from  run is: $exit_code_from_script"
+  docker run -it -e TRAVIS="$TRAVIS" \
+  --hostname=Docker-Stretch \
+  -v "$(pwd)":/shared \
+  ubuntu:ae-stretch \
+  ./after-effects --fix --simulate --yes --enable-pre --enable-post --api-endpoint https://${TRAVIS_BRANCH}--ubuntu-post-install.netlify.com/api
+
+  exit_code_from_container="$?"
+  echo "Exit code from docker run is: $exit_code_from_container"
   echo "Print Logs is set to: $PRINT_LOGS"
-  if [ "$PRINT_LOGS" == "true" ] || [[ "$exit_code_from_script" -gt 0 ]]; then
+  if [ "$PRINT_LOGS" == "true" ] || [[ "$exit_code_from_container" -gt 0 ]]; then
     echo " "
     echo " "
     echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     cat "$log_file"
   fi
-  return "$exit_code_from_script"
+
+  return "$exit_code_from_container"
 }
 
 main "$@"

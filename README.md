@@ -87,6 +87,8 @@ PoP! OS          | 17.10 & 18.04     | Yes         |
 Linux-Lite       | 3.X               | Yes         | (Based on Ubuntu 16.04)
 Zorin-OS         | 12.X              | Yes         | (Based on Ubuntu 16.04)
 Bodhi Linux      | 4                 | Yes         | (Based on Ubuntu 16.04)
+Debian 8         | Jessie            | Yes         |
+Debian 9         | Stretch           | Yes         |
 
 ## Oh no! It crashed :(
 

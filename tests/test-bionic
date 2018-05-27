@@ -7,7 +7,10 @@
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
 set -o pipefail
-
+branch=master
+if [[ -v $TRAVIS_BRANCH ]]; then
+  branch="$TRAVIS_BRANCH"
+fi
 function main()
 {
   dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
