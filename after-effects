@@ -784,6 +784,16 @@ function _get_remote_config()
       add_kubernetes_repo=$(grep "kubernetes_repo" "$api_resp_file" | cut -f2 -d ':')
       _log_and_show "${_info} Adding Kubernetes repository is set to: $add_kubernetes_repo"
 
+      # Custom Data Directory
+      api_data_dir$(grep "data_directory" "$api_resp_file" | cut -f2 -d ':')
+      if [ ! -d "$dir/$api_data_dir" ]; then
+        _log_and_show "Daa Directory mentioned in Config file : $api_data_dir does not exist in $dir."
+        _log_and_exit "Script cannot continue.." "32"
+      else
+        data_dir="$api_data_dir"
+        _log_and_show "Using List files from $data_dir"
+      fi 
+
   else
     _log_and_show "${_info} Report stats is set to false will also disable remote config."
   fi
