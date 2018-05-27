@@ -848,6 +848,41 @@ function _show_confirmation_dialog_for_tasks()
 }
 
 
+function _clean_apt_packages()
+{
+  # Function to clean apt package cache. Takes care of -k flag in all the installs.
+  # Honor -k flag
+  # Delete DEBs
+  _debug_log "Cleaning APT packages..."
+  if [ "$bool_preserve_debs" == "true" ];then
+    _log_and_show "${_deleting}APT Cached Packages"
+    apt clean | _add_timestamp_to_logs "${_apt_logs}"
+  else
+    _debug_log "Keeping cahed APT Packages because -k flag is set."
+  fi
+  
+}
+
+function _install_packages()
+{
+  # Install packages mentioned in the arguments.
+  # ARG 1: Packages in quote seperated by space.
+  local packages="${1}"
+  _debug_log "Installing Packages"
+  _debug_log "Package List: $packages"
+  apt-get -y install "${packages}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  || _log_and_exit "${_failed} Installing dependencies. Script cannot continue!!" "21"
+  exit_status=$?
+  if [ "$exit_status" -eq 0 ]; then
+     _log_and_show "${_installed} packages in the list $line."
+  else
+    _log_and_show "${_oh_no} Something went wrong while installing dependencies."
+    set_blue;
+    _log_and_exit "${_notice} Please see the log file for more details." "21"
+  fi
+  _clean_apt_packages
+
+}
+
 function _install_pre_requisites()
 {
   # This function installs required packages for adding apt repositories
@@ -858,21 +893,8 @@ function _install_pre_requisites()
   # curl, software-properties-common
   _log_and_show "${_installing} Necessary dependencies..."
   _debug_log "${_installing} apt-transport-https, ca-certificates, curl, software-properties-common ppa-purge."
-   apt-get -y install apt-transport-https \
-    ca-certificates \
-    curl \
-    ppa-purge\
-    software-properties-common 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  || _log_and_exit "${_failed} Installing dependencies. Script cannot continue!!" "21"
-  _log_and_show "${_installed} Necessary dependencies."
+  _install_packages "apt-transport-https ca-certificates curl software-properties-common"
 
-  # Honor -k flag
-  # Delete DEBs
-  if [ "$bool_preserve_debs" == "true" ];then
-    _log_and_show "${_deleting}APT Cached Packages"
-    apt clean | _add_timestamp_to_logs "${_apt_logs}"
-  else
-    _debug_log "Keeping cahed APT Packages"
-  fi
 }
 
 
@@ -1212,6 +1234,8 @@ function upgrade_apps()
     _log_and_show "${_notice} Please see the log file for more details. Most of the times its either missing repositories or wrongly configured repositories."
   fi
   set_default;
+  # Cleanup APT cache (-k)
+  _clean_apt_packages;
 }
 
 
@@ -1230,23 +1254,27 @@ function disable_external_repos()
   # Simulate option has no effect on this function. PPAs will be purged irrespective of its value.
   local exit_status
   local old_path
-  _log_and_show "${_deleting} External repositoris"
-  _install_pre_requisites;
-
-  # Function Reads the file ./data/ppa.list and purges the ppa one by one
-    while IFS= read -r line
-      do
-           _log_and_show "${_purging} $line..."
-           _debug_log "Purging: $line"
-           if ppa-purge -y "$line"  2>&1 | _add_timestamp_to_logs "${_apt_logs}"  ; then
-             sleep 10 #wait sometimes apt lock isnt released soon.
-             _log_and_show "${_purged} $line successfully."
-           else
-             _log_and_show "${_oh_no} Some Error occured while purging $line."
-           fi
-      done < "$ppa_list"
-      set_yellow;
-    _log_and_show "${_purged} External PPAs."
+  
+  if [ "$bool_is_debian" == "false" ]; then
+    _log_and_show "${_deleting} External repositoris"
+    _install_packages "ppa-purge"
+    # Function Reads the file ./data/ppa.list and purges the ppa one by one
+      while IFS= read -r line
+        do
+            _log_and_show "${_purging} $line..."
+            _debug_log "Purging: $line"
+            if ppa-purge -y "$line"  2>&1 | _add_timestamp_to_logs "${_apt_logs}"  ; then
+              sleep 10 #wait sometimes apt lock isnt released soon.
+              _log_and_show "${_purged} $line successfully."
+            else
+              _log_and_show "${_oh_no} Some Error occured while purging $line."
+            fi
+        done < "$ppa_list"
+        set_yellow;
+      _log_and_show "${_purged} External PPAs."
+    elif [ "$bool_is_debian" == "trues" ]; then
+      _log_and_show "PPA's are not supported, because this is Debian."
+    fi
 
     # Remove keys and list files.
     _log_and_show "${_deleting} Keys and external repositoris"
@@ -1410,12 +1438,7 @@ function install_apps()
     done < "$app_list_list"
 
     # Delete DEBs
-    if [ "$bool_preserve_debs" == "true" ];then
-      _log_and_show "${_deleting}APT Cached Packages"
-      apt clean | _add_timestamp_to_logs "${_apt_logs}"
-    else
-      _debug_log "Keeping cahed APT Packages"
-    fi
+    _clean_apt_packages;
 
 }
 
@@ -1534,13 +1557,7 @@ function _install_pip_python()
   fi
 
   ## honor --keep-debs -k flags
-  # Delete DEBs
-  if [ "$bool_preserve_debs" == "true" ];then
-    _log_and_show "${_deleting}APT Cached Packages"
-    apt clean | _add_timestamp_to_logs "${_apt_logs}"
-  else
-    _debug_log "Keeping cahed APT Packages"
-  fi
+  _clean_apt_packages;
   set_default;
 }
 
@@ -1572,8 +1589,8 @@ function install_debs ()
     while IFS= read -r line
       do
            _debug_log "$line"
-           deb_url=$(echo "$line" | cut -d ' ' -f1 )
-           deb_name=$(echo "$line" | cut -d ' ' -f2 )
+           deb_url=$(echo "$line" | cut -d ',' -f1 )
+           deb_name=$(echo "$line" | cut -d ',' -f2 )
            _debug_log "DEB file url: $deb_url"
            _debug_log "DEB file name: $deb_name"
            _log_and_show "${_downloading} $deb_name"
@@ -1612,6 +1629,8 @@ function install_debs ()
       else
         _debug_log "Keeping Downloaded DEB Packages"
       fi
+      # clean apt too because we used apt insall -f
+      _clean_apt_packages;
 
 }
 
