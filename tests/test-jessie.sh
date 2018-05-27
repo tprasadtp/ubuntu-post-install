@@ -32,7 +32,7 @@ function main()
   --hostname=Docker-Jessie \
   -v "$(pwd)":/shared \
   ubuntu:ae-jessie \
-  ./after-effects --fix --simulate --yes --enable-pre --enable-post --api-endpoint https://${TRAVIS_BRANCH}--ubuntu-post-install.netlify.com/api
+  ./after-effects --fix --simulate --yes --enable-pre --enable-post --api-endpoint https://"${TRAVIS_BRANCH}"--ubuntu-post-install.netlify.com/api
 
   exit_code_from_container="$?"
   echo "Exit code from docker run is: $exit_code_from_container"

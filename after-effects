@@ -966,6 +966,7 @@ function add_ppas()
         set_default;
   else
     _log_and_show "This is Debian. PPAs are not available."
+  fi
 }
 
 
@@ -1066,7 +1067,7 @@ function add_repositories()
     _debug_log "Adding Docker repository is set to true"
     _log_and_show "${_adding} Docker-CE repository"
     _debug_log "Getting Docker-CE repository Key"
-    wget -q https://download.docker.com/linux/${OS_DISTRIBUTION}/gpg -O docker-key.gpg >> "$log_file"  2>&1
+    wget -q https://download.docker.com/linux/"${OS_DISTRIBUTION}"/gpg -O docker-key.gpg >> "$log_file"  2>&1
     _debug_log "Adding Docker repository key"
     apt-key add docker-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Docker-CE keys failed"
     _debug_log "${_added} Docker-CE"
