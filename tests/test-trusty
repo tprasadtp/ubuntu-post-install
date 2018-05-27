@@ -28,7 +28,7 @@ function main()
   sed -i '/indicator-kdeconnect\|peek\|yubikey-manager-qt/d' ./data/extern-repo.list
   echo "Adding External Repos"
   echo "./data/extern-repo.list" >> ./data/app-list.list
-  sudo ./after-effects --yes --simulate --enable-pre --enable-post --api-endpoint https://""${TRAVIS_BRANCH}""--ubuntu-post-install.netlify.com/api
+  sudo ./after-effects --yes --simulate --enable-pre --enable-post --api-endpoint https://"${TRAVIS_BRANCH}"--ubuntu-post-install.netlify.com/api
 
   exit_code_from_script="$?"
   echo "Exit code from  run is: $exit_code_from_script"
