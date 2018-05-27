@@ -326,7 +326,7 @@ function _script_launch_log()
 {
     _debug_log "Executing Script"
     _line_fill >> "$log_file"
-    printf "Running %s on %s as %s" "$SCRIPT" "$DATE" "$USER" >> "$log_file"
+    printf "Running %s on %s as %s\n" "$SCRIPT" "$DATE" "$USER" >> "$log_file"
 }
 
 function _goodbye_msg ()
