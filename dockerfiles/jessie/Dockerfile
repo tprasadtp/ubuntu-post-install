@@ -11,5 +11,4 @@ lsb-release \
 whiptail \
 iputils-ping \
 apt-transport-https \
-ca-certificates curl \
-ppa-purge > /dev/null
+ca-certificates curl > /dev/null
