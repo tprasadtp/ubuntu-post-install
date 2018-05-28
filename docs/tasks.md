@@ -174,10 +174,10 @@ Invoking scripts requires two flags to be passed.
 - If you wish to run python or other code, please use shell-script as wrapper.
 
 ### Honoring simulate flag in hooks
-Check for environment variable `AE_SIMULATE`. By default its false and is set to true, if `--simulate or -s` falg is used.
+Check for file `.ae_simulate`. By default its is not preset. It is preset & set to true, if `--simulate or -s` falg is used.
 
 ### Honoring `AUTOPILOT` falg in hooks
-Check for environment variable `AUTOPILOT`. It is set to true if AUTOPILOT is true. Otherwise its false or not set.
+Check for contents of file `.autopilot`. It is set to true if AUTOPILOT is true. Otherwise its not present.
 
 
 ## All In one

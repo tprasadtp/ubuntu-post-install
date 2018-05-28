@@ -117,6 +117,6 @@ credits.txt
 .jekyll-metadata
 **/_site/**
 **/site/**
-
+.ae*
 # Ruby
 Gemfile.lock

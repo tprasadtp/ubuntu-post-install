@@ -355,6 +355,7 @@ function delete_log_file()
   set_yellow;
   printf "${_deleting} log file %s.\n" "$log_file"
   set_default;
+  rm -f .ae_*
   rm -f "$log_file"
   exit 0;
 
@@ -372,6 +373,7 @@ function _check_if_in_pwd()
     _debug_log "Script is in current directory."
     _debug_log "Script is $file"
     bool_pwd_check_passed="true"
+    echo "$dir" > .ae_pwd || _log_and_exit "Failed to write config file" "33"
   else
     _debug_log "Script is Not present in current directory."
     _debug_log "Script is $file"
@@ -615,13 +617,34 @@ function _test_internet_connection ()
 }
 
 
+function _test_conflicting_apps ()
+{
+  # Function checks if any apps like syanptic aptitude are running.
+  local lock
+  _log_and_show "${_conflicts} Checking..."
+  for lock in synaptic update-manager software-center apt-get dpkg aptitude
+  do
+    # shellcheck disable=SC2009
+    if ps -U root -u root u | grep $lock | grep -v grep > /dev/null;
+       then
+         _log_and_show "${_aptrunning} Installation won't work. Please close $lock first then try again."
+         _script_exit_log
+         exit 15;
+       else
+        _debug_log "$lock not is running."
+     fi
+   done
+   _log_and_show "${_conflicts} None detected."
+}
+
+
 function  _export_variables()
 {
   # Export Variables
   # Export Simulate flag for other scripts
-  export AE_SIMULATE="$simulate_apt_install"
+  echo "$simulate_apt_install" > .ae_simulate
   # Export Log file name
-  export AE_LOG_FILE="$log_file"
+  echo "$log_file" > .ae_logfile
 }
 
 function _set_custom_api_nodes ()
@@ -1790,6 +1813,8 @@ function main()
 
   # Initialize variables and checks
   _script_launch_log
+  _debug_log "Removing Old Flag Files"
+  rm -f .autopilot .ae_simulate .ae_logfile || _log_and_exit "Failed to clear old config Files" "33"
   _check_dependencies
   _init_script_variables;
   _check_if_in_pwd;
@@ -1802,7 +1827,6 @@ function main()
 
   if [ "$TRAVIS" == "true" ]; then
     AUTOPILOT="true"
-    export AUTOPILOT
     _log_and_show "${_travis} I'm running in  CI :|"
   fi
 
@@ -1874,6 +1898,7 @@ function main()
   _fix_ubuntu_derivatives;
   _test_internet_connection;
   _test_conflicting_apps;
+# Export Simulate and Log files
   _export_variables;
   _set_custom_api_nodes;
   _version_checks;
@@ -1888,6 +1913,7 @@ function main()
     set_blue;
     _log_and_show "${_autopilot} is Active"
     set_default
+    echo "$AUTOPILOT" > .autopilot || _log_and_show "Failed to write AUTOPILOT preference file."
     #_log_and_exit "Because I can" "255"
     all_in_one;
   else
