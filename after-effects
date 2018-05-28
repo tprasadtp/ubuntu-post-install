@@ -886,7 +886,7 @@ function _install_packages()
   _debug_log "Installing Packages"
   _debug_log "Package List: $packages"
   # shellcheck disable=SC2086
-  apt-get -y install ${packages} 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  || _log_and_exit "${_failed} Installing dependencies. Script cannot continue!!" "21"
+  apt-get -y --no-install-recommends install ${packages} 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  || _log_and_exit "${_failed} Installing dependencies. Script cannot continue!!" "21"
   exit_status=$?
   if [ "$exit_status" -eq 0 ]; then
      _log_and_show "${_installed} packages in the list $line."
@@ -908,8 +908,8 @@ function _install_pre_requisites()
   # linux-image-extra-<>, apt-transport-https, ca-certificates,
   # curl, software-properties-common
   _log_and_show "${_installing} Necessary dependencies..."
-  _debug_log "${_installing} apt-transport-https, ca-certificates, curl, software-properties-common ppa-purge."
-  _install_packages "apt-transport-https ca-certificates curl software-properties-common"
+  _debug_log "${_installing} apt-transport-https, ca-certificates, curl, software-properties-common gpg."
+  _install_packages "apt-transport-https ca-certificates curl software-properties-common gpg"
 
 }
 
@@ -1003,7 +1003,9 @@ function add_ppas()
         _log_and_show "${_added} PPAs in the list file."
         set_default;
   else
-    _log_and_show "This is Debian. PPAs are not available."
+    set_yellow;
+    _log_and_show "${_error} This is Debian. PPAs are not available."
+    set_default;
   fi
 }
 
@@ -1753,7 +1755,7 @@ function _process_opts
 function _check_dependencies()
 {
   #statements
-  local after_effects_core_dependencies=(wget lsb_release whiptail ping)
+  local after_effects_core_dependencies=(wget lsb_release whiptail ping ps grep cut tr)
   local dependency_check_failed_count dep_res
   dependency_check_failed_count=0;
   _log_and_show "${_info} Checking dependencies..."

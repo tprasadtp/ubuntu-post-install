@@ -31,8 +31,8 @@ function main()
   docker run -it -e TRAVIS="$TRAVIS" \
   --hostname=Docker-Jessie \
   -v "$(pwd)":/shared \
-  ubuntu:ae-jessie \
-  ./after-effects --fix --simulate --yes --enable-pre --enable-post --api-endpoint https://"${TRAVIS_BRANCH}"--ubuntu-post-install.netlify.com/api
+  debian:ae-jessie \
+  ./after-effects --fix --simulate --yes --enable-pre --enable-post --api-endpoint https://"${TRAVIS_BRANCH}"--ubuntu-post-install.netlify.com/cfg
 
   exit_code_from_container="$?"
   echo "Exit code from docker run is: $exit_code_from_container"

@@ -9,6 +9,8 @@ RUN apt-get update > /dev/null
 RUN apt-get install -y wget \
 lsb-release \
 whiptail \
+procps \
+gpg \
 iputils-ping \
 apt-transport-https \
 ca-certificates curl > /dev/null
