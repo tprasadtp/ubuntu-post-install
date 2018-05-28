@@ -31,8 +31,8 @@ readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 log_file="$dir"/after-effects-logs/after-effects.log
 mkdir -p "$dir"/after-effects-logs
-readonly REL_NAME="4.0 Beta"
-readonly REL_NUM=42
+readonly REL_NAME="4.1 Beta"
+readonly REL_NUM=44
 EXEC_TIME=0;
 
 
@@ -121,22 +121,19 @@ function _init_script_variables()
   # Necessary variables used by the script are initialized here. This function
   # should be called first before choices are made, always.
 
-  #grabbing os info
+  # Grabbing OS info
   readonly OS_DISTRIBUTION=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
   readonly VERSION=$(lsb_release -rs)
   readonly LONG_VERSION=$(lsb_release -ds)
+  # Achtung: Do not set code_name as readonly!!
   code_name=$(lsb_release -cs)
   readonly architeture=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
   if [ "$architeture" == "64" ];then
     _debug_log "Architecture is 64 bit."
     readonly ARCH=amd64
-    #readonly jq_bin="vendor/jq-linux64"
-    #_debug_log "JQ Binary is 64 Bit: $jq_bin"
   elif [[ "$architeture" == "32" ]]; then
     _debug_log "Architecture is 32 bit."
     readonly ARCH=i386
-    #readonly jq_bin="vendor/jq-linux32"
-    #_debug_log "JQ Binary is 32 Bit: $jq_bin"
   else
     set_yellow;
     _log_and_show "${_error} This architecture is not supported by this script!"
@@ -146,8 +143,8 @@ function _init_script_variables()
 
 
   # Get Hostname & a UUID
-  CLIENT_NAME=$(hostname)
-  CLIENT_ID=$(cat /proc/sys/kernel/random/uuid)
+  readonly CLIENT_NAME=$(hostname)
+  readonly CLIENT_ID=$(cat /proc/sys/kernel/random/uuid)
 
 
   # etc sources list dir
@@ -155,15 +152,6 @@ function _init_script_variables()
 
   # Ping URL
   readonly PING_URL="www.google.com"
-
-  # Package list files
-  readonly deb_files_list="$dir/$data_dir/deb-files.list"
-  readonly ppa_list="$dir/$data_dir/ppa.list"
-  readonly app_list_list="$dir/$data_dir/app-list.list"
-  readonly purge_list="$dir/$data_dir/purge.list"
-  readonly post_script_list="$dir/$data_dir/post-script.list"
-  readonly pre_script_list="$dir/$data_dir/pre-script.list"
-
 
   #============================ Switches/ bools ================================
 
@@ -212,9 +200,7 @@ function _init_script_variables()
   bool_custom_api_node="false"
 
   # Define API Node name aka server name
-  api_node="ae.prasadt.com"
-  api_endpoint=https://${api_node}/cfg/
-  bool_node_use_ssl="true"
+  api_endpoint=https://ae.prasadt.com/cfg/
 
   # Default Stats Server name & Stats reporting flag
   # Server side flags. Can be changed via server side flags
@@ -649,13 +635,14 @@ function _set_custom_api_nodes ()
 }
 
 
-function _get_api_cfg_files()
+function _get_cfg_files()
 {
   # Get response
   local exit_status
   api_resp_file="/tmp/after-effects-api-response.txt"
   exit_status=0
   # Get Version Metadata
+  _log_and_show "${_info} Getting Remote Configuration file..."
   wget -q "${api_endpoint}"/version -O "$api_resp_file" >> $"$log_file"
   # Check if exit code is zero
   exit_status="$?"
@@ -675,7 +662,7 @@ function _version_checks ()
   # Also suggest updating to latest version if current version is not latest,
   # Allows to deprecate old version as it can be suggested.
   # Dynamic EOL checks
-  _get_api_cfg_files;
+  _get_cfg_files;
   # Check if Version Checks is enabled. (Default is enabled)
   if [ "$bool_check_version" == "true" ]; then
   _debug_log "Version Checks are enabled."
@@ -730,11 +717,11 @@ function _version_checks ()
 
 }
 
-function _get_remote_config()
+function _set_remote_config()
 {
 
   # Server side flags
-  _get_api_cfg_files;
+  _get_cfg_files;
   local api_docker_repo api_winehq_repo api_mendeley_repo
   # Report usage flag
   if [ "$bool_report_stats" == "true" ]; then
@@ -801,6 +788,20 @@ function _get_remote_config()
 }
 
 
+function _set_list_files()
+{
+    # Define List Files
+    # Must be Run after Remote config and before Hooks
+    readonly deb_files_list="$dir/$data_dir/deb-files.list"
+    readonly ppa_list="$dir/$data_dir/ppa.list"
+    readonly app_list_list="$dir/$data_dir/app-list.list"
+    readonly purge_list="$dir/$data_dir/purge.list"
+    # Hooks list file
+    readonly post_script_list="$dir/$data_dir/post-script.list"
+    readonly pre_script_list="$dir/$data_dir/pre-script.list"
+
+}
+
 function _test_conflicting_apps ()
 {
   # Function checks if any apps like syanptic aptitude are running.
@@ -819,7 +820,6 @@ function _test_conflicting_apps ()
      fi
    done
    _log_and_show "${_conflicts} None detected."
-   sleep 5
 }
 
 function _show_confirmation_dialog_for_tasks()
@@ -1877,7 +1877,9 @@ function main()
   _export_variables;
   _set_custom_api_nodes;
   _version_checks;
-  _get_remote_config;
+  _set_remote_config;
+  # Set List Files
+  _set_list_files;
   # Run Pre Scripts
   run_pre_scripts;
 
