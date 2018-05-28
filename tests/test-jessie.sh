@@ -8,7 +8,11 @@
 
 set -o pipefail
 branch=master
-if [[ -v $TRAVIS_BRANCH ]]; then
+if [ "$TRAVIS_EVENT_TYPE" == "pull_request" ];then
+  branch="$TRAVIS_PULL_REQUEST_BRANCH"
+elif [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
+  branch="$TRAVIS_BRANCH"
+elif [ "$TRAVIS_EVENT_TYPE" == "cron" ] || [ "$TRAVIS_EVENT_TYPE" == "api" ] ; then
   branch="$TRAVIS_BRANCH"
 fi
 function main()
@@ -30,13 +34,15 @@ function main()
   echo "./data/extern-repo.list" >> ./data/app-list.list
   echo "Removing Timeshift"
   sed -i '/timeshift/d' ./data/extern-repo.list
+  echo "Removing Nautilus Admin"
+  sed -i '/nautilus-admin/d' ./data/administration.list
   echo "Running in Docker Jessie"
 
   docker run -it -e TRAVIS="$TRAVIS" \
   --hostname=Docker-Jessie \
   -v "$(pwd)":/shared \
   debian:ae-jessie \
-  ./after-effects --fix --simulate --yes --enable-pre --enable-post --api-endpoint https://"${TRAVIS_BRANCH}"--ubuntu-post-install.netlify.com/cfg
+  ./after-effects --fix --simulate --yes --enable-pre --enable-post --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/cfg
 
   exit_code_from_container="$?"
   echo "Exit code from docker run is: $exit_code_from_container"

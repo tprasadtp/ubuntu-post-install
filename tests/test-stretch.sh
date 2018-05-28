@@ -8,7 +8,12 @@
 
 set -o pipefail
 branch=master
-if [[ -v $TRAVIS_BRANCH ]]; then
+branch=master
+if [ "$TRAVIS_EVENT_TYPE" == "pull_request" ];then
+  branch="$TRAVIS_PULL_REQUEST_BRANCH"
+elif [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
+  branch="$TRAVIS_BRANCH"
+elif [ "$TRAVIS_EVENT_TYPE" == "cron" ] || [ "$TRAVIS_EVENT_TYPE" == "api" ] ; then
   branch="$TRAVIS_BRANCH"
 fi
 function main()
@@ -36,7 +41,7 @@ function main()
   --hostname=Docker-Stretch \
   -v "$(pwd)":/shared \
   ubuntu:ae-stretch \
-  ./after-effects --fix --simulate --yes --enable-pre --enable-post --api-endpoint https://"${TRAVIS_BRANCH}"--ubuntu-post-install.netlify.com/cfg
+  ./after-effects --fix --simulate --yes --enable-pre --enable-post --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/cfg
 
   exit_code_from_container="$?"
   echo "Exit code from docker run is: $exit_code_from_container"

@@ -43,3 +43,19 @@ Non package related lists (settings, deb files, delete packages list). The use a
 
 !!! tip
     After you customize, might want to use simulate flag. `sudo ./after-effects -s`
+
+!!! bug "Exceptions for packages in the list"
+    Some packages are not added or available for the some releases.
+
+    ## Debian 8
+    - timeshift nautilus-admin
+    - utilities.list is not added or tested.
+
+    ## Debian 9
+    - utilities.list is not added or tested.
+
+    ## Trusty
+    - peek, kdeconnect-indicator PPAs
+    - openjdk-8-jdk from development.list
+    - gnome-calendar, gnome-todo, polari from productivity.list
+    - indicator-kdeconnect, peek, yubikey-manager-qt extern-repo.list
