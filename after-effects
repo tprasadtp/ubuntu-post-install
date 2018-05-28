@@ -1058,11 +1058,15 @@ function add_repositories()
   fi
 
   # Insync
-  if [ "$add_insync_repo" == "true" ]; then
+  if [ "$add_insync_repo" == "true" ] && [ "$bool_is_debian" != "true" ]; then
     _log_and_show "${_adding} Insync repository"
     _debug_log "Adding Insync keys"
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ACCAF35C  2>&1 |_add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Insync Repository failed"
     echo "deb http://apt.insynchq.com/${OS_DISTRIBUTION} $code_name_fix_latest non-free contrib #Insync Client" > ${SOURCES_FILE_DIR}/insync.list || _log_and_show "Adding Insync Repository failed"
+  if [ "$add_insync_repo" == "true" ] && [ "$bool_is_debian" == "true" ]; then
+    _log_and_show "${_whoops} Unfortunately InSync repositoris are not supported on Debian."
+    _log_and_show "${_info} Please use debfile instead of repositoris."
+    _log_and_show "${_info} Visit https://ae.prasadt.com/tasks/#install-debian-package-package-archives-deb-files"
   else
     _log_and_show "${_adding} Insync repository is set to false. Skipping."
   fi
