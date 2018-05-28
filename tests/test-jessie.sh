@@ -28,6 +28,8 @@ function main()
   sed -i '/data\/utilities.list/d' ./data/app-list.list
   echo "Adding External Repos"
   echo "./data/extern-repo.list" >> ./data/app-list.list
+  echo "Removing Timeshift"
+  sed -i '/timeshift/d' ./data/extern-repo.list
   echo "Running in Docker Jessie"
 
   docker run -it -e TRAVIS="$TRAVIS" \

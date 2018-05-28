@@ -25,8 +25,6 @@ Some tasks might install packages automatically, which are required to perform c
 
 ???+ info "Additional APT packages installed"
     Some apt packages will be installed automatically, as they are necessary to perform selected tasks.
-    Recommended packages are not installed. the script uses `--no-install-recommends`. In case of app installing
-    from lists default ubuntu behaviour shoud be expected. 
     ### For repository related tasks
     - apt-transport-https
     - ca-certificates
