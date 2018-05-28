@@ -5,12 +5,16 @@
 # Author: Prasad Tengse
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
-
+set -o pipefail
 branch=master
-if [[ -v $TRAVIS_BRANCH ]]; then
+if [ "$TRAVIS_EVENT_TYPE" == "pull_request" ];then
+  branch="$TRAVIS_PULL_REQUEST_BRANCH"
+elif [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
+  branch="$TRAVIS_BRANCH"
+elif [ "$TRAVIS_EVENT_TYPE" == "cron" ] || [ "$TRAVIS_EVENT_TYPE" == "api" ] ; then
   branch="$TRAVIS_BRANCH"
 fi
-set -o pipefail
+
 
 function main()
 {

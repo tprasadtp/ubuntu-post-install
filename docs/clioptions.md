@@ -163,11 +163,10 @@ They are disabled by default and need to be enabled via `enable-pre` and `--enab
 ## Do not report statistics
 
 !!! snippet "Usage"
-    For pre task hooks
     ```
     ./after-effects --no-stats
     ```
-    For post task hooks
+    OR
     ```
     ./after-effects --no-reporting
     ```

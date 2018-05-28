@@ -8,7 +8,6 @@
 
 set -o pipefail
 branch=master
-branch=master
 if [ "$TRAVIS_EVENT_TYPE" == "pull_request" ];then
   branch="$TRAVIS_PULL_REQUEST_BRANCH"
 elif [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
