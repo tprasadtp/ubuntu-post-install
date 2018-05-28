@@ -86,9 +86,6 @@ function _init_printf_variables()
     readonly       _checking="[    Checking   ]"
     readonly        _checked="[    Checked    ]"
     readonly            _eol="[      EOL      ]"
-    readonly   _pip_python_2="[      PIP2     ]"
-    readonly   _pip_python_3="[      PIP3     ]"
-    readonly   _dependencies="[  Dependencies ]"
     readonly        _running="[    Running    ]"
     readonly         _script="[  Shell-Script ]"
     readonly      _autopilot="[   Autopilot   ]"
@@ -878,7 +875,7 @@ function _clean_apt_packages()
   # Delete DEBs
   _debug_log "Cleaning APT packages..."
   if [ "$bool_preserve_debs" != "true" ];then
-    _log_and_show "${_deleting}APT Cached Packages"
+    _log_and_show "${_deleting} APT Cached Packages"
     apt-get -q clean | _add_timestamp_to_logs "${_apt_logs}"
   else
     _debug_log "Keeping cahed APT Packages because -k flag is set."
@@ -1012,7 +1009,7 @@ function add_ppas()
         set_default;
   else
     set_yellow;
-    _log_and_show "${_error} This is Debian. PPAs are not available."
+    _log_and_show "${_whoops} This is Debian. PPAs are not available."
     set_default;
   fi
   _line_fill >> "$log_file"
@@ -1511,16 +1508,17 @@ function _install_pip_python()
   set_default;
   #Install starts here
   local pip_dependency_list exit_status _disp_pip_ver pip_command dependency_packages pip_loc pip_list
-  pip_list="$dir/$data_dir"
-  pip_list+="/${1}"
+  pip_list="$dir/$data_dir/"
+  pip_list+="${1}"
   local pip_ver="${2}"
   _debug_log "Option: Install Python Packaes via PIP, Function name: _install_pip_python"
   _debug_log "pip Version : ${pip_ver}, List File : ${pip_list}"
 
+  pip_dependency_list="$dir/$data_dir/"
   # Check Python Version
   case ${pip_ver} in
-              2 | 2.7 | python2 )         _disp_pip_ver="${_pip_python_2}"; pip_dependency_list="pip-dep.apt"; pip_command="pip";;
-        3 | 3.6 | 3.5 | python3 )         _disp_pip_ver="${_pip_python_3}"; pip_dependency_list="pip3-dep.apt"; pip_command="pip3";;
+              2 | 2.7 | python2 )         pip_dependency_list+="pip-dep.apt"; readonly pip_command="pip";;
+        3 | 3.6 | 3.5 | python3 )         pip_dependency_list+="pip3-dep.apt"; readonly pip_command="pip3";;
                               * )         _log_and_exit "Internal Function Error. Arguments for python version." "19";;
   esac
 
@@ -1533,8 +1531,8 @@ function _install_pip_python()
       update_repos;
       _log_and_show "${_installing} packages from list : $pip_dependency_list"
       # shellcheck disable=SC2002
-      cat "$dir/$data_dir/$pip_dependency_list" 2>&1 | _add_timestamp_to_logs "${_cat_logs}"
-      dependency_packages=$(cat "$dir/$data_dir/$pip_dependency_list")
+      cat "$pip_dependency_list" 2>&1 | _add_timestamp_to_logs "${_cat_logs}"
+      dependency_packages=$(cat "$pip_dependency_list")
 
       # If Dependency list is empty exit the script
       if [[ -z "$dependency_packages" ]]; then
@@ -1576,7 +1574,7 @@ function _install_pip_python()
   set_default;
 
 
-  _log_and_show "${_disp_pip_ver} Installing python packages from : ${pip_list}"
+  _log_and_show "${_installing} Installing python packages from : ${pip_list}"
   _debug_log "Following Python packages are in $pip_list"
   _line_fill >> "$log_file"
   # shellcheck disable=SC2002
@@ -1594,17 +1592,17 @@ function _install_pip_python()
     # Check if simulate is true & is not running on TRAVIS.
     if [ "$simulate_apt_install" == "true" ] && [ "$TRAVIS" != "true" ]; then
       set_yellow;
-      _log_and_show "${_disp_pip_ver} PIP does not support simulated installs. Not performing install."
+      _log_and_show "${_whoops} PIP does not support simulated installs. Not performing install."
       set_default;
     else
-      pip install -r "${pip_list}" 2>&1 | _add_timestamp_to_logs "${_pip_logs}"
+      "$pip_command" install -r "${pip_list}" 2>&1 | _add_timestamp_to_logs "${_pip_logs}"
     fi
     exit_status=$?
     if [ "$exit_status" -eq 0 ]; then
-      _log_and_show "${_disp_pip_ver} Installed packages from ${pip_list}"
+      _log_and_show "${_installed} python modules from ${pip_list}"
     else
         set_yellow;
-        _log_and_show "${_disp_pip_ver} Something went wrong while installing packages in $pip_list."
+        _log_and_show "${_error} Something went wrong while installing packages in $pip_list."
         set_blue;
         _log_and_show "${_notice} Please see the log file for more details."
     fi
@@ -1748,27 +1746,27 @@ function _process_opts
         case $task in
     update_repos )            _show_confirmation_dialog_for_tasks "Update Repositories metadata/index" "Update Repositories index/metadata?" "$task"
                               ;;
-    upgrade_system )          _show_confirmation_dialog_for_tasks "Upgrade Packages" "This will upgrade all your packages to the latest version available.\nContinue?" "$task"
+    upgrade_system )          _show_confirmation_dialog_for_tasks "Upgrade Packages" "This will upgrade all your packages to the latest version available.\n\nContinue?" "$task"
                               ;;
-    add_ppas )                _show_confirmation_dialog_for_tasks "Add Additional PPAs" "This task will add PPAs specified in $ppa_list file. Would you like to continue?" "$task"
+    add_ppas )                _show_confirmation_dialog_for_tasks "Add Additional PPAs" "This task will add PPAs specified in $ppa_list file.\n\nWould you like to continue?" "$task"
                               ;;
     add_repositories )        _show_confirmation_dialog_for_tasks "Add Additional Repositories" "Adding additional repositories is set as follows.\n Google Chrome & Google Earth : $add_google_repo,\n Google Cloud SDK : $add_googlecloud_repo\n Visual Studio Code : $add_vscode_repo\n Docker : $add_docker_repo\n Insync : $add_insync_repo\n Spotify : $add_spotify_repo\n Wine-HQ : $add_winehq_repo\n Skype : $add_skype_repo\n Kubernetes : $add_kubernetes_repo\n Signal Desktop : $add_signal_repo.\n Shall I do it?" "$task"
                               ;;
-    install_apps )            _show_confirmation_dialog_for_tasks "Install Apps" "I can Install the packages listed in lists files mentioned in app-list.list.\nNo checks are being made on the validity of the list. Be careful while installing graphic drivers and core system componetnts. Shall I do it?" "$task"
+    install_apps )            _show_confirmation_dialog_for_tasks "Install Apps" "I can Install the packages listed in lists files mentioned in app-list.list.\nNo checks are being made on the validity of the list. Be careful while installing graphic drivers and core system componetnts.\n\nShall I do it?" "$task"
                               ;;
-    disable_external_repos )  _show_confirmation_dialog_for_tasks "Remove External Repositories" "I can remove External Repositories added and PPAs in the ppa.list. Apps installed via ppa will be reverted to original versions/uninstalled. Apps from Repositories will be kept as it is. Shall I do it for you?" "$task"
+    disable_external_repos )  _show_confirmation_dialog_for_tasks "Remove External Repositories" "I can remove External Repositories added and PPAs in the ppa.list. Apps installed via ppa will be reverted to original versions/uninstalled. Apps from Repositories will be kept as it is.\n\nShall I do it for you?" "$task"
                               ;;
     purge_not_required )      _show_confirmation_dialog_for_tasks "Purge Unwanted Packages" "Shall I Purge Unwanted packages mentioned in purge.list?" "$task"
                               ;;
-    all_in_one )              _show_confirmation_dialog_for_tasks "All In One" "This task will do the following.\nUpdate Repositories\nUpgrade Packages\nAdd Repositories and PPAs\nInstall apps from List\nPurge Unwanted Packages\nContinue?" "$task"
+    all_in_one )              _show_confirmation_dialog_for_tasks "All In One" "This task will do the following.\nUpdate Repositories\nUpgrade Packages\nAdd Repositories and PPAs\nInstall apps from List\nPurge Unwanted Packages\n\nContinue?" "$task"
                               ;;
     install_debs )            _show_confirmation_dialog_for_tasks "Download & Install DEB files" "DEB Files in the list deb-files.list will be Download and installed. Proceed with the task?" "$task"
                               ;;
     set_gsettings )           _show_confirmation_dialog_for_tasks "Apply Custom gsettings" "Gsettings mentioned in the file gsettings.list will be Applied. \n Proceed?" "$task"
                               ;;
-    install_pip_packages_2 )  _show_confirmation_dialog_for_tasks "Install Python2 packages" "Python packaes for Python 2 mentioned in pip.list will be installed via pip. If necessary python-pip package will be installed from apt. \n Proceed?" "$task"
+    install_pip_packages_2 )  _show_confirmation_dialog_for_tasks "Install Python2 packages" "Python packaes for Python 2 mentioned in pip.list will be installed via pip. If necessary python-pip package will be installed from apt. \n\nProceed?" "$task"
                               ;;
-    install_pip_packages_3 )  _show_confirmation_dialog_for_tasks "Install Python3 packages" "Python packaes for Python 3 mentioned in pip3.list will be installed via pip. If necessary python-pip package will be installed from apt. \n Proceed?" "$task"
+    install_pip_packages_3 )  _show_confirmation_dialog_for_tasks "Install Python3 packages" "Python packaes for Python 3 mentioned in pip3.list will be installed via pip. If necessary python3-pip package will be installed from apt. \n\nProceed?" "$task"
                               ;;
     delete_log_file )         _debug_log "Delete log selected"
                               delete_log_file;
