@@ -745,7 +745,6 @@ function _set_remote_config()
 
   # Server side flags
   _get_cfg_files;
-  local api_docker_repo api_winehq_repo api_mendeley_repo
   # Report usage flag
   if [ "$bool_report_stats" == "true" ]; then
 
@@ -825,25 +824,6 @@ function _set_list_files()
 
 }
 
-function _test_conflicting_apps ()
-{
-  # Function checks if any apps like syanptic aptitude are running.
-  local lock
-  _log_and_show "${_conflicts} Checking..."
-  for lock in synaptic update-manager software-center apt-get dpkg aptitude
-  do
-    # shellcheck disable=SC2009
-    if ps -U root -u root u | grep $lock | grep -v grep > /dev/null;
-       then
-         _log_and_show "${_aptrunning} Installation won't work. Please close $lock first then try again."
-         _script_exit_log
-         exit 15;
-       else
-        _debug_log "$lock not is running."
-     fi
-   done
-   _log_and_show "${_conflicts} None detected."
-}
 
 function _show_confirmation_dialog_for_tasks()
 {
@@ -904,7 +884,8 @@ function _install_packages()
   local packages="${1}"
   _debug_log "Installing Packages"
   _debug_log "Package List: $packages"
-  apt-get -y install "${packages}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  || _log_and_exit "${_failed} Installing dependencies. Script cannot continue!!" "21"
+  # shellcheck disable=SC2086
+  apt-get -y install ${packages} 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  || _log_and_exit "${_failed} Installing dependencies. Script cannot continue!!" "21"
   exit_status=$?
   if [ "$exit_status" -eq 0 ]; then
      _log_and_show "${_installed} packages in the list $line."

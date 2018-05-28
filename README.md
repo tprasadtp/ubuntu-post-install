@@ -15,7 +15,7 @@ Github URL: https://github.com/tprasadtp/after-effects-ubuntu
 
 ## How to use this?
 
-### Step 0: Install Ubuntu/Linux-Mint/Elementary/Ubuntu Derivative
+### Step 0: Install Ubuntu/Linux-Mint/Elementary/Ubuntu/Debian or its derivative
 
 Install (if you haven't already) your choice of Ubuntu/Derivative as you would( If you wish to automate that too, you can use `preseed.cfg file`)
 
@@ -82,6 +82,7 @@ Linux-Mint 18.3  | Sylvia            | Yes         |
 Linux Mint 19    | Tara              | Not Yet     | Will be in the future
 Elementary-OS    | Freya             | Yes         |
 Elementary-OS    | Loki              | Yes         |
+Elementary-OS    | Juno              | Yes         | Not tested.   
 Budgie Remix     | 16.04             | Yes         |
 PoP! OS          | 17.10 & 18.04     | Yes         |
 Linux-Lite       | 3.X               | Yes         | (Based on Ubuntu 16.04)
