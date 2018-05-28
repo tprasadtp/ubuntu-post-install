@@ -585,6 +585,7 @@ function _fix_ubuntu_derivatives()
                                             ;;
       stretch | jessie )                    bool_is_debian="true";
                                             _log_and_show "${_notice} This is Debian. PPAs are disabled."
+                                            bool_config_partner_repo="false"
                                             ;;
       *)                                    _log_and_show "${_error} Unknown Distribution/Release."
                                             _log_and_show "${_notice} This Script is not designed to run on this ($code_name) distro/release."
