@@ -911,7 +911,7 @@ function _install_pre_requisites()
   # curl, software-properties-common
   _log_and_show "${_installing} Necessary dependencies..."
   _debug_log "${_installing} apt-transport-https, ca-certificates, curl, software-properties-common gpg"
-  _install_packages "apt-transport-https ca-certificates curl software-properties-common gpg"
+  _install_packages "apt-transport-https ca-certificates curl software-properties-common gnupg"
 
 }
 

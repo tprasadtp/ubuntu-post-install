@@ -10,7 +10,7 @@ RUN apt-get install -y wget \
 lsb-release \
 whiptail \
 procps \
-gpg \
+gnupg \
 iputils-ping \
 apt-transport-https \
 ca-certificates curl  > /dev/null
