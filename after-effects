@@ -879,7 +879,7 @@ function _clean_apt_packages()
   _debug_log "Cleaning APT packages..."
   if [ "$bool_preserve_debs" != "true" ];then
     _log_and_show "${_deleting}APT Cached Packages"
-    apt clean | _add_timestamp_to_logs "${_apt_logs}"
+    apt-get -q clean | _add_timestamp_to_logs "${_apt_logs}"
   else
     _debug_log "Keeping cahed APT Packages because -k flag is set."
   fi
@@ -894,7 +894,7 @@ function _install_packages()
   _debug_log "Installing Packages"
   _debug_log "Package List: $packages"
   # shellcheck disable=SC2086
-  apt-get -y install ${packages} 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  || _log_and_exit "${_failed} Installing dependencies. Script cannot continue!!" "21"
+  apt-get -q -y install ${packages} 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  || _log_and_exit "${_failed} Installing dependencies. Script cannot continue!!" "21"
   exit_status=$?
   if [ "$exit_status" -eq 0 ]; then
      _log_and_show "${_installed} packages in the list $line."
@@ -1220,7 +1220,7 @@ function update_repos()
 {
   local exit_status
   _log_and_show "${_updating} Repository index/metadata..."
-  apt-get update 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+  apt-get -q update 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
   exit_status=$?
   if [ "$exit_status" -eq 0 ]; then
     _log_and_show "${_updated} Repository metadata successfully!"
@@ -1246,14 +1246,12 @@ function upgrade_apps()
   apt list --upgradable 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  || _log_and_show "Something went wrong while listing upgradable packages. Please see the log file for more details."
   set_yellow;
   _debug_log "The above list of packages will be upgraded!"
-  sleep 5;
   set_default;
-  sleep 5
   _debug_log "Upgrading packages..."
   # only do upgrades if simulate is set to false
   if [ "$simulate_apt_install" == "false" ]; then
 
-    DEBIAN_FRONTEND=noninteractive apt-get -y upgrade | _add_timestamp_to_logs "${_apt_logs}"
+    DEBIAN_FRONTEND=noninteractive apt-get -q -y upgrade | _add_timestamp_to_logs "${_apt_logs}"
     DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::='--force-confold' --force-yes -fuy dist-upgrade | _add_timestamp_to_logs "${_apt_logs}"
     exit_status=$?
   else
@@ -1399,10 +1397,10 @@ function purge_not_required()
              # disable shellcheck for quoted variable as its an exception
              # quoting $packages leads to errors.
              # shellcheck disable=SC2086
-             apt-get -y remove --purge --dry-run $packages 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+             apt-get -q -y remove --purge --dry-run $packages 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
            else
            # shellcheck disable=SC2086
-             apt-get -y purge $packages 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+             apt-get -q -y purge $packages 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
            fi
            exit_status=$?
            set_yellow
@@ -1468,10 +1466,10 @@ function install_apps()
            # quoting $packages leads to errors.
            # we need user to see errors, dont redirect stderr
            # shellcheck disable=SC2086
-           apt-get -y install -s $packages | _add_timestamp_to_logs "${_apt_logs}"
+           apt-get -q -y install -s $packages | _add_timestamp_to_logs "${_apt_logs}"
          else
            # shellcheck disable=SC2086
-           apt-get -y install $packages | _add_timestamp_to_logs "${_apt_logs}"
+           apt-get -q -y install $packages | _add_timestamp_to_logs "${_apt_logs}"
          fi
          exit_status=$?
          if [ "$exit_status" -eq 0 ]; then
@@ -1550,10 +1548,10 @@ function _install_pip_python()
         _log_and_show "${_simulate} No Dependencies will be installed!!"
         set_default;
         # shellcheck disable=SC2086
-        apt-get -y install -s $dependency_packages 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+        apt-get -q -y install -s $dependency_packages 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
       else
         # shellcheck disable=SC2086
-        apt-get -y install $dependency_packages 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+        apt-get -q -y install $dependency_packages 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
       fi
       exit_status=$?
 
@@ -1660,12 +1658,12 @@ function install_debs ()
              set_default
              dpkg -i --dry-run "$deb_name" 2>&1 | _add_timestamp_to_logs "${_dpkg_logs}"
              _debug_log "Installing missing packages..."
-             apt-get -y install -f 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+             apt-get -q -y install -f 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
              exit_status=$?
             else
               dpkg -i "$deb_name" 2>&1 | _add_timestamp_to_logs "${_dpkg_logs}"
              _debug_log "Installing missing packages..."
-              apt-get -y install -f 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+              apt-get -q -y install -f 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
               exit_status=$?
            fi
 
