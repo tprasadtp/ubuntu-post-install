@@ -76,8 +76,8 @@ function _init_printf_variables()
     readonly       _simulate="[   Simulating  ]"
     readonly       _fix_repo="[      Fix      ]"
     readonly        _deboalt="[    Deboalt    ]"
-    readonly           _warn="[    WARNING    ]"
-    readonly         _whoops="[   Whoopsie!   ]"
+    readonly           _warn="[    Warning    ]"
+    readonly         _whoops="[     Oops!     ]"
     readonly         _travis="[   Travis-CI   ]"
     readonly         _docker="[     Docker    ]"
     readonly    _pre_release="[  Pre Release  ]"
@@ -101,6 +101,7 @@ function _init_printf_variables()
     readonly   _apt_key_logs="[  APT-KEY-Logs ]"
     readonly       _pip_logs="[    PIP-Logs   ]"
     readonly     _hooks_logs="[   Hooks-Logs  ]"
+    readonly            _cfg="[     RCFG      ]"
     readonly _eol_date_zesty="January 13th, 2018"
     #readonly           _falg="[     Flag      ]"
 
@@ -122,7 +123,7 @@ function _init_script_variables()
 
   #grabbing os info
   readonly OS_DISTRIBUTION=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
-  readonly VERSION=$(lsb_release --rs)
+  readonly VERSION=$(lsb_release -rs)
   readonly LONG_VERSION=$(lsb_release -ds)
   code_name=$(lsb_release -cs)
   readonly architeture=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
@@ -355,7 +356,7 @@ function _log_and_exit()
     local msg="$1"
     printf "$msg\n";
     #shellcheck disable=SC2129
-    printf "[$(date)] ${_debug}\t$msg \n" >> "$log_file";
+    printf "[$(date)] $msg \n" >> "$log_file";
     printf "\nFinished %s on $(date).\nLast exit code was: %d\n" "$SCRIPT" "$?" >> "$log_file";
     set_yellow
     _line_fill | tee -a "$log_file"
@@ -741,9 +742,9 @@ function _get_remote_config()
       api_report_usage=$(grep "report_usage" "$api_resp_file" | cut -f2 -d ':')
       if [ "$api_report_usage" == "false" ]; then
         bool_report_stats=false;
-        _log_and_show "${_info} Usage reporting is disabled by server side flag."
+        _log_and_show "${_cfg} Usage reporting is disabled by server side flag."
       else
-        _log_and_show "${_info} Usage reporting is defined by user flag."
+        _log_and_show "${_cfg} Usage reporting is defined by user flag."
       fi
 
       # Stats node
@@ -751,51 +752,51 @@ function _get_remote_config()
 
       # Repo flags
       add_docker_repo=$(grep "docker_repo" "$api_resp_file" | cut -f2 -d ':')
-      _log_and_show "${_info} Adding Docker repository is set to: $add_docker_repo"
+      _log_and_show "${_cfg} Docker repository: $add_docker_repo"
 
       add_winehq_repo=$(grep "winehq_repo" "$api_resp_file" | cut -f2 -d ':')
-      _log_and_show "${_info} Adding WineHQ repository is set to: $add_winehq_repo"
+      _log_and_show "${_cfg} WineHQ repository: $add_winehq_repo"
 
       add_mendeley_repo=$(grep "mendeley_repo" "$api_resp_file" | cut -f2 -d ':')
-      _log_and_show "${_info} Adding Mendelay repository is set to: $add_mendeley_repo"
+      _log_and_show "${_cfg} Mendelay repository: $add_mendeley_repo"
 
       add_googlecloud_repo=$(grep "googlecloud_repo" "$api_resp_file" | cut -f2 -d ':')
-      _log_and_show "${_info} Adding Google Cloud SDK repository is set to: $add_googlecloud_repo"
+      _log_and_show "${_cfg} Google Cloud SDK repository: $add_googlecloud_repo"
 
       add_spotify_repo=$(grep "spotify_repo" "$api_resp_file" | cut -f2 -d ':')
-      _log_and_show "${_info} Adding Spotify repository is set to: $add_spotify_repo"
+      _log_and_show "${_cfg} Spotify repository: $add_spotify_repo"
 
       add_skype_repo=$(grep "skype_repo" "$api_resp_file" | cut -f2 -d ':')
-      _log_and_show "${_info} Adding Skype repository is set to: $add_skype_repo"
+      _log_and_show "${_cfg} Skype repository: $add_skype_repo"
 
       add_vscode_repo=$(grep "vscode_repo" "$api_resp_file" | cut -f2 -d ':')
-      _log_and_show "${_info} Adding Visual Studio repository is set to: $add_vscode_repo"
+      _log_and_show "${_cfg} Visual Studio repository: $add_vscode_repo"
 
       add_insync_repo=$(grep "insync_repo" "$api_resp_file" | cut -f2 -d ':')
-      _log_and_show "${_info} Adding Insync repository is set to: $add_insync_repo"
+      _log_and_show "${_cfg} Insync repository: $add_insync_repo"
 
       add_signal_repo=$(grep "signal_repo" "$api_resp_file" | cut -f2 -d ':')
-      _log_and_show "${_info} Adding Signal for Desktop repository is set to: $add_signal_repo"
+      _log_and_show "${_cfg} Signal for Desktop repository: $add_signal_repo"
 
 
       add_signal_repo=$(grep "google_repo" "$api_resp_file" | cut -f2 -d ':')
-      _log_and_show "${_info} Adding Google chrome & Earth repository is set to: $add_google_repo"
+      _log_and_show "${_cfg} Google Chrome & Earth repository: $add_google_repo"
 
       add_kubernetes_repo=$(grep "kubernetes_repo" "$api_resp_file" | cut -f2 -d ':')
-      _log_and_show "${_info} Adding Kubernetes repository is set to: $add_kubernetes_repo"
+      _log_and_show "${_cfg} Kubernetes repository: $add_kubernetes_repo"
 
       # Custom Data Directory
-      api_data_dir$(grep "data_directory" "$api_resp_file" | cut -f2 -d ':')
+      api_data_dir=$(grep "data_directory" "$api_resp_file" | cut -f2 -d ':')
       if [ ! -d "$dir/$api_data_dir" ]; then
         _log_and_show "Daa Directory mentioned in Config file : $api_data_dir does not exist in $dir."
         _log_and_exit "Script cannot continue.." "32"
       else
         data_dir="$api_data_dir"
-        _log_and_show "Using List files from $data_dir"
-      fi 
+        _log_and_show "${_cfg} Using List files from: $data_dir"
+      fi
 
   else
-    _log_and_show "${_info} Report stats is set to false will also disable remote config."
+    _log_and_show "${_cfg} Report stats is set to false will also disable remote config."
   fi
 }
 
@@ -870,7 +871,7 @@ function _clean_apt_packages()
   else
     _debug_log "Keeping cahed APT Packages because -k flag is set."
   fi
-  
+
 }
 
 function _install_packages()
@@ -1039,7 +1040,7 @@ function add_repositories()
   else
     _log_and_show "${_adding} Chrome repository is set to false. Skipping."
   fi
-  
+
 
   # Spotify client
   if [ "$add_spotify_repo" == "true" ]; then
@@ -1264,7 +1265,7 @@ function disable_external_repos()
   # Simulate option has no effect on this function. PPAs will be purged irrespective of its value.
   local exit_status
   local old_path
-  
+
   if [ "$bool_is_debian" == "false" ]; then
     _log_and_show "${_deleting} External repositoris"
     _install_packages "ppa-purge"
