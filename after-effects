@@ -458,6 +458,8 @@ function _script_exit_log()
     _debug_log "Exiting Script"
     printf "\nFinished %s in %d seconds, on %s.\nLast exit code was: %d\n" "$SCRIPT" "$EXEC_TIME" "$(date)" "$?" | tee -a "$log_file"
     _line_fill >> "$log_file"
+    return 0
+
 }
 
 
@@ -1066,9 +1068,11 @@ function add_repositories()
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ACCAF35C  2>&1 |_add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Insync Repository failed"
     echo "deb http://apt.insynchq.com/${OS_DISTRIBUTION} $code_name_fix_latest non-free contrib #Insync Client" > ${SOURCES_FILE_DIR}/insync.list || _log_and_show "Adding Insync Repository failed"
   elif [ "$add_insync_repo" == "true" ] && [ "$bool_is_debian" == "true" ]; then
+    set_yellow;
     _log_and_show "${_whoops} Unfortunately InSync repositoris are not supported on Debian."
     _log_and_show "${_info} Please use debfile instead of repositoris."
     _log_and_show "${_info} Visit https://ae.prasadt.com/tasks/#install-debian-package-package-archives-deb-files"
+    set_default;
   else
     _log_and_show "${_adding} Insync repository is set to false. Skipping."
   fi
@@ -1192,7 +1196,7 @@ function add_repositories()
     _log_and_show "${_adding} Canonical partner repositoris"
     add-apt-repository "deb http://archive.canonical.com/ubuntu $code_name partner" >> "$log_file"
   else
-    _log_and_show "${_warn} This is Linux Mint/Elementary. Since they have different way of configuring partner repositoris, leaving it unchanged."
+    _log_and_show "${_warn} Canonical Partner repositoris may not be supported on this platform. They remain unchanged/unavailable."
   fi
 
 
@@ -1531,6 +1535,7 @@ function _install_pip_python()
       if [ "$exit_status" -eq 0 ]; then
         set_yellow
         _log_and_show "${_installed} packages in the list $pip_dependency_list."
+        set_default
       else
         set_yellow;
         _log_and_show "${_oh_no} Something went wrong while installing dependencies."

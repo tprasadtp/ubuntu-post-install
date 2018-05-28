@@ -24,6 +24,8 @@ function main()
   docker build -t  ubuntu:ae-stretch ./dockerfiles/stretch
   echo "Adding Xenial and above list to app-list.list"
   echo "./data/xenial-above.list" >> ./data/app-list.list
+  echo "Removing Utils"
+  sed -i '/data\/utilities.list/d' ./data/app-list.list
   echo "Adding External Repos"
   echo "./data/extern-repo.list" >> ./data/app-list.list
   echo "Running in Docker Debian Stretch"

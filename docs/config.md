@@ -19,7 +19,7 @@ These files contain list of apt packages which can be installed. Please see [Ins
 | multimedia | Tools to edit photos and videos, video players and editors. | Yes |
 | productivity | Email, Chat, Office tools, Document converters etc. | Yes |
 | security | Security related tools | Yes |
-| utilities | Utilities and Tools | Yes |
+| utilities | Utilities and Tools | Yes except on debian. |
 | wine | Wine related packages like winetricks | No (But is added during Travis tests for supported releases)|
 | xenial-above | Packages are not available in Xenial or below in Ubuntu repositories, but are available in 16.10 and later. | No (But is added during Travis tests for supported releases) |
 | latex | Latex related packages | Yes |
