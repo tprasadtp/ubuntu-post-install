@@ -112,7 +112,7 @@ Following repositories are conditional and are determined based on the flags or 
 - It is a good idea to include packages from external repositories in a different list than others because they might fail sometimes.
 - Make sure that all the packages in the lists are available for your release. Using `-s` command line option helps. Also check for the logs for any errors or conflicts.
 
-## Install debian package package archives (.deb files)
+## Install Debian package archives (.deb files)
 This will install deb files specified in the list deb-files.list
 
 - Logs will  show entry in the format `[<date and time>] [  PKG  ] <log>` for dpkg actions and
@@ -174,7 +174,7 @@ Invoking scripts requires two flags to be passed.
 - If you wish to run python or other code, please use shell-script as wrapper.
 
 ### Honoring simulate flag in hooks
-Check for file `.ae_simulate`. By default its is not preset. It is preset & set to true, if `--simulate or -s` falg is used.
+Check for file `.ae_simulate`. By default its is not preset. It is preset & set to true, if `--simulate or -s` flag is used.
 
 ### Honoring `AUTOPILOT` falg in hooks
 Check for contents of file `.autopilot`. It is set to true if AUTOPILOT is true. Otherwise its not present.

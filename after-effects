@@ -448,6 +448,9 @@ function _script_exit_log()
       fi
     fi
 
+    # Remove Script specific flag files like .ae_logfile etc
+    _debug_log "Removing Jitter generated :P"
+    rm -f .ae_* || _debug_log "Error Deleting Jitter files .ae_*"
     # Script time
     EXEC_END=$(date +%s)
     EXEC_TIME=$((EXEC_END-EXEC_START))
@@ -495,6 +498,7 @@ function run_pre_scripts()
         _log_and_exit "Not in current directory" "27"
       fi
   fi
+  _line_fill >> "$log_file"
 
 }
 
@@ -643,7 +647,6 @@ function _test_conflicting_apps ()
 
 function  _export_variables()
 {
-  # Export Variables
   # Export Simulate flag for other scripts
   echo "$simulate_apt_install" > .ae_simulate
   # Export Log file name
@@ -656,6 +659,7 @@ function _set_custom_api_nodes ()
   if [[ "$bool_custom_api_node" == "true" ]]; then
    _log_and_show "${_info} Custom API node is set."
    api_endpoint="$custom_api_node"
+   _log_and_show "${_api} API endpoint is : $api_endpoint"
  fi
 
 }
@@ -750,7 +754,7 @@ function _set_remote_config()
   _get_cfg_files;
   # Report usage flag
   if [ "$bool_report_stats" == "true" ]; then
-
+      set_blue;
       api_report_usage=$(grep "report_usage" "$api_resp_file" | cut -f2 -d ':')
       if [ "$api_report_usage" == "false" ]; then
         bool_report_stats=false;
@@ -807,9 +811,11 @@ function _set_remote_config()
         _log_and_show "${_cfg} Using List files from: $data_dir"
       fi
 
+      set_default;
   else
     _log_and_show "${_cfg} Report stats is set to false will also disable remote config."
   fi
+  _line_fill >> "$log_file"
 }
 
 
@@ -871,7 +877,7 @@ function _clean_apt_packages()
   # Honor -k flag
   # Delete DEBs
   _debug_log "Cleaning APT packages..."
-  if [ "$bool_preserve_debs" == "true" ];then
+  if [ "$bool_preserve_debs" != "true" ];then
     _log_and_show "${_deleting}APT Cached Packages"
     apt clean | _add_timestamp_to_logs "${_apt_logs}"
   else
@@ -910,7 +916,7 @@ function _install_pre_requisites()
   # linux-image-extra-<>, apt-transport-https, ca-certificates,
   # curl, software-properties-common
   _log_and_show "${_installing} Necessary dependencies..."
-  _debug_log "${_installing} apt-transport-https, ca-certificates, curl, software-properties-common gpg"
+  _debug_log "${_installing} apt-transport-https, ca-certificates, curl, software-properties-common gnugpg"
   _install_packages "apt-transport-https ca-certificates curl software-properties-common gnupg"
 
 }
@@ -1009,6 +1015,7 @@ function add_ppas()
     _log_and_show "${_error} This is Debian. PPAs are not available."
     set_default;
   fi
+  _line_fill >> "$log_file"
 }
 
 
@@ -1071,7 +1078,8 @@ function add_repositories()
     set_yellow;
     _log_and_show "${_whoops} Unfortunately InSync repositoris are not supported on Debian."
     _log_and_show "${_info} Please use debfile instead of repositoris."
-    _log_and_show "${_info} Visit https://ae.prasadt.com/tasks/#install-debian-package-package-archives-deb-files"
+    set_blue;
+    _log_and_show "${_info} Visit https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files"
     set_default;
   else
     _log_and_show "${_adding} Insync repository is set to false. Skipping."
@@ -1204,6 +1212,7 @@ function add_repositories()
   _debug_log "Removing keys and converted files from current directory"
   rm  -f ./*.gpg ./*.asc ./*.pub ./Release  ./*.Release ./*.key ./*.pub.* ./*.asc.* ./*.key.* ./*.gpg.* >> "$log_file"
 
+  _line_fill >> "$log_file"
 }
 
 
@@ -1221,6 +1230,7 @@ function update_repos()
     _log_and_show "${_notice} Most of the times its either missing repository keys or wrongly configured repositories."
     set_default;
   fi
+  _line_fill >> "$log_file"
 }
 
 
@@ -1231,7 +1241,7 @@ function upgrade_apps()
   local exit_status
   _log_and_show "${_upgrading} Packages"
   _debug_log "Listing Upgradable packages"
-  _line_fill;
+  _line_fill >> "$log_file"
   # upgradable is not available in apt-get ignore warning about apt being unstable
   apt list --upgradable 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  || _log_and_show "Something went wrong while listing upgradable packages. Please see the log file for more details."
   set_yellow;
@@ -1262,6 +1272,8 @@ function upgrade_apps()
   set_default;
   # Cleanup APT cache (-k)
   _clean_apt_packages;
+
+  _line_fill >> "$log_file"
 }
 
 
@@ -1298,6 +1310,10 @@ function disable_external_repos()
         done < "$ppa_list"
         set_yellow;
       _log_and_show "${_purged} External PPAs."
+
+      # Clean -k flag.
+      _clean_apt_packages;
+
     elif [ "$bool_is_debian" == "trues" ]; then
       _log_and_show "PPA's are not supported, because this is Debian."
     fi
@@ -1349,6 +1365,8 @@ function disable_external_repos()
     cd "$old_path" || return
     _log_and_show "${_removed} PPAs and Repositories. Please check the logs for errors."
 
+    _line_fill >> "$log_file"
+
 }
 
 function purge_not_required()
@@ -1391,6 +1409,7 @@ function purge_not_required()
            if [ "$exit_status" -eq 0 ]; then
              _log_and_show "${_purged} packages in the list successfully."
            else
+             set_yellow;
              _log_and_show "${_oh_no} Something went wrong while purging packages in $purge_list"
              set_blue;
              _log_and_show "${_notice} Please see the log file for more details."
@@ -1402,7 +1421,9 @@ function purge_not_required()
     set_yellow
     _log_and_exit "${_error} Purge switch is set to false. Did you pass -d along wth the command?" "20"
   fi
-set_default
+set_default;
+
+_line_fill >> "$log_file"
 
 }
 
@@ -1432,6 +1453,7 @@ function install_apps()
     do
          _log_and_show "${_installing} packages from list :$line:"
          _debug_log "$line\n"
+         _debug_log "Following packages will be installed."
          # shellcheck disable=SC2002
          # just to print it in logs so ignore shellcheck
          cat "$dir/$line" 2>&1 | _add_timestamp_to_logs "${_cat_logs}"
@@ -1455,6 +1477,7 @@ function install_apps()
          if [ "$exit_status" -eq 0 ]; then
            _log_and_show "${_installed} packages in the list $line."
          else
+           set_yellow;
            _log_and_show "${_oh_no} Something went wrong while installing packages in $line."
            set_blue;
            _log_and_show "${_notice} Please see the log file for more details."
@@ -1466,6 +1489,7 @@ function install_apps()
     # Delete DEBs
     _clean_apt_packages;
 
+    _line_fill >> "$log_file"
 }
 
 
@@ -1486,11 +1510,11 @@ function _install_pip_python()
     _log_and_exit "Internal Function Error. Invalid number of Arguments: $#." "18";
   fi;
 
-  update_repos;
   set_default;
   #Install starts here
-  local pip_dependency_list exit_status _disp_pip_ver pip_command dependency_packages pip_loc
-  local pip_list="${1}"
+  local pip_dependency_list exit_status _disp_pip_ver pip_command dependency_packages pip_loc pip_list
+  pip_list="$dir/$data_dir"
+  pip_list+="/${1}"
   local pip_ver="${2}"
   _debug_log "Option: Install Python Packaes via PIP, Function name: _install_pip_python"
   _debug_log "pip Version : ${pip_ver}, List File : ${pip_list}"
@@ -1505,9 +1529,10 @@ function _install_pip_python()
   _log_and_show "${_checking} Dependencies for Python: ${pip_ver}"
   # Check if `python-pip` is installed, if not install it
   if ! pip_loc="$(type -p "$pip_command")" || [[ -z $pip_loc ]]; then
-      set_yellow
-      _log_and_show "${_notice} $pip_command is not installed!${NC}"
-      set_default
+      set_yellow;
+      _log_and_show "${_info} $pip_command is not installed!${NC}"
+      set_default;
+      update_repos;
       _log_and_show "${_installing} packages from list : $pip_dependency_list"
       # shellcheck disable=SC2002
       cat "$dir/$data_dir/$pip_dependency_list" 2>&1 | _add_timestamp_to_logs "${_cat_logs}"
@@ -1533,9 +1558,7 @@ function _install_pip_python()
       exit_status=$?
 
       if [ "$exit_status" -eq 0 ]; then
-        set_yellow
         _log_and_show "${_installed} packages in the list $pip_dependency_list."
-        set_default
       else
         set_yellow;
         _log_and_show "${_oh_no} Something went wrong while installing dependencies."
@@ -1543,6 +1566,10 @@ function _install_pip_python()
         set_default;
         _log_and_exit "${_notice} Please see the log file for more details." "23"
       fi
+
+      ## honor --keep-debs -k flags
+      _clean_apt_packages;
+
   else
     _log_and_show "${_info} Dependency already satisfied."
   fi
@@ -1552,11 +1579,14 @@ function _install_pip_python()
 
 
   _log_and_show "${_disp_pip_ver} Installing python packages from : ${pip_list}"
+  _debug_log "Following Python packages are in $pip_list"
+  _line_fill >> "$log_file"
   # shellcheck disable=SC2002
   # just to print it in logs so ignore shellcheck
-  cat "$dir/$data_dir/$pip_list" 2>&1 | _add_timestamp_to_logs "${_cat_logs}"
+  cat "$pip_list" 2>&1 | _add_timestamp_to_logs "${_cat_logs}"
+  _line_fill >> "$log_file"
   # Check if pip package list is empty
-  pip_packages=$(cat "$dir/$data_dir/$pip_list")
+  pip_packages=$(cat "$pip_list")
   if [[ -z "$pip_packages" ]]; then
     set_yellow;
     _log_and_show "${_error} Package lists file ${pip-list} is empty!";
@@ -1569,11 +1599,10 @@ function _install_pip_python()
       _log_and_show "${_disp_pip_ver} PIP does not support simulated installs. Not performing install."
       set_default;
     else
-      pip install --no-cache-dir -r "${dir}/data/${pip_list}" 2>&1 | _add_timestamp_to_logs "${_pip_logs}"
+      pip install -r "${pip_list}" 2>&1 | _add_timestamp_to_logs "${_pip_logs}"
     fi
     exit_status=$?
     if [ "$exit_status" -eq 0 ]; then
-      set_yellow
       _log_and_show "${_disp_pip_ver} Installed packages from ${pip_list}"
     else
         set_yellow;
@@ -1583,9 +1612,9 @@ function _install_pip_python()
     fi
   fi
 
-  ## honor --keep-debs -k flags
-  _clean_apt_packages;
   set_default;
+
+  _line_fill >> "$log_file"
 }
 
 
@@ -1630,12 +1659,12 @@ function install_debs ()
              _log_and_show "${_simulate} $deb_name Installation!!"
              set_default
              dpkg -i --dry-run "$deb_name" 2>&1 | _add_timestamp_to_logs "${_dpkg_logs}"
-             _debug_log "$_installing missing packages..."
+             _debug_log "Installing missing packages..."
              apt-get -y install -f 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
              exit_status=$?
             else
               dpkg -i "$deb_name" 2>&1 | _add_timestamp_to_logs "${_dpkg_logs}"
-             _debug_log "$_installing missing packages..."
+             _debug_log "Installing missing packages..."
               apt-get -y install -f 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
               exit_status=$?
            fi
@@ -1650,15 +1679,16 @@ function install_debs ()
       done < "$deb_files_list"
 
       # Delete DEBs
-      if [ "$bool_preserve_debs" == "true" ];then
+      if [ "$bool_preserve_debs" == "false" ];then
         _log_and_show "${_deleting} Downloaded DEB Packages"
         rm -f ./*.deb ./*.DEB ./*.deb.* ./*.DEB.* >> "$log_file"
       else
         _debug_log "Keeping Downloaded DEB Packages"
       fi
-      # clean apt too because we used apt insall -f
+      # clean apt cache too because we used apt insall -f
       _clean_apt_packages;
 
+      _line_fill >> "$log_file"
 }
 
 
@@ -1667,11 +1697,8 @@ function install_debs ()
 function all_in_one()
 {
   #Wrapper for all options
-  set_yellow;
   _debug_log "Option: ALL IN ONE, function name: all_in_one"
   _line_fill;
-  set_blue;
-  _log_and_show "${_info} Apps will be installed, Upgrades and repositoris and will be added, deb files will be downloaded and installed!"
   set_default;
   update_repos;
   upgrade_apps;
@@ -1681,7 +1708,6 @@ function all_in_one()
   install_debs;
   install_pip_packages_2;
   install_pip_packages_3;
-  set_yellow;
   _line_fill;
   set_default;
 }
@@ -1728,7 +1754,7 @@ function _process_opts
                               ;;
     add_ppas )                _show_confirmation_dialog_for_tasks "Add Additional PPAs" "This task will add PPAs specified in $ppa_list file. Would you like to continue?" "$task"
                               ;;
-    add_repositories )        _show_confirmation_dialog_for_tasks "Add Additional Repositories" "Following additional Repositories:\nGoogle Chrome & Google Earth, Google Cloud SDK\nVisual Studio Code\nDocker(If set to true, Default: true)\nInsync\nSpotify\nWineHQ(If set to true, Default: false)\nwill be added.\nShall I do it?" "$task"
+    add_repositories )        _show_confirmation_dialog_for_tasks "Add Additional Repositories" "Adding additional repositories is set as follows.\n Google Chrome & Google Earth : $add_google_repo,\n Google Cloud SDK : $add_googlecloud_repo\n Visual Studio Code : $add_vscode_repo\n Docker : $add_docker_repo\n Insync : $add_insync_repo\n Spotify : $add_spotify_repo\n Wine-HQ : $add_winehq_repo\n Skype : $add_skype_repo\n Kubernetes : $add_kubernetes_repo\n Signal Desktop : $add_signal_repo.\n Shall I do it?" "$task"
                               ;;
     install_apps )            _show_confirmation_dialog_for_tasks "Install Apps" "I can Install the packages listed in lists files mentioned in app-list.list.\nNo checks are being made on the validity of the list. Be careful while installing graphic drivers and core system componetnts. Shall I do it?" "$task"
                               ;;
@@ -1863,7 +1889,6 @@ function main()
           --api-endpoint )        set_default;
                                   bool_custom_api_node="true";
                                   shift; custom_api_node=${1};
-                                  _log_and_show "${_api} API endpoint is : ${custom_api_node}"
                                   ;;
           --enable-pre )          set_default;
                                   bool_enable_pre_scripts="true";
@@ -1913,7 +1938,6 @@ function main()
   _process_opts;
   #_log_and_show "DEBUG: Options Proceed"
   fi
-  #Logs exit and exit code of script
   _script_exit_log
 }
 
