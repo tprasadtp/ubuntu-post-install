@@ -24,18 +24,22 @@ function main()
   # set eo on script.
   sed -i 's/set -o pipefail/set -eo pipefail/g' "$dir"/after-effects
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-  echo "Building Bionic Docker Image"
-  docker build -t  ubuntu:ae-bionic ./dockerfiles/bionic
+  echo "Building Stretch Docker Image"
+  docker build -t  ubuntu:ae-stretch ./dockerfiles/stretch
   echo "Adding Xenial and above list to app-list.list"
   echo "./data/xenial-above.list" >> ./data/app-list.list
+  echo "Removing Utils"
+  sed -i '/data\/utilities.list/d' ./data/app-list.list
   echo "Adding External Repos"
   echo "./data/extern-repo.list" >> ./data/app-list.list
-  echo "Running in Docker Bionic"
+  echo "Removing Timeshift"
+  sed -i '/timeshift/d' ./data/extern-repo.list
+  echo "Running in Docker Debian Stretch"
 
   docker run -it -e TRAVIS="$TRAVIS" \
-  --hostname=Docker-Bionic \
+  --hostname=Docker-Stretch \
   -v "$(pwd)":/shared \
-  ubuntu:ae-bionic \
+  ubuntu:ae-stretch \
   ./after-effects --fix --simulate --yes --enable-pre --enable-post --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/cfg
 
   exit_code_from_container="$?"

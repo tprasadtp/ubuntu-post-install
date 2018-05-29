@@ -26,10 +26,10 @@ This will add the following repositories.
 !!! tip "Your own Remote config"
     You can use your own remote config file. You need following to do so.
     - A Valid configuration file accessible over http/https/ftp without login.
-    - You can copy the files in api directory of this branch.
+    - You can copy the files in cfg directory of this branch.
     - Host the files on your own server/S3/website & Note the base url for that directory.
-    - Use --api-endpoint protocol://{BASE_URL}/ while running the script.
-    - Config files should be accessible over protocol://{BASEURL}/version
+    - Use --api-endpoint {protocol}://{BASE_URL} while running the script. (Note that there is no trailing slash)
+    - Config files should be accessible over {protocol}://{BASEURL}/version
 
 ### Canonical partner repositories
 
@@ -66,13 +66,22 @@ Following repositories are conditional and are determined based on the flags or 
       add_googlecloud_repo=true
 
       #Signal
-      add_signal_repo=true
+      add_signal_repo=false
 
       #Skype
       add_skype_repo=true
 
       #VS code
       add_vscode_repo=true
+
+      #Google
+      add_google_repo=true
+
+      #Kubernetes
+      add_kubernetes_repo=false
+
+      # Define Data Directory
+      data_dir="data"
     ```
 
 !!! bug "Note on 32 bit Architecture"
@@ -88,6 +97,7 @@ Following repositories are conditional and are determined based on the flags or 
 
 !!! warning
     - PPAs should be checked before they are added to the list. Sometimes PPAs listed in the file may not be available for all releases.
+    - Debian does not support PPAs.
 
 ## Install apt packages
 
@@ -102,22 +112,22 @@ Following repositories are conditional and are determined based on the flags or 
 - It is a good idea to include packages from external repositories in a different list than others because they might fail sometimes.
 - Make sure that all the packages in the lists are available for your release. Using `-s` command line option helps. Also check for the logs for any errors or conflicts.
 
-## Install debian package package archives (.deb files)
+## Install Debian package archives (.deb files)
 This will install deb files specified in the list deb-files.list
 
 - Logs will  show entry in the format `[<date and time>] [  PKG  ] <log>` for dpkg actions and
 - APT Logs will  show entry in the format `[<date and time>] [  APT  ] <log>` for actions performed by apt commands. (`apt-get install -f` for missing packages)
 - **Simulate** option will use `--dry-run` option in dpkg to Simulate DEB installation.
-- Configuration file is similar to that of PPA and package lists, but with one difference.
+- Configuration file is a `csv` file without headers. first column corresponds to URL ans the seconf field the file name under which the file is saved.
 - Each DEB file to be installed should have following entry.
 - URL to the deb file which can be accessed using wget  [ tab or space ] Name of the deb file without any spaces or special chars except hyphen.
 - For example to install Atom Editor the deb-files.list should look like below.
 
-```text
-https://atom-installer.github.com/v1.21.1/atom-amd64.deb  ATOM-Editor.deb
+```csv
+https://atom-installer.github.com/v1.21.1/atom-amd64.deb,ATOM-Editor.deb
 ```
 
-- First part is the URL to the deb file separated by a tab name of the file.
+- First part is the URL to the deb file separated by ',' of the file.
 
 !!! note "Note on file names in configuration"
     Please note that deb file will be  saved with the name mentioned in the file. (DEB file is named **exactly** as mentioned in the second field. So if you want them to be named with extension .deb include that in the second field and avoid illegal chars)
@@ -164,10 +174,10 @@ Invoking scripts requires two flags to be passed.
 - If you wish to run python or other code, please use shell-script as wrapper.
 
 ### Honoring simulate flag in hooks
-Check for environment variable `AE_SIMULATE`. By default its false and is set to true, if `--simulate or -s` falg is used.
+Check for file `.ae_simulate`. By default its is not preset. It is preset & set to true, if `--simulate or -s` flag is used.
 
 ### Honoring `AUTOPILOT` falg in hooks
-Check for environment variable `AUTOPILOT`. It is set to true if AUTOPILOT is true. Otherwise its false or not set.
+Check for contents of file `.autopilot`. It is set to true if AUTOPILOT is true. Otherwise its not present.
 
 
 ## All In one

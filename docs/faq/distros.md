@@ -34,7 +34,8 @@ PoP! OS          | 17.10 & 18.04     | Yes         |
 Linux-Lite       | 3.X               | Yes         | (Based on Ubuntu 16.04)
 Zorin-OS         | 12.X              | Yes         | (Based on Ubuntu 16.04)
 Bodhi Linux      | 4                 | Yes         | (Based on Ubuntu 16.04)
-
+Debian 8         | Jessie            | Yes         |
+Debian 9         | Stretch           | Yes         |
 
 ??? info "Pre-Release and development builds"
     - Support for Ubuntu Pre-release builds, Elementary OS Juno are **experimental** and things might break.

@@ -5,7 +5,7 @@
 | 1- 10 | Script cannot run on the system |
 |  1 | Dependencies are not met |
 |  2 | Script not running as root |
-| 10-20 | Not Running with right configuration or flags |
+| 10-19 | Not Running with right configuration or flags |
 | 11 | Unsupported Architecture |
 | 12 | End of Life release |
 | 14 | No Internet connection |
@@ -26,4 +26,5 @@
 | 28 | Getting API response failed |
 | 29 | Stat reporting failed |
 | 30 | Similar to 24. But the latest available release is blacklisted. Use script from commit mentioned |
+| 32 | Custom data directory mentioned in cfg file is invalid or doesnot exist, in current directory. |
 | 255 | Test Exit code |

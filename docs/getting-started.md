@@ -23,7 +23,8 @@ git clone --depth 1 https://github.com/tprasadtp/ubuntu-post-install.git && cd u
 
 ## Step 2: Update the lists to suit your needs (Optional)
 
-Update the list files to suit your needs. Change PPAs, add or delete packages to list, tweak variables etc. Please see Tasks section for more details.
+Update the list files to suit your needs. Change PPAs, add or delete packages to list, tweak variables etc.
+Please see [Configuration](https://ae.prasadt.com/config/#package-lists) & [Tasks](https://ae.prasadt.com/tasks/#what-can-it-do) for more details.
 
 ## Step 3: Run it
 

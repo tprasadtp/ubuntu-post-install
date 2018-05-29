@@ -1,16 +1,23 @@
+# Version Config
 api_version:1
-release_number:42
-release_name:4.0 Beta
+release_number:44
+release_name:4.1 Beta
 blacklisted:false
 blacklist_msg:
 blacklist_fallback:42
-fallback_commit:5f3bf22
+fallback_commit:61d8b77d6911ed8155bf9b8b99dd9e63fce18aa2
+
+# Release names
 current_lts:bionic
 current_stable:bionic
 pre_release:cosmic
+
+# Stats reporting
 report_usage:true
 usage_node:stats.ae.prasadt.com
 polaris_field:Gowri
+
+# Repository Flags
 winehq_repo:true
 docker_repo:true
 mendeley_repo:false
@@ -18,5 +25,10 @@ googlecloud_repo:true
 spotify_repo:true
 vscode_repo:true
 skype_repo:true
-signal_repo:true
+signal_repo:false
 insync_repo:true
+google_repo:true
+kubernetes_repo:flase
+
+# Others
+data_directory:data

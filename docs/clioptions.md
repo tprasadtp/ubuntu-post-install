@@ -143,7 +143,7 @@ Keeps packages cached by APT and downloaded DEB packages.
 Default behavior is to clean apt cache and delete downloaded DEB packages.
 
 !!! bug "Python packages"
-    Python package installation does not use cached packages. (It uses `--no-cache-dir` falg)
+    Python package installation does not honor this flag.
 
 ## Enable pre & post task hooks
 
@@ -163,11 +163,10 @@ They are disabled by default and need to be enabled via `enable-pre` and `--enab
 ## Do not report statistics
 
 !!! snippet "Usage"
-    For pre task hooks
     ```
     ./after-effects --no-stats
     ```
-    For post task hooks
+    OR
     ```
     ./after-effects --no-reporting
     ```

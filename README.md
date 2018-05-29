@@ -1,6 +1,6 @@
 # Ubuntu Post Installation Script : after-effects
 
-Effortless way to setup your fresh Ubuntu installs. Please read the [FAQ](https://ae.prasadt.com/faq/dependencies/) & the [Docs](https://ae.prasadt.com/getting-started/)
+Effortless way to setup your fresh Ubuntu, Linux Mint, Debian installs. Please read the [FAQ](https://ae.prasadt.com/faq/dependencies/) & the [Docs](https://ae.prasadt.com/getting-started/)
 before trying out.
 
 [![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.png?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
@@ -15,7 +15,7 @@ Github URL: https://github.com/tprasadtp/after-effects-ubuntu
 
 ## How to use this?
 
-### Step 0: Install Ubuntu/Linux-Mint/Elementary/Ubuntu Derivative
+### Step 0: Install Ubuntu/Linux-Mint/Elementary/Ubuntu/Debian or its derivative
 
 Install (if you haven't already) your choice of Ubuntu/Derivative as you would( If you wish to automate that too, you can use `preseed.cfg file`)
 
@@ -40,6 +40,7 @@ git clone --depth 1 https://github.com/tprasadtp/ubuntu-post-install.git && cd u
 ### Step 2: Update the lists to suit your needs (Optional)
 
 Update the list files to suit your needs. Change PPAs, add or delete packages to list, tweak flags etc.
+Please see [Configuration](https://ae.prasadt.com/config/#package-lists) & [Tasks](https://ae.prasadt.com/tasks/#what-can-it-do)
 
 ### Step 3: Run the script
 
@@ -82,11 +83,14 @@ Linux-Mint 18.3  | Sylvia            | Yes         |
 Linux Mint 19    | Tara              | Not Yet     | Will be in the future
 Elementary-OS    | Freya             | Yes         |
 Elementary-OS    | Loki              | Yes         |
+Elementary-OS    | Juno              | Yes         | Not tested.   
 Budgie Remix     | 16.04             | Yes         |
 PoP! OS          | 17.10 & 18.04     | Yes         |
 Linux-Lite       | 3.X               | Yes         | (Based on Ubuntu 16.04)
 Zorin-OS         | 12.X              | Yes         | (Based on Ubuntu 16.04)
 Bodhi Linux      | 4                 | Yes         | (Based on Ubuntu 16.04)
+Debian 8         | Jessie            | Yes         |
+Debian 9         | Stretch           | Yes         |
 
 ## Oh no! It crashed :(
 

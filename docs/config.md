@@ -19,7 +19,7 @@ These files contain list of apt packages which can be installed. Please see [Ins
 | multimedia | Tools to edit photos and videos, video players and editors. | Yes |
 | productivity | Email, Chat, Office tools, Document converters etc. | Yes |
 | security | Security related tools | Yes |
-| utilities | Utilities and Tools | Yes |
+| utilities | Utilities and Tools | Yes except on debian. |
 | wine | Wine related packages like winetricks | No (But is added during Travis tests for supported releases)|
 | xenial-above | Packages are not available in Xenial or below in Ubuntu repositories, but are available in 16.10 and later. | No (But is added during Travis tests for supported releases) |
 | latex | Latex related packages | Yes |
@@ -43,3 +43,23 @@ Non package related lists (settings, deb files, delete packages list). The use a
 
 !!! tip
     After you customize, might want to use simulate flag. `sudo ./after-effects -s`
+
+???+ bug "Exceptions for packages in the list"
+     Some packages are not added or available for the some releases.
+
+     **Debian 8**
+
+     - timeshift nautilus-admin
+     - utilities.list, xenial-above.list are not added or tested.
+
+     **Debian 9**
+
+     - utilities.list is not added or tested.
+
+     **Trusty**
+
+     - peek, kdeconnect-indicator PPAs
+     - openjdk-8-jdk from development.list
+     - gnome-calendar, gnome-todo, polari from productivity.list
+     - indicator-kdeconnect, peek, yubikey-manager-qt from extern-repo.list
+     - xenial-above.list is not added or tested.
