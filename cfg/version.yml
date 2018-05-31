@@ -1,0 +1,61 @@
+# Version Config
+version: 1
+author: Prasad T
+# Configuraion
+config:
+    # Script Version
+    script:
+        number: '44'
+        name: 4.1 Beta
+    blacklist:
+        current: false
+        msg: None
+        releases:
+            - '38'
+            - '39'
+        # Blacklist fallback
+        number: 42
+        commit: 61d8b77d6911ed8155bf9b8b99dd9e63fce18aa2
+    yellowlist:
+        releases:
+            - '40'
+            - '41'
+    # Release names
+    ubuntu:
+        lts: bionic
+        stable: bionic
+        dev: cosmic
+
+    debian_release:
+        current: stretch
+        dev: buster
+        prev: jessie
+
+    # Stats reporting
+    stats:
+        report: true
+        node: st.com
+        polaris:
+            - Gowri
+            - Sindhu
+            - Inchara
+        ssl: true
+        feedback: false
+
+    # Repository Flags
+    add_repos:
+        winehq: true
+        docker: true
+        mendeley: false
+        googlecloud: true
+        spotify: true
+        vscode: true
+        skype: true
+        signal: false
+        insync: true
+        google: true
+        kubernetes: false
+
+    # Others
+    others:
+        data_directory: data
