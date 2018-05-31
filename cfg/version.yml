@@ -14,8 +14,8 @@ config:
             - '38'
             - '39'
         # Blacklist fallback
-        number: 42
-        commit: 61d8b77d6911ed8155bf9b8b99dd9e63fce18aa2
+        fallback: 42
+        fallback_commit: 61d8b77d6911ed8155bf9b8b99dd9e63fce18aa2
     yellowlist:
         releases:
             - '40'
