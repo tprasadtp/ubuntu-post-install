@@ -160,6 +160,36 @@ Default behavior is to clean apt cache and delete downloaded DEB packages.
 There is an option to execute set of scripts defined in configuration files, before and after all the tasks are complete.
 They are disabled by default and need to be enabled via `enable-pre` and `--enable-post` options. They can be used independently of each other. See Tasks section for more details on pre-post hooks.
 
+## Prefer Local Flags & configuration ang ignore Remote configs
+
+!!! snippet "Usage"
+    ```
+    ./after-effects --prefer-local
+    ```
+    OR
+    ```
+    ./after-effects --local
+    ```
+
+Using this option, you can chose to ignore remote configuration and prefer local flags and configuration files and list files. 
+
+!!! bug "Exceptions"
+    - You cannot ignore version checks with this option. please use `--no-version-check` for skipping version checks.
+    - Stats reporting & stats servers are always determined based on remote configuration file. You cannot overrride this.
+
+## Use Custom Configration file
+
+!!! snippet "Usage"
+    ```
+    ./after-effects --config-file <filename>
+    ```
+    OR
+    ```
+    ./after-effects -c <filename>
+    ```
+
+You can prefer using custom configuration file you have stored locally [It should be available via local paths or network share. not via ftp or http]. Enabling this option will disable fetching configuration from api-endpoints mentioned or default endpoints.
+
 ## Do not report statistics
 
 !!! snippet "Usage"
@@ -184,9 +214,6 @@ Following things are reported. (Nothing more than that)
 - Feature/Task(s) selected,
 - Flags used,
 - Timezone and system language.
-
-!!! warning
-    Disabling stat reporting will also disable remote config.
 
 ??? question "Privacy Concerns?"
     - If you are freaking out, its a shell script !! You can literally look into it and check what's collected. Why if you ask? I mostly use it on a bunch of machines and would like to keep an eye on how it did.

@@ -3,8 +3,11 @@
 Effortless way to setup your fresh Ubuntu, Linux Mint, Debian installs. Please read the [FAQ](https://ae.prasadt.com/faq/dependencies/) & the [Docs](https://ae.prasadt.com/getting-started/)
 before trying out.
 
-[![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.png?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
-[![Latest Version](https://img.shields.io/github/release/tprasadtp/ubuntu-post-install/all.png?label=Latest)](https://github.com/tprasadtp/ubuntu-post-install/releases)
+[![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.svg?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
+[![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=flat&url=https://new-badges--ubuntu-post-install.netlify.com/cfg/version.json&query=config.script.number&prefix=v)](https://github.com/tprasadtp/ubuntu-post-install/)
+[![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Release&style=flat&url=https://new-badges--ubuntu-post-install.netlify.com/cfg/version.json&query=config.script.name&prefix=v)](https://github.com/tprasadtp/ubuntu-post-install/releases)
+
+
 
 ## URLs
 

@@ -120,3 +120,7 @@ credits.txt
 .ae*
 # Ruby
 Gemfile.lock
+cfg/version.json
+api/version.json
+api/test-taml.sh
+cfg/test-yaml.sh

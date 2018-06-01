@@ -32,7 +32,7 @@ readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 log_file="$dir"/after-effects-logs/after-effects.log
 mkdir -p "$dir"/after-effects-logs
 readonly REL_NAME="4.1 Beta"
-readonly REL_NUM=44
+readonly REL_NUM=45
 EXEC_TIME=0;
 
 
@@ -256,7 +256,7 @@ function _init_script_variables()
   # Default is yaml you can also use tex but it has limited capabilities and 
   # Might be removed in the future.
   config_file_type="yaml"
-  prefer_local_flags="false"
+  bool_prefer_local_flags="false"
 
   # 
   # ================================================================================== # 
@@ -499,7 +499,6 @@ function run_pre_scripts()
             _log_and_show "${_warn} Found an empty line in pre-script.list Moving on to next line"
             continue
           fi
-          _debug_log "Making $line executable"
           if bash "$line"  2>&1 | _add_timestamp_to_logs "${_hooks_logs}"  ; then
             _log_and_show "${_script} $line ran successfully."
           else
@@ -679,64 +678,6 @@ function _set_custom_api_nodes ()
 }
 
 
-function _get_cfg_files()
-{
-  # Get response
-  local exit_status
-  _debug_log "Validating Config File type"
-  _debug_log "Current value of config_file_type: $config_file_type"
-  # Determine if file type is valid
-  case ${config_file_type} in
-         .yaml  | yml | yaml | .yml )         config_file_type="yaml";;
-        txt | text | .txt | default )         config_file_type="text";;
-                                  * )         _log_and_exit "${_error} Not a valid config file type. Use yml, yaml or txt. Defaults to txt" "35";;
-  esac
-
-  if [ "$config_file_type" == "text" ]; then
-    api_resp_file="/tmp/after-effects-api-response.txt"
-    _log_and_show "${_info} Getting Remote Configuration file... [TEXT]"
-    exit_status=0
-    wget -q "${api_endpoint}"/version -O "$api_resp_file" >> $"$log_file"
-    exit_status="$?"
-
-  elif [ "$config_file_type" == "yaml" ]; then
-    api_resp_file="/tmp/after-effects-api-response.yml"
-    _log_and_show "${_info} Getting Remote Configuration file... [YAML]"
-    wget -q "${api_endpoint}"/version.yml -O "$api_resp_file" >> $"$log_file"
-    exit_status="$?"
-  fi
-
-  _debug_log "Exit code from wget  API response is : $exit_status"
-  if [ "$exit_status" -eq 0 ]; then
-    _debug_log "Successfully retrieved Config file."
-  else
-    set_yellow;
-    _log_and_show "${_error} Something went wrong while retrieving response from API endpoint."
-    _log_and_exit "${_error} Error Getiing response." "28"
-  fi
-
-  # Parse from CFG
-  if [ "$config_file_type" == "text" ]; then
-      # Get Version Metadata
-      api_rel_num=$( grep "release_number" "$api_resp_file" | cut -f2 -d ':')
-      api_rel_blacklisted=$( grep "blacklisted" "$api_resp_file" | cut -f2 -d ':')
-      api_blacklist_fallback=$( grep "blacklist_fallback" "$api_resp_file" | cut -f2 -d ':')
-      api_blacklist_fallback_commit=$( grep "fallback_commit" "$api_resp_file" | cut -f2 -d ':')
-  
-  elif [ "$config_file_type" == "yaml" ]; then
-    eval "$(parse_yaml "$api_resp_file")"
-    api_rel_num="${config__script__number[0]}"
-    api_rel_blacklisted="${config__blacklist__current[0]}"
-    api_blacklist_fallback="${config__blacklist__current[0]}"
-    api_blacklist_fallback_commit="${config__blacklist__fallback_commit[0]}"
-  fi
-  _debug_log "Version from API: $api_rel_num"
-  _debug_log "Blacklist falg: $api_rel_blacklisted" 
-  _debug_log "Blacklist fallback Version: $api_blacklist_fallback"
-  _debug_log "Blacklist fallback Commit : $api_blacklist_fallback_commit"
-
-}
-
 
 function parse_yaml() 
 {
@@ -776,44 +717,96 @@ function parse_yaml()
 }
 
 
+function _get_cfg_files()
+{
+  # Get response
+  local exit_status
+  if [ "$bool_custom_config_file" != "true" ]; then
+    api_resp_file="/tmp/after-effects-api-response.yml"
+    _log_and_show "${_info} Getting Remote Configuration file... [YAML]"
+    wget -q "${api_endpoint}"/version.yml -O "$api_resp_file" >> $"$log_file"
+    exit_status="$?"
+
+    _debug_log "Exit code from wget  API response is : $exit_status"
+    if [ "$exit_status" -eq 0 ]; then
+      _debug_log "Successfully retrieved Config file."
+    else
+      set_yellow;
+      _log_and_show "${_error} Something went wrong while retrieving response from API endpoint."
+      _log_and_exit "${_error} Error Getiing response." "28"
+    fi
+  # Check if file exists
+  elif [ "$bool_custom_config_file" == "true" ]; then
+    set_yellow;
+    _log_and_show "${_info} Using Custom config file: $custom_config_file" 
+    if [ ! -f "$custom_config_file" ]; then
+      _log_and_exit "${_error} Custom config file defined does not exist." "36"
+    fi
+    api_resp_file="$custom_config_file"
+    set_default;
+  fi
+
+  # Parse YAML
+  _debug_log "Using Config File : $api_resp_file"
+  eval "$(parse_yaml "$api_resp_file")"
+}
+
+
 function _version_checks ()
 {
   # Checks if its running latest version.
   # Also suggest updating to latest version if current version is not latest,
   # Allows to deprecate old version as it can be suggested.
-  _debug_log "Version Checks are enabled & in $config_file_type Mode"
+
+  api_rel_num="${config__script__number[0]}"
+  api_rel_blacklisted="${config__blacklist__current[0]}"
+  api_blacklist_fallback="${config__blacklist__current[0]}"
+  api_blacklist_fallback_commit="${config__blacklist__fallback_commit[0]}"
+  api_blacklist_blacklist_msg="${config__blacklist__blacklist_msg[0]}"
+  
+  # Debug
+  _debug_log "Version from API: $api_rel_num"
+  _debug_log "Blacklist falg: $api_rel_blacklisted" 
+  _debug_log "Blacklist fallback Version: $api_blacklist_fallback"
+  _debug_log "Blacklist fallback Commit : $api_blacklist_fallback_commit"
+
 
   # Check if Version Checks is enabled. (Default is enabled)
   if [ "$bool_check_version" == "true" ]; then
-      # Version Checks
+      _debug_log "Version Checks are enabled."
       # If release number is higher tahn one in the script
       # & not is not blacklisted, throw error & ask to update.
-      if [ "$api_rel_num" -gt "$REL_NUM" ] && [ "$api_rel_blacklisted" == "false" ]; then
+      if [[ $api_rel_num -gt $REL_NUM ]] && [ "$api_rel_blacklisted" == "false" ]; then
         set_yellow
-        _log_and_show "${_warn} A newer release is available. Please download latest release and try again."
+        _log_and_show "${_version} A newer release is available. Please download latest release and try again."
         _log_and_show "${_version} You are running version $REL_NUM. Latest available version is $api_rel_num."
         _log_and_exit "${_info} You can disable version checks by passing --no-version-checks" "24"
         set_default
       # If Current release number is blacklisted
       # & fallback version is higher than one in the script, throw an error.
-      elif [ "$api_blacklist_fallback" -gt "$REL_NUM" ]&& [ "$api_rel_blacklisted" == "true" ]; then
-        _log_and_show "${_warn} A newer version is available."
-        _log_and_show "${_warn} Currently there are some issues with the latest release."
+      elif [[ $api_blacklist_fallback -gt $REL_NUM ]] && [ "$api_rel_blacklisted" == "true" ]; then
+        _log_and_show "${_version} A newer version is available."
+        _log_and_show "${_version} Currently there are some issues with the latest release."
         _log_and_show "${_notice} Please use the script version ${api_blacklist_fallback} from commit: ${api_blacklist_fallback_commit}"
         _log_and_exit "${_info} You can disable version checks by passing --no-version-checks" "30"
       elif [ "$api_rel_num" -eq "$REL_NUM" ]; then
         _log_and_show "${_version} You are running the latest version of script."
       elif [ "$api_rel_num" -lt "$REL_NUM" ]; then
+        set_blue;
         _log_and_show "${_info} Hey Time traveller! You seem to be running a development version of script."
         _log_and_show "${_info} You are running version $REL_NUM. Latest stable version is $api_rel_num."
+        set_default;
       fi
 
       # Check if Blacklist is true
       if [ "$api_rel_blacklisted" == "true" ]; then
         set_yellow
         _log_and_show "${_error} This release has serious issues and has been blacklisted."
-        _log_and_show "${_warn} Reason: $( grep "blacklist_msg" "$api_resp_file" | cut -f2 -d ':')"
-        _log_and_exit "${_info} In the meantime, please use script from tree:  $( grep "fallback_commit" "$api_resp_file" | cut -f2 -d ':')" "25"
+        set_default;
+        _log_and_show "${_error} Reason: $api_blacklist_blacklist_msg" 
+        _log_and_show "${_info} In the meantime, please use script from tree/url below."
+        set_blue;
+        _log_and_exit "${_info} https://github.com/tprasadtp/ubuntu-post-install/tree/${api_blacklist_fallback_commit}" "30"
         set_default
       else
         _log_and_show "${_version} Release is Good."
@@ -829,165 +822,100 @@ function _version_checks ()
 
 function _set_remote_config()
 {
-  # TEXT Config File
-  if [ "$config_file_type" == "text" ]; then
-
-      # Report usage flag
-      if [ "$bool_report_stats" == "true" ]; then
-        set_blue;
-        api_report_usage=$(grep "report_usage" "$api_resp_file" | cut -f2 -d ':')
-        if [ "$api_report_usage" == "false" ]; then
-          bool_report_stats=false;
-          _log_and_show "${_cfg} Usage reporting is disabled by server side flag."
-        else
-          _log_and_show "${_cfg} Usage reporting is defined by user flag."
-        fi
-
-        # Stats node
-        api_report_endpoint=$(grep "usage_node" "$api_resp_file" | cut -f2 -d ':')
-
-        # Repo flags
-        add_docker_repo=$(grep "docker_repo" "$api_resp_file" | cut -f2 -d ':')
-        _log_and_show "${_cfg} Docker repository: $add_docker_repo"
-
-        add_winehq_repo=$(grep "winehq_repo" "$api_resp_file" | cut -f2 -d ':')
-        _log_and_show "${_cfg} WineHQ repository: $add_winehq_repo"
-
-        add_mendeley_repo=$(grep "mendeley_repo" "$api_resp_file" | cut -f2 -d ':')
-        _log_and_show "${_cfg} Mendelay repository: $add_mendeley_repo"
-
-        add_googlecloud_repo=$(grep "googlecloud_repo" "$api_resp_file" | cut -f2 -d ':')
-        _log_and_show "${_cfg} Google Cloud SDK repository: $add_googlecloud_repo"
-
-        add_spotify_repo=$(grep "spotify_repo" "$api_resp_file" | cut -f2 -d ':')
-        _log_and_show "${_cfg} Spotify repository: $add_spotify_repo"
-
-        add_skype_repo=$(grep "skype_repo" "$api_resp_file" | cut -f2 -d ':')
-        _log_and_show "${_cfg} Skype repository: $add_skype_repo"
-
-        add_vscode_repo=$(grep "vscode_repo" "$api_resp_file" | cut -f2 -d ':')
-        _log_and_show "${_cfg} Visual Studio repository: $add_vscode_repo"
-
-        add_insync_repo=$(grep "insync_repo" "$api_resp_file" | cut -f2 -d ':')
-        _log_and_show "${_cfg} Insync repository: $add_insync_repo"
-
-        add_signal_repo=$(grep "signal_repo" "$api_resp_file" | cut -f2 -d ':')
-        _log_and_show "${_cfg} Signal for Desktop repository: $add_signal_repo"
-
-        add_signal_repo=$(grep "google_repo" "$api_resp_file" | cut -f2 -d ':')
-        _log_and_show "${_cfg} Google Chrome & Earth repository: $add_google_repo"
-
-        add_kubernetes_repo=$(grep "kubernetes_repo" "$api_resp_file" | cut -f2 -d ':')
-        _log_and_show "${_cfg} Kubernetes repository: $add_kubernetes_repo"
-
-        # Custom Data Directory
-        api_data_dir=$(grep "data_directory" "$api_resp_file" | cut -f2 -d ':')
-        if [ ! -d "$dir/$api_data_dir" ]; then
-          _log_and_show "Daa Directory mentioned in Config file : $api_data_dir does not exist in $dir."
-          _log_and_exit "Script cannot continue.." "32"
-        else
-          data_dir="$api_data_dir"
-          _log_and_show "${_cfg} Using List files from: $data_dir"
-        fi
-
-        set_default;
-      
-      else
-        _log_and_show "${_cfg} Report stats is set to false will also disable remote config."
-      fi
-    
-
+  local api_prefer_local_config
   # YAML Files
-  elif [ "$config_file_type" == "yaml" ]; then
-    
-    # Report usage flag
-      if [ "$bool_report_stats" == "true" ]; then
-        set_blue;
-        api_report_usage="${config__stats__report[0]}"
-        if [ "$api_report_usage" == "false" ]; then
-          bool_report_stats=false;
-          _log_and_show "${_cfg} Usage reporting is disabled by server side flag."
-        else
-          _log_and_show "${_cfg} Usage reporting is defined by user flag."
-        fi
-      fi
-
-        # Stats node
-        api_report_endpoint="${config__stats__node[0]}"
-        _log_and_show "${_cfg} Stats Report node is: $api_report_endpoint"
-
-        # IOF local flags are not preferred && prefer local flags is set as false by remote config
-        # Use flags provided by remote
-        # shellcheck disable=SC2193
-        if [ "$prefer_local_flags" == "false" ] && [ "$config__others__prefer_local_flags[0]" == "false" ]; then
-          
-          # These will override local flags
-          # Repo flags
-          add_docker_repo="${config__add_repos__docker[0]}"
-          _log_and_show "${_cfg} Docker repository: $add_docker_repo"
-
-          add_winehq_repo="${config__add_repos__winehq[0]}"
-          _log_and_show "${_cfg} WineHQ repository: $add_winehq_repo"
-
-          add_mendeley_repo="${config__add_repos__mendeley[0]}"
-          _log_and_show "${_cfg} Mendelay repository: $add_mendeley_repo"
-
-          add_googlecloud_repo="${config__add_repos__googlecloud[0]}"
-          _log_and_show "${_cfg} Google Cloud SDK repository: $add_googlecloud_repo"
-
-          add_spotify_repo="${config__add_repos__spotify[0]}"
-          _log_and_show "${_cfg} Spotify repository: $add_spotify_repo"
-
-          add_skype_repo="${config__add_repos__skype[0]}"
-          _log_and_show "${_cfg} Skype repository: $add_skype_repo"
-
-          add_vscode_repo="${config__add_repos__vscode[0]}"
-          _log_and_show "${_cfg} Visual Studio repository: $add_vscode_repo"
-
-          add_insync_repo="${config__add_repos__insync[0]}"
-          _log_and_show "${_cfg} Insync repository: $add_insync_repo"
-
-          add_signal_repo="${config__add_repos__signal[0]}"
-          _log_and_show "${_cfg} Signal for Desktop repository: $add_signal_repo"
-
-          add_signal_repo="${config__add_repos__google[0]}"
-          _log_and_show "${_cfg} Google Chrome & Earth repository: $add_google_repo"
-
-          add_kubernetes_repo="${config__add_repos__kubernetes[0]}"
-          _log_and_show "${_cfg} Kubernetes repository: $add_kubernetes_repo"
-    
-          # Custom Data Directory
-          api_data_dir="${config__others__data_directory[0]}"
-          if [ ! -d "$dir/$api_data_dir" ]; then
-            _log_and_show "Daa Directory mentioned in Config file : $api_data_dir does not exist in $dir."
-            _log_and_exit "Script cannot continue.." "32"
-          else
-            data_dir="$api_data_dir"
-            _log_and_show "${_cfg} Using List files from: $data_dir"
-          fi
-          # Purge Packages
-          bool_purge_not_required_pkgs="${config__others__purge_enabled[0]}"
-          _log_and_show "${_cfg} Purge Packages: $bool_purge_not_required_pkgs"
-
-          # Keep Debs
-          bool_preserve_debs="${config__others__keep_debs[0]}"
-          _log_and_show "${_cfg} Keep Debs: $bool_preserve_debs"
-
-          # Enable Pre & Post Hooks
-          bool_enable_pre_scripts="${config__others_enable_pre[0]}"
-          bool_enable_post_scripts="${config__others_enable_post[0]}"
-          _log_and_show "${_cfg} Pre Hooks: $bool_enable_pre_scripts"
-          _log_and_show "${_cfg} Post Hooks: $bool_enable_post_scripts"
-
-          # Yes
-          bool_say_yes_to_all="${config__others_auto_yes[0]}"
-          _log_and_show "${_cfg} Auto Yes: $bool_enable_post_scripts"
-
-        else
-          _log_and_show "${_cfg} Local Flags and Configs are preferred."
-        fi
+  # Report usage flag
+  set_blue;
+  if [ "$bool_report_stats" == "true" ]; then
+    api_report_usage="${config__stats__report[0]}"
+    if [ "$api_report_usage" == "false" ]; then
+      bool_report_stats=false;
+      _log_and_show "${_cfg} Usage reporting is disabled by server side flag."
+    else
+      _log_and_show "${_cfg} Usage reporting is defined by user flag."
+    fi
   fi
-    
+
+  # Stats node
+  api_report_endpoint="${config__stats__node[0]}"
+  _log_and_show "${_cfg} Stats Report node is: $api_report_endpoint"
+
+  # IOF local flags are not preferred && prefer local flags is set as false by remote config
+  # Use flags provided by remote
+  api_prefer_local_config="$config__others__prefer_local_flags[0]"
+
+  if [ "$bool_prefer_local_flags" != "true" ] && [ "$api_prefer_local_config" != "true" ]; then
+    # These will override local flags
+    # Repo flags
+    add_docker_repo="${config__add_repos__docker[0]}"
+    _log_and_show "${_cfg} Docker repository: $add_docker_repo"
+
+    add_winehq_repo="${config__add_repos__winehq[0]}"
+    _log_and_show "${_cfg} WineHQ repository: $add_winehq_repo"
+
+    add_mendeley_repo="${config__add_repos__mendeley[0]}"
+    _log_and_show "${_cfg} Mendelay repository: $add_mendeley_repo"
+
+    add_googlecloud_repo="${config__add_repos__googlecloud[0]}"
+    _log_and_show "${_cfg} Google Cloud SDK repository: $add_googlecloud_repo"
+
+    add_spotify_repo="${config__add_repos__spotify[0]}"
+    _log_and_show "${_cfg} Spotify repository: $add_spotify_repo"
+
+    add_skype_repo="${config__add_repos__skype[0]}"
+    _log_and_show "${_cfg} Skype repository: $add_skype_repo"
+
+    add_vscode_repo="${config__add_repos__vscode[0]}"
+    _log_and_show "${_cfg} Visual Studio repository: $add_vscode_repo"
+
+    add_insync_repo="${config__add_repos__insync[0]}"
+    _log_and_show "${_cfg} Insync repository: $add_insync_repo"
+
+    add_signal_repo="${config__add_repos__signal[0]}"
+    _log_and_show "${_cfg} Signal for Desktop repository: $add_signal_repo"
+
+    add_signal_repo="${config__add_repos__google[0]}"
+    _log_and_show "${_cfg} Google Chrome & Earth repository: $add_google_repo"
+
+    add_kubernetes_repo="${config__add_repos__kubernetes[0]}"
+    _log_and_show "${_cfg} Kubernetes repository: $add_kubernetes_repo"
+  
+    # Custom Data Directory
+    api_data_dir="${config__others__data_directory[0]}"
+    if [ ! -d "$dir/$api_data_dir" ]; then
+      set_yellow;
+      _log_and_show "Data Directory mentioned in config file : $api_data_dir does not exist in $dir."
+      _log_and_exit "Script cannot continue.." "32"
+    else
+      data_dir="$api_data_dir"
+      set_blue;  
+      _log_and_show "${_cfg} Using List files from: $data_dir"
+      set_default;
+    fi
+    set_blue;
+    # Purge Packages
+    bool_purge_not_required_pkgs="${config__others__purge_enabled[0]}"
+    _log_and_show "${_cfg} Purge Packages: $bool_purge_not_required_pkgs"
+
+    # Keep Debs
+    bool_preserve_debs="${config__others__keep_debs[0]}"
+    _log_and_show "${_cfg} Keep Debs: $bool_preserve_debs"
+
+    # Enable Pre & Post Hooks
+    bool_enable_pre_scripts="${config__others__enable_pre[0]}"
+    bool_enable_post_scripts="${config__others__enable_post[0]}"
+    _log_and_show "${_cfg} Pre Hooks: $bool_enable_pre_scripts"
+    _log_and_show "${_cfg} Post Hooks: $bool_enable_post_scripts"
+
+    # Yes
+    bool_say_yes_to_all="${config__others__auto_yes[0]}"
+    _log_and_show "${_cfg} Auto Yes: $bool_enable_post_scripts"
+
+    set_default;
+    else
+      _log_and_show "${_cfg} Local Flags and Configs are preferred."
+    fi
+
   _line_fill >> "$log_file"
 
 }
@@ -2078,10 +2006,9 @@ function main()
                                   bool_report_stats="false";
                                   _log_and_show "${_info} Statistis will not be reported."
                                   ;;
-  -c | --config-file-type )      shift; config_file_type="${1}"
+        -c | --config-file )      shift; custom_config_file="${1}"; bool_custom_config_file="true";
                                   ;;
-  --prefer-local | --local )      set_yellow; prefer_local_flags="true"
-                                  _log_and_show "${_info} Local Flags re preferred."
+  --prefer-local | --local )      set_yellow; bool_prefer_local_flags="true";
                                   ;;
            * )                    set_yellow
                                   _log_and_exit "${_error} Invalid option: $1" "22"
@@ -2118,8 +2045,8 @@ function main()
     #_log_and_exit "Because I can" "255"
     all_in_one;
   else
-  _process_opts;
-  #_log_and_show "DEBUG: Options Proceed"
+  #_process_opts;
+  _log_and_show "DEBUG: Options Proceed"
   fi
   _script_exit_log
 }
