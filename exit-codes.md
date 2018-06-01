@@ -27,4 +27,6 @@
 | 29 | Stat reporting failed |
 | 30 | Similar to 24. But the latest available release is blacklisted. Use script from commit mentioned |
 | 32 | Custom data directory mentioned in cfg file is invalid or doesnot exist, in current directory. |
+| 34 | Failed to get all the list files mentioned in remote config. |
+| 35 | Not a valid config file type |
 | 255 | Test Exit code |
