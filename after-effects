@@ -918,7 +918,8 @@ function _set_remote_config()
 
         # IOF local flags are not preferred && prefer local flags is set as false by remote config
         # Use flags provided by remote
-        if [ "$prefer_local_flags" == "false" ] &&  [ "$config__others__prefer_local_flags[0]" == "false" ]; then
+        # shellcheck disable=SC2193
+        if [ "$prefer_local_flags" == "false" ] && [ "$config__others__prefer_local_flags[0]" == "false" ]; then
           
           # These will override local flags
           # Repo flags
