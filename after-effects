@@ -724,7 +724,7 @@ function _get_cfg_files()
   if [ "$bool_custom_config_file" != "true" ]; then
     api_resp_file="/tmp/after-effects-api-response.yml"
     _log_and_show "${_info} Getting Remote Configuration file... [YAML]"
-    wget -q "${api_endpoint}"/version.yml -O "$api_resp_file" >> $"$log_file"
+    wget -q "${api_endpoint}"/version -O "$api_resp_file" >> $"$log_file"
     exit_status="$?"
 
     _debug_log "Exit code from wget  API response is : $exit_status"

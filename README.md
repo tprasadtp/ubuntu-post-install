@@ -8,7 +8,6 @@ before trying out.
 [![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Release&style=flat&url=https://new-badges--ubuntu-post-install.netlify.com/cfg/version.json&query=config.script.name&prefix=v)](https://github.com/tprasadtp/ubuntu-post-install/releases)
 
 
-
 ## URLs
 
 ```bash
