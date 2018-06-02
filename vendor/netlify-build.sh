@@ -88,7 +88,6 @@ function jekyll_branch()
   mkdir -p ./cfg/json/
   yamllint ./cfg/version && yml2json ./cfg/version | python -m json.tool > ./cfg/json/version
   cp -R ./cfg/ ./_site/cfg/
-  cp -R ./netlify/ ./_site/
   gen_metadata;
 }
 
