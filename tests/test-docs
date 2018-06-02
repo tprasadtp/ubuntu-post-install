@@ -9,7 +9,6 @@ set -e pipefail
 spacing_string="%-15s"
 
 ## Install Python packages
-pip install --upgrade pip
 pip install -r ./dockerfiles/mkdocs/requirements.txt
 # Build Static
 echo "Building Docs"
