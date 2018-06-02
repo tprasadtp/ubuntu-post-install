@@ -105,7 +105,6 @@ EOF
 
 function install_dependencies()
 {
-  pip install --upgrade pip
   pip install -r ./dockerfiles/mkdocs/requirements.txt
   mkdocs --version
   #bundle install
