@@ -85,6 +85,7 @@ function jekyll_branch()
   echo "---> Building Website with Branch"
   mkdocs build;
   echo "---> Copying Static Files"
+  touch ./cfg/json/version
   yamllint ./cfg/version && yml2json ./cfg/version | python -m json.tool > ./cfg/json/version
   cp -R ./cfg/ ./_site/cfg/
   gen_metadata;
