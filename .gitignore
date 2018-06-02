@@ -124,3 +124,4 @@ cfg/version.json
 api/version.json
 api/test-taml.sh
 cfg/test-yaml.sh
+test-yaml.sh
