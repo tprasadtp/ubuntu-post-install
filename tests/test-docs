@@ -15,6 +15,7 @@ pip install -r ./dockerfiles/mkdocs/requirements.txt
 echo "Building Docs"
 mkdocs build -v -s
 echo "Generate JSON"
+mkdir -p ./cfg/json/
 yamllint ./cfg/version && yml2json ./cfg/version | python -m json.tool > ./cfg/json/version
 echo "Copy API Files"
 cp -R ./cfg/ ./_site/cfg/

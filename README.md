@@ -7,7 +7,6 @@ before trying out.
 [![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=flat&url=https://new-badges--ubuntu-post-install.netlify.com/cfg/json/version&query=config.script.number&prefix=v)](https://github.com/tprasadtp/ubuntu-post-install/)
 [![Latest Release](https://img.shields.io/badge/dynamic/json.svg?label=Release&style=flat&url=https://new-badges--ubuntu-post-install.netlify.com/cfg/json/version&query=config.script.name&prefix=v)](https://github.com/tprasadtp/ubuntu-post-install/releases)
 [![Blacklist](https://img.shields.io/badge/dynamic/json.svg?label=Blacklisted&style=flat&url=https://new-badges--ubuntu-post-install.netlify.com/cfg/json/version&query=config.blacklist.current)](https://github.com/tprasadtp/ubuntu-post-install/releases)
-[![Polaris](https://img.shields.io/badge/dynamic/json.svg?label=Polaris_Field&style=flat&url=https://new-badges--ubuntu-post-install.netlify.com/cfg/json/version&query=config.stats.polaris)](https://github.com/tprasadtp/ubuntu-post-install/releases)
 
 ## URLs
 
@@ -97,11 +96,11 @@ Debian 9         | Stretch           | Yes         |
 
 ## Oh no! It crashed :(
 
-Well that shouldn't have happened. If it does, see [Script Crashes](https://ae.prasadt.com/faq/crash/) and consider opening an issue on Github.
+- Well that shouldn't have happened. If it does, see [Script Crashes](https://ae.prasadt.com/faq/crash/) and consider opening an issue on Github.
+- Never set environment variable `TRAVIS=true` unless you are running on TRAVIS or are sure of its effects.
 
 ## Contributing & Forks
 
 See [Contributing and forks](./.github/CONTRIBUTING)
-
 
 [![Analytics](https://ga-beacon.prasadt.com/UA-101760811-3/github/ubuntu-post-install?flat)](https://prasadt.com/google-analytics-beacon)
