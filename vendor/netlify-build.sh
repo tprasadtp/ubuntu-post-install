@@ -32,7 +32,7 @@ function gen_metadata()
   echo ">>---------------------------- Build Metadata -------------------------------------<<" >>${DEPLOY_PARAM}
   echo "This Version of Website was Generated On ${DATE} By Netlify Build Bots." >> ${DEPLOY_PARAM}
   printf "${spacing_string}: $BRANCH\n" "Branch" >>${DEPLOY_PARAM}
-  printf "${spacing_string}: $PULL_REQUEST\n" "Is Pull Request" >>${DEPLOY_PARAM}
+  printf "${spacing_string}: $PULL_REQUEST\n" "Is PR" >>${DEPLOY_PARAM}
   printf "${spacing_string}: ${COMMIT_REF:0:7}\n" "Commit" >>${DEPLOY_PARAM}
   printf "${spacing_string}: $CONTEXT\n" "Deploy Type" >>${DEPLOY_PARAM}
   printf "${spacing_string}: $DEPLOY_URL\n" "Deploy URL" >>${DEPLOY_PARAM}
@@ -88,6 +88,7 @@ function jekyll_branch()
   mkdir -p ./cfg/json/
   yamllint ./cfg/version && yml2json ./cfg/version | python -m json.tool > ./cfg/json/version
   cp -R ./cfg/ ./_site/cfg/
+  cp -R ./netlify/ ./_site/
   gen_metadata;
 }
 
