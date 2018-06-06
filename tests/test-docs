@@ -20,7 +20,6 @@ echo "Copy API Files"
 cp -R ./cfg/ ./_site/cfg/
 echo "Copy Netlify Files"
 cp -R ./vendor/ ./_site/vendor/
-cp -R ./_redirects ./_site/_redirects
 cp -R ./netlify.toml ./_site/netlify.toml
 echo "Commit Info"
 true > ./_site/commit.txt

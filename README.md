@@ -82,12 +82,12 @@ Linux Mint 18    | Sarah             | Yes         |
 Linux-Mint 18.1  | Serena            | Yes         |
 Linux-Mint 18.2  | Sonya             | Yes         |
 Linux-Mint 18.3  | Sylvia            | Yes         |
-Linux Mint 19    | Tara              | Not Yet     | Will be in the future
-Elementary-OS    | Freya             | Yes         |
-Elementary-OS    | Loki              | Yes         |
-Elementary-OS    | Juno              | Yes         | Not tested.   
+Linux Mint 19    | Tara              | Yes         | Not tested
+Elementary-OS    | Freya             | Yes         | Not tested
+Elementary-OS    | Loki              | Yes         | Not tested
+Elementary-OS    | Juno              | Yes         | Not tested
 Budgie Remix     | 16.04             | Yes         |
-PoP! OS          | 17.10 & 18.04     | Yes         |
+PoP! OS          | 17.10 & 18.04     | Yes         | Not tested
 Linux-Lite       | 3.X               | Yes         | (Based on Ubuntu 16.04)
 Zorin-OS         | 12.X              | Yes         | (Based on Ubuntu 16.04)
 Bodhi Linux      | 4                 | Yes         | (Based on Ubuntu 16.04)

@@ -181,7 +181,7 @@ function _init_script_variables()
 
   # Server side flags. Can be changed via server side config and will
   # Only be prefered if --prefer-local is passed.
-  
+
   # Purge not required packages
   # Default is false
   # Requires commad line option -d to be passed via command line otherwise it will not work.
@@ -203,8 +203,8 @@ function _init_script_variables()
   bool_config_partner_repo="true"
 
   # Keep Downloaded DEB packages
-  bool_preserve_debs="false"  
-  
+  bool_preserve_debs="false"
+
   # Default Stats Server name & Stats reporting flag
   bool_report_stats="true"
   stats_node="stats.ae.prasadt.com"
@@ -253,15 +253,15 @@ function _init_script_variables()
   bool_enable_post_scripts="false"
 
   # Config File Type
-  # Default is yaml you can also use tex but it has limited capabilities and 
+  # Default is yaml you can also use tex but it has limited capabilities and
   # Might be removed in the future.
   config_file_type="yaml"
   bool_prefer_local_flags="false"
 
-  # 
-  # ================================================================================== # 
+  #
+  # ================================================================================== #
   # Achtung!
-  # Do not change any of the variables below this if you dont know what they do. 
+  # Do not change any of the variables below this if you dont know what they do.
   # They are NOT Server Side flags & are essential for correct working of the script.
   # Current directory check
   bool_pwd_check_passed="false"
@@ -568,7 +568,6 @@ function _fix_ubuntu_derivatives()
                                             code_name="bionic"
                                             _log_and_show "${_linuxmint} Changed codename to $code_name"
                                             bool_config_partner_repo="false"
-                                            _log_and_exit "${_error} Unfortunately, this release of Linux Mint not yet supported." "17"
                                             ;;
       loki | juno )                         _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 16.04 Xenial."
                                             _log_and_show "${_notice} External repositories will use Ubuntu 16.04."
@@ -679,7 +678,7 @@ function _set_custom_api_nodes ()
 
 
 
-function parse_yaml() 
+function parse_yaml()
 {
   # Function to parse yaml
     local yaml_file=$1
@@ -708,7 +707,7 @@ function parse_yaml()
                     printf("%s%s%s%s=(\"%s\")\n", "'"$prefix"'",vn, $2, conj[indent-1],$3);
                 }
             }' |
-            
+
         sed -e 's/_=/+=/g' \
             -e '/\..*=/s|\.|_|' \
             -e '/\-.*=/s|\-|_|'
@@ -738,7 +737,7 @@ function _get_cfg_files()
   # Check if file exists
   elif [ "$bool_custom_config_file" == "true" ]; then
     set_yellow;
-    _log_and_show "${_info} Using Custom config file: $custom_config_file" 
+    _log_and_show "${_info} Using Custom config file: $custom_config_file"
     if [ ! -f "$custom_config_file" ]; then
       _log_and_exit "${_error} Custom config file defined does not exist." "36"
     fi
@@ -763,10 +762,10 @@ function _version_checks ()
   api_blacklist_fallback="${config__blacklist__current[0]}"
   api_blacklist_fallback_commit="${config__blacklist__fallback_commit[0]}"
   api_blacklist_blacklist_msg="${config__blacklist__blacklist_msg[0]}"
-  
+
   # Debug
   _debug_log "Version from API: $api_rel_num"
-  _debug_log "Blacklist falg: $api_rel_blacklisted" 
+  _debug_log "Blacklist falg: $api_rel_blacklisted"
   _debug_log "Blacklist fallback Version: $api_blacklist_fallback"
   _debug_log "Blacklist fallback Commit : $api_blacklist_fallback_commit"
 
@@ -803,7 +802,7 @@ function _version_checks ()
         set_yellow
         _log_and_show "${_error} This release has serious issues and has been blacklisted."
         set_default;
-        _log_and_show "${_error} Reason: $api_blacklist_blacklist_msg" 
+        _log_and_show "${_error} Reason: $api_blacklist_blacklist_msg"
         _log_and_show "${_info} In the meantime, please use script from tree/url below."
         set_blue;
         _log_and_exit "${_info} https://github.com/tprasadtp/ubuntu-post-install/tree/${api_blacklist_fallback_commit}" "30"
@@ -879,7 +878,7 @@ function _set_remote_config()
 
     add_kubernetes_repo="${config__add_repos__kubernetes[0]}"
     _log_and_show "${_cfg} Kubernetes repository: $add_kubernetes_repo"
-  
+
     # Custom Data Directory
     api_data_dir="${config__others__data_directory[0]}"
     if [ ! -d "$dir/$api_data_dir" ]; then
@@ -888,7 +887,7 @@ function _set_remote_config()
       _log_and_exit "Script cannot continue.." "32"
     else
       data_dir="$api_data_dir"
-      set_blue;  
+      set_blue;
       _log_and_show "${_cfg} Using List files from: $data_dir"
       set_default;
     fi
@@ -2025,12 +2024,12 @@ function main()
   # Export Simulate and Log files
   _export_variables;
   _set_custom_api_nodes;
-  
+
   # Get Remote Config File/s, check version & configure
   _get_cfg_files;
   _version_checks;
   _set_remote_config;
-  
+
   # Set List Files
   _set_list_files;
   # Run Pre Scripts

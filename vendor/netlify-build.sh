@@ -75,6 +75,8 @@ function jekyll_production()
   --exclude 'dockerfiles' \
   --exclude 'tests' \
   ./ ./_site && printf "[ INFO ] Copied gh-pages\n"
+  # Copy Redirects 
+  cp ./vendor/_redirects/ ./_site/_redirects
   gen_metadata;
 
 }
@@ -88,6 +90,7 @@ function jekyll_branch()
   mkdir -p ./cfg/json/
   yamllint ./cfg/version && yml2json ./cfg/version | python -m json.tool > ./cfg/json/version
   cp -R ./cfg/ ./_site/cfg/
+  cp ./vendor/_redirects/ ./_site/_redirects
   gen_metadata;
 }
 
