@@ -20,7 +20,8 @@
 # Requirements - Bash v4 and above
 #              - whiptail, lsb-release, wget, iputils-ping
 #              - Ubuntu 14.04/16.04/17.04/17.10/18.04 or Elementary Freya/Loki/Juno
-#              - or Mint 17.X or 18.X or 19.X
+#              - Mint 17.X or 18.X or 19.X
+#              - Debian 8 & 9
 #
 
 set -o pipefail
@@ -31,7 +32,7 @@ readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 log_file="$dir"/after-effects-logs/after-effects.log
 mkdir -p "$dir"/after-effects-logs
-readonly REL_NAME="4.1 Beta"
+readonly REL_NAME="4.2 Beta"
 readonly REL_NUM=45
 EXEC_TIME=0;
 
@@ -743,7 +744,10 @@ function _get_cfg_files()
     fi
     api_resp_file="$custom_config_file"
     set_default;
+  else
+    _log_and_exit "${_error} Custom config file argument is wrong." "19"
   fi
+
 
   # Parse YAML
   _debug_log "Using Config File : $api_resp_file"
@@ -839,7 +843,7 @@ function _set_remote_config()
   api_report_endpoint="${config__stats__node[0]}"
   _log_and_show "${_cfg} Stats Report node is: $api_report_endpoint"
 
-  # IOF local flags are not preferred && prefer local flags is set as false by remote config
+  # IF local flags are not preferred && prefer local flags is not set as true by remote config
   # Use flags provided by remote
   api_prefer_local_config="$config__others__prefer_local_flags[0]"
 
@@ -1621,8 +1625,8 @@ function _install_pip_python()
   pip_dependency_list="$dir/$data_dir/"
   # Check Python Version
   case ${pip_ver} in
-              2 | 2.7 | python2 )         pip_dependency_list+="pip-dep.apt"; readonly pip_command="pip";;
-        3 | 3.6 | 3.5 | python3 )         pip_dependency_list+="pip3-dep.apt"; readonly pip_command="pip3";;
+              2 | 2.7 | python2 )         pip_dependency_list+="pip-dep.apt"; readonly pip_command="pip";dependency_packages="python-pip";;
+        3 | 3.6 | 3.5 | python3 )         pip_dependency_list+="pip3-dep.apt"; readonly pip_command="pip3";dependency_packages="python3-pip";;
                               * )         _log_and_exit "Internal Function Error. Arguments for python version." "19";;
   esac
 
@@ -1633,16 +1637,7 @@ function _install_pip_python()
       _log_and_show "${_info} $pip_command is not installed!${NC}"
       set_default;
       update_repos;
-      _log_and_show "${_installing} packages from list : $pip_dependency_list"
-      # shellcheck disable=SC2002
-      cat "$pip_dependency_list" 2>&1 | _add_timestamp_to_logs "${_cat_logs}"
-      dependency_packages=$(cat "$pip_dependency_list")
-
-      # If Dependency list is empty exit the script
-      if [[ -z "$dependency_packages" ]]; then
-        set_red;
-        _log_and_exit "${_error} PIP dependency list: $pip_dependency_list is empty." "19";
-      fi
+      _log_and_show "${_installing} PIP Dependencies"
 
       # Check if simulate flag is set
       if [ "$simulate_apt_install" == "true" ] && [ "$TRAVIS" != "true" ]; then

@@ -23,8 +23,6 @@ These files contain list of apt packages which can be installed. Please see [Ins
 | wine | Wine related packages like winetricks | No (But is added during Travis tests for supported releases)|
 | xenial-above | Packages are not available in Xenial or below in Ubuntu repositories, but are available in 16.10 and later. | No (But is added during Travis tests for supported releases) |
 | latex | Latex related packages | Yes |
-| pip.apt   | Python 2 APT dependencies | Yes |
-| pip3.apt  | Python 3 APT dependencies | Yes |
 
 ---
 Non package related lists (settings, deb files, delete packages list). The use and format is explained in individual sections.
