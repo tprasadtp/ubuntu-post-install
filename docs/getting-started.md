@@ -5,7 +5,7 @@ Install (if you haven't already) your choice of Ubuntu/Derivative as you would( 
 
 ## Step 1: Get the script
 
-### Without Git
+#### Without Git
 
 Run this in Terminal
 
@@ -13,9 +13,15 @@ Run this in Terminal
 wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash
 ```
 
-### With Git
+Or if you want to use remote configuration & not download or use .list files
 
-If you already have git on your system you can use,
+```sh
+wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash -s -- -r
+```
+
+#### With Git
+
+If you already have git on your system already you can use,
 
 ```bash
 git clone --depth 1 https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install

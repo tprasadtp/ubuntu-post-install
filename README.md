@@ -5,8 +5,8 @@ before trying out.
 
 [![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.svg?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
 [![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=flat&url=https://new-badges--ubuntu-post-install.netlify.com/cfg/json/version&query=config.script.number&prefix=v)](https://github.com/tprasadtp/ubuntu-post-install/)
-[![Latest Release](https://img.shields.io/badge/dynamic/json.svg?label=Release&style=flat&url=https://new-badges--ubuntu-post-install.netlify.com/cfg/json/version&query=config.script.name&prefix=v)](https://github.com/tprasadtp/ubuntu-post-install/releases)
-[![Blacklist](https://img.shields.io/badge/dynamic/json.svg?label=Blacklisted&style=flat&url=https://new-badges--ubuntu-post-install.netlify.com/cfg/json/version&query=config.blacklist.current)](https://github.com/tprasadtp/ubuntu-post-install/releases)
+[![Latest Release](https://img.shields.io/badge/dynamic/json.svg?label=Release&style=flat&url=https://new-badges--ubuntu-post-install.netlify.com/cfg/json/version&query=config.script.name&prefix=v)]()
+[![Blacklist](https://img.shields.io/badge/dynamic/json.svg?label=Blacklisted&style=flat&url=https://new-badges--ubuntu-post-install.netlify.com/cfg/json/version&query=config.blacklist.current)]()
 
 ## URLs
 
@@ -31,15 +31,21 @@ Run this in Terminal
 wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash
 ```
 
+Or if you want to use remote configuration & not download or use .list files
+
+```sh
+wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash -s -- -r
+```
+
 #### With Git
 
-If you already have git on your system you can use,
+If you already have git on your system already you can use,
 
 ```bash
 git clone --depth 1 https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install
 ```
 
-### Step 2: Update the lists to suit your needs (Optional)
+### Step 2: Update the lists or your Config File (Optional)
 
 Update the list files to suit your needs. Change PPAs, add or delete packages to list, tweak flags etc.
 Please see [Configuration](https://ae.prasadt.com/config/#package-lists) & [Tasks](https://ae.prasadt.com/tasks/#what-can-it-do)

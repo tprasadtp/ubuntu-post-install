@@ -60,23 +60,38 @@ function get-after-effects()
   wget -q  "${GET_BASE_URL}"/after-effects
   printf "${YELLOW}Changing file permissions...${NC}\n"
   chmod +x ./after-effects
-  printf "${YELLOW}Getting Data and Lists...${NC}\n"
-  wget -q "${GET_BASE_URL}"/data/get.mlist
-  mkdir -p data
-  while IFS= read -r line
-    do
-      echo "Getting: $line"
-      wget -q -P ./data/ "${GET_BASE_LIST_URL}"/"$line"
-    done <get.mlist
-  printf "${YELLOW}Please Run the script after-effects as root\n"
-  printf "${YELLOW}sudo ./after-effects\n"
-  printf "${YELLOW}For documentation visit: https://ae.prasadt.com${NC}\n"
-
+  if [ "$use_remote_config" != "true" ]; then
+    printf "${YELLOW}Getting Data and Lists...${NC}\n"
+    wget -q "${GET_BASE_URL}"/data/get.mlist
+    mkdir -p data
+    while IFS= read -r line
+      do
+        echo "Getting: $line"
+        wget -q -P ./data/ "${GET_BASE_LIST_URL}"/"$line"
+      done <get.mlist
+    printf "${YELLOW}Please Run the script after-effects as root\n"
+    printf "${YELLOW}sudo ./after-effects\n"
+    printf "${YELLOW}For documentation visit: https://ae.prasadt.com${NC}\n"
+  else
+    printf "[   Info  ] Be sure to pass the right flags ( --use-remote 0r --config-file ) while running the script"
+  fi
 }
 
 
 function main()
 {
+  while [ "$1" != "" ]; do
+        case ${1} in
+            -r | --remote-config )  use_remote_config=true;
+                                    printf "[   Info  ] Not Downloading list. Using Remote configurations."
+                                    ;;
+                * )                 printf "[  Error!  ] Invalid option: $1"
+                                    exit 1;
+                                    ;;
+      esac
+    shift
+  done
+
   check_dependencies
   get-after-effects
 }
