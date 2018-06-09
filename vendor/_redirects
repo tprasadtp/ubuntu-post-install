@@ -18,5 +18,5 @@ https://upi.deepankuri.com/* https://ae.prasadt.com/:splat 301!
 /dp            /deploy-params.txt
 /build         /deploy-params.txt
 
-/cfg           /cfg/version
-/cfgj           /cfg/json/version
+/api           /api/:splat
+/apij          /api/json/:splat
