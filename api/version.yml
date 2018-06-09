@@ -1,0 +1,36 @@
+# Version Config
+api: 1
+# Configuraion
+version:
+    script:
+        number: 44
+        name: "4.1 Beta"
+    blacklist:
+        current: false
+        blacklist_msg:
+        releases:
+            - 38
+            - 39
+        # Blacklist fallback
+        fallback: 42
+        fallback_commit: 61d8b77d6911ed8155bf9b8b99dd9e63fce18aa2
+    # Release names
+    ubuntu_release:
+        lts: bionic
+        stable: bionic
+        dev: cosmic
+        eol:
+            - zesty
+            - precise
+
+    debian_release:
+        current: stretch
+        dev: buster
+        prev: jessie
+
+    # Stats reporting
+    stats:
+        report: true
+        node: https://stats.ae.prasadt.com/report
+        usessl: true
+        feedback: false
