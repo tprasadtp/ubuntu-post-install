@@ -13,7 +13,7 @@
   "gitlens.statusBar.enabled": false,
   "gitlens.settings.mode": "advanced",
   "gitlens.advanced.fileHistoryFollowsRenames": false,
-  "gitlens.historyExplorer.enabled": false,
+  "gitlens.historyExplorer.enabled": true,
   "files.trimTrailingWhitespace": true,
   "trailing-spaces.trimOnSave": true,
   "editor.tabSize": 2,
