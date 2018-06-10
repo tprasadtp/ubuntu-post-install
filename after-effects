@@ -30,8 +30,8 @@ EXEC_START=$(date +%s)
 DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-log_file="$dir"/after-effects-logs/after-effects.log
-mkdir -p "$dir"/after-effects-logs
+log_file="$dir"/logs/after-effects.log
+mkdir -p "$dir"/logs
 readonly REL_NAME="4.2 Beta"
 readonly REL_NUM=45
 EXEC_TIME=0;
