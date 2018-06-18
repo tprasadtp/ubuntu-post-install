@@ -60,7 +60,7 @@ function get-after-effects()
   wget -q  "${GET_BASE_URL}"/after-effects
   printf "${YELLOW}Changing file permissions...${NC}\n"
   chmod +x ./after-effects
-  if [ "$use_remote_config" != "true" ]; then
+  if [ "$use_list_config" != "true" ]; then
     printf "${YELLOW}Getting Data and Lists...${NC}\n"
     wget -q "${GET_BASE_URL}"/data/get.mlist
     mkdir -p data
@@ -82,10 +82,10 @@ function main()
 {
   while [ "$1" != "" ]; do
         case ${1} in
-            -r | --remote-config )  use_remote_config=true;
-                                    printf "[   Info  ] Not Downloading list. Using Remote configurations."
+            -l | --list )  use_remote_config=true;
+                                    printf "[   Info  ] Not Downloading list. Using YAML configurations."
                                     ;;
-                * )                 printf "[  Error!  ] Invalid option: $1"
+                * )                 printf "[  Error! ] Invalid option: $1"
                                     exit 1;
                                     ;;
       esac
