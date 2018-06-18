@@ -40,7 +40,7 @@ function main()
   --hostname=Docker-Stretch \
   -v "$(pwd)":/shared \
   ubuntu:ae-stretch \
-  ./after-effects --fix --simulate --yes --enable-pre --enable-post --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/cfg
+  ./after-effects --fix --simulate --yes --enable-pre --enable-post --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/api
 
   exit_code_from_container="$?"
   echo "Exit code from docker run is: $exit_code_from_container"
