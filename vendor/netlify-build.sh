@@ -75,7 +75,7 @@ function jekyll_production()
   --exclude 'dockerfiles' \
   --exclude 'tests' \
   ./ ./_site && printf "[ INFO ] Copied gh-pages\n"
-  # Copy Redirects 
+  # Copy Redirects
   cp ./vendor/_redirects/ ./_site/_redirects
   gen_metadata;
 
@@ -87,9 +87,16 @@ function jekyll_branch()
   echo "---> Building Website with Branch"
   mkdocs build;
   echo "---> Copying Static Files"
-  mkdir -p ./cfg/json/
-  yamllint ./cfg/version && yml2json ./cfg/version | python -m json.tool > ./cfg/json/version
-  cp -R ./cfg/ ./_site/cfg/
+  echo "Generate JSON"
+  for file in ./api/*.yml;
+  do
+    printf "Linting Converting File  to JSON : ${file}\n"
+    file_name_json=$(basename ./api/"${file}" .yml)
+    file_name_json+=".json"
+    yamllint ./api/"${file}" && yml2json ./api/"${file}" | python -m json.tool > ./api/"${file_name_json}"
+    index=$((index + 1))
+  done
+  cp -R ./api/ ./_site/api/
   cp ./vendor/_redirects/ ./_site/_redirects
   gen_metadata;
 }
@@ -100,9 +107,9 @@ function usage()
   #Prints out help menu
 cat <<EOF
 Usage: netlify-deploy [OPTIONS]
-[-p --production]        [Master Deployment]
-[-b --branch]        [Branch Deployment]
-[-pr --pull-request] [Pull request deployment(Same as branch)]
+[-p --production]       [Production Deployment (Master Branch)]
+[-b --branch]           [Branch Deployment]
+[-pr --pull-request]    [Pull request deployment (Same as branch)]
 EOF
 }
 

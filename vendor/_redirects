@@ -1,8 +1,8 @@
 # Redirects for domains
 http://after-effects.prasadt.com/* http://ae.prasadt.com/:splat 301!
 https://after-effects.prasadt.com/* https://ae.prasadt.com/:splat 301!
-http://upi.deepankuri.com/* http://ae.prasadt.com/:splat 301!
-https://upi.deepankuri.com/* https://ae.prasadt.com/:splat 301!
+http://upi.prasadt.com/* http://ae.prasadt.com/:splat 301!
+https://upi.prasadt.com/* https://ae.prasadt.com/:splat 301!
 
 # Regional Availability
 /  /unavailable   302  Country=cn,hk,tw,cu,ir,pk,sd,sa,tr,ru,ye,bd
@@ -12,11 +12,10 @@ https://upi.deepankuri.com/* https://ae.prasadt.com/:splat 301!
 /git            https://github.com/tprasadtp/ubuntu-post-install  301!
 /github         https://github.com/tprasadtp/ubuntu-post-install  301!
 /issue          https://github.com/tprasadtp/ubuntu-post-install/issues  301!
-/issues          https://github.com/tprasadtp/ubuntu-post-install/issues  301!
+/issues         https://github.com/tprasadtp/ubuntu-post-install/issues  301!
 
 # Deploy Paremeters
 /dp            /deploy-params.txt
 /build         /deploy-params.txt
 
 /api           /api/:splat
-/apij          /api/json/:splat
