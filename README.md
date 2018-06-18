@@ -45,6 +45,8 @@ If you already have git on your system already you can use,
 git clone --depth 1 https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install
 ```
 
+If you already have cloned the repo, you canuse git fetch/pull to get the latest changes.
+
 ### Step 2: Update the lists or your Config File (Optional)
 
 Update the list files to suit your needs. Change PPAs, add or delete packages to list, tweak flags etc.
@@ -103,6 +105,7 @@ Debian 9         | Stretch           | Yes         |
 ## Oh no! It crashed :(
 
 - Well that shouldn't have happened. If it does, see [Script Crashes](https://ae.prasadt.com/faq/crash/) and consider opening an issue on Github.
+- Please include the log file and terminal output if you can in the issue..
 - Never set environment variable `TRAVIS=true` unless you are running on TRAVIS or are sure of its effects.
 
 ## Contributing & Forks
