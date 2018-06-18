@@ -84,7 +84,7 @@ function get-after-effects()
     printf "${YELLOW}sudo ./after-effects\n"
     printf "${YELLOW}For documentation visit: https://ae.prasadt.com${NC}\n"
   else
-    printf "[   Info  ] Be sure to pass the right flags ( --use-remote 0r --config-file ) while running the script"
+    printf "[   Info  ] Be sure to pass the right flags ( --use-remote 0r --config-file ) while running the script\n"
   fi
 }
 
@@ -94,10 +94,12 @@ function main()
   while [ "$1" != "" ]; do
         case ${1} in
             -l | --list )           use_remote_config=true;
-                                    printf "[   Info  ] Not Downloading list. Using YAML configurations."
+                                    printf "[   Info  ] Not Downloading list. Using YAML configurations.\n"
                                     ;;
-            -f | --force )          ignore_git_folder=true;
-                * )                 printf "[  Error! ] Invalid option: $1"
+            -f | --force )          ignore_git_folder=true
+                                    printf "[   Info  ] Will ignore existing \'.git\' folder.\n"
+                                    ;;
+                * )                 printf "[  Error! ] Invalid option: $1\n"
                                     exit 1;
                                     ;;
       esac
