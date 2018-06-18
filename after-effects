@@ -175,7 +175,9 @@ function _init_script_variables()
   bool_custom_api_node="false"
 
   # Define API Node name aka server name
-  api_endpoint=https://ae.prasadt.com/cfg/
+  api_endpoint=https://ae.prasadt.com/api/
+  yaml_version_name="default"
+  yaml_config_name="default"
 
   # Achtung!!
   # ========================================================================================= #
@@ -669,9 +671,9 @@ function  _export_variables()
 function _set_custom_api_nodes ()
 {
   # Set custom api endpoints
-  if [[ "$bool_custom_api_node" == "true" ]]; then
+  if [[ "$bool_custom_api_endpoint" == "true" ]]; then
    _log_and_show "${_info} Custom API node is set."
-   api_endpoint="$custom_api_node"
+   api_endpoint="$custom_api_endpont"
    _log_and_show "${_api} API endpoint is : $api_endpoint"
  fi
 
@@ -1974,37 +1976,32 @@ function main()
                                   _log_and_show "${_warn} Will automatically assume yes, for all the confirmation dialogs.";
                                   set_default;
                                   ;;
-          -l | --delete-log )     set_default;
-                                  delete_log_file;
-                                  ;;
+          -l | --delete-log )     delete_log_file;;
           -k | --keep-debs )      set_default;
                                   bool_preserve_debs="true";
                                   _log_and_show "${_info} Will keep downloaded DEB packages."
                                   ;;
-          --api-endpoint )        set_default;
+          -e | --api-endpoint )   set_default;
                                   bool_custom_api_node="true";
                                   shift; custom_api_node=${1};
                                   ;;
-          --enable-pre )          set_default;
+      --pre  | --enable-pre )     set_default;
                                   bool_enable_pre_scripts="true";
                                   _log_and_show "${_info} custom scripts will be run before running any tasks."
                                   ;;
-          --enable-post )         set_default;
+      --post | --enable-post )    set_default;
                                   bool_enable_post_scripts="true";
                                   _log_and_show "${_info} custom scripts will be run after running all the tasks."
                                   ;;
-    --no-version-checks )         set_default;
-                                  bool_check_version="false"
-                                  ;;
-  --no-stats | --no-reporting )   set_default;
+    -N  | --no-version-checks )   bool_check_version="false";;
+          -S |  --no-stats )      set_default;
                                   bool_report_stats="false";
                                   _log_and_show "${_info} Statistis will not be reported."
                                   ;;
-        -c | --config-file )      shift; custom_config_file="${1}"; bool_custom_config_file="true";
-                                  ;;
-  --prefer-local | --local )      set_yellow; bool_prefer_local_flags="true";
-                                  ;;
-           * )                    set_yellow
+          -C | --config-file )    shift; custom_config_file="${1}"; bool_custom_config_file="true";;
+          -V | --version-file )   shift; custom_version_file="${1}"; bool_custom_version_file="true";;
+          -L | --prefer-local )   bool_prefer_local_flags="true";;
+           * )                    set_yellow;
                                   _log_and_exit "${_error} Invalid option: $1" "22"
                                   set_default
                                   ;;
