@@ -31,6 +31,8 @@ readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 #readonly BLUE=$(tput setaf 6)
 readonly YELLOW=$(tput setaf 3)
 readonly NC=$(tput sgr 0)
+ignore_git_folder="false"
+use_remote_config="false"
 GET_BASE_URL="https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master"
 GET_BASE_LIST_URL="https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master"
 function check_dependencies()
@@ -54,8 +56,17 @@ function check_dependencies()
 function get-after-effects()
 {
   # Function to get after-effects main module
-  printf "${YELLOW}Removing old files...${NC}\n"
-  rm -f after-effects after-effects.* get.mlist .data/*.list get.mlist.* README.md README.md.* ./data/*.list ./data/*.list.*
+  if [ -d .git ] && [ "$ignore_git_folder" != "true" ]; then
+    printf "This directory seems to be a git repository. Please use git pull or git fetch to update the script.\n"
+    printf "If its not, please delete the .git folder and try again. Use -f opion to ignore this.\n"
+  elif [ -d .git ] && [ "$ignore_git_folder" == "true" ]; then
+    printf "This directory seems to be a git repository.\nSince --force is used, Cleaning up...\n"
+    rm -f ./* ./.* ./docs/**/*.* ./docs/*.* ./api/* ./data/* ./tests/* ./vendor/* ./.vscode/* ./dockerfiles/* ./.github/* ./after-effects ./after-effects.*
+  else
+    printf "${YELLOW}Removing old files...${NC}\n"
+    rm -f after-effects after-effects.* get.mlist .data/*.list get.mlist.* README.md README.md.* ./data/*.list ./data/*.list.*
+  fi
+
   echo "Getting: after-effects"
   wget -q  "${GET_BASE_URL}"/after-effects
   printf "${YELLOW}Changing file permissions...${NC}\n"
@@ -82,9 +93,10 @@ function main()
 {
   while [ "$1" != "" ]; do
         case ${1} in
-            -l | --list )  use_remote_config=true;
+            -l | --list )           use_remote_config=true;
                                     printf "[   Info  ] Not Downloading list. Using YAML configurations."
                                     ;;
+            -f | --force )          ignore_git_folder=true;
                 * )                 printf "[  Error! ] Invalid option: $1"
                                     exit 1;
                                     ;;
