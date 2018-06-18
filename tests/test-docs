@@ -26,8 +26,8 @@ done
 echo "Copy API Files"
 cp -R ./api/ ./_site/api/
 echo "Copy Netlify Files"
-cp -R ./vendor/ ./_site/vendor/
-cp -R ./netlify.toml ./_site/netlify.toml
+cp  ./vendor/_redirects ./_site/_redirects
+cp  ./netlify.toml ./_site/netlify.toml
 echo "Commit Info"
 true > ./_site/commit.txt
 printf "${spacing_string}: ${TRAVIS_COMMIT:0:7}\n" "SRC Commit ID"  | tee -a ./_site/commit.txt
