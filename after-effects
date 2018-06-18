@@ -342,14 +342,14 @@ function _goodbye_msg ()
 function _debug_log()
 {
     local msg="$1"
-    printf "[$(date)] ${_debug} $msg \n" >> "$log_file"
+    printf "[$(date)] ${_debug} $msg\n" >> "$log_file"
 }
 
 function _log_and_show()
 {
     local msg="$1"
     printf "$msg\n"
-    printf "[$(date)] $msg \n" >> "$log_file"
+    printf "[$(date)] $msg\n" >> "$log_file"
 }
 
 function _log_and_exit()
@@ -359,7 +359,7 @@ function _log_and_exit()
     local msg="$1"
     printf "$msg\n";
     #shellcheck disable=SC2129
-    printf "[$(date)] $msg \n" >> "$log_file";
+    printf "[$(date)] $msg\n" >> "$log_file";
     printf "\nFinished %s on $(date).\nLast exit code was: %d\n" "$SCRIPT" "$?" >> "$log_file";
     set_yellow
     _line_fill | tee -a "$log_file"
