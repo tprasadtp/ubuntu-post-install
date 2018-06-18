@@ -14,7 +14,6 @@ pip install -r ./dockerfiles/mkdocs/requirements.txt
 echo "Building Docs"
 mkdocs build -v -s
 echo "Generate JSON"
-mkdir -p ./api/json/
 for file in ./api/*.yml;
 do
 	printf "Linting Converting File  to JSON : ${file}\n"
