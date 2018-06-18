@@ -36,28 +36,28 @@ config:
         enable_post: true
     # Packages to purge
     purge:
-      - gnome-mines
-      - gnome-sudoku
-      - aisleriot
-      - gnome-mahjongg
+        - gnome-mines
+        - gnome-sudoku
+        - aisleriot
+        - gnome-mahjongg
     # Install APT PAckages, Add PPAs & PIP
     install:
         # PPA List
         ppa:
-          - ppa:dawidd0811/neofetch
-          - ppa:yubico/stable
-          - ppa:teejee2008/ppa
+            - ppa:dawidd0811/neofetch
+            - ppa:yubico/stable
+            - ppa:teejee2008/ppa
         # Python 2 Modules
         python2:
-          - docker-compose
+            - docker-compose
         # Python 3 Modules
         python3:
-          - awscli
+            - awscli
         # Debian packages:  .deb files
         # CSV format similar to lists
         debian_packages:
-              - https://atom-installer.github.com/v1.23.2/atom-amd64.deb,Atom-Editor.deb
-              - https://download.teamviewer.com/download/teamviewer_i386.deb,Teamviewer.deb
+            - https://atom-installer.github.com/v1.23.2/atom-amd64.deb,Atom-Editor.deb
+            - https://download.teamviewer.com/download/teamviewer_i386.deb,Teamviewer.deb
         # Whether to install Packages in list external
         apt_external: true
         apt_packages:
