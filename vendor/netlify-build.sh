@@ -93,11 +93,11 @@ function jekyll_branch()
     printf "Linting Converting File  to JSON : ${file}\n"
     file_name_json=$(basename ./api/"${file}" .yml)
     file_name_json+=".json"
-    yamllint ./api/"${file}" && yml2json ./api/"${file}" | python -m json.tool > ./api/"${file_name_json}"
+    yamllint "${file}" && yml2json "${file}" | python -m json.tool > ./api/"${file_name_json}"
     index=$((index + 1))
   done
   cp -R ./api/ ./_site/api/
-  cp ./vendor/_redirects/ ./_site/_redirects
+  cp ./vendor/_redirects ./_site/_redirects
   gen_metadata;
 }
 
