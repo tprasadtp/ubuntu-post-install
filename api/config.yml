@@ -27,9 +27,6 @@ config:
         # false : Prefer local lists and ignore remote lists
         # true  : Prefer remote lists and ignore local lists
         prefer_local_flags: false
-        fetch_remote_data: false
-        # Base URL to fetch data files. All files must be available via
-        # curl -s <BASE_URL>/file.extension
         purge_enabled: false
         keep_debs: true
         auto_yes: false
@@ -57,6 +54,7 @@ config:
         python3:
           - awscli
         # Debian packages:  .deb files
+        # CSV format similar to lists
         debian_packages:
               - https://atom-installer.github.com/v1.23.2/atom-amd64.deb,Atom-Editor.deb
               - https://download.teamviewer.com/download/teamviewer_i386.deb,Teamviewer.deb
@@ -147,7 +145,7 @@ config:
                 - gnome-online-miners
                 - telepathy-accounts-signon
                 - signon-ui-service
-            # Packages supplied by external repositories & PPA
+            # Packages supplied by external repositories & PPAs
             # Dont Mix packages provided by distribution and PPAs
             # Sometimes external repos and ppas fail, so better isolate it.
             external:
@@ -163,6 +161,9 @@ config:
             dir: "scripts"
             # Whether to use local Scripts. If Dir mentioned above
             # does not exists then the script will fail.
+            # If false, the Dir is cleaned before downloading files.
+            # Else only the scripts specified will be downloded.
+            # If a file already exists, its overwrien.
             use_local: false
             # URL to retreive scripts from via curl or wget.
             baseurl:

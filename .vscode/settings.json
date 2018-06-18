@@ -26,7 +26,6 @@
   "terminal.integrated.cursorStyle": "block",
   "editor.minimap.enabled": false,
   "explorer.openEditors.visible": 0,
-  "gitHistory.hideCommitViewExplorer": false,
   "editor.fontLigatures": true,
   "editor.emptySelectionClipboard": false,
   "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?",

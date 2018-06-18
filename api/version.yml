@@ -4,7 +4,7 @@ api: 1
 version:
     script:
         number: 44
-        name: "4.1 Beta"
+        name: "5.0 PRe Alpha"
     blacklist:
         current: false
         blacklist_msg:

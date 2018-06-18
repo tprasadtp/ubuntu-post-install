@@ -14,10 +14,18 @@ pip install -r ./dockerfiles/mkdocs/requirements.txt
 echo "Building Docs"
 mkdocs build -v -s
 echo "Generate JSON"
-mkdir -p ./cfg/json/
-yamllint ./cfg/version && yml2json ./cfg/version | python -m json.tool > ./cfg/json/version
+mkdir -p ./api/json/
+for file in ./api/*.yml;
+do
+	printf "Linting Converting File  to JSON : ${file}\n"
+  file_name_json=$(basename ./api/"${file}" .yml)
+  file_name_json+=".json"
+  yamllint ./api/"${file}" && yml2json ./api/"${file}" | python -m json.tool > ./api/"${file_name_json}"
+	index=$((index + 1))
+done
+
 echo "Copy API Files"
-cp -R ./cfg/ ./_site/cfg/
+cp -R ./api/ ./_site/api/
 echo "Copy Netlify Files"
 cp -R ./vendor/ ./_site/vendor/
 cp -R ./netlify.toml ./_site/netlify.toml
