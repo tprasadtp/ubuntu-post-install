@@ -61,10 +61,10 @@ function get-after-effects()
     printf "If its not, please delete the .git folder and try again. Use -f opion to ignore this.\n"
   elif [ -d .git ] && [ "$ignore_git_folder" == "true" ]; then
     printf "This directory seems to be a git repository.\nSince --force is used, Cleaning up...\n"
-    rm -f ./* ./.* ./docs/**/*.* ./docs/*.* ./api/* ./data/* ./tests/* ./vendor/* ./.vscode/* ./dockerfiles/* ./.github/* ./after-effects ./after-effects.* *.mlist *.mlist.*
+    rm -f ./* ./.* ./docs/**/*.* ./docs/*.* ./api/* ./data/* ./tests/* ./vendor/* ./.vscode/* ./dockerfiles/* ./.github/* ./after-effects ./after-effects.* ./*.mlist ./*.mlist.*
   else
     printf "${YELLOW}Removing old files...${NC}\n"
-    rm -f after-effects after-effects.* get.mlist .data/*.list get.mlist.* README.md README.md.* ./data/*.list ./data/*.list.*
+    rm -f after-effects ./after-effects.* get.mlist .data/*.list ./get.mlist.* ./README.md ./README.md.* ./data/*.list ./data/*.list.*
   fi
 
   echo "Getting: after-effects"
