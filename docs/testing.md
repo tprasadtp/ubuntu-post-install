@@ -6,14 +6,13 @@
 Following Tests are done on Travis-CI.
 
 - `shellcheck` every executable script (Job #build.1)
-- Test on Artful container (Job #build.2)
-- Test on Xenial container (Job #build.3)
-- Test on Bionic Beaver (Job #build.4)
-- Test on Trusty (Host) (Job #build.5) (Soon to be removed)
+- Test on Xenial container (Job #build.2)
+- Test on Bionic Beaver (Job #build.3)
+- Test on Trusty (Host) (Job #build.4)
+- Test on Debian 9 Stretch (Job #build.5)
 - Test on Debian 9 Stretch (Job #build.6)
-- Test on Debian 9 Stretch (Job #build.7)
-- Test on Ubuntu Cosmic  (Job #build.8)
-- Build, Test & deploy documentation (Job #build.9).
+- Test on Ubuntu Cosmic  (Job #build.7)
+- Build, Test & deploy documentation (Job #build.8).
 
 !!! info
     Trusty tests do not install indicator-kdeconnect, peek, openjdk-8-jdk, gnome-todo , gnome-calendar, polari and their PPAs. Please modify your lists accordingly.
