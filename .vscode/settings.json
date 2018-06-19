@@ -28,7 +28,7 @@
   "explorer.openEditors.visible": 0,
   "editor.fontLigatures": true,
   "editor.emptySelectionClipboard": false,
-  "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?",
+  "editor.wordSeparators": "`~!@$#%^&*()-=+[{]}\\|;:'\",.<>/?",
   "editor.quickSuggestionsDelay": 0,
   "diffEditor.ignoreTrimWhitespace": false,
   "editor.hideCursorInOverviewRuler": false,
@@ -58,9 +58,9 @@
   "telemetry.enableCrashReporter": false,
   "telemetry.enableTelemetry": false,
   "python.autoComplete.addBrackets": true,
-  "github.repositories": [
-    "tprasadtp/ubuntu-post-install"
-  ],
+  "github.repositories": ["ubuntu-post-install"],
   "latex.StopAsking": true,
-  "git.autorefresh": true
+  "git.autorefresh": true,
+  "git.ignoreLimitWarning": true,
+  "github.username": "tprasadtp"
 }
