@@ -50,13 +50,13 @@
   status = 301
   force = true
 
-# Country specific
+# Country specific rules
 [[redirects]]
   from = "/"
   to = "/unavailable"
   status = 302
-  force = false
-  conditions = {Country = "cn,hk,tw,cu,ir,pk,sd,sa,tr,ru,ye,bd"}
+  force = true
+  conditions = {Country = ["CN","HK","TW","CU","IR","PK","SD","SA","TR","RU","YE","BD"]}
 
 # GH URLs
 [[redirects]]
