@@ -24,18 +24,16 @@
 #              - Debian 8 & 9
 #
 
-set -o pipefail
+set -uo pipefail
 #Constants
-EXEC_START=$(date +%s)
-DATE=$(date +%Y-%m-%d:%H:%M:%S)
+readonly EXEC_START=$(date +%s)
+readonly DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-log_file="$dir"/logs/after-effects.log
+readonly log_file="$dir"/logs/after-effects.log
 mkdir -p "$dir"/logs
 readonly REL_NAME="5.0 Beta"
 readonly REL_NUM=45
-EXEC_TIME=0;
-
 
 function _init_printf_variables()
 {
@@ -162,26 +160,28 @@ function _init_script_variables()
   readonly post_script_list="$dir/data/post-script.list"
   readonly pre_script_list="$dir/data/pre-script.list"
 
+  #-------------------------- Release codenames --------------------------------
+  readonly code_name_latest_release="bionic"
+  readonly codename_previous_release="artful"
+  readonly codename_upcoming_release="cosmic"
+
   #============================ Switches/ bools ================================
 
 
   # Fix Repo not available for latest release
   bool_fix_repo_not_available_for_latest="false"
-  readonly code_name_latest_release="bionic"
-  readonly codename_previous_release="artful"
+
 
   # Allow repo fixes for Upcoming releases of ubuntu and its derivatives.
   bool_fix_repo_not_available_for_upcoming_release="false"
-  readonly codename_upcoming_release="cosmic"
 
   # Checks for Version and Changelogs via APIs
   # Define API node endpoints
 
   bool_check_version="true"
   bool_ignore_api_error="false"
-  bool_custom_api_node="false"
 
-  # Define API Node name aka server name
+  # Define API endpoint for version and config
   api_endpoint=https://ae.prasadt.com/api/
   yaml_version_name="default"
   yaml_config_name="default"
@@ -275,9 +275,8 @@ function _init_script_variables()
 
   # Check Debian Flags
   bool_is_debian="false"
-
-
 }
+
 
 function _init_print_basic_info()
 {
@@ -376,7 +375,6 @@ function delete_log_file()
   set_yellow;
   printf "${_deleting} log file %s.\n" "$log_file"
   set_default;
-  rm -f .ae_*
   rm -f "$log_file"
   exit 0;
 
@@ -407,8 +405,10 @@ function _check_if_in_pwd()
 
 function  _add_timestamp_to_logs()
 {
-  # This function adds time stamp to ${1}-logs without using external utilities
+  # This function adds time stamp to logs without using external utilities
   # Output will be automatically written to $log_file
+  # Arguments : 1
+  # ARG -1: printf variable for formatting the log
   # Usage command | _add_timestamp_to_logs "$1"
   while IFS= read -r line; do printf "[$(date)] ${1} %s\n" "$line" &>> "$log_file"; done
 
@@ -428,12 +428,14 @@ function report_stats()
   # Data will be stored in AWS DynamoDB and Google Firebase Realtime Database.
   # Data will not be shared with any third party. Period. Only me or my team members will have access
   # to it. If you run a search query on google, it probably collects more data than me.
-  # API endpoints may log IP addresses (Github, Google and AWS).
-  # But I really really don't want to report stats because I use this script at NSA.
+  # API endpoints may log public IP addresses (Github, Google and AWS). But are not saved in the database.
+  # Internal IP addresses may be logged. [RFC1918 space]. Since these are non routable over internet,
+  # Its not a privacy risk.
+  # But I really really don't want to report stats because I USe it in Top Secret place under the rock.
   # Well, 1. You should not use this script! There are better tools like Chef and
   #          Ansible for huge deployments.
   #       2. Okay! Okay! just pass --no-stats or -S as an argument and be done ith it &
-  #          the script **will not** "phone home".
+  #          the script WILL NOT "phone home".
   true
 }
 
@@ -473,8 +475,8 @@ function run_post_hooks()
 function _script_exit_log()
 {
     # Script time
-    EXEC_END=$(date +%s)
-    EXEC_TIME=$((EXEC_END-EXEC_START))
+    readonly EXEC_END=$(date +%s)
+    readonly EXEC_TIME=$((EXEC_END-EXEC_START))
 
     # Report Stats
     report_stats
@@ -595,8 +597,8 @@ function _fix_ubuntu_derivatives()
                                             ;;
       zesty )                               _eol_message "$code_name" "$_eol_date_zesty"
                                             ;;
-      #artful )                              _eol_message "$code_name" "July 2018"
-      #                                      ;;
+      artful )                              _eol_message "$code_name" "July 2018"
+                                            ;;
       bionic )                              set_yellow
                                             _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
                                             _log_and_show "${_notice} Please use --fix flag if your choice of repos are not available."
@@ -664,14 +666,6 @@ function _test_conflicting_apps ()
    _log_and_show "${_conflicts} None detected."
 }
 
-
-function  _export_variables()
-{
-  # Export Simulate flag for other scripts
-  echo "$simulate_apt_install" > .ae_simulate
-  # Export Log file name
-  echo "$log_file" > .ae_logfile
-}
 
 function _set_custom_api_nodes ()
 {
@@ -1962,8 +1956,8 @@ function main()
                                   _log_and_show "${_info} Will keep downloaded DEB packages."
                                   ;;
           -e | --api-endpoint )   set_default;
-                                  bool_custom_api_node="true";
-                                  shift; custom_api_node=${1};
+                                  readonly bool_custom_api_node="true";
+                                  shift; readonly custom_api_node=${1};
                                   ;;
       --pre  | --enable-pre )     set_default;
                                   bool_enable_pre_scripts="true";
@@ -1993,8 +1987,7 @@ function main()
   _test_internet_connection;
   _test_conflicting_apps;
 
-  # Export Simulate and Log files
-  _export_variables;
+ # Set API Endpoints
   _set_custom_api_nodes;
 
   # Get Remote Config File/s, check version & configure
@@ -2018,10 +2011,10 @@ function main()
     all_in_one;
   else
   #_process_opts;
-  _log_and_show "DEBUG: Options Proceed"
+  _log_and_show "DEBUG: Options Processed"
   fi
 
-  # Run Pre Scripts
+  # Run Post Hooks Scripts
   run_post_hooks;
   _script_exit_log;
 }
