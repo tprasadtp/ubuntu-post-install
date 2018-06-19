@@ -15,23 +15,23 @@ jobs:
   include:
   - stage: Shellcheck
     env: TEST_ENV="Shellcheck"
-    script: "./tests/test-shell-scripts"
+    script: "./tests/test-shell-scripts.sh"
   - stage: Docker
   - env: TEST_ENV="Xenial-Docker"
-    script: "./tests/test-xenial"
+    script: "./tests/test-xenial.sh"
   - env: TEST_ENV="Bionic-Docker"
-    script: "./tests/test-bionic"
+    script: "./tests/test-bionic.sh"
   - env: TEST_ENV="Trusty"
-    script: "./tests/test-trusty"
+    script: "./tests/test-trusty.sh"
   - env: TEST_ENV="Debian9-Docker"
     script: "./tests/test-stretch.sh"
   - env: TEST_ENV="Debian8-Docker"
     script: "./tests/test-jessie.sh"
   - env: TEST_ENV="Cosmic-Docker"
-    script: "./tests/test-prerelease"
+    script: "./tests/test-prerelease.sh"
   - stage: Documentation & Deploy
     env: TEST_ENV="Docs-Build"
-    script: "./tests/test-docs"
+    script: "./tests/test-docs.sh"
     deploy:
       provider: pages
       skip_cleanup: true
