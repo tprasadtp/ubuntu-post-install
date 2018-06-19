@@ -30,5 +30,37 @@
   "editor.emptySelectionClipboard": false,
   "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?",
   "editor.quickSuggestionsDelay": 0,
-  "diffEditor.ignoreTrimWhitespace": false
+  "diffEditor.ignoreTrimWhitespace": false,
+  "editor.hideCursorInOverviewRuler": false,
+  "editor.mouseWheelScrollSensitivity": 2,
+  "scm.alwaysShowProviders": false,
+  "workbench.startupEditor": "none",
+  "files.autoGuessEncoding": true,
+  "files.eol": "\n",
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true
+  },
+  "files.hotExit": "onExitAndWindowClose",
+  "files.insertFinalNewline": true,
+  "files.maxMemoryForLargeFilesMB": 2048,
+  "files.trimFinalNewlines": true,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/.saas-cache": true
+  },
+  "extensions.ignoreRecommendations": true,
+  "extensions.showRecommendationsOnlyOnDemand": true,
+  "telemetry.enableCrashReporter": false,
+  "telemetry.enableTelemetry": false,
+  "python.autoComplete.addBrackets": true,
+  "github.repositories": [
+    "tprasadtp/ubuntu-post-install"
+  ],
+  "latex.StopAsking": true,
+  "git.autorefresh": true
 }

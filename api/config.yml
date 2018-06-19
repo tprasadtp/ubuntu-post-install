@@ -17,20 +17,17 @@ config:
         insync: true
         google: true
         kubernetes: false
+    # Fetch Remote Data Files,
+    # data_direcory must not be set to `data`, otherwise
+    # local files will be overwriten.
+    data_directory: polaris
 
-    # Other Flags
-    others:
-        data_directory: data
-        # Fetch Remote Data Files,
-        # data_direcory must not be set to `data`, otherwise
-        # local files will be overwriten.
-        # false : Prefer local lists and ignore remote lists
-        # true  : Prefer remote lists and ignore local lists
+    flags:
         prefer_local_flags: false
-        purge_enabled: false
+        purge_enabled: true
         keep_debs: true
         auto_yes: false
-        # Simulate will never be overridden by remote config.
+        # Simulate flag will never be overridden by remote config.
         # Hooks
         enable_pre: true
         enable_post: true
@@ -172,3 +169,10 @@ config:
                 - scripts/test-pre-2.sh
                 - scripts/test-post.sh
                 - scripts/test-post-2.sh
+            # Sign all the files with GPG
+            # Checksum all the remote hooks scripts and
+            # Sign it using GPG. So that only signed hooks are executed.
+            # After download, the signature is verified. If mismatch is found,
+            # Hooks are not run.
+            signature:
+                - 07C2014CA5B137D8

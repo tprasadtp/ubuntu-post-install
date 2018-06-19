@@ -2,32 +2,17 @@
 api: 1
 # Configuraion
 version:
-    script:
-        number: 44
-        name: "5.0 PRe Alpha"
+    number: 44
+    name: "5.0 Alpha"
     blacklist:
         current: false
-        blacklist_msg:
+        blacklist_msg: not-blacklitsted
         releases:
             - 38
             - 39
         # Blacklist fallback
         fallback: 42
         fallback_commit: 61d8b77d6911ed8155bf9b8b99dd9e63fce18aa2
-    # Release names
-    ubuntu_release:
-        lts: bionic
-        stable: bionic
-        dev: cosmic
-        eol:
-            - zesty
-            - precise
-
-    debian_release:
-        current: stretch
-        dev: buster
-        prev: jessie
-
     # Stats reporting
     stats:
         report: true
