@@ -72,12 +72,14 @@ Thumbs.db
 **/*~
 
 
-#IDEAS
+# IDEAS #
+######################
 /.idea/workspace.xml
 /.idea/tasks.xml
 
 
-# AEU
+# Script Specific #
+######################
 *.log
 *.gpg
 *.gpg.*
@@ -98,27 +100,25 @@ Release*
 *.run
 
 
-## Custom ignores for git hooks
-.noupdatets
-.updatets
-.gitmodules
-test-pre-commit.sh
-
-## Project specific
-## .synaptic is synaptic package lists file
+# Project specific #
+######################
 *.old
-*.synaptic
 *.list
 *.ignore
-var.sh
+.ae*
+
+
+# Jekyll #
+######################
 *.scssc
 **/.saas-cache/*
-credits.txt
 .jekyll-metadata
 **/_site/**
 **/site/**
-.ae*
-# Ruby
+
+
+# Ruby #
+######################
 Gemfile.lock
 cfg/version.json
 api/version.json
