@@ -110,7 +110,7 @@ From v3.0 onward, you will be asked for confirmation before performing the task 
 
 Usually Ubuntu comes with some pre-installed games, packages which you sometimes do not need. This option is a switch to used in purging these packages mentioned in the subsequent sections. Since it is possible that user might purge necessary packages like sudo or other core system components, these just acts like a barrier from accidentally doing so.
 
-!!! warning  
+!!! warning
     This flag **MUST** be passed, if you intend to purge packages from system. Otherwise you will receive an error.
 
 ## Delete log file
@@ -171,7 +171,7 @@ They are disabled by default and need to be enabled via `enable-pre` and `--enab
     ./after-effects --local
     ```
 
-Using this option, you can chose to ignore remote configuration and prefer local flags and configuration files and list files. 
+Using this option, you can chose to ignore remote configuration and prefer local flags and configuration files and list files.
 
 !!! bug "Exceptions"
     - You cannot ignore version checks with this option. please use `--no-version-check` for skipping version checks.
