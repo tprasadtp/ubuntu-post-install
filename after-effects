@@ -32,7 +32,7 @@ readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 log_file="$dir"/logs/after-effects.log
 mkdir -p "$dir"/logs
-readonly REL_NAME="4.2 Beta"
+readonly REL_NAME="5.0 Beta"
 readonly REL_NUM=45
 EXEC_TIME=0;
 
@@ -96,7 +96,7 @@ function _init_printf_variables()
     readonly       _apt_logs="[    APT-Logs   ]"
     readonly       _cat_logs="[    CAT-Logs   ]"
     readonly      _dpkg_logs="[    PKG-Logs   ]"
-    readonly   _apt_key_logs="[  APT-KEY-Logs ]"
+    readonly   _apt_key_logs="[  APT-Key-Logs ]"
     readonly       _pip_logs="[    PIP-Logs   ]"
     readonly     _hooks_logs="[   Hooks-Logs  ]"
     readonly            _cfg="[     RCFG      ]"
@@ -210,7 +210,7 @@ function _init_script_variables()
 
   # Default Stats Server name & Stats reporting flag
   bool_report_stats="true"
-  stats_node="stats.ae.prasadt.com"
+  stats_node="https://stats.ae.prasadt.com/report"
 
   # Latest wine builds
   add_winehq_repo=true
@@ -298,7 +298,7 @@ function _init_print_basic_info()
 # Utility Functions
 function _line_fill()
 {
-    printf "%-$(tput cols)s@%s\n" | sed -e "s/ /-/g" -e "s/-@/ /" -e "s/@-/ /"
+  printf "%-$(tput cols)s@%s\n" | sed -e "s/ /-/g" -e "s/-@/ /" -e "s/@-/ /"
 }
 
 function set_blue()
@@ -328,43 +328,43 @@ function set_default()
 
 function _script_launch_log()
 {
-    _debug_log "Executing Script"
-    _line_fill >> "$log_file"
-    printf "Running %s on %s as %s\n" "$SCRIPT" "$DATE" "$USER" >> "$log_file"
+  _debug_log "Executing Script"
+  _line_fill >> "$log_file"
+  printf "Running %s on %s as %s\n" "$SCRIPT" "$DATE" "$USER" >> "$log_file"
 }
 
 function _goodbye_msg ()
 {
-    printf "\n$(tput setaf 3)It was a pleasure helping you,\nHave a great time with this Linux Machine.\nWith loads of love,\n$(tput setaf 6)${SCRIPT} running on $(uname -n)$(tput sgr 0)\n"
+  printf "\n$(tput setaf 3)It was a pleasure helping you,\nHave a great time with this Linux Machine.\nWith loads of love,\n$(tput setaf 6)${SCRIPT} running on $(uname -n)$(tput sgr 0)\n"
 }
 
 
 function _debug_log()
 {
-    local msg="$1"
-    printf "[$(date)] ${_debug} $msg\n" >> "$log_file"
+  local msg="$1"
+  printf "[$(date)] ${_debug} $msg\n" >> "$log_file"
 }
 
 function _log_and_show()
 {
-    local msg="$1"
-    printf "$msg\n"
-    printf "[$(date)] $msg\n" >> "$log_file"
+  local msg="$1"
+  printf "$msg\n"
+  printf "[$(date)] $msg\n" >> "$log_file"
 }
 
 function _log_and_exit()
 {
   # ARG-1 log msg
   # ARG-2 exit code int
-    local msg="$1"
-    printf "$msg\n";
-    #shellcheck disable=SC2129
-    printf "[$(date)] $msg\n" >> "$log_file";
-    printf "\nFinished %s on $(date).\nLast exit code was: %d\n" "$SCRIPT" "$?" >> "$log_file";
-    set_yellow
-    _line_fill | tee -a "$log_file"
-    set_default
-    exit "$2";
+  local msg="$1"
+  printf "$msg\n";
+  #shellcheck disable=SC2129
+  printf "[$(date)] $msg\n" >> "$log_file";
+  printf "\nFinished %s on $(date).\nLast exit code was: %d\n" "$SCRIPT" "$?" >> "$log_file";
+  set_yellow
+  _line_fill | tee -a "$log_file"
+  set_default
+  exit "$2";
 }
 
 function delete_log_file()
@@ -390,7 +390,6 @@ function _check_if_in_pwd()
     _debug_log "Script is in current directory."
     _debug_log "Script is $file"
     bool_pwd_check_passed="true"
-    echo "$dir" > .ae_pwd || _log_and_exit "Failed to write config file" "33"
   else
     _debug_log "Script is Not present in current directory."
     _debug_log "Script is $file"
@@ -429,50 +428,52 @@ function report_stats()
   # But I really really don't want to report stats because I use this script at NSA.
   # Well, 1. You should not use this script! There are better tools like Chef and
   #          Ansible for huge deployments.
-  #       2. Okay! Okay! just pass --no-stats as an argument and be done ith it &
+  #       2. Okay! Okay! just pass --no-stats or -S as an argument and be done ith it &
   #          the script **will not** "phone home".
   true
 }
 
+
+function run_post_hooks()
+{
+  # Run Post Scripts
+  local line
+  if [[ "$bool_enable_post_scripts" == "true" ]]; then
+    _log_and_show "${_info} Post Scripts in post-script.list will be run"
+     # Check pwd flag since script paths are relative.
+    if [[ "$bool_pwd_check_passed" == "true" ]]; then
+      _debug_log "PWD checks have passed, Proceed with hooks"
+      # Function Reads the file ./data/post-script.list and purges the ppa one by one
+      while IFS= read -r line
+        do
+            _log_and_show "${_script} Script : $line..."
+            _debug_log "Running: $line"
+            if [ "$line" == "" ]; then
+              _log_and_show "${_warn} Found and empty line in post-script.list. Moving on to next line"
+              continue
+            fi
+            if bash "$line"  2>&1 | _add_timestamp_to_logs "${_hooks_logs}"  ; then
+              _log_and_show "${_script} $line ran successfully."
+            else
+              _log_and_show "${_oh_no} Some Error occured while running $line."
+            fi
+        done < "$post_script_list"
+    else
+      _log_and_show "${_error} $SCRIPT is not in your current directory. Hooks have been disabled."
+      _log_and_exit "Not in current directory" "27"
+    fi
+  fi
+}
+
+
 function _script_exit_log()
 {
-    # Run Post Scripts
-    local line
-    if [[ "$bool_enable_post_scripts" == "true" ]]; then
-      _log_and_show "${_info} Post Scripts in post-script.list will be run"
-
-      # Check pwd flag since script paths are relative.
-      if [[ "$bool_pwd_check_passed" == "true" ]]; then
-        _debug_log "PWD checks have passed, Proceed with hooks"
-        # Function Reads the file ./data/post-script.list and purges the ppa one by one
-        while IFS= read -r line
-          do
-              _log_and_show "${_script} Script : $line..."
-              _debug_log "Running: $line"
-              if [ "$line" == "" ]; then
-                _log_and_show "${_warn} Found and empty line in post-script.list. Moving on to next line"
-                continue
-              fi
-              if bash "$line"  2>&1 | _add_timestamp_to_logs "${_hooks_logs}"  ; then
-                _log_and_show "${_script} $line ran successfully."
-              else
-                _log_and_show "${_oh_no} Some Error occured while running $line."
-              fi
-          done < "$post_script_list"
-      else
-        _log_and_show "${_error} $SCRIPT is not in your current directory. Hooks have been disabled."
-        _log_and_exit "Not in current directory" "27"
-      fi
-    fi
-
-    # Remove Script specific flag files like .ae_logfile etc
-    _debug_log "Removing Jitter generated :P"
-    rm -f .ae_* || _debug_log "Error Deleting Jitter files .ae_*"
     # Script time
     EXEC_END=$(date +%s)
     EXEC_TIME=$((EXEC_END-EXEC_START))
 
-    # report_stats
+    # Report Stats
+    report_stats
     # Generage Exit message & log
     _goodbye_msg
     _debug_log "Exiting Script"
@@ -2032,14 +2033,16 @@ function main()
     set_blue;
     _log_and_show "${_autopilot} is Active"
     set_default
-    echo "$AUTOPILOT" > .autopilot || _log_and_show "Failed to write AUTOPILOT preference file."
     #_log_and_exit "Because I can" "255"
     all_in_one;
   else
   #_process_opts;
   _log_and_show "DEBUG: Options Proceed"
   fi
-  _script_exit_log
+
+  # Run Pre Scripts
+  run_post_hooks;
+  _script_exit_log;
 }
 
 
