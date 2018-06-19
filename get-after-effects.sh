@@ -34,7 +34,7 @@ readonly NC=$(tput sgr 0)
 ignore_git_folder="false"
 use_remote_config="false"
 GET_BASE_URL="https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master"
-GET_BASE_LIST_URL="https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master"
+GET_LIST_BASE_URL="https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/data"
 function check_dependencies()
 {
   #Function to check is dependencies are available
@@ -61,7 +61,7 @@ function get-after-effects()
     printf "If its not, please delete the .git folder and try again. Use -f opion to ignore this.\n"
   elif [ -d .git ] && [ "$ignore_git_folder" == "true" ]; then
     printf "This directory seems to be a git repository.\nSince --force is used, Cleaning up...\n"
-    rm -f ./* ./.* ./docs/**/*.* ./docs/*.* ./api/* ./data/* ./tests/* ./vendor/* ./.vscode/* ./dockerfiles/* ./.github/* ./after-effects ./after-effects.*
+    rm -f ./* ./.* ./docs/**/*.* ./docs/*.* ./api/* ./data/* ./tests/* ./vendor/* ./.vscode/* ./dockerfiles/* ./.github/* ./after-effects ./after-effects.* *.mlist *.mlist.*
   else
     printf "${YELLOW}Removing old files...${NC}\n"
     rm -f after-effects after-effects.* get.mlist .data/*.list get.mlist.* README.md README.md.* ./data/*.list ./data/*.list.*
@@ -73,19 +73,19 @@ function get-after-effects()
   chmod +x ./after-effects
   if [ "$use_list_config" != "true" ]; then
     printf "${YELLOW}Getting Data and Lists...${NC}\n"
-    wget -q "${GET_BASE_URL}"/data/get.mlist
+    wget -q "${GET_LIST_BASE_URL}"/get.mlist
     mkdir -p data
     while IFS= read -r line
       do
         echo "Getting: $line"
-        wget -q -P ./data/ "${GET_BASE_LIST_URL}"/"$line"
+        wget -q -P ./data/ "${GET_LIST_BASE_URL}"/"$line"
       done <get.mlist
-    printf "${YELLOW}Please Run the script after-effects as root\n"
-    printf "${YELLOW}sudo ./after-effects\n"
-    printf "${YELLOW}For documentation visit: https://ae.prasadt.com${NC}\n"
   else
-    printf "[   Info  ] Be sure to pass the right flags ( --use-remote 0r --config-file ) while running the script\n"
+    printf "[   Info  ] Be sure to pass the right flags while running the script\n"
   fi
+  printf "${YELLOW}Please Run the script after-effects as root\n"
+  printf "${YELLOW}sudo ./after-effects\n"
+  printf "${YELLOW}For documentation visit: https://ae.prasadt.com${NC}\n"
 }
 
 
