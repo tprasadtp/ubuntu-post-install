@@ -75,8 +75,6 @@ function jekyll_production()
   --exclude 'dockerfiles' \
   --exclude 'tests' \
   ./ ./_site && printf "[ INFO ] Copied gh-pages\n"
-  # Copy Redirects
-  cp ./vendor/_redirects/ ./_site/_redirects
   gen_metadata;
 
 }
@@ -97,7 +95,6 @@ function jekyll_branch()
     index=$((index + 1))
   done
   cp -R ./api/ ./_site/api/
-  cp ./vendor/_redirects ./_site/_redirects
   gen_metadata;
 }
 
