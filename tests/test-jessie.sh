@@ -26,21 +26,13 @@ function main()
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo "Building Jessie Docker Image"
   docker build -t  debian:ae-jessie ./dockerfiles/jessie
-  echo "Removing Utils"
-  sed -i '/data\/utilities.list/d' ./data/app-list.list
-  echo "Adding External Repos"
-  echo "./data/extern-repo.list" >> ./data/app-list.list
-  echo "Removing Timeshift"
-  sed -i '/timeshift/d' ./data/extern-repo.list
-  echo "Removing Nautilus Admin"
-  sed -i '/nautilus-admin/d' ./data/administration.list
   echo "Running in Docker Jessie"
 
   docker run -it -e TRAVIS="$TRAVIS" \
   --hostname=Docker-Jessie \
   -v "$(pwd)":/shared \
   debian:ae-jessie \
-  ./after-effects --fix --simulate --yes --enable-pre --enable-post --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/api
+  ./after-effects --fix --simulate --yes --enable-pre --enable-post --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/api --name jessie
 
   exit_code_from_container="$?"
   echo "Exit code from docker run is: $exit_code_from_container"

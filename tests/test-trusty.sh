@@ -24,14 +24,7 @@ function main()
   sed -i 's/set -o pipefail/set -eo pipefail/g' "$dir"/after-effects
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo "Testing On HOST"
-  echo "Remove peek, kdeconnect-indicator PPAs"
-  sed -i '/peek-developers\|indicator-kdeconnect/d' ./data/ppa.list
-  sed -i '/openjdk-8-jdk/d' ./data/development.list
-  sed -i '/gnome-calendar\|gnome-todo\|polari/d' ./data/productivity.list
-  sed -i '/indicator-kdeconnect\|peek\|yubikey-manager-qt/d' ./data/extern-repo.list
-  echo "Adding External Repos"
-  echo "./data/extern-repo.list" >> ./data/app-list.list
-  sudo ./after-effects --yes --simulate --enable-pre --enable-post --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/api
+  sudo ./after-effects --yes --simulate --enable-pre --enable-post --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/api --name trusty
 
   exit_code_from_script="$?"
   echo "Exit code from  run is: $exit_code_from_script"

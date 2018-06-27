@@ -26,10 +26,6 @@ function main()
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo "Building Bionic Docker Image"
   docker build -t  ubuntu:ae-bionic ./dockerfiles/bionic
-  echo "Adding Xenial and above list to app-list.list"
-  echo "./data/xenial-above.list" >> ./data/app-list.list
-  echo "Adding External Repos"
-  echo "./data/extern-repo.list" >> ./data/app-list.list
   echo "Running in Docker Bionic"
 
   docker run -it -e TRAVIS="$TRAVIS" \

@@ -27,8 +27,6 @@ function main()
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo "Building Xenial Docker Image"
   docker build -t  ubuntu:ae-xenial ./dockerfiles/xenial
-  echo "Adding External Repos"
-  echo "./data/extern-repo.list" >> ./data/app-list.list
   echo "Running in Docker Xenial"
   docker run -it -e TRAVIS="$TRAVIS" \
   --hostname=Docker-Xenial \

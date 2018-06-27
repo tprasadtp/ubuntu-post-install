@@ -30,10 +30,6 @@ function main()
   ls -a
   echo "Building $PRE_REL_CODENAME Docker Image"
   docker build -t ubuntu:ae-pre-release ./dockerfiles/pre-release
-  echo "Adding Xenial and above list to app-list.list"
-  echo "./data/xenial-above.list" >> ./data/app-list.list
-  echo "Adding External Repos"
-  echo "./data/extern-repo.list" >> ./data/app-list.list
   echo "Codename : $PRE_REL_CODENAME"
 
   docker run -it -e TRAVIS="$TRAVIS" \
