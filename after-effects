@@ -98,7 +98,6 @@ function _init_printf_variables()
     readonly       _pip_logs="[    PIP-Logs   ]"
     readonly     _hooks_logs="[   Hooks-Logs  ]"
     readonly            _cfg="[     RCFG      ]"
-    readonly _eol_date_zesty="January 13th, 2018"
     #readonly           _falg="[     Flag      ]"
 
     #colors for display
@@ -160,12 +159,12 @@ function _init_script_variables()
   readonly post_script_list="$dir/data/post-script.list"
   readonly pre_script_list="$dir/data/pre-script.list"
 
-  #-------------------------- Release codenames --------------------------------
+  #-------------------------- Release codenames --------------------------------------
   readonly code_name_latest_release="bionic"
   readonly codename_previous_release="artful"
   readonly codename_upcoming_release="cosmic"
 
-  #============================ Switches/ bools ================================
+  #============================ Switches/ bools & Vars ================================
 
 
   # Fix Repo not available for latest release
@@ -182,9 +181,7 @@ function _init_script_variables()
   bool_ignore_api_error="false"
 
   # Define API endpoint for version and config
-  api_endpoint=https://ae.prasadt.com/api/
-  yaml_version_name="default"
-  yaml_config_name="default"
+  readonly default_api_endpoint_url=https://ae.prasadt.com/api/
 
   # Achtung!!
   # ========================================================================================= #
@@ -260,10 +257,10 @@ function _init_script_variables()
   bool_enable_pre_scripts="false"
   bool_enable_post_scripts="false"
 
-  # Config File Type
-  # Default is yaml you can also use tex but it has limited capabilities and
+  # Config Type
+  # Default is yaml you can also use list but it has limited capabilities and
   # Might be removed in the future.
-  config_file_type="yaml"
+  config_file_format="yaml"
 
   #
   # ================================================================================== #
@@ -402,6 +399,7 @@ function _check_if_in_pwd()
   fi
 
 }
+
 
 function  _add_timestamp_to_logs()
 {
@@ -559,7 +557,7 @@ function _fix_ubuntu_derivatives()
 
   _log_and_show "${_derivatives} Checking for Ubuntu based distributions which use different codename"
   set_yellow;
-        _debug_log "Variable code_name is : $code_name"
+  _debug_log "Variable code_name is : $code_name"
   case ${code_name} in
       qiana | rebecca | rafaela | rosa )    _log_and_show "${_linuxmint} Release is Linux mint 17.X."
                                             _log_and_show "${_notice} Setting additional repositoris to follow Ubuntu 14.04."
@@ -595,9 +593,9 @@ function _fix_ubuntu_derivatives()
                                             set_default;
                                             _log_and_show "${_info} Keeping the codename as: $code_name."
                                             ;;
-      zesty )                               _eol_message "$code_name" "$_eol_date_zesty"
+      zesty )                               _eol_message "$code_name" "January 13th, 2018"
                                             ;;
-      artful )                              _eol_message "$code_name" "July 2018"
+      artful )                              _eol_message "$code_name" "July, 2018"
                                             ;;
       bionic )                              set_yellow
                                             _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
@@ -672,10 +670,24 @@ function _set_custom_api_nodes ()
   # Set custom api endpoints
   if [[ "$bool_custom_api_endpoint" == "true" ]]; then
    _log_and_show "${_info} Custom API node is set."
-   api_endpoint="$custom_api_endpont"
+   readonly api_endpoint="$custom_api_endpont"
    _log_and_show "${_api} API endpoint is : $api_endpoint"
- fi
+  else
+    readonly api_endpoint="$defauapi_endpont_url"
+    _log_and_show "${_api} API endpoint is : $api_endpoint"
+  fi
 
+  # Custom Remote Config name as Query parameter name
+  if [ "$bool_custom_remote_config_name" == "true" ]; then
+   readonly remote_config_name="$custom_remote_config_name"
+  else
+   readonly remote_config_name="default"
+  fi
+
+  # Version, Config ang GPG signature URLS
+  readonly api_version_url="$defaul_endpont_url/version?name=${remote_config_name}.yml"
+  readonly api_config_url="$api_endpoint/config?name=${remote_config_name}.yml"
+  readonly api_script_gpg_sig_url="$default_api_endpoint_url/gpg/after-effects?version=$VERSION_NUMBER"
 }
 
 
@@ -706,7 +718,7 @@ function parse_yaml()
             for (i in vname) {if (i > indent) {delete vname[i]}}
                 if (length($3) > 0) {
                     vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
-                    printf("%s%s%s%s=(\"%s\")\n", "'"$prefix"'",vn, $2, conj[indent-1],$3);
+                    printf("readonly local %s%s%s%s=(\"%s\")\n", "'"$prefix"'",vn, $2, conj[indent-1],$3);
                 }
             }' |
 
@@ -718,42 +730,54 @@ function parse_yaml()
 }
 
 
-function _get_cfg_files()
+function _check_file_exists_not_empty()
 {
-  # Get response
-  local exit_status
-  if [ "$bool_custom_config_file" != "true" ]; then
-    api_resp_file="/tmp/after-effects-api-response.yml"
-    _log_and_show "${_info} Getting Remote Configuration file... [YAML]"
-    wget -q "${api_endpoint}"/version -O "$api_resp_file" >> $"$log_file"
+  # Function to check if a file ixist and is not empty or is a block device.
+  # Accepts one argument.
+  # If file not found exits with code 36
+  # If file is empty exits with code 37
+  # If file is blk device exits with code 38
+  # ARG 1: path to file
+  local file_name=${1}
+
+  if [ "$#" -ne 1 ]; then
+    _log_and_exit "${_error} Not enough arguments for file checks." "19"
+  fi
+
+  if
+}
+
+
+function _get_remote_file()
+{
+  # Function to get remote file/response
+  # exits script if it fails.
+  # Accepts 2 arguments.
+  # ARG 1: File name; Name of the local file the response or file should be saved as.
+  # ARG 2: URL to the  file
+
+  local file_name="${1}"
+  local exit_status;
+  local file_url="${2}"
+  _debug_log "Remote URL is set to ${file_url}"
+
+  if [ "$#" -eq 2 ]; then
+    # Remote files
+    wget -q "${file_url}" -O "$file_name" >> $"$log_file"
     exit_status="$?"
 
-    _debug_log "Exit code from wget  API response is : $exit_status"
+    _debug_log "Exit code from wget is : $exit_status"
     if [ "$exit_status" -eq 0 ]; then
       _debug_log "Successfully retrieved Config file."
     else
       set_yellow;
-      _log_and_show "${_error} Something went wrong while retrieving response from API endpoint."
-      _log_and_exit "${_error} Error Getiing response." "28"
+      _log_and_show "${_error} Something went wrong while retrieving ${file_name}."
+      _log_and_exit "${_error} Error Getiing file." "28"
     fi
-  # Check if file exists
-  elif [ "$bool_custom_config_file" == "true" ]; then
-    set_yellow;
-    _log_and_show "${_info} Using Custom config file: $custom_config_file"
-    if [ ! -f "$custom_config_file" ]; then
-      _log_and_exit "${_error} Custom config file defined does not exist." "36"
-    fi
-    api_resp_file="$custom_config_file"
-    set_default;
-  else
-    _log_and_exit "${_error} Custom config file argument is wrong." "19"
   fi
 
-
-  # Parse YAML
-  _debug_log "Using Config File : $api_resp_file"
-  eval "$(parse_yaml "$api_resp_file")"
 }
+
 
 
 function _version_checks ()
@@ -761,59 +785,50 @@ function _version_checks ()
   # Checks if its running latest version.
   # Also suggest updating to latest version if current version is not latest,
   # Allows to deprecate old version as it can be suggested.
-
-  api_rel_num="${config__script__number[0]}"
-  api_rel_blacklisted="${config__blacklist__current[0]}"
-  api_blacklist_fallback="${config__blacklist__current[0]}"
-  api_blacklist_fallback_commit="${config__blacklist__fallback_commit[0]}"
-  api_blacklist_blacklist_msg="${config__blacklist__blacklist_msg[0]}"
-
-  # Debug
-  _debug_log "Version from API: $api_rel_num"
-  _debug_log "Blacklist falg: $api_rel_blacklisted"
-  _debug_log "Blacklist fallback Version: $api_blacklist_fallback"
-  _debug_log "Blacklist fallback Commit : $api_blacklist_fallback_commit"
-
-
   # Check if Version Checks is enabled. (Default is enabled)
   if [ "$bool_check_version" == "true" ]; then
       _debug_log "Version Checks are enabled."
-      # If release number is higher tahn one in the script
-      # & not is not blacklisted, throw error & ask to update.
-      if [[ $api_rel_num -gt $REL_NUM ]] && [ "$api_rel_blacklisted" == "false" ]; then
-        set_yellow
+      if [ "$bool_custom_version_file" != "true" ]; then
+        _log_and_show "${_cfg} Using Remote Config file."
+        _debug_log "Deleting old YAMLS"
+        rm -f /tmp/api-version.yml || _debug_log "Deleting old version YAML failed."
+        readonly version_yaml_file="/tmp/api-version-resp.yml"
+        # Get response/file
+        _get_remote_file "$version_yaml_file" "$api_version_url"
+      else
+        _log_and_show "${_cfg} Using local config file : $custom_version_file"
+        readonly version_yaml_file="$custom_version_file"
+      fi
+
+      # Parse YAML to variables
+      _debug_log "Parsing Version Config File "
+      eval "$(parse_yaml "$version_yaml_file")"
+
+      local readonly api_rel_num="${version__number[0]}"
+
+      # Assign Stat Variables and endpoints
+      api_report_endpoint="{stats__node[0]}"
+      api_report_usage="{stats__report[0]}"
+
+      # Debug
+      _debug_log "Version from API: ${api_rel_num}"
+      _debug_log "Stats reporting is : ${api_report_usage}"
+      _debug_log "Reporting endpoint is: ${api_report_endpoint}"
+
+      # If release number is higher than one in the script throw error & ask to update.
+      if [[ $api_rel_num -gt $REL_NUM ]]; then
+        set_yellow;
         _log_and_show "${_version} A newer release is available. Please download latest release and try again."
         _log_and_show "${_version} You are running version $REL_NUM. Latest available version is $api_rel_num."
         _log_and_exit "${_info} You can disable version checks by passing --no-version-checks" "24"
-        set_default
-      # If Current release number is blacklisted
-      # & fallback version is higher than one in the script, throw an error.
-      elif [[ $api_blacklist_fallback -gt $REL_NUM ]] && [ "$api_rel_blacklisted" == "true" ]; then
-        _log_and_show "${_version} A newer version is available."
-        _log_and_show "${_version} Currently there are some issues with the latest release."
-        _log_and_show "${_notice} Please use the script version ${api_blacklist_fallback} from commit: ${api_blacklist_fallback_commit}"
-        _log_and_exit "${_info} You can disable version checks by passing --no-version-checks" "30"
-      elif [ "$api_rel_num" -eq "$REL_NUM" ]; then
+        set_default;
+      elif [[ $api_rel_num -eq $REL_NUM ]]; then
         _log_and_show "${_version} You are running the latest version of script."
-      elif [ "$api_rel_num" -lt "$REL_NUM" ]; then
+      elif [[ $api_rel_num -lt $REL_NUM ]]; then
         set_blue;
         _log_and_show "${_info} Hey Time traveller! You seem to be running a development version of script."
         _log_and_show "${_info} You are running version $REL_NUM. Latest stable version is $api_rel_num."
         set_default;
-      fi
-
-      # Check if Blacklist is true
-      if [ "$api_rel_blacklisted" == "true" ]; then
-        set_yellow
-        _log_and_show "${_error} This release has serious issues and has been blacklisted."
-        set_default;
-        _log_and_show "${_error} Reason: $api_blacklist_blacklist_msg"
-        _log_and_show "${_info} In the meantime, please use script from tree/url below."
-        set_blue;
-        _log_and_exit "${_info} https://github.com/tprasadtp/ubuntu-post-install/tree/${api_blacklist_fallback_commit}" "30"
-        set_default
-      else
-        _log_and_show "${_version} Release is Good."
       fi
 
   # If version checks have been disabled
@@ -1585,7 +1600,7 @@ function _install_pip_python()
   #Check args
   if [ $# -lt 2 ] ||  [ $# -gt 2 ] ; then
     set_yellow;
-    _log_and_show "${_error} Not enough arguments. \n${_info} Usage: _check_and_install_pre_requisites <list.apt> <commands to check>\n" && \
+    _log_and_show "${_error} Incorrect number of arguments. \n${_info} Usage: _check_and_install_pre_requisites <list.apt> <commands to check>\n" && \
     _log_and_exit "Internal Function Error. Invalid number of Arguments: $#." "18";
   fi;
 
@@ -1882,6 +1897,7 @@ function _check_dependencies()
   fi
 }
 
+
 function main()
 {
   _init_printf_variables
@@ -1967,7 +1983,7 @@ function main()
                                   bool_enable_post_scripts="true";
                                   _log_and_show "${_info} custom scripts will be run after running all the tasks."
                                   ;;
-    -N  | --no-version-checks )   bool_check_version="false";;
+    -g  | --no-version-checks )   bool_check_version="false";;
           -S |  --no-stats )      set_default;
                                   readonly bool_report_stats="false";
                                   _log_and_show "${_info} Statistis will not be reported."
@@ -1975,6 +1991,7 @@ function main()
           -C | --config-file )    shift; readonly custom_config_file="${1}"; readonly bool_custom_config_file="true";;
           -V | --version-file )   shift; readonly custom_version_file="${1}"; readonly bool_custom_version_file="true";;
           -L | --prefer-local )   readonly bool_prefer_local_flags="true";;
+          -n | --name)            shift readonly bool_custom_remote_config_name="true"; readonly custom_remote_config_name="${1}";;
            * )                    set_yellow;
                                   _log_and_exit "${_error} Invalid option: $1" "22"
                                   set_default

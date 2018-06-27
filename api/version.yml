@@ -2,20 +2,9 @@
 api: 1
 # Configuraion
 version:
-    number: 44
-    name: "5.0 Alpha"
-    blacklist:
-        current: false
-        blacklist_msg: not-blacklitsted
-        releases:
-            - 38
-            - 39
-        # Blacklist fallback
-        fallback: 42
-        fallback_commit: 61d8b77d6911ed8155bf9b8b99dd9e63fce18aa2
-    # Stats reporting
-    stats:
-        report: true
-        node: https://stats.ae.prasadt.com/report
-        usessl: true
-        feedback: false
+  number: 44
+  name: "5.0 Alpha"
+# Stats reporting
+stats:
+  report: true
+  node: https://stats.ae.prasadt.com/report
