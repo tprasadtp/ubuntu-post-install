@@ -37,19 +37,6 @@
   force = true
 
 
-[[redirects]]
-  from = "http://upi.prasadt.com/*"
-  to = "http://ae.prasadt.com/:splat"
-  status = 301
-  force = true
-
-
-[[redirects]]
-  from = "https://upi.prasadt.com/*"
-  to = "https://ae.prasadt.com/:splat"
-  status = 301
-  force = true
-
 # Country specific rules
 #[[redirects]]
 #  from = "/"

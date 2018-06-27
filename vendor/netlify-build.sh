@@ -95,6 +95,12 @@ function jekyll_branch()
     index=$((index + 1))
   done
   cp -R ./api/ ./_site/api/
+  echo "Copying Signature file"
+  if [ -f after-effects.asc ]; then
+    cp ./after-effects.asc ./api/gpg/after-effects
+  elif [ -f after-effects.sig ]; then
+    cp ./after-effects.asc ./api/gpg/after-effects
+  fi
   gen_metadata;
 }
 
