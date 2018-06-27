@@ -17,9 +17,7 @@ Github URL: https://github.com/tprasadtp/after-effects-ubuntu
 
 ## How to use this?
 
-### Step 0: Install Ubuntu/Linux-Mint/Elementary/Ubuntu/Debian or its derivative
-
-Install (if you haven't already) your choice of Ubuntu/Derivative as you would( If you wish to automate that too, you can use `preseed.cfg file`)
+Install your choice of Ubuntu/Debian or its derivative as you would( If you wish to automate that too, you can use `preseed.cfg file`)
 
 ### Step 1: Get the script
 
@@ -45,12 +43,29 @@ If you already have git on your system already you can use,
 git clone --depth 1 https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install
 ```
 
-If you already have cloned the repo, you canuse git fetch/pull to get the latest changes.
+If you already have cloned the repo, you can use git to get the latest changes.
 
-### Step 2: Update the lists or your Config File (Optional)
+### Step 2: [Optional] Update the lists or your Config File (
 
 Update the list files to suit your needs. Change PPAs, add or delete packages to list, tweak flags etc.
-Please see [Configuration](https://ae.prasadt.com/config/#package-lists) & [Tasks](https://ae.prasadt.com/tasks/#what-can-it-do)
+Please see [Configuration](https://ae.prasadt.com/config/#package-lists) & [Tasks](https://ae.prasadt.com/tasks/#what-can-it-do).
+
+OR
+
+#### Use config server
+
+This script can use a config server to retrieve  its configuration data. Please use `cfg-server` project for more info. You can use simple docker container to host the server. Its written in Go.
+For simple not-database based config server, use docker-compose.yaml in the cfg-srv directory. Folders within that directory containing configs will be available at `localhost/<FOLDER-NAME>?name="NAME_OF_THE_CONFIG"`
+
+```bash
+cd cfg-srv
+# create a test config file under cfg-srv/config
+docker-compose up
+# Testing the response
+curl -s localhost/config?name="test"
+# This should return contents file test.yml or default config under folder cfg-srv/config
+```
+
 
 ### Step 3: Run the script
 
@@ -70,6 +85,11 @@ Please note that `gh-pages` branch is complete derivative of master. Please chec
 ## FAQ & Documentation
 
 See /docs or visit [https://after-effects.prasadt.com](https://after-effects.prasadt.com).
+
+## Security
+Well, this isn't very secure or meant to be.
+- The script is signed with gpg key id `BA19B5162553B1BF`. SHA256 checksums for script are available via
+- GPG signature of the script is also available at `api/gpg?version="VERSION_NUMBER"`
 
 ## Supported Distributions
 
