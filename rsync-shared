@@ -20,6 +20,16 @@ if command -v rsync >&/dev/null; then
   --exclude 'LICENSE' \
   --exclude 'dockerfiles' \
   --exclude 'tests' \
+  --exclude 'docs' \
+  --exclude 'vendor' \
+  --exclude '.github' \
+  --exclude '.vscode' \
+  --exclude '.editorconfig' \
+  --exclude '.gitattributes' \
+  --exclude 'mkdocs.yl' \
+  --exclude 'test-yaml.sh' \
+  --exclude 'api' \
+  --exclude 'netlify.toml' \
   ./ "${SHARED_DIR}" && printf "[ INFO ] Copied\n"
 else
   printf "${YELLOW}Program rsync is not installed. Please install rsync.\nThis script requires rsync.\n${NC}";
