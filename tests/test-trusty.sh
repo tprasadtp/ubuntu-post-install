@@ -24,7 +24,7 @@ function main()
   sed -i 's/set -o pipefail/set -eo pipefail/g' "$dir"/after-effects
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo "Testing On HOST"
-  sudo ./after-effects --yes --simulate --enable-pre --enable-post --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/api --name trusty
+  sudo ./after-effects --yes --simulate --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/api --name trusty
 
   exit_code_from_script="$?"
   echo "Exit code from  run is: $exit_code_from_script"
