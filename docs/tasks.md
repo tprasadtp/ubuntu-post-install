@@ -162,24 +162,6 @@ This will purge Unwanted packages from the system.
 !!! bug "Scope of this function"
     This will **NOT** remove PPAs or repositories you have added manually or those added while installing DEB files.
 
-## Pre and Post task hooks
-Since version 4.0, it is possible to run list of shell-scripts (listed in pre/post-script.list), before any of the tasks like installing or adding repositories begin as well as after all the tasks are completed. Please note that currently no checks are being made if all the tasks completed successfully. The scripts are executed, regardless of the exit status of the tasks.
-
-Invoking scripts requires two flags to be passed.
-
-- `--enable-pre` for pre task scripts
-- `--enable-post` for post task scripts.
-- Configurations are similar to package lists, one line per script. Please include complete path for the shell-scripts.
-- Empty lines are ignored.
-- If you wish to run python or other code, please use shell-script as wrapper.
-
-### Honoring simulate flag in hooks
-Check for file `.ae_simulate`. By default its is not preset. It is preset & set to true, if `--simulate or -s` flag is used.
-
-### Honoring `AUTOPILOT` falg in hooks
-Check for contents of file `.autopilot`. It is set to true if AUTOPILOT is true. Otherwise its not present.
-
-
 ## All In one
 
 This will perform Following actions. (In the following order)

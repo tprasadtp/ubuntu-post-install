@@ -22,7 +22,6 @@
 | 24 | Not Running the latest version |
 | 25 | Release  has some issues and is blacklisted |
 | 26 | API Node is offline or not available or invalid |
-| 27 | `after-effects` is not in your current directory & hooks will be disabled |
 | 28 | Getting API response failed |
 | 29 | Stat reporting failed |
 | 30 | Similar to 24. But the latest available release is blacklisted. Use script from commit mentioned |

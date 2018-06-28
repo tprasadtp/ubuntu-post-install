@@ -149,14 +149,10 @@ function _init_script_variables()
   readonly PING_URL="www.google.com"
 
   # Define List Files
-  # Must be Run after Remote config and before Hooks
   readonly deb_files_list="$dir/data/deb-files.list"
   readonly ppa_list="$dir/data/ppa.list"
   readonly app_list_list="$dir/data/app-list.list"
   readonly purge_list="$dir/data/purge.list"
-  # Hooks list file
-  readonly post_script_list="$dir/data/post-script.list"
-  readonly pre_script_list="$dir/data/pre-script.list"
 
   #-------------------------- Release codenames --------------------------------------
   readonly code_name_latest_release="bionic"
@@ -973,8 +969,6 @@ function _set_remote_config()
     _log_and_show "${_cfg} Parsing local lists..."
     # Parse local lists to appropriate variables, arrays and inject them in script.
     # Only supports 5 APT lists, Purge, DEB, PPA. PIP2, PIP3 lists
-    # Hooks can only be scripts and not commands themselves.
-    # Signature checks are skipped for hooks as they are local. You should be able to trust them.
     _parse_local_lists;
   fi
 
@@ -1439,7 +1433,7 @@ function disable_external_repos()
 {
   # Function to disable external repositoris added by this script.
   # PPAs added or repositoris added by actions other than this script are not removed.
-  # Repositoris added by dpkg pist install hooks and deb files will not be removed!!
+  # Repositoris added by dpkg post install scripts and deb files will not be removed!!
   # Simulate option has no effect on this function. PPAs will be purged irrespective of its value.
   local exit_status
   local old_path
@@ -2079,8 +2073,6 @@ function main()
   _log_and_show "DEBUG: Options Processed"
   fi
 
-  # Run Post Hooks Scripts
-  run_post_hooks;
   _script_exit_log;
 }
 
