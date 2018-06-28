@@ -1,5 +1,5 @@
 # Install Config
-version: 2
+version: 3
 name: Polaris
 author: Prasad T
 # Configuraion
@@ -38,13 +38,11 @@ config:
         kubernetes: false
     # Flags
     flags:
+    # Simulate flag will never be overridden by remote config.
         purge_enabled: true
         preserve_debs: true
         auto_yes: false
-        # Simulate flag will never be overridden by remote config.
-        # Hooks
-        enable_pre: true
-        enable_post: true
+
     # Packages to purge
     purge:
         - gnome-mines

@@ -96,7 +96,6 @@ function _init_printf_variables()
     readonly      _dpkg_logs="[    PKG-Logs   ]"
     readonly   _apt_key_logs="[  APT-Key-Logs ]"
     readonly       _pip_logs="[    PIP-Logs   ]"
-    readonly     _hooks_logs="[   Hooks-Logs  ]"
     readonly            _cfg="[     RCFG      ]"
     #readonly           _falg="[     Flag      ]"
 
@@ -178,7 +177,6 @@ function _init_script_variables()
   # Define API node endpoints
 
   bool_check_version="true"
-  bool_ignore_api_error="false"
 
   # Define API endpoint for version and config
   readonly default_api_endpoint_url="https://new-badges--ubuntu-post-install.netlify.com/api"
@@ -240,19 +238,6 @@ function _init_script_variables()
 
   #Kubernetes
   add_kubernetes_repo=false
-
-
-  # Pre and Post Scripts
-  # Scripts can be defines in list pre-script.list and post-script.list
-  # Which will run before and after all the tasks.
-  # these flags control it.
-  bool_enable_pre_scripts="false"
-  bool_enable_post_scripts="false"
-
-  # Config Type
-  # Default is yaml you can also use list but it has limited capabilities and
-  # Might be removed in the future.
-  config_file_format="yaml"
 
   #
   # ================================================================================== #
@@ -896,12 +881,6 @@ function _set_remote_config()
     bool_preserve_debs="${config__flags__preserve_debs[0]}"
     _log_and_show "${_cfg} Keep Debs: $bool_preserve_debs"
 
-    # Enable Pre & Post Hooks
-    bool_enable_pre_scripts="${config__flags__enable_pre[0]}"
-    bool_enable_post_scripts="${config__flags__enable_post[0]}"
-    _log_and_show "${_cfg} Pre Hooks: $bool_enable_pre_scripts"
-    _log_and_show "${_cfg} Post Hooks: $bool_enable_post_scripts"
-
     # Yes
     bool_say_yes_to_all="${config__flag__auto_yes[0]}"
     _log_and_show "${_cfg} Auto Yes: $bool_say_yes_to_all"
@@ -984,28 +963,6 @@ function _set_remote_config()
     readonly pip2_packages=("${config__install__python2[@]}")
     readonly pip3_packages=("${config__install__python3[@]}")
 
-    #--------------------------------------------------------------------------------
-    #                             Pre - Post task Hook scripts/ commands
-    #--------------------------------------------------------------------------------
-    # There are two keys under config.hooks.pre, config.hooks.post which contain
-    # Pre and post install hooks scripts.
-    # There are few other keys
-    # config.hooks.dir      : Directory to store theremote scripts
-    # config.hooks.baseurl  : Base URL to all the remote scripts
-    # config.hooks.fetch    : List of script names to fetch from base url.
-    #                         Scripts are available at baseurl/<config.hooks.fetch[index]>
-    # config.hooks.sign     : GPG Key used to sign all scripts.
-    # congig.hooks.signfile : File with SHA Sums and GPG signature of all the scripts.
-    # Copy Hooks list
-    readonly hooks_local_dir_tosave="${config__hooks__dir[0]}"
-    readonly hooks_base_url="${config__hooks__baseurl[0]}"
-    readonly hooks_use_local_scripts="${config__hooks__use_local[0]}"
-    readonly hooks_files=("${config__hooks__fetch[@]}")
-    readonly hooks_pre=("${config__hooks__post[@]}")
-    readonly hooks_post=("${config__hooks__pre[@]}")
-    readonly hooks_signature="{config__hooks__sign[0]}"
-    readonly hooks_signature_file="${config__hooks__sign_file}"
-
 
   # If --local or --list option is used then we dont need to fetch Configs
   # We need to just parse the .list files in data.Flags will be local and can be alterd via options or editing the
@@ -1020,44 +977,6 @@ function _set_remote_config()
     # Signature checks are skipped for hooks as they are local. You should be able to trust them.
     _parse_local_lists;
   fi
-
-  # Handle existing Scripts in hooks folder. Clean it if necessary...
-  if [ "$hooks_use_local_scripts" != "true" ]; then
-    # cleanup the direcctory
-    _debug_log "Local Scripts are set to false, cleaning up folder : $hooks_local_dir_tosave"
-    rm -f ./"${hooks_local_dir_tosave}"/* ./"${hooks_local_dir_tosave}"/.* ./"${hooks_local_dir_tosave}"/*.* \
-    || _debug_log "Cleaning up ${hooks_local_dir_tosave} failed"
-  fi
-
-
-  #--------------------------------------------------------------------------------
-  #                             Get Hooks and Verify them.
-  #--------------------------------------------------------------------------------
-
-
-  # Get Hooks Executables
-  local item
-  _debug_log "Base URL is set to ${hooks_base_url}"
-
-  # Get the scripts
-  for item in "${hooks_files[@]}"; do
-    _debug_log "Geting ${item}"
-    _get_remote_file "${dir}/${hooks_local_dir_tosave}/${item}" "${hooks_base_url}/${item}"
-  done
-
-  # Verification.
-  #---------------------------------------------------------------------------------
-  # Get Checksums and Signature file
-  _get_remote_file "${dir}/${hooks_checksum_file}" "${hooks_base_url}/${hooks_checksum_file}"
-  _get_remote_file "${dir}/${hooks_checksum_file}.asc" "${hooks_base_url}/${hooks_checksum_file}.asc"
-  # Verify SHA Sums
-  sha1sum -c
-  _verify_gpg_signature "${dir}/${hooks_checksum_file}.asc"
-
-
-
-
-
 
   _line_fill >> "$log_file"
 
@@ -2110,14 +2029,6 @@ function main()
           -e | --api-endpoint )   set_default;
                                   readonly bool_custom_api_node="true";
                                   shift; readonly custom_api_node=${1};
-                                  ;;
-      --pre  | --enable-pre )     set_default;
-                                  bool_enable_pre_scripts="true";
-                                  _log_and_show "${_info} custom scripts will be run before running any tasks."
-                                  ;;
-      --post | --enable-post )    set_default;
-                                  bool_enable_post_scripts="true";
-                                  _log_and_show "${_info} custom scripts will be run after running all the tasks."
                                   ;;
     -g  | --no-version-checks )   bool_check_version="false";;
           -S |  --no-stats )      set_default;

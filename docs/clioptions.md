@@ -145,20 +145,6 @@ Default behavior is to clean apt cache and delete downloaded DEB packages.
 !!! bug "Python packages"
     Python package installation does not honor this flag.
 
-## Enable pre & post task hooks
-
-!!! snippet "Usage"
-    For pre task hooks
-    ```
-    ./after-effects --enable-pre
-    ```
-    For post task hooks
-    ```
-    ./after-effects --enable-post
-    ```
-
-There is an option to execute set of scripts defined in configuration files, before and after all the tasks are complete.
-They are disabled by default and need to be enabled via `enable-pre` and `--enable-post` options. They can be used independently of each other. See Tasks section for more details on pre-post hooks.
 
 ## Prefer Local Flags & configuration ang ignore Remote configs
 
