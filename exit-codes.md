@@ -30,4 +30,5 @@
 | 34 | Failed to get all the list files mentioned in remote config. |
 | 35 | Not a valid config file type |
 | 36 | file defined does not exist/not accessible |
+| 37 | Configuration error. Expects Boolean but found string or integer. |
 | 255 | Test Exit code |

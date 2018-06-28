@@ -33,7 +33,7 @@ readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 readonly log_file="$dir"/logs/after-effects.log
 mkdir -p "$dir"/logs
 readonly REL_NAME="5.0 Beta"
-readonly REL_NUM=45
+readonly REL_NUM=50
 
 function _init_printf_variables()
 {
@@ -181,7 +181,7 @@ function _init_script_variables()
   bool_ignore_api_error="false"
 
   # Define API endpoint for version and config
-  readonly default_api_endpoint_url=https://ae.prasadt.com/api/
+  readonly default_api_endpoint_url="https://new-badges--ubuntu-post-install.netlify.com/api"
 
   # Achtung!!
   # ========================================================================================= #
@@ -685,9 +685,9 @@ function _set_custom_api_nodes ()
   fi
 
   # Version, Config ang GPG signature URLS
-  readonly api_version_url="$defaul_endpont_url/version?name=${remote_config_name}.yml"
-  readonly api_config_url="$api_endpoint/config?name=${remote_config_name}.yml"
-  readonly api_script_gpg_sig_url="$default_api_endpoint_url/gpg/after-effects?version=$VERSION_NUMBER"
+  readonly api_version_url="${default_endpont_url}/version.yml"
+  readonly api_config_url="${api_endpoint}/config.yml?name=${remote_config_name}"
+  readonly api_script_gpg_sig_url="${default_api_endpoint_url}/gpg/after-effects?version=$VERSION_NUMBER"
 }
 
 
@@ -732,7 +732,7 @@ function parse_yaml()
 
 function _check_file_exists_not_empty()
 {
-  # Function to check if a file ixist and is not empty or is a block device.
+  # Function to check if a file exists and is not empty or is a block device.
   # Accepts one argument.
   # If file not found exits with code 36
   # If file is empty exits with code 37
@@ -743,8 +743,6 @@ function _check_file_exists_not_empty()
   if [ "$#" -ne 1 ]; then
     _log_and_exit "${_error} Not enough arguments for file checks." "19"
   fi
-
-  if
 }
 
 
@@ -792,7 +790,7 @@ function _version_checks ()
         _log_and_show "${_cfg} Using Remote Config file."
         _debug_log "Deleting old YAMLS"
         rm -f /tmp/api-version.yml || _debug_log "Deleting old version YAML failed."
-        readonly version_yaml_file="/tmp/api-version-resp.yml"
+        readonly version_yaml_file="/tmp/api-version.yml"
         # Get response/file
         _get_remote_file "$version_yaml_file" "$api_version_url"
       else
@@ -804,13 +802,14 @@ function _version_checks ()
       _debug_log "Parsing Version Config File "
       eval "$(parse_yaml "$version_yaml_file")"
 
-      local readonly api_rel_num="${version__number[0]}"
+      # Assign them to local variables as sometimes bash if does not handle array elements very well.
+      local api_rel_num="${version__number[0]}"
 
-      # Assign Stat Variables and endpoints
-      api_report_endpoint="{stats__node[0]}"
-      api_report_usage="{stats__report[0]}"
+      # Assign Statistics reporting flag and endpoint to Global variables.
+      readonly api_report_endpoint="{stats__node[0]}"
+      readonly api_report_usage="{stats__report[0]}"
 
-      # Debug
+      # Debug Info
       _debug_log "Version from API: ${api_rel_num}"
       _debug_log "Stats reporting is : ${api_report_usage}"
       _debug_log "Reporting endpoint is: ${api_report_endpoint}"
@@ -819,7 +818,8 @@ function _version_checks ()
       if [[ $api_rel_num -gt $REL_NUM ]]; then
         set_yellow;
         _log_and_show "${_version} A newer release is available. Please download latest release and try again."
-        _log_and_show "${_version} You are running version $REL_NUM. Latest available version is $api_rel_num."
+        _log_and_show "${_version} You are running version ${REL_NAME}-${REL_NUM}."
+        _log_and_show "${_version} Latest available version is ${version__name[0]}-${api_rel_num}."
         _log_and_exit "${_info} You can disable version checks by passing --no-version-checks" "24"
         set_default;
       elif [[ $api_rel_num -eq $REL_NUM ]]; then
@@ -827,7 +827,8 @@ function _version_checks ()
       elif [[ $api_rel_num -lt $REL_NUM ]]; then
         set_blue;
         _log_and_show "${_info} Hey Time traveller! You seem to be running a development version of script."
-        _log_and_show "${_info} You are running version $REL_NUM. Latest stable version is $api_rel_num."
+        _log_and_show "${_info} You are running version ${REL_NAME}-${REL_NUM}."
+        _log_and_show "${_info} Latest stable version is ${version__name[0]}-${api_rel_num}."
         set_default;
       fi
 
@@ -839,33 +840,63 @@ function _version_checks ()
 
 }
 
+
 function _set_remote_config()
 {
-  local api_prefer_local_config
-  # YAML Files
+
   # Report usage flag
-  set_blue;
-  if [ "$bool_report_stats" == "true" ]; then
-    api_report_usage="${config__stats__report[0]}"
+  if [ "$bool_report_stats" != "false" ]; then
+    # If --no-stats is not used, bool_report_stats is not set. Lets set its value
+    # from config.
+    set_blue;
     if [ "$api_report_usage" == "false" ]; then
-      bool_report_stats=false;
+      # Config file has disabled reporting set bool_report_stats to false.
+      # Use readonly to prevent being overwritten.
+      readonly bool_report_stats=false;
       _log_and_show "${_cfg} Usage reporting is disabled by server side flag."
+    elif [ "$api_report_usage" == "false" ]; then
+      # Config gile has set report stats to true. enable it.
+      # Display endpoint for User info.
+      # Use readonly to prevent being overwritten.
+      readonly bool_report_stats="true";
+      _log_and_show "${_cfg} Usage reporting is enabled."
+      _log_and_show "${_cfg} Reporting endpoint: ${api_report_endpoint}"
     else
-      _log_and_show "${_cfg} Usage reporting is defined by user flag."
+      # If value is neither true or false, there is error in version config, exit the script.
+      _log_and_exit "${_cfg} Configuraion error. Expects boolean for stats.report key." "37"
     fi
+    set_default;
+  else
+    # --no-stats option is used while running, which sets bool_report_stats to false
+    _log_and_show "${_info} Usage reporting is disabled by User."
   fi
 
-  # Stats node
-  api_report_endpoint="${config__stats__node[0]}"
-  _log_and_show "${_cfg} Stats Report node is: $api_report_endpoint"
 
-  # IF local flags are not preferred && prefer local flags is not set as true by remote config
-  # Use flags provided by remote
-  api_prefer_local_config="$config__others__prefer_local_flags[0]"
+  # If local flags are not preferred get and parse config YAML
+  if [ "$bool_prefer_local_flags" != "true" ]; then
+    set_blue;
+    # Get and parse the file
+    if [ "$bool_custom_config_file" != "true" ]; then
+      _log_and_show "${_cfg} Using Remote Config file."
+      _debug_log "Deleting old YAMLS"
+      rm -f /tmp/api-config.yml || _debug_log "Deleting old version YAML failed."
+      readonly config_yaml_file="/tmp/api-config.yml"
+      # Get response/file
+      _get_remote_file "$config_yaml_file" "$api_config_url"
+    else
+      _log_and_show "${_cfg} Using local config file : $custom_config_file"
+      readonly config_yaml_file="$custom_config_file"
+    fi
 
-  if [ "$bool_prefer_local_flags" != "true" ] && [ "$api_prefer_local_config" != "true" ]; then
-    # These will override local flags
+    # Parse YAML to variables
+    _debug_log "Parsing Config File "
+    eval "$(parse_yaml "$config_yaml_file")"
+
+    # We declared variables as local so assign them to global variables.
+    # These will override local flags & variables
+
     # Repo flags
+    #################################################################################
     add_docker_repo="${config__add_repos__docker[0]}"
     _log_and_show "${_cfg} Docker repository: $add_docker_repo"
 
@@ -899,30 +930,172 @@ function _set_remote_config()
     add_kubernetes_repo="${config__add_repos__kubernetes[0]}"
     _log_and_show "${_cfg} Kubernetes repository: $add_kubernetes_repo"
 
+    # Tasks Flags
+    ##################################################################################
+    ae_task_update="${config__tasks__update[0]}"
+    _log_and_show "${_cfg} Update Repos: $ae_task_update"
 
-    set_blue;
+    ae_task_upgrade="${config__tasks__upgrade[0]}"
+    _log_and_show "${_cfg} Upgrade: $ae_task_upgrade"
+
+    ae_task_repo="${config__tasks__repo[0]}"
+    _log_and_show "${_cfg} Add Repos: $ae_task_repo"
+
+    ae_task_ppa="${config__tasks__ppa[0]}"
+    _log_and_show "${_cfg} Add PPA: $ae_task_ppa"
+
+    ae_task_apt="${config__tasks__apt[0]}"
+    _log_and_show "${_cfg} Install APT packages: $ae_task_apt"
+
+    ae_task_apt_external="${config__tasks__apt_external[0]}"
+    _log_and_show "${_cfg} APT Packages by external repos: $ae_task_apt_external"
+
+    ae_task_debs="${config__tasks__debs[0]}"
+    _log_and_show "${_cfg} Install exernal DEB packages: $ae_task_debs"
+
+    ae_task_purge="${config__tasks__purge[0]}"
+    _log_and_show "${_cfg} Purge not required packages: $ae_task_purge"
+
+    ae_task_pip2="${config__tasks__pip2[0]}"
+    _log_and_show "${_cfg} Install Python 2 Modules: $ae_task_pip2"
+
+    ae_task_pip3="${config__tasks__pip3[0]}"
+    _log_and_show "${_cfg} Install Python 3 Modules: $ae_task_pip3"
+
+    # Other Script Flags
+    #################################################################################
     # Purge Packages
-    bool_purge_not_required_pkgs="${config__others__purge_enabled[0]}"
+    bool_purge_not_required_pkgs="${config__flags__purge_enabled[0]}"
     _log_and_show "${_cfg} Purge Packages: $bool_purge_not_required_pkgs"
 
     # Keep Debs
-    bool_preserve_debs="${config__others__keep_debs[0]}"
+    bool_preserve_debs="${config__flags__preserve_debs[0]}"
     _log_and_show "${_cfg} Keep Debs: $bool_preserve_debs"
 
     # Enable Pre & Post Hooks
-    bool_enable_pre_scripts="${config__others__enable_pre[0]}"
-    bool_enable_post_scripts="${config__others__enable_post[0]}"
+    bool_enable_pre_scripts="${config__flags__enable_pre[0]}"
+    bool_enable_post_scripts="${config__flags__enable_post[0]}"
     _log_and_show "${_cfg} Pre Hooks: $bool_enable_pre_scripts"
     _log_and_show "${_cfg} Post Hooks: $bool_enable_post_scripts"
 
     # Yes
-    bool_say_yes_to_all="${config__others__auto_yes[0]}"
-    _log_and_show "${_cfg} Auto Yes: $bool_enable_post_scripts"
+    bool_say_yes_to_all="${config__flag__auto_yes[0]}"
+    _log_and_show "${_cfg} Auto Yes: $bool_say_yes_to_all"
 
+    # We dont need blue man now. thanks buddy :)
     set_default;
-    else
-      _log_and_show "${_cfg} Local Flags and Configs are preferred."
-    fi
+
+    #################################################################################
+    #                              Parse Arrays
+    #################################################################################
+    # Config file YAML has list of apt files and other lists as well.
+    # We need to parse apt packages, ppa's, deb packages, python modules listed in yaml
+    # to bash arrays.
+
+    #--------------------------------------------------------------------------------
+    #                               APT Lists
+    #--------------------------------------------------------------------------------
+    # There are Seven lists under key config.install.apt.[mentioned from 1-7]
+    # 1. administration : Contains Administrative packages
+    # 2. security       : contains Security related tools and packages
+    # 3. productivity   : Office tools, writing tools, lates, document tools and other
+    #                     productivity tools, Email clients, browsers, IM clients etc.
+    #                   : Example : LateX, TeXStudio, Libre office, pandoc empathy, thunderbird
+    # 4. Multimedia     : Multimedia tools like media players, audio converters and playes etc.
+    # 5. development    : IDEs [Spyder, Jetbeans etc], languagues [go, python, ruby, rust, java etc],
+    #                   : Containers [docker lxc rkt etc], Python libraries, compilers [gcc, clang]
+    #                   : SDKs [AWS SDK, Coogle Cloud SDK, open-jdk, Tensor Flow], headers and libraries[ocl-icd-dev],
+    #                   : Anything related to development and *-dev or *-devl packages.
+    # 6. other          : Everything which doesnot fit in the above categories.
+    #                   : Themes, Tools, Utilities like htop etc.
+    # 7. External       : Any packages which are provided by ppas, or repositories not present in
+    #                   : base *buntu distribution. Theres a possibility that the repository might not
+    #                   : be added or may be unavailable or offline. So Keeping the list seperate from
+    #                   : others packges minimizes errors if there are any.
+    # This classification is only for ease of use and need not be strictly followed. You can put
+    # vlc package in 'security', it will still install fine. This classification helps
+    # while writing configs and editing them. Its advised to follow it if your configs
+    # tend to get to couple of hundreds of lines. Also YAML file should be a valid YAML.
+
+    #--------------------------------------------------------------------------------
+    #                             Special list - Purge list
+    #--------------------------------------------------------------------------------
+    # There is a special package list under key, config.purge, which contains list of apt packages to be
+    # purges from the system if present.
+
+    # Lets get em, shall we?
+
+    # Copy package list
+    readonly purge_packages=("${config__purge[@]}")
+    readonly administration_packages=("${config__install__apt__administration[@]}")
+    readonly secutity_packages=("${config__install__apt__security[@]}")
+    readonly productivity_packages=("${config__install__apt__productivity[@]}")
+    readonly multimedia_packages=("${config__install__apt__multimedia[@]}")
+    readonly development_packages=("${config__install__apt__development[@]}")
+    readonly other_packages=("${config__install__apt__others[@]}")
+    readonly external_packages=("${config__install__apt__external[@]}")
+
+    #--------------------------------------------------------------------------------
+    #                             PPA Lists
+    #--------------------------------------------------------------------------------
+    # Config file contains list of PPAs to be added under key
+    # config.ppa
+    readonly ppas_to_add=("${config__ppa[@]}")
+
+    #--------------------------------------------------------------------------------
+    #                             Debian packages
+    #--------------------------------------------------------------------------------
+    # Config file contains list of PPAs to be added under key
+    # config.install.debian_packages
+    # The configuration is not simple URL its csv. <URL to Deb file>,<Name of the Package>
+    # This is for compatiblity reasons
+    readonly debian_packages=("${config__install__debian_packages[@]}")
+
+    #--------------------------------------------------------------------------------
+    #                             Python Modules
+    #--------------------------------------------------------------------------------
+    # There are two keys under config.install.python(2/3) which contain Python 2 and Python 3
+    # Modules respectively. Please donot mix python 2 Modules with Python 3.
+
+    readonly pip2_packages=("${config__install__python2[@]}")
+    readonly pip3_packages=("${config__install__python3[@]}")
+
+    #--------------------------------------------------------------------------------
+    #                             Pre - Post task Hook scripts/ commands
+    #--------------------------------------------------------------------------------
+    # There are two keys under config.hooks.pre, config.hooks.post which contain
+    # Pre and post install hooks scripts.
+    # There are few other keys
+    # config.hooks.dir      : Directory to store theremote scripts
+    # config.hooks.baseurl  : Base URL to all the remote scripts
+    # config.hooks.fetch    : List of script names to fetch from base url.
+    #                         Scripts are available at baseurl/<config.hooks.fetch[index]>
+    # config.hooks.sign     : GPG Key used to sign all scripts.
+    # congig.hooks.signfile : File with SHA Sums and GPG signature of all the scripts.
+    # Copy Hooks list
+    readonly hooks_local_dir_tosave="${config__hooks__dir[0]}"
+    readonly hooks_base_url="${config__hooks__baseurl[0]}"
+    readonly hooks_use_local_scripts="${config__hooks__use_local[0]}"
+    readonly hooks_files=("${config__hooks__fetch[@]}")
+    readonly hooks_pre=("${config__hooks__post[@]}")
+    readonly hooks_post=("${config__hooks__pre[@]}")
+    readonly hooks_signature="{config__hooks__sign[0]}"
+    readonly hooks_signature_file="${config__hooks__sign_file}"
+
+
+  # If --local or --list option is used then we dont need to fetch Configs
+  # We need to just parse the .list files in data.Flags will be local and can be alterd via options or editing the
+  # Script itself.
+  else
+    set_blue;
+    _log_and_show "${_cfg} Local Flags and Configs are preferred."
+    _log_and_show "${_cfg} Parsing local lists..."
+    # Parse local lists to appropriate variables, arrays and inject them in script.
+    # Only supports 5 APT lists, Purge, DEB, PPA. PIP2, PIP3 lists
+    # Hooks can only be scripts and not commands themselves.
+    # Signature checks are skipped for hooks as they are local. You should be able to trust them.
+    _parse_local_lists;
+  fi
 
   _line_fill >> "$log_file"
 
@@ -1992,6 +2165,7 @@ function main()
           -V | --version-file )   shift; readonly custom_version_file="${1}"; readonly bool_custom_version_file="true";;
           -L | --prefer-local )   readonly bool_prefer_local_flags="true";;
           -n | --name)            shift readonly bool_custom_remote_config_name="true"; readonly custom_remote_config_name="${1}";;
+          --lists)                bool_use_lists="true";;
            * )                    set_yellow;
                                   _log_and_exit "${_error} Invalid option: $1" "22"
                                   set_default

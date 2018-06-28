@@ -1,9 +1,28 @@
 # Install Config
-version: 1
+version: 2
 name: Polaris
 author: Prasad T
 # Configuraion
 config:
+    # Enabled Tasks
+    tasks:
+        update: true
+        upgrade: true
+        # Add Repos
+        # individual repos flags are mentioned under config.add_repo key
+        repo: true
+        # Add PPAs
+        ppa: true
+        # APT Packages
+        apt: true
+        # Whether to install Packages from external repos and ppas
+        apt_external: true
+        # Whether to purge packages mentioned in config.purge key
+        purge: false
+        debs: true
+        pip2: true
+        pip3: true
+
     # Repository Flags
     add_repos:
         winehq: true
@@ -17,15 +36,10 @@ config:
         insync: true
         google: true
         kubernetes: false
-    # Fetch Remote Data Files,
-    # data_direcory must not be set to `data`, otherwise
-    # local files will be overwriten.
-    data_directory: polaris
-
+    # Flags
     flags:
-        prefer_local_flags: false
         purge_enabled: true
-        keep_debs: true
+        preserve_debs: true
         auto_yes: false
         # Simulate flag will never be overridden by remote config.
         # Hooks
@@ -37,13 +51,14 @@ config:
         - gnome-sudoku
         - aisleriot
         - gnome-mahjongg
-    # Install APT PAckages, Add PPAs & PIP
+    # PPA List
+    ppa:
+        - ppa:dawidd0811/neofetch
+        - ppa:yubico/stable
+        - ppa:teejee2008/ppa
+    # Install components
+    # APT Packages, Python Modules, Debian packages
     install:
-        # PPA List
-        ppa:
-            - ppa:dawidd0811/neofetch
-            - ppa:yubico/stable
-            - ppa:teejee2008/ppa
         # Python 2 Modules
         python2:
             - docker-compose
@@ -55,9 +70,7 @@ config:
         debian_packages:
             - https://atom-installer.github.com/v1.23.2/atom-amd64.deb,Atom-Editor.deb
             - https://download.teamviewer.com/download/teamviewer_i386.deb,Teamviewer.deb
-        # Whether to install Packages in list external
-        apt_external: true
-        apt_packages:
+        apt:
             # Admin related Stuff
             administration:
                 - dconf-editor
@@ -108,7 +121,7 @@ config:
                 - pavucontrol
                 - cheese
             # Tools related to development.
-            devtools:
+            development:
                 - curl
                 - spyder
                 - spyder3
@@ -131,7 +144,7 @@ config:
                 - python-pip
             # Everything Else
             # Which is conditional
-            conditional_others:
+            other:
                 - mesa-opencl-icd
                 - opencl-clhpp-headers
                 - opencl-c-headers
@@ -156,23 +169,29 @@ config:
         hooks:
             # Directory in which scripts are saved
             dir: "scripts"
-            # Whether to use local Scripts. If Dir mentioned above
-            # does not exists then the script will fail.
-            # If false, the Dir is cleaned before downloading files.
+            # Whether to keep local scripts
+            # If false, the config.hooks.dir is cleaned before downloading files.
             # Else only the scripts specified will be downloded.
             # If a file already exists, its overwrien.
             use_local: false
             # URL to retreive scripts from via curl or wget.
-            baseurl:
-            files:
-                - scripts/test-pre.sh
-                - scripts/test-pre-2.sh
-                - scripts/test-post.sh
-                - scripts/test-post-2.sh
+            baseurl: https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/new-badges/data/scripts
+            fetch:
+                - test-pre.sh
+                - test-pre-2.sh
+                - test-post.sh
+                - test-post-2.sh
             # Sign all the files with GPG
             # Checksum all the remote hooks scripts and
             # Sign it using GPG. So that only signed hooks are executed.
             # After download, the signature is verified. If mismatch is found,
             # Hooks are not run.
             signature:
-                - 07C2014CA5B137D8
+                - BA19B5162553B1BF
+            # Enabled Hooks
+            pre:
+                - test-pre.sh
+                - test-pre2.sh
+            post:
+                - test-post.sh
+                - test-post2.sh
