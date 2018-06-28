@@ -201,14 +201,6 @@ function _init_script_variables()
   # Set this to true if you dont want to pass -y every time
   bool_say_yes_to_all="false";
 
-  # Configure Partner Repositoris
-  # Some Releases like linux mint have their own way of enabling partner Repositoris,
-  # Disable adding partner Repositoris when using Ubuntu Derivatives like Linux Mint.
-  # Default is true
-  # _fix_ubuntu_derivatives will take care of this variable and set it to false if
-  # derivative of ubuntu is found.
-  bool_config_partner_repo="true"
-
   # Keep Downloaded DEB packages
   bool_preserve_debs="false"
 
@@ -267,11 +259,12 @@ function _init_script_variables()
   # Achtung!
   # Do not change any of the variables below this if you dont know what they do.
   # They are NOT Server Side flags & are essential for correct working of the script.
-  # Current directory check
-  bool_pwd_check_passed="false"
 
   # Check Debian Flags
   bool_is_debian="false"
+
+  # Check Signature
+  readonly bool_verify_gpg_signatures="true"
 }
 
 
@@ -330,7 +323,7 @@ function _script_launch_log()
 {
   _debug_log "Executing Script"
   _line_fill >> "$log_file"
-  printf "Running %s on %s as %s\n" "$SCRIPT" "$DATE" "$USER" >> "$log_file"
+  printf "Running %s on %s\n" "$SCRIPT" "$DATE" >> "$log_file"
 }
 
 function _goodbye_msg ()
@@ -378,28 +371,6 @@ function delete_log_file()
 }
 
 
-function _check_if_in_pwd()
-{
-  # Check if script is in current directory
-  local file
-  file="$(pwd)"
-  file+="/$SCRIPT"
-
-  if [ -x "$file" ]; then
-    _debug_log "Script is in current directory."
-    _debug_log "Script is $file"
-    bool_pwd_check_passed="true"
-  else
-    _debug_log "Script is Not present in current directory."
-    _debug_log "Script is $file"
-    bool_pwd_check_passed="false"
-    _log_and_show "${_warn} You are not running this script from your current directory."
-    _log_and_show "${_notice} For best results run this script from its base directory."
-    _log_and_show "${_notice} Your current directory is: $(pwd)"
-  fi
-
-}
-
 
 function  _add_timestamp_to_logs()
 {
@@ -410,6 +381,14 @@ function  _add_timestamp_to_logs()
   # Usage command | _add_timestamp_to_logs "$1"
   while IFS= read -r line; do printf "[$(date)] ${1} %s\n" "$line" &>> "$log_file"; done
 
+}
+
+
+function _print_arrays_to_logfile_as_list()
+{
+  # Prints arrays passed to the logfile as if it was cat
+  # Arguments : Arrays
+  true
 }
 
 
@@ -438,37 +417,6 @@ function report_stats()
 }
 
 
-function run_post_hooks()
-{
-  # Run Post Scripts
-  local line
-  if [[ "$bool_enable_post_scripts" == "true" ]]; then
-    _log_and_show "${_info} Post Scripts in post-script.list will be run"
-     # Check pwd flag since script paths are relative.
-    if [[ "$bool_pwd_check_passed" == "true" ]]; then
-      _debug_log "PWD checks have passed, Proceed with hooks"
-      # Function Reads the file ./data/post-script.list and purges the ppa one by one
-      while IFS= read -r line
-        do
-            _log_and_show "${_script} Script : $line..."
-            _debug_log "Running: $line"
-            if [ "$line" == "" ]; then
-              _log_and_show "${_warn} Found and empty line in post-script.list. Moving on to next line"
-              continue
-            fi
-            if bash "$line"  2>&1 | _add_timestamp_to_logs "${_hooks_logs}"  ; then
-              _log_and_show "${_script} $line ran successfully."
-            else
-              _log_and_show "${_oh_no} Some Error occured while running $line."
-            fi
-        done < "$post_script_list"
-    else
-      _log_and_show "${_error} $SCRIPT is not in your current directory. Hooks have been disabled."
-      _log_and_exit "Not in current directory" "27"
-    fi
-  fi
-}
-
 
 function _script_exit_log()
 {
@@ -487,41 +435,6 @@ function _script_exit_log()
 
 }
 
-
-function run_pre_scripts()
-{
-  # Run Pre Scripts
-  local line
-  if [[ "$bool_enable_pre_scripts" == "true" ]]; then
-    _log_and_show "${_info} Shell Scripts in pre-script.list will be run"
-
-    # Check pwd flag since script paths are relative.
-    if [[ "$bool_pwd_check_passed" == "true" ]]; then
-      _debug_log "PWD checks have passed, Proceed with hooks"
-
-      # Function Reads the file ./data/pre-script.list and purges the ppa one by one
-      while IFS= read -r line
-        do
-          _log_and_show "${_script} Script : $line..."
-          if [ "$line" == "" ]; then
-            _log_and_show "${_warn} Found an empty line in pre-script.list Moving on to next line"
-            continue
-          fi
-          if bash "$line"  2>&1 | _add_timestamp_to_logs "${_hooks_logs}"  ; then
-            _log_and_show "${_script} $line ran successfully."
-          else
-            _log_and_show "${_oh_no} Some Error occured while running $line."
-          fi
-        done < "$pre_script_list"
-
-      else
-        _log_and_show "${_error} $SCRIPT is not in your current directory. Hooks have been disabled."
-        _log_and_exit "Not in current directory" "27"
-      fi
-  fi
-  _line_fill >> "$log_file"
-
-}
 
 function _eol_message()
 {
@@ -563,34 +476,29 @@ function _fix_ubuntu_derivatives()
                                             _log_and_show "${_notice} Setting additional repositoris to follow Ubuntu 14.04."
                                             code_name="trusty"
                                             _log_and_show "${_linuxmint} Changed codename to $code_name"
-                                            bool_config_partner_repo="false"
                                             ;;
       sarah | serena | sonya | sylvia )     _log_and_show "${_linuxmint} Release is Linux mint 18.X."
                                             _log_and_show "${_notice} Setting additional repositoris to follow Ubuntu 16.04."
                                             code_name="xenial"
                                             _log_and_show "${_linuxmint} Changed codename to $code_name"
-                                            bool_config_partner_repo="false"
                                             ;;
       tara )                                _log_and_show "${_linuxmint} Release is Linux mint 19.X."
                                             _log_and_show "${_notice} Setting additional repositoris to follow Ubuntu 18.04."
                                             code_name="bionic"
                                             _log_and_show "${_linuxmint} Changed codename to $code_name"
-                                            bool_config_partner_repo="false"
                                             ;;
       loki | juno )                         _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 16.04 Xenial."
                                             _log_and_show "${_notice} External repositories will use Ubuntu 16.04."
                                             code_name="xenial"
                                             _log_and_show "${_elementary} Changed codename to $code_name"
-                                            bool_config_partner_repo="false"
                                             ;;
       freya )                               _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 14.04 Trusty."
                                             _log_and_show "${_notice} External repositories will use Ubuntu 14.04."
                                             code_name="trusty"
                                             _log_and_show "${_elementary} Changed codename to $code_name"
-                                            bool_config_partner_repo="false"
                                             ;;
       xenial | trusty | artful )            _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
-                                            set_default;
+                                            readonly bool_config_partner_repo="true"
                                             _log_and_show "${_info} Keeping the codename as: $code_name."
                                             ;;
       zesty )                               _eol_message "$code_name" "January 13th, 2018"
@@ -601,7 +509,8 @@ function _fix_ubuntu_derivatives()
                                             _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
                                             _log_and_show "${_notice} Please use --fix flag if your choice of repos are not available."
                                             ;;
-      cosmic  )                             set_magenta;
+      cosmic  )                             readonly bool_config_partner_repo="true"
+                                            set_magenta;
                                             _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
                                             set_yellow;
                                             _log_and_show "${_pre_release} This is Ubuntu 18.10 Cosmic Canimal"
@@ -611,7 +520,7 @@ function _fix_ubuntu_derivatives()
                                             ;;
       stretch | jessie )                    bool_is_debian="true";
                                             _log_and_show "${_notice} This is Debian. PPAs are disabled."
-                                            bool_config_partner_repo="false"
+
                                             ;;
       *)                                    _log_and_show "${_error} Unknown Distribution/Release."
                                             _log_and_show "${_notice} This Script is not designed to run on this ($code_name) distro/release."
@@ -619,9 +528,6 @@ function _fix_ubuntu_derivatives()
                                             exit 16;
                                             ;;
   esac
-  # Assign code_name to code_name_fix_latest used in _fix_repo_not_available
-  _debug_log "Assigning Code name to variable code_name_fix_latest as $code_name."
-  code_name_fix_latest="$code_name"
   set_default;
 
 }
@@ -776,6 +682,24 @@ function _get_remote_file()
 
 }
 
+
+function _verify_gpg_signature()
+{
+  # Verifies the file with its detached GPG signature.
+  # Arguments 1
+  # Arguments 2:
+  # ARG - 1   : Signature File / clearsigned file
+  # Assumes that you already have public key in your keyring.
+  # Assumes original file is present at same localtion,
+  # with same name but without .sig or .gpg or .asc extension.
+  _check_dependencies=(gpg)
+  _log_and_show "${_info} Verifying Signature of ClearSigned file.."
+  if gpg --verify "${1}" ; then
+    _log_and_show "Signature verified!"
+  else
+    _log_and_exit "${_error} Signature checks failed. File is either corrupt or has been tampered with." "50"
+  fi
+}
 
 
 function _version_checks ()
@@ -1097,6 +1021,44 @@ function _set_remote_config()
     _parse_local_lists;
   fi
 
+  # Handle existing Scripts in hooks folder. Clean it if necessary...
+  if [ "$hooks_use_local_scripts" != "true" ]; then
+    # cleanup the direcctory
+    _debug_log "Local Scripts are set to false, cleaning up folder : $hooks_local_dir_tosave"
+    rm -f ./"${hooks_local_dir_tosave}"/* ./"${hooks_local_dir_tosave}"/.* ./"${hooks_local_dir_tosave}"/*.* \
+    || _debug_log "Cleaning up ${hooks_local_dir_tosave} failed"
+  fi
+
+
+  #--------------------------------------------------------------------------------
+  #                             Get Hooks and Verify them.
+  #--------------------------------------------------------------------------------
+
+
+  # Get Hooks Executables
+  local item
+  _debug_log "Base URL is set to ${hooks_base_url}"
+
+  # Get the scripts
+  for item in "${hooks_files[@]}"; do
+    _debug_log "Geting ${item}"
+    _get_remote_file "${dir}/${hooks_local_dir_tosave}/${item}" "${hooks_base_url}/${item}"
+  done
+
+  # Verification.
+  #---------------------------------------------------------------------------------
+  # Get Checksums and Signature file
+  _get_remote_file "${dir}/${hooks_checksum_file}" "${hooks_base_url}/${hooks_checksum_file}"
+  _get_remote_file "${dir}/${hooks_checksum_file}.asc" "${hooks_base_url}/${hooks_checksum_file}.asc"
+  # Verify SHA Sums
+  sha1sum -c
+  _verify_gpg_signature "${dir}/${hooks_checksum_file}.asc"
+
+
+
+
+
+
   _line_fill >> "$log_file"
 
 }
@@ -1155,6 +1117,7 @@ function _clean_apt_packages()
 
 }
 
+
 function _install_packages()
 {
   # Install packages mentioned in the arguments.
@@ -1175,6 +1138,7 @@ function _install_packages()
   _clean_apt_packages
 
 }
+
 
 function _install_pre_requisites()
 {
@@ -1201,7 +1165,7 @@ function _fix_repo_not_available()
       _debug_log "Sometimes repositories are not available for latest ubuntu release.\nUsing last known stable release: $code_name_latest_release."
       printf "${YELLOW}${_new_release} Using repositories from an older release: $codename_previous_release is being used.\n"
       printf "${YELLOW}${_new_release} You need to modify this in Software and updates when it becomes available for ${code_name_latest_release}.\n${NC}"
-      code_name_fix_latest="$codename_previous_release"
+      code_name="$codename_previous_release"
     else
       _debug_log "This Release/Distro does not support this flag. --fix will be ignored."
     fi
@@ -1230,11 +1194,10 @@ function _fix_repo_not_available_upcoming_release()
         if [ "$bool_fix_repo_not_available_for_latest" == "true" ]; then
           # We need to use repositories for previous stable release.
           _log_and_show "${_pre_release} Both falgs for --pre-release and -fix are set. Using codename: $codename_previous_release"
-          code_name_fix_latest="$codename_previous_release"
+          code_name="$codename_previous_release"
         else
           # No need to apply fix for latest release, We can use latest stable release repositories
           _log_and_show "${_pre_release} Using repositories for current stable release: $code_name_latest_release"
-          code_name_fix_latest="$code_name_latest_release"
           code_name="$code_name_latest_release"
         fi
     else
@@ -1255,7 +1218,7 @@ function add_ppas()
   local line;
   # Function Reads the file ./data/ppa.list and adds the ppa one by one.
   # Install dependencies required
-  if [ "$bool_is_debian" == "false" ]; then
+  if [ "$bool_is_debian" != "true" ]; then
     _install_pre_requisites;
 
       while IFS= read -r line
@@ -1294,7 +1257,6 @@ function add_repositories()
   # Google Chrome, Spotify, Google Cloud SDK, GCSFUSE(Part of google cloud),
   # Skype, Docker, Skype, Microsoft Visual Studio Code, Google Earth, Insync client, WineHQ etc
   # WARNING: Some repositories might not support latest version of Ubuntu.
-  # ${code_name_fix_latest} is used in known cases where a repository might be unavailable for latest Ubuntu Release
 
   local CLOUD_SDK_REPO
   local GCSFUSE_REPO
@@ -1342,7 +1304,7 @@ function add_repositories()
     _log_and_show "${_adding} Insync repository"
     _debug_log "Adding Insync keys"
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ACCAF35C  2>&1 |_add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Insync Repository failed"
-    echo "deb http://apt.insynchq.com/${OS_DISTRIBUTION} $code_name_fix_latest non-free contrib #Insync Client" > ${SOURCES_FILE_DIR}/insync.list || _log_and_show "Adding Insync Repository failed"
+    echo "deb http://apt.insynchq.com/${OS_DISTRIBUTION} $code_name non-free contrib #Insync Client" > ${SOURCES_FILE_DIR}/insync.list || _log_and_show "Adding Insync Repository failed"
   elif [ "$add_insync_repo" == "true" ] && [ "$bool_is_debian" == "true" ]; then
     set_yellow;
     _log_and_show "${_whoops} Unfortunately InSync repositoris are not supported on Debian."
@@ -1356,8 +1318,8 @@ function add_repositories()
 
   # Google Cloud SDK and GCS-FUSE
   if [ "$add_googlecloud_repo" == "true" ]; then
-    CLOUD_SDK_REPO="cloud-sdk-$code_name_fix_latest"
-    GCSFUSE_REPO="gcsfuse-$code_name_fix_latest"
+    CLOUD_SDK_REPO="cloud-sdk-$_install_pre_requisites_for_repo_tasks"
+    GCSFUSE_REPO="gcsfuse-$_install_pre_requisites_for_repo_tasks"
     _log_and_show "${_google_cloud} Repositories"
     _debug_log "Adding Google-Cloud repository sigining key"
     wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg >> "$log_file"
@@ -1382,7 +1344,7 @@ function add_repositories()
     _debug_log "Adding WineHQ key"
     apt-key add wine-hq-sigining-key.key 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding WineHQ keys failed"
     _debug_log "Adding WineHQ repository"
-    echo "deb https://dl.winehq.org/wine-builds/${OS_DISTRIBUTION}/ $code_name_fix_latest main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list || _log_and_show "Adding WineHQ repository failed"
+    echo "deb https://dl.winehq.org/wine-builds/${OS_DISTRIBUTION}/ $_install_pre_requisites_for_repo_tasks main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list || _log_and_show "Adding WineHQ repository failed"
   else
     _log_and_show "${_adding} WineHQ repository is set to false. Skipping."
   fi
@@ -1396,7 +1358,7 @@ function add_repositories()
     _debug_log "Adding Docker repository key"
     apt-key add docker-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Docker-CE keys failed"
     _debug_log "${_added} Docker-CE"
-    echo "deb [arch=$ARCH] https://download.docker.com/linux/${OS_DISTRIBUTION}  $code_name_fix_latest stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list || _log_and_show "Adding Docker-CE repository failed"
+    echo "deb [arch=$ARCH] https://download.docker.com/linux/${OS_DISTRIBUTION}  $_install_pre_requisites_for_repo_tasks stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list || _log_and_show "Adding Docker-CE repository failed"
   else
     _debug_log "Adding Docekr-CE repository is set to false. Skipping."
   fi
@@ -1468,14 +1430,17 @@ function add_repositories()
 
 
   # Enable Canonical Partner repos
+  # Some Releases like linux mint have their own way of enabling partner Repositoris,
+  # Disable adding partner Repositoris when using Ubuntu Derivatives like Linux Mint.
+  # Default is true
+  # _fix_ubuntu_derivatives will take care of this and bool_config_partner_repo is set to true only if
+  # Ubuntu and its flavors are used.
   if [ "$bool_config_partner_repo" != "false" ]; then
-    _debug_log "Release is Ubuntu. Enabling Canonical partner repository"
     _log_and_show "${_adding} Canonical partner repositoris"
     add-apt-repository "deb http://archive.canonical.com/ubuntu $code_name partner" >> "$log_file"
   else
     _log_and_show "${_warn} Canonical Partner repositoris may not be supported on this platform. They remain unchanged/unavailable."
   fi
-
 
   # Remove artifacts and keys
   _debug_log "Removing keys and converted files from current directory"
@@ -2049,9 +2014,7 @@ function _check_dependencies()
   local dependency_check_failed_count dep_res
   dependency_check_failed_count=0;
   _log_and_show "${_info} Checking dependencies..."
-  for dep in "${after_effects_core_dependencies[@]}"
-  do
-   :
+  for dep in "${after_effects_core_dependencies[@]}"; do
    command -v "$dep" > /dev/null
    dep_res=$?
    if [ "$dep_res" -eq 1 ]; then

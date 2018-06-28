@@ -24,7 +24,7 @@
 #              - whiptail, lsb-release, wget
 
 #
-set -e pipefail
+set -o pipefail
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 #colors for display
