@@ -10,7 +10,7 @@ branches:
   - gh-pages
 before_install:
 - chmod +x ./after-effects
-- chmod +x ./tests/*
+- chmod +x ./tests/*.sh
 jobs:
   include:
   - stage: Shellcheck

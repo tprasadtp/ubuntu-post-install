@@ -97,6 +97,7 @@ function _init_printf_variables()
     readonly   _apt_key_logs="[  APT-Key-Logs ]"
     readonly       _pip_logs="[    PIP-Logs   ]"
     readonly            _cfg="[     RCFG      ]"
+    readonly             _ci="[      C-I      ]"
     #readonly           _falg="[     Flag      ]"
 
     #colors for display
@@ -2030,11 +2031,10 @@ function _ci_cloud_and_container_checks()
     _log_and_show "${_ci} I'm running in  CI :|"
   fi
 
-
   #================================ CI =============================================
-  if [ "$CI" == "true" ]; then
+  if [ "$TRAVIS" == "true" ]; then
     AUTOPILOT="true"
-    _log_and_show "${_ci} I'm running in  CI :|"
+    _log_and_show "${_travis} Running in Travis CI :|"
   fi
 
   #============================ Docker =============================================
