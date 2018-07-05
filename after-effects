@@ -99,6 +99,7 @@ function _init_printf_variables()
     readonly            _cfg="[    R-Config   ]"
     readonly         _rtasks="[    R-Tasks    ]"
     readonly             _ci="[      C-I      ]"
+    readonly          _table="[  ---Table---  ]"
     #readonly           _falg="[     Flag      ]"
 
     #colors for display
@@ -272,8 +273,7 @@ function _init_print_basic_info()
   _log_and_show "${_info} Code Name: ${code_name}"
   _log_and_show "${_info} Architeture: ${ARCH}"
   _log_and_show "${_info} Path for sources.list.d: ${SOURCES_FILE_DIR}"
-  _log_and_show "${_version} $REL_NUM"
-  _log_and_show "${_info} Script Version: $REL_NAME"
+  _log_and_show "${_version} ${REL_NAME} - ${REL_NUM}"
 
   #disable hist chars  so that I can print "!!"" properly
   histchars=
@@ -522,7 +522,7 @@ function _fix_ubuntu_derivatives()
   # POP_OS! uses Ubuntu codenames (No need to apply fix)
   # If the release is not known this function exits the script for safety.
 
-  _log_and_show "${_derivatives} Checking for Ubuntu based distributions which use different codename"
+  _log_and_show "${_derivatives} Checking..."
   set_yellow;
   _debug_log "Variable code_name is : $code_name"
   case ${code_name} in
@@ -551,23 +551,16 @@ function _fix_ubuntu_derivatives()
                                             code_name="trusty"
                                             _log_and_show "${_elementary} Changed codename to $code_name"
                                             ;;
-      xenial | trusty | artful )            _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
-                                            readonly bool_config_partner_repo="true"
+      xenial | trusty | artful | bionic )   readonly bool_config_partner_repo="true"
                                             _log_and_show "${_info} Keeping the codename as: $code_name."
                                             ;;
       zesty )                               _eol_message "$code_name" "January 13th, 2018"
                                             ;;
       artful )                              _eol_message "$code_name" "July, 2018"
                                             ;;
-      bionic )                              set_yellow
-                                            _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
-                                            _log_and_show "${_notice} Please use --fix flag if your choice of repos are not available."
-                                            ;;
       cosmic  )                             readonly bool_config_partner_repo="true"
                                             set_magenta;
-                                            _log_and_show "${_canonical} No known derivative of Ubuntu found or the derivative uses same codename as Ubuntu."
-                                            set_yellow;
-                                            _log_and_show "${_pre_release} This is Ubuntu 18.10 Cosmic Canimal"
+                                            _log_and_show "${_pre_release} This is Ubuntu 18.10 Cosmic"
                                             _log_and_show "${_pre_release} Please use --pre-release flag if you cannot add repos yet. There's no fix for PPAs."
                                             _log_and_show "${_warn} This is a pre-release of Ubuntu Which is in early stages of development. Use with caution"
                                             _log_and_show "${_warn} Packages and PPAs might not work with this release!"
@@ -631,10 +624,10 @@ function _set_custom_api_nodes ()
   if [[ "$bool_custom_api_endpoint" == "true" ]]; then
    _log_and_show "${_info} Custom API node is set."
    readonly api_endpoint="$custom_api_endpont"
-   _log_and_show "${_api} API endpoint is : $api_endpoint"
+   _log_and_show "${_api} API endpoint is set as below.\n${_api} $api_endpoint"
   else
     readonly api_endpoint="${default_api_endpoint}"
-    _log_and_show "${_api} API endpoint is : $api_endpoint"
+    _log_and_show "${_api} API endpoint is set as below.\n${_api} $api_endpoint"
   fi
 
   # Custom Remote Config name as Query parameter name
@@ -753,10 +746,8 @@ function _version_checks ()
         # Get response/file
         _get_remote_file "$version_yaml_file" "$api_version_url"
       else
-        set_blue
         _log_and_show "${_cfg} Using local Version file : $custom_version_file"
         readonly version_yaml_file="$custom_version_file"
-        set_default;
       fi
 
       # Parse YAML to variables
@@ -782,19 +773,19 @@ function _version_checks ()
       # If release number is higher than one in the script throw error & ask to update.
       if [[ $api_rel_num -gt $REL_NUM ]]; then
         set_yellow;
-        _log_and_show "${_version} A newer release is available. Please download latest release and try again."
+        _log_and_show "${_version} A newer release is available.\n${_version} Please download latest release and try again."
         _log_and_show "${_version} You are running version ${REL_NAME} with version number ${REL_NUM}."
         echo "${version__name[0]}"
         echo "${api_rel_num}"
         _log_and_show "${_version} Latest available version is ${version__name[0]}-${api_rel_num}."
-        _log_and_exit "${_info} You can disable version checks by passing --no-version-checks" "24"
+        _log_and_exit "${_info} You can disable version checks by passing\n${_version} --no-version-checks" "24"
         set_default;
       elif [[ $api_rel_num -eq $REL_NUM ]]; then
         _log_and_show "${_version} All Good! You are running the latest version of script."
       elif [[ $api_rel_num -lt $REL_NUM ]]; then
-        set_blue;
-        _log_and_show "${_info} Hey Time traveler! You seem to be running a development version of script."
-        _log_and_show "${_info} You are running version ${REL_NAME} with version number ${REL_NUM}."
+        set_yellow;
+        _log_and_show "${_info} Hey Time traveler!\n${_version} You seem to be running a development version of script."
+        _log_and_show "${_info} You are running version ${REL_NAME} - ${REL_NUM}."
         _log_and_show "${_info} Latest stable version is ${version__name[0]}-${api_rel_num}."
         set_default;
       fi
@@ -815,7 +806,6 @@ function _set_remote_config()
   if [ "$bool_report_stats" != "false" ]; then
     # If --no-stats is not used, bool_report_stats is not set. Lets set its value
     # from config.
-    set_blue;
     if [ "$api_report_usage" == "false" ]; then
       # Config file has disabled reporting set bool_report_stats to false.
       # Use readonly to prevent being overwritten.
@@ -827,12 +817,11 @@ function _set_remote_config()
       # Use readonly to prevent being overwritten.
       readonly bool_report_stats="true";
       _log_and_show "${_cfg} Usage reporting is enabled."
-      _log_and_show "${_cfg} Reporting endpoint: ${api_report_endpoint}"
+      _log_and_show "${_cfg} Reporting endpoint is set as below\n${_api} ${api_report_endpoint}"
     else
       # If value is neither true or false, there is error in version config, exit the script.
       _log_and_exit "${_cfg} Configuration error. Expects boolean for stats.report key." "37"
     fi
-    set_default;
   else
     # --no-stats option is used while running, which sets bool_report_stats to false
     _log_and_show "${_info} Usage reporting is disabled by User."
@@ -840,7 +829,6 @@ function _set_remote_config()
 
   # If local flags are not preferred get and parse config YAML
   if [ "$bool_prefer_local_flags" != "true" ]; then
-    set_blue;
     # Get and parse the file
     if [ "$bool_custom_config_file" != "true" ]; then
       _log_and_show "${_cfg} Using Remote Config file."
@@ -865,91 +853,107 @@ function _set_remote_config()
     # We declared variables as local so assign them to global variables.
     # These will override local flags & variables
 
+    set_default;
+    _line_fill;
+    printf "${_table} %-20s | %-10s |\n" "Repository" "Enabled"
+    _line_fill;
+    set_blue;
     # Repo flags
     #################################################################################
     add_docker_repo="${config__add_repo__docker[0]}"
-    _log_and_show "${_cfg} Docker repository: $add_docker_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
 
     add_winehq_repo="${config__add_repo__winehq[0]}"
-    _log_and_show "${_cfg} WineHQ repository: $add_winehq_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
 
     add_mendeley_repo="${config__add_repo__mendeley[0]}"
-    _log_and_show "${_cfg} Mendelay repository: $add_mendeley_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Mendeley" "$add_mendeley_repo"
 
     add_googlecloud_repo="${config__add_repo__googlecloud[0]}"
-    _log_and_show "${_cfg} Google Cloud SDK repository: $add_googlecloud_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Google Cloud SDK" "$add_googlecloud_repo"
 
     add_spotify_repo="${config__add_repo__spotify[0]}"
-    _log_and_show "${_cfg} Spotify repository: $add_spotify_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Spotify" "$add_spotify_repo"
 
     add_skype_repo="${config__add_repo__skype[0]}"
-    _log_and_show "${_cfg} Skype repository: $add_skype_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Skype" "$add_skype_repo"
 
     add_vscode_repo="${config__add_repo__vscode[0]}"
-    _log_and_show "${_cfg} Visual Studio repository: $add_vscode_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Visual Studio Code" "$add_vscode_repo"
 
     add_insync_repo="${config__add_repo__insync[0]}"
-    _log_and_show "${_cfg} Insync repository: $add_insync_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Insync" "$add_insync_repo"
 
     add_signal_repo="${config__add_repo__signal[0]}"
-    _log_and_show "${_cfg} Signal for Desktop repository: $add_signal_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Signal for Desktop" "$add_signal_repo"
 
     add_signal_repo="${config__add_repo__google[0]}"
-    _log_and_show "${_cfg} Google Chrome & Earth repository: $add_google_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Google Chrome & Earh" "$add_google_repo"
 
     add_kubernetes_repo="${config__add_repo__kubernetes[0]}"
-    _log_and_show "${_cfg} Kubernetes repository: $add_kubernetes_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Kubernetes" "$add_kubernetes_repo"
 
-    # Tasks Flags
-    ##################################################################################
-    set_magenta
-    ae_task_update="${config__tasks__update[0]}"
-    printf "${_rtasks} Update Repos: $ae_task_update" ""
-
-    ae_task_upgrade="${config__tasks__upgrade[0]}"
-    printf "${_rtasks} Upgrade: $ae_task_upgrade"
-
-    ae_task_repo="${config__tasks__repo[0]}"
-    printf "${_rtasks} Add Repos: $ae_task_repo"
-
-    ae_task_ppa="${config__tasks__ppa[0]}"
-    printf "${_rtasks} Add PPA: $ae_task_ppa"
-
-    ae_task_apt="${config__tasks__apt[0]}"
-    printf "${_rtasks} Install APT packages: $ae_task_apt"
-
-    ae_task_apt_external="${config__tasks__apt_external[0]}"
-    printf "${_rtasks} APT Packages by external repos: $ae_task_apt_external"
-
-    ae_task_debs="${config__tasks__debs[0]}"
-    printf "${_rtasks} Install exernal DEB packages: $ae_task_debs"
-
-    ae_task_purge="${config__tasks__purge[0]}"
-    printf "${_rtasks} Purge not required packages: $ae_task_purge"
-
-    ae_task_pip2="${config__tasks__pip2[0]}"
-    printf "${_rtasks} Install Python 2 Modules: $ae_task_pip2"
-
-    ae_task_pip3="${config__tasks__pip3[0]}"
-    printf "${_rtasks} Install Python 3 Modules: $ae_task_pip3"
-
-    set_blue;
     # Other Script Flags
+    set_default;
+    _line_fill;
+    printf "${_table} %-20s | %-10s |\n" "Other Flags" "Config"
+    _line_fill;
+    set_blue
     #################################################################################
     # Purge Packages
     bool_purge_not_required_pkgs="${config__flags__purge_enabled[0]}"
-    _log_and_show "${_cfg} Purge Packages: $bool_purge_not_required_pkgs"
+    printf "${_cfg} %-20s | %-10s |\n" "Purge Enabled" "$bool_purge_not_required_pkgs"
 
     # Keep Debs
     bool_preserve_debs="${config__flags__preserve_debs[0]}"
-    _log_and_show "${_cfg} Keep Debs: $bool_preserve_debs"
+    printf "${_cfg} %-20s | %-10s |\n" "Keep DEBs/APT cache" "$bool_preserve_debs"
 
     # Yes
     bool_say_yes_to_all="${config__flags__auto_yes[0]}"
-    _log_and_show "${_cfg} Auto Yes: $bool_say_yes_to_all"
+    printf "${_cfg} %-20s | %-10s |\n" "Dont confirm" "$bool_say_yes_to_all"
 
-    # We dont need blue man now. thanks buddy :)
+
     set_default;
+    # Tasks Flags
+    ##################################################################################
+
+    _line_fill;
+    printf "${_table} %-20s | %-10s |\n" "Task" "Config"
+    _line_fill;
+    set_magenta
+
+    ae_task_update="${config__tasks__update[0]}"
+    printf "${_rtasks} %-20s | %-10s |\n" "Update" "$ae_task_update"
+
+    ae_task_upgrade="${config__tasks__upgrade[0]}"
+    printf "${_rtasks} %-20s | %-10s |\n" "Upgrade" "$ae_task_upgrade"
+
+    ae_task_repo="${config__tasks__repo[0]}"
+    printf "${_rtasks} %-20s | %-10s |\n" "Add Repos" "$ae_task_repo"
+
+    ae_task_ppa="${config__tasks__ppa[0]}"
+    printf "${_rtasks} %-20s | %-10s |\n" "Add PPA" "$ae_task_ppa"
+
+    ae_task_apt="${config__tasks__apt[0]}"
+    printf "${_rtasks} %-20s | %-10s |\n" "APT packages" "$ae_task_apt"
+
+    ae_task_apt_external="${config__tasks__apt_external[0]}"
+    printf "${_rtasks} %-20s | %-10s |\n" "APT external repos" "$ae_task_apt_external"
+
+    ae_task_debs="${config__tasks__debs[0]}"
+    printf "${_rtasks} %-20s | %-10s |\n" "DEB packages" "$ae_task_debs"
+
+    ae_task_purge="${config__tasks__purge[0]}"
+    printf "${_rtasks} %-20s | %-10s |\n" "Purge packages" "$ae_task_purge"
+
+    ae_task_pip2="${config__tasks__pip2[0]}"
+    printf "${_rtasks} %-20s | %-10s |\n" "Python 2 Modules" "$ae_task_pip2"
+
+    ae_task_pip3="${config__tasks__pip3[0]}"
+    printf "${_rtasks} %-20s | %-10s |\n" "Python 3 Modules" "$ae_task_pip3"
+
+    set_default;
+    _line_fill;
 
     #################################################################################
     #                              Parse Arrays
@@ -2255,8 +2259,8 @@ function main()
     _autopilot_check_task_flag_and_run "$ae_task_pip3" "install_pip_packages_3"
     _autopilot_check_task_flag_and_run "$ae_task_purge" "purge_not_required"
   else
-  _process_menu;
-  #_log_and_show "DEBUG: Options Processed"
+  #_process_menu;
+  _log_and_show "DEBUG: Options Processed"
   fi
 
   _script_exit_log;
