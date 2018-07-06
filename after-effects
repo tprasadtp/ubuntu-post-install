@@ -457,7 +457,8 @@ function verify_gpg_signature()
 
   printf "Signature File: $(basename "${signature}")\n"
   printf "Data File: ${fl}\n"
-  if $(${gpg_verify_cmd[@]}) ; then
+  #shellcheck disable=SC2091
+  if $("${gpg_verify_cmd[@]}") ; then
     printf "OK! Signature verified!\n"
   else
     set_yellow;
