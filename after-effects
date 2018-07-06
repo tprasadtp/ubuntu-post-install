@@ -731,7 +731,7 @@ function _get_remote_file()
     exit_status="$?"
 
     _debug_log "Exit code from wget is : $exit_status"
-    if [ "$exit_status" -eq 0 ]; then
+    if [[ $exit_status -eq 0 ]]; then
       _debug_log "Successfully retrieved Config file."
     else
       set_yellow;
@@ -1172,7 +1172,7 @@ function _install_dependencies()
     printf "%s\n" "${packages[@]}"
   } >> "${log_file}"
   # Check if array is empty
-  if [ ${#packages[@]} -eq 0 ]; then
+  if [[ ${#packages[@]} -eq 0 ]]; then
     set_yellow;
     _log_and_exit "${_error} Package array is empty!" "19"
   else
@@ -1180,7 +1180,7 @@ function _install_dependencies()
     || _log_and_exit "${_error} Failed to install dependencies. Script cannot continue!!" "21"
 
     exit_status=$?
-    if [ "$exit_status" -eq 0 ]; then
+    if [ $exit_status -eq 0 ]; then
        _log_and_show "${_installed} packages in the list $line."
     else
       _log_and_show "${_oh_no} Something went wrong while installing dependencies."
@@ -1554,7 +1554,7 @@ function update_repos()
   _log_and_show "${_update} Repository index/metadata..."
   apt-get -q update 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
   exit_status=$?
-  if [ "$exit_status" -eq 0 ]; then
+  if [[ $exit_status -eq 0 ]]; then
     _log_and_show "${_update} Success!"
   else
     set_yellow;
@@ -1596,7 +1596,7 @@ function upgrade_apps()
     exit_status=0
   fi
   set_yellow;
-  if [ "$exit_status" -eq 0 ]; then
+  if [[ $exit_status -eq 0 ]]; then
     _log_and_show "${_upgrade} completed successfully!"
   else
     _log_and_show "${_oh_no} Something went wrong while upgrading packages."
@@ -1725,7 +1725,7 @@ function disable_external_repos()
     )
     exit_status=$?
     set_yellow;
-    if [ "$exit_status" -eq 0 ]; then
+    if [[ $exit_status -eq 0 ]]; then
       _log_and_show "${_removed} Additional APT keys and repositories."
       _log_and_show "${_notice} Canonical partner repository was left unchanged."
     else
@@ -1755,7 +1755,7 @@ function purge_not_required()
   local exit_status
   if [ "$bool_purge_not_required_pkgs" == "true" ]; then
     _log_and_show "${_purge} Packages..."
-    if [ ${#parsed_purge_packages[@]} -eq 0 ]; then
+    if [[ ${#parsed_purge_packages[@]} -eq 0 ]]; then
       set_yellow;
       _log_and_show "${_error} Package array is empty!";
       set_default;
@@ -1771,7 +1771,7 @@ function purge_not_required()
       fi
       exit_status=$?
       set_yellow
-      if [ "$exit_status" -eq 0 ]; then
+      if [[ $exit_status -eq 0 ]]; then
         _log_and_show "${_purge} packages in the list successfully."
       else
         set_yellow;
@@ -1927,7 +1927,7 @@ function _install_pip_python()
       fi
       exit_status=$?
 
-      if [ "$exit_status" -eq 0 ]; then
+      if [[ $exit_status -eq 0 ]]; then
         _log_and_show "${_installed} packages in the list $pip_dependency_list."
       else
         set_yellow;
@@ -1949,11 +1949,11 @@ function _install_pip_python()
 
 
   _log_and_show "${_installing} Installing python packages"
-  _debug_log "Following Python packages are in "
+  _debug_log "Requirements file: ${requirements_file}"
    rm -f ${requirements_file} || _log_and_exit "Failed to remove ${requirements_file}" "38"
    printf '%s\n' "${python_packages[@]}" > "${requirements_file}"
   # Check if pip package list is empty
-  if [ ${#python_packages[@]} -eq 0 ]; then
+  if [[ ${#python_packages[@]} -eq 0 ]]; then
     set_yellow;
     _log_and_show "${_error} Package array is empty!";
     set_default;
@@ -1969,7 +1969,7 @@ function _install_pip_python()
       $pip_command install -r "${requirements_file}" 2>&1 | _add_timestamp_to_logs "${_pip_logs}"
     fi
     exit_status=$?
-    if [ "$exit_status" -eq 0 ]; then
+    if [[ $exit_status -eq 0 ]]; then
       _log_and_show "${_installed} python modules from ${pip_list}"
     else
       set_yellow;
