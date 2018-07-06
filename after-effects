@@ -425,15 +425,48 @@ function verify_gpg_signature()
   # Assumes that you already have public key in your keyring.
   # Assumes original file is present at same localtion,
   # with same name but without .sig or .gpg or .asc extension.
-  local dependency_array=(gpgv)
-  _check_dependencies "${dependency_array[@]}"
-  _log_and_show "${_info} Verifying GPG signature of file.."
-  if gpgv --weak-digest MD5 "${1}" ; then
-    _log_and_show "${_info} Signature verified!"
-  else
-    _log_and_show "${_error} Signature checks failed."
-    _log_and_exit "${_error} File is either corrupt or has been tampered with." "50"
+
+  if [[ $# -lt 1 ]]; then
+    printf "Not enough arguments."
+    printf "Usage: verify_gpg_signature <signature file>"
+    exit 19;
   fi
+
+  # Checks if file is present
+  if ! [ -f "${1}" ]; then
+    printf "${YELLOW} Error! Signature file not found.${NC}\n"
+    exit 51;
+  fi
+
+  # Lets declare variables
+  local fl signature
+  signature="${1}"
+  fl="$(basename -s .asc "${signature}")"
+
+  printf "Verifying GPG signature of file..\n"
+  # Checks for commands
+  if command -v gpg > /dev/null; then
+    readonly local gpg_verify_cmd=(gpg --verify "${1}" "${fl}")
+  elif command -v gpgv > /dev/null; then
+    readonly local gpg_verify_cmd=(gpgv --keyring "$HOME/.gnupg/pubring.kbx" "${signature}" "${fl}")
+  else
+    printf "Cannot perform verification. gpgv or gpg is not installed."
+    printf "This action requires gnugpg/gnupg2 or gpgv package.\n"
+    exit 1;
+  fi
+
+  printf "Signature File: $(basename "${signature}")\n"
+  printf "Data File: ${fl}\n"
+  if $(${gpg_verify_cmd[@]}) ; then
+    printf "OK! Signature verified!\n"
+  else
+    set_yellow;
+    printf "Oh No! Signature checks failed.\n"
+    printf "File is either corrupt or has been modified.\n"
+    set_default;
+    exit 50;
+  fi
+
 }
 
 
@@ -1849,11 +1882,11 @@ function _install_pip_python()
   # Check if pip package list is empty
   if [ ${#python_packages[@]} -eq 0 ]; then
     set_yellow;
-    _log_and_show "${_error} Package lists file ${pip-list} is empty!";
+    _log_and_show "${_error} Package array is empty!";
     set_default;
   else
     # I package list isn't empty proceed to install pip packages
-    # Check if simulate is true & is not running on TRAVIS.
+    # Check if simulate is true & is not running on TRAVIS/CI.
     if [ "$simulate_apt_install" == "true" ] && [ "$CI" != "true" ]; then
       set_yellow;
       _log_and_show "${_whoops} PIP does not support simulated installs. Not performing install."
@@ -1876,7 +1909,6 @@ function _install_pip_python()
 
   _line_fill >> "$log_file"
 }
-
 
 
 function install_pip_packages_2()
@@ -2196,8 +2228,9 @@ function main()
           -d | --purge )          bool_purge_not_required_pkgs="true";
                                   set_yellow;
                                   _log_and_show "${_purge} Purge packages is set to true."
-                                  _log_and_show "${_warn} No checks are being made on the Packages in the list. Use carefully!. Purging something like sudo is stupid idea!";
-                                  set_default
+                                  _log_and_show "${_warn} No checks are being made on the Packages in the list."
+                                  _log_and_show "${_warn} Use carefully!. Purging something like sudo is stupid idea!"
+                                  set_default;
                                   ;;
           -y | --yes )            bool_say_yes_to_all="true";
                                   set_yellow;
@@ -2282,7 +2315,7 @@ function main()
     _autopilot_check_task_flag_and_run "$ae_task_purge" "purge_not_required"
   else
   _process_menu;
-  _log_and_show "DEBUG: Options Processed"
+  #_log_and_show "DEBUG: Options Processed"
   fi
 
   _script_exit_log;
