@@ -30,8 +30,6 @@ readonly EXEC_START=$(date +%s)
 readonly DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly log_file="$dir"/logs/after-effects.log
-mkdir -p "$dir"/logs
 readonly REL_NAME="5.0 Beta"
 readonly REL_NUM=50
 
@@ -90,7 +88,111 @@ function _init_printf_variables()
     readonly NC=$(tput sgr 0)
     readonly MAGENTA=$(tput setaf 5)
 
+}
 
+
+function _init_logging()
+{
+  # Initialize phase 2
+  # Only variables necessary for logging & start logging
+  # Script relatead variables are defined in _init_script_variables
+  readonly log_file="$dir"/logs/after-effects.log
+  mkdir -p "$dir"/logs
+  _debug_log "Executing Script"
+  _line_fill >> "$log_file"
+}
+
+
+# Utility Functions
+function _line_fill()
+{
+  printf "%-$(tput cols)s@%s\n" | sed -e "s/ /-/g" -e "s/-@/ /" -e "s/@-/ /"
+}
+
+
+function set_blue()
+{
+  tput setaf 6
+}
+
+
+function set_yellow()
+{
+  tput setaf 3
+}
+
+
+function set_magenta()
+{
+  tput setaf 5
+}
+
+
+function set_red()
+{
+  tput setaf 1
+}
+
+
+function set_default()
+{
+  tput sgr 0
+}
+
+
+function _goodbye_msg ()
+{
+  printf "\n$(tput setaf 3)It was a pleasure helping you,\nHave a great time with this Linux Machine.\nWith loads of love,\n$(tput setaf 6)${SCRIPT} running on $(uname -n)$(tput sgr 0)\n"
+}
+
+
+function _log_and_exit()
+{
+  # ARG-1 log msg
+  # ARG-2 exit code int
+  local msg="$1"
+  printf "$msg\n";
+  {
+    printf "[$(date)] ${msg}\n" >> "$log_file";
+    printf "\nFinished %s on $(date).\nLast exit code was: %d\n" "$SCRIPT" "$?"
+  } >> "$log_file"
+
+  set_yellow
+  _line_fill | tee -a "$log_file"
+  set_default
+  exit "$2";
+}
+
+
+function _script_exit_log()
+{
+    # Script time
+    readonly EXEC_END=$(date +%s)
+    readonly EXEC_TIME=$((EXEC_END-EXEC_START))
+
+    # Report Stats
+    report_stats
+    # Generage Exit message & log
+    _goodbye_msg
+    _debug_log "Exiting Script"
+    printf "\nFinished %s in %d seconds, on %s.\nLast exit code was: %d\n" "$SCRIPT" "$EXEC_TIME" "$(date)" "$?" | tee -a "$log_file"
+    _line_fill >> "$log_file"
+    return 0
+
+}
+
+function _debug_log()
+{
+  local msg="$1"
+  printf "[$(date)] ${_debug} $msg\n" >> "$log_file"
+}
+
+
+function _log_and_show()
+{
+  local msg="$1"
+  printf "$msg\n"
+  printf "[$(date)] $msg\n" >> "$log_file"
 }
 
 
@@ -260,106 +362,6 @@ function _init_print_basic_info()
 
   #disable hist chars  so that I can print "!!"" properly
   histchars=
-}
-
-
-# Utility Functions
-function _line_fill()
-{
-  printf "%-$(tput cols)s@%s\n" | sed -e "s/ /-/g" -e "s/-@/ /" -e "s/@-/ /"
-}
-
-
-function set_blue()
-{
-  tput setaf 6
-}
-
-
-function set_yellow()
-{
-  tput setaf 3
-}
-
-
-function set_magenta()
-{
-  tput setaf 5
-}
-
-
-function set_red()
-{
-  tput setaf 1
-}
-
-
-function set_default()
-{
-  tput sgr 0
-}
-
-
-function _script_launch_log()
-{
-  _debug_log "Executing Script"
-  _line_fill >> "$log_file"
-}
-
-
-function _goodbye_msg ()
-{
-  printf "\n$(tput setaf 3)It was a pleasure helping you,\nHave a great time with this Linux Machine.\nWith loads of love,\n$(tput setaf 6)${SCRIPT} running on $(uname -n)$(tput sgr 0)\n"
-}
-
-
-function _log_and_exit()
-{
-  # ARG-1 log msg
-  # ARG-2 exit code int
-  local msg="$1"
-  printf "$msg\n";
-  {
-    printf "[$(date)] ${msg}\n" >> "$log_file";
-    printf "\nFinished %s on $(date).\nLast exit code was: %d\n" "$SCRIPT" "$?"
-  } >> "$log_file"
-
-  set_yellow
-  _line_fill | tee -a "$log_file"
-  set_default
-  exit "$2";
-}
-
-
-function _script_exit_log()
-{
-    # Script time
-    readonly EXEC_END=$(date +%s)
-    readonly EXEC_TIME=$((EXEC_END-EXEC_START))
-
-    # Report Stats
-    report_stats
-    # Generage Exit message & log
-    _goodbye_msg
-    _debug_log "Exiting Script"
-    printf "\nFinished %s in %d seconds, on %s.\nLast exit code was: %d\n" "$SCRIPT" "$EXEC_TIME" "$(date)" "$?" | tee -a "$log_file"
-    _line_fill >> "$log_file"
-    return 0
-
-}
-
-function _debug_log()
-{
-  local msg="$1"
-  printf "[$(date)] ${_debug} $msg\n" >> "$log_file"
-}
-
-
-function _log_and_show()
-{
-  local msg="$1"
-  printf "$msg\n"
-  printf "[$(date)] $msg\n" >> "$log_file"
 }
 
 
@@ -1890,6 +1892,7 @@ function install_pip_packages_3()
   _install_pip_python "3"
 }
 
+
 function install_debs ()
 {
 
@@ -2126,12 +2129,25 @@ function display_version()
 
 {
 
-  _line_fill "${BLUE}"
-  printf "%s %s\n" "${_version}" "${REL_NUM}"
-  printf "%s %s\n" "${_version}" "${REL_NAME}"
-  printf "%s %s\n" "${_info}" "Executable : ${SCRIPT}"
-  _line_fill "${BLUE}"
+  #_line_fill
+  printf "%-15s : %s\n" "Version Number" "${REL_NUM}"
+  printf "%-15s : %s\n" "Version Name" "${REL_NAME}"
+  printf "%-15s : %s\n" "Executable" "${SCRIPT}"
+  #_line_fill
 
+}
+
+
+function _process_non_root_options()
+{
+  # Process command line arguments which does not require root.
+  while [ "${1}" != "" ]; do
+    case ${1} in
+      -v | --version)         display_version;exit 0;;
+      --verify )              verify_gpg_signature "${dir}/${SCRIPT}.asc"; exit 0;;
+    esac
+    shift
+  done
 }
 
 
@@ -2139,11 +2155,8 @@ function main()
 {
   _init_printf_variables
 
-  # Display Version Info and Exit
-  if [ "${1}" == "-v" ] || [ "${1}" == "--version" ]; then
-    display_version;
-    exit 0;
-  fi
+  # Display Version Info and Verify signature options
+  _process_non_root_options "$@"
 
   _line_fill;
   printf "${_checking} Permissions...\n"
@@ -2158,6 +2171,9 @@ function main()
   else
     _debug_log "OK! running as root."
   fi
+
+  # Actual logging starts
+  _init_logging
 
   # Process command line arguments.
   while [ "${1}" != "" ]; do
@@ -2215,7 +2231,6 @@ function main()
           -L | --prefer-local )   readonly bool_prefer_local_flags="true"; _log_and_show "Ignoring flags supplied by remote configuration.";;
           -n | --name)            shift readonly bool_custom_remote_config_name="true"; readonly custom_remote_config_name="${1}";;
 #          --use-lists)            bool_use_lists="true";;
-          --verify )              verify_gpg_signature "${dir}/${SCRIPT}";;
           -v | --version )        _log_and_exit "-v or --version should be the only argument and should be used as first argument only." "23";;
            * )                    _log_and_exit "${_error} Invalid option: $1" "22";;
       esac
@@ -2223,7 +2238,6 @@ function main()
   done
 
   # Initialize variables and checks
-  _script_launch_log
   local after_effects_core_dependencies=(wget lsb_release whiptail ping ps grep cut tr)
   _check_dependencies "${after_effects_core_dependencies[@]}"
   _init_script_variables;
