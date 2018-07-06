@@ -29,7 +29,7 @@ Run this in Terminal
 wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash
 ```
 
-Or if you want to use remote configuration & not download or use .list files
+Or if you want to use YAML configuration & not download or use .list files
 
 ```sh
 wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash -s -- -r
@@ -49,23 +49,6 @@ If you already have cloned the repo, you can use git to get the latest changes.
 
 Update the list files to suit your needs. Change PPAs, add or delete packages to list, tweak flags etc.
 Please see [Configuration](https://ae.prasadt.com/config/#package-lists) & [Tasks](https://ae.prasadt.com/tasks/#what-can-it-do).
-
-OR
-
-#### Use config server
-
-This script can use a config server to retrieve  its configuration data. Please use `cfg-server` project for more info. You can use simple docker container to host the server. Its written in Go.
-For simple not-database based config server, use docker-compose.yaml in the cfg-srv directory. Folders within that directory containing configs will be available at `localhost/<FOLDER-NAME>?name="NAME_OF_THE_CONFIG"`
-
-```bash
-cd cfg-srv
-# create a test config file under cfg-srv/config
-docker-compose up
-# Testing the response
-curl -s localhost/config?name="test"
-# This should return contents file test.yml or default config under folder cfg-srv/config
-```
-
 
 ### Step 3: Run the script
 
@@ -88,7 +71,8 @@ See /docs or visit [https://after-effects.prasadt.com](https://after-effects.pra
 
 ## Security
 Well, this isn't very secure or meant to be.
-- The script is signed with gpg key id `BA19B5162553B1BF`. SHA256 checksums for script are available via
+- The script is signed with gpg key id `BA19B5162553B1BF`.
+- You can verify them manually or via `./after-effects --verify`
 - GPG signature of the script is also available at `api/gpg?version="VERSION_NUMBER"`
 
 ## Supported Distributions
@@ -127,7 +111,7 @@ Debian 9         | Stretch           | Yes         |
 
 - Well that shouldn't have happened. If it does, see [Script Crashes](https://ae.prasadt.com/faq/crash/) and consider opening an issue on Github.
 - Please include the log file and terminal output if you can in the issue..
-- Never set environment variable `TRAVIS=true` unless you are running on TRAVIS or are sure of its effects.
+- **Never** set environment variable `CI=true` & `TRAVIS=true` unless you are running CI tests or are sure of its effects.
 
 ## Contributing & Forks
 
