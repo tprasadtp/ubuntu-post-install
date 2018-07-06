@@ -548,14 +548,19 @@ function _fix_ubuntu_derivatives()
                                             code_name="bionic"
                                             _log_and_show "${_linuxmint} Changed codename to $code_name"
                                             ;;
-      loki | juno )                         _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 16.04 Xenial."
+      freya )                               _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 14.04 Trusty."
+                                            _log_and_show "${_notice} External repositories will use Ubuntu 14.04."
+                                            code_name="trusty"
+                                            _log_and_show "${_elementary} Changed codename to $code_name"
+                                            ;;
+      loki )                                _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 16.04 Xenial."
                                             _log_and_show "${_notice} External repositories will use Ubuntu 16.04."
                                             code_name="xenial"
                                             _log_and_show "${_elementary} Changed codename to $code_name"
                                             ;;
-      freya )                               _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 14.04 Trusty."
-                                            _log_and_show "${_notice} External repositories will use Ubuntu 14.04."
-                                            code_name="trusty"
+      juno )                                _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 18.04 Bionic."
+                                            _log_and_show "${_notice} External repositories will use Ubuntu 18.04."
+                                            code_name="bionic"
                                             _log_and_show "${_elementary} Changed codename to $code_name"
                                             ;;
       xenial | trusty | artful | bionic )   readonly bool_config_partner_repo="true"
