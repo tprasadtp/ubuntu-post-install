@@ -1792,13 +1792,8 @@ function purge_not_required()
 
 function install_apps()
 {
-  # Function to install apps mentioned in individual list files mentioned in master lisy app-list.list
-  # Repositories manually added get their own list file because they are prone to errors
-  # This function reads from list of lists
-  # File ${dir}/data/app-list.list contains list of list files in ${dir}/data/ directory
-  # which contain package names of the packages to be installed.
-  #
-  # external-repo should always be at last to avoid any errors in previous lists.
+  # Function to install apps mentioned in lists/arrays
+  # external-repos should always be at last to avoid any errors in previous lists.
   # No checks are being made on any of the files for validity. One entry per line is recommended.
   # If a package is not available entire collection in the file *.list will not be installed!!
 
@@ -1806,50 +1801,67 @@ function install_apps()
   update_repos;
   echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true |  debconf-set-selections
   #Install starts here
-  local packages
-  local exit_status line
+  local packages exit_status index
+  local readonly package_arrays=(
+                              administration
+                              security
+                              productivity
+                              multimedia
+                              development
+                              other
+                              external
+                              )
+  for array in "${package_arrays[@]}"; do
+    case "${array}" in
+      administration)         packages=("${parsed_administration_packages[@]}");;
+      security)               packages=("${parsed_secutity_packages[@]}");;
+      productivity)           packages=("${parsed_productivity_packages[@]}");;
+      multimedia)             packages=("${parsed_multimedia_packages[@]}");;
+      development)            packages=("${parsed_development_packages[@]}");;
+      other)                  packages=("${parsed_other_packages[@]}");;
+      external)               packages=("${parsed_external_packages[@]}");;
+      *)                      _log_and_exit "${_error} Critical error. Invalid array type" "19";;
+    esac
+    _log_and_show "${_installing} packages $array"
 
-  while IFS= read -r line
-    do
-         _log_and_show "${_installing} packages from list :$line:"
-         _debug_log "$line\n"
-         _debug_log "Following packages will be installed."
-         # shellcheck disable=SC2002
-         # just to print it in logs so ignore shellcheck
-         cat "$dir/$line" 2>&1 | _add_timestamp_to_logs "${_cat_logs}"
-         packages=$(cat "$dir/$line")
-         [[ -z "$packages" ]] && _log_and_show "package list to install is empty!!" && continue;
-         # Check if simulate is true
-         if [ "$simulate_apt_install" == "true" ]; then
-           set_yellow;
-           _log_and_show "${_simulate} package installation."
-           set_default;
-           # disable shellcheck for quoted variable as its an exception
-           # quoting $packages leads to errors.
-           # we need user to see errors, dont redirect stderr
-           # shellcheck disable=SC2086
-           apt-get -q -y install -s "${packages[@]}" | _add_timestamp_to_logs "${_apt_logs}"
-         else
-           # shellcheck disable=SC2086
-           apt-get -q -y install $packages | _add_timestamp_to_logs "${_apt_logs}"
-         fi
-         exit_status=$?
-         if [ "$exit_status" -eq 0 ]; then
-           _log_and_show "${_installed} packages in the list $line."
-         else
-           set_yellow;
-           _log_and_show "${_oh_no} Something went wrong while installing packages in $line."
-           set_blue;
-           _log_and_show "${_notice} Please see the log file for more details."
-       fi
-         set_default;
-         unset packages;
-    done < "$app_list_list"
+    # Chek if array is empty
+    if [[ ${#packages[@]} -eq 0 ]]; then
+      set_yellow;
+      _log_and_show "${_error} Package array is empty!";
+      set_default;
+      continue
+    else
+      _debug_log "Following packages will be installed."
+      printf "%s\n" "${packages[@]}" >> "${log_file}"
+      # Check if simulate is true
+      if [ "$simulate_apt_install" == "true" ]; then
+        set_yellow;
+        _log_and_show "${_simulate} package installation."
+        set_default;
+        apt-get -q -y install -s "${packages[@]}" | _add_timestamp_to_logs "${_apt_logs}"
+      else
+        apt-get -q -y install "${packages[@]}" | _add_timestamp_to_logs "${_apt_logs}"
+      fi
+      exit_status=$?
+      unset packages;
+      if [[ $exit_status -eq 0 ]]; then
+      _log_and_show "${_installed} packages in the list $index."
+      else
+      set_yellow;
+      _log_and_show "${_oh_no} Something went wrong while installing packages in $index."
+      set_blue;
+      _log_and_show "${_notice} Please see the log file for more details."
+      set_default;
+      fi
 
-    # Delete DEBs
-    _clean_apt_cache;
+    fi
+    unset packages
+  done
 
-    _line_fill >> "$log_file"
+  # Delete DEBs
+  _clean_apt_cache;
+
+  _line_fill >> "$log_file"
 }
 
 
