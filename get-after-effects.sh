@@ -41,9 +41,7 @@ function check_dependencies()
   local get_after_effects_dependencies=(wget)
   local dep_res
   printf "${YELLOW}Checking dependencies${NC}\n"
-  for dep in "${get_after_effects_dependencies[@]}"
-  do
-   :
+  for dep in "${get_after_effects_dependencies[@]}"; do
    command -v "$dep" > /dev/null
    dep_res=$?
    if [ "$dep_res" -eq 1 ]; then
@@ -71,7 +69,7 @@ function get-after-effects()
   wget -q  "${GET_BASE_URL}"/after-effects
   printf "${YELLOW}Changing file permissions...${NC}\n"
   chmod +x ./after-effects
-  if [ "$use_list_config" != "true" ]; then
+  if [ "$use_yaml" != "true" ]; then
     printf "${YELLOW}Getting Data and Lists...${NC}\n"
     wget -q "${GET_LIST_BASE_URL}"/get.mlist
     mkdir -p data
@@ -93,7 +91,7 @@ function main()
 {
   while [ "$1" != "" ]; do
         case ${1} in
-            -l | --list )           use_remote_config=true;
+            -l | --list )           use_yaml=false;
                                     printf "[   Info  ] Not Downloading list. Using YAML configurations.\n"
                                     ;;
             -f | --force )          ignore_git_folder=true
