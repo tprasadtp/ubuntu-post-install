@@ -652,11 +652,11 @@ function _set_custom_api_nodes ()
 
   # Version, Config ang GPG signature URLS
   readonly api_version_url="${default_api_endpoint}/version.yml"
-  _debug_log "Version file URL is: ${api_version_url}"
+  _debug_log "Version Info URL is: ${api_version_url}"
   readonly api_config_url="${api_endpoint}/config.yml?name=${remote_config_name}"
-  _debug_log "Config file URL is: ${api_config_url}"
+  _debug_log "Config URL is: ${api_config_url}"
   readonly api_script_gpg_sig_url="${default_api_endpoint}/gpg/after-effects?version=$REL_NUM"
-  _debug_log "GPG Signature file URL is: ${api_script_gpg_sig_url}"
+  _debug_log "GPG Signature URL is: ${api_script_gpg_sig_url}"
 }
 
 
@@ -816,6 +816,7 @@ function _version_checks ()
 function _set_remote_config()
 {
 
+
   # Report usage flag
   if [ "$bool_report_stats" != "false" ]; then
     # If --no-stats is not used, bool_report_stats is not set. Lets set its value
@@ -843,6 +844,50 @@ function _set_remote_config()
 
   # If local flags are not preferred get and parse config YAML
   if [ "$bool_prefer_local_flags" != "true" ]; then
+    # Lets reset all default variables which can be altered to false.
+
+    # Purge not required packages
+    bool_purge_not_required_pkgs="false"
+
+    # Say yes to all
+    bool_say_yes_to_all="false";
+
+    # Keep Downloaded DEB packages
+    bool_preserve_debs="false"
+
+    # Latest wine builds
+    add_winehq_repo=false
+
+    #Docker community edition
+    add_docker_repo=false
+
+    #Mendeley Desktop
+    add_mendeley_repo=false
+
+    #Spotify
+    add_spotify_repo=false
+
+    #InSync
+    add_insync_repo=false
+
+    #Google Cloud SDK
+    add_googlecloud_repo=false
+
+    #Signal
+    add_signal_repo=false
+
+    #Skype
+    add_skype_repo=false
+
+    #VS code
+    add_vscode_repo=false
+
+    #Google
+    add_google_repo=false
+
+    #Kubernetes
+    add_kubernetes_repo=false
+
     # Get and parse the file
     _log_and_show "${_info} Processing config..."
     if [ "$bool_custom_config_file" != "true" ]; then
@@ -1055,7 +1100,8 @@ function _set_remote_config()
     _log_and_show "${_cfg} Parsing local lists..."
     # Parse local lists to appropriate variables, arrays and inject them in script.
     # Only supports 5 APT lists, Purge, DEB, PPA. PIP2, PIP3 lists
-    _parse_local_lists;
+    #_parse_local_lists;
+    _log_and_exit "Feature not yet available" "254"
   fi
 
   _line_fill >> "$log_file"
@@ -1101,7 +1147,7 @@ function _show_confirmation_dialog_for_tasks()
 }
 
 
-function _clean_apt_packages()
+function _clean_apt_cache()
 {
   # Function to clean apt package cache. Takes care of -k flag in all the installs.
   # Honor -k flag
@@ -1139,7 +1185,7 @@ function _install_packages()
     set_blue;
     _log_and_exit "${_notice} Please see the log file for more details." "21"
   fi
-  _clean_apt_packages
+  _clean_apt_cache
 
 }
 
@@ -1557,7 +1603,7 @@ function upgrade_apps()
   fi
   set_default;
   # Cleanup APT cache (-k)
-  _clean_apt_packages;
+  _clean_apt_cache;
 
   _line_fill >> "$log_file"
 }
@@ -1599,7 +1645,7 @@ function disable_external_repos()
       _log_and_show "${_purge} External PPAs."
 
       # Clean -k flag.
-      _clean_apt_packages;
+      _clean_apt_cache;
 
     elif [ "$bool_is_debian" == "trues" ]; then
       _log_and_show "PPA's are not available, because this is Debian."
@@ -1773,7 +1819,7 @@ function install_apps()
            # quoting $packages leads to errors.
            # we need user to see errors, dont redirect stderr
            # shellcheck disable=SC2086
-           apt-get -q -y install -s $packages | _add_timestamp_to_logs "${_apt_logs}"
+           apt-get -q -y install -s "${packages[@]}" | _add_timestamp_to_logs "${_apt_logs}"
          else
            # shellcheck disable=SC2086
            apt-get -q -y install $packages | _add_timestamp_to_logs "${_apt_logs}"
@@ -1792,7 +1838,7 @@ function install_apps()
     done < "$app_list_list"
 
     # Delete DEBs
-    _clean_apt_packages;
+    _clean_apt_cache;
 
     _line_fill >> "$log_file"
 }
@@ -1871,7 +1917,7 @@ function _install_pip_python()
       fi
 
       ## honor --keep-debs -k flags
-      _clean_apt_packages;
+      _clean_apt_cache;
 
   else
     _log_and_show "${_info} Dependency already satisfied."
@@ -1982,7 +2028,7 @@ function install_debs ()
     (
       rm -f "${dir}"/*.deb "${dir}"/*.DEB "${dir}"/*.deb.* "${dir}"/*.DEB.* >> "$log_file"
     )
-    _clean_apt_packages;
+    _clean_apt_cache;
   else
     _debug_log "Keeping Downloaded DEB Packages"
   fi
@@ -2267,9 +2313,8 @@ function main()
                                   readonly bool_custom_version_file="true"
                                   _log_and_show "${_info} Using custom version info file"
                                   ;;
-          -L | --prefer-local )   readonly bool_prefer_local_flags="true"; _log_and_show "Ignoring flags supplied by remote configuration.";;
+          -L | --use-lists )      readonly bool_prefer_local_flags="true"; _log_and_show "Ignoring remote config";;
           -n | --name)            shift readonly bool_custom_remote_config_name="true"; readonly custom_remote_config_name="${1}";;
-#          --use-lists)            bool_use_lists="true";;
           -v | --version )        _log_and_exit "-v or --version should be the only argument and should be used as first argument only." "23";;
            * )                    _log_and_exit "${_error} Invalid option: $1" "22";;
       esac
@@ -2320,8 +2365,8 @@ function main()
     _autopilot_check_task_flag_and_run "$ae_task_pip3" "install_pip_packages_3"
     _autopilot_check_task_flag_and_run "$ae_task_purge" "purge_not_required"
   else
-  _process_menu;
-  #_log_and_show "DEBUG: Options Processed"
+  #_process_menu;
+  _log_and_show "DEBUG: Options Processed"
   fi
 
   _script_exit_log;
