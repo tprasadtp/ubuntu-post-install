@@ -15,8 +15,6 @@ config:
     ppa: true
     # APT Packages
     apt: true
-    # Whether to install Packages from external repos and ppas
-    apt_external: true
     # Whether to purge packages mentioned in config.purge key
     purge: false
     debs: true

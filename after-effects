@@ -997,9 +997,6 @@ function _set_remote_config()
     ae_task_apt="${config__tasks__apt[0]}"
     printf "${_rtasks} %-20s | %-10s |\n" "APT packages" "$ae_task_apt"
 
-    ae_task_apt_external="${config__tasks__apt_external[0]}"
-    printf "${_rtasks} %-20s | %-10s |\n" "APT external repos" "$ae_task_apt_external"
-
     ae_task_debs="${config__tasks__debs[0]}"
     printf "${_rtasks} %-20s | %-10s |\n" "DEB packages" "$ae_task_debs"
 
