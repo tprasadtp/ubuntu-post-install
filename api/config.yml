@@ -66,7 +66,7 @@ config:
     # Debian packages:  .deb files
     # CSV format similar to lists
     debian_packages:
-      - https://atom-installer.github.com/v1.23.2/atom-amd64.deb,Atom-Editor.deb
+      - https://atom-installer.github.com/v1.28.0/atom-amd64.deb,Atom-Editor.deb
       - https://download.teamviewer.com/download/teamviewer_i386.deb,Teamviewer.deb
     apt:
       # Admin related Stuff
