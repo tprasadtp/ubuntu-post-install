@@ -1163,7 +1163,7 @@ function _clean_apt_cache()
 }
 
 
-function _install_packages()
+function _install_dependencies()
 {
   # Install packages mentioned in the arguments.
   # If installation fails exit the script.
@@ -1174,17 +1174,22 @@ function _install_packages()
     printf "Following packages will be installed\n"
     printf "%s\n" "${packages[@]}"
   } >> "${log_file}"
-  apt-get -q -y install "${packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  \
-  || _log_and_exit "${_error} Failed to install dependencies. Script cannot continue!!" "21"
-
-  exit_status=$?
-  if [ "$exit_status" -eq 0 ]; then
-     _log_and_show "${_installed} packages in the list $line."
+  # Check if array is empty
+  if [ ${#packages[@]} -eq 0 ]; then
+    set_yellow;
+    _log_and_exit "${_error} Package array is empty!" "19"
   else
-    _log_and_show "${_oh_no} Something went wrong while installing dependencies."
-    set_blue;
-    _log_and_exit "${_notice} Please see the log file for more details." "21"
-  fi
+    apt-get -q -y install "${packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  \
+    || _log_and_exit "${_error} Failed to install dependencies. Script cannot continue!!" "21"
+
+    exit_status=$?
+    if [ "$exit_status" -eq 0 ]; then
+       _log_and_show "${_installed} packages in the list $line."
+    else
+      _log_and_show "${_oh_no} Something went wrong while installing dependencies."
+      set_blue;
+      _log_and_exit "${_notice} Please see the log file for more details." "21"
+    fi
   _clean_apt_cache
 
 }
@@ -1201,7 +1206,7 @@ function _install_pre_requisites()
   local pre_requisite_packages=(apt-transport-https ca-certificates curl software-properties-common gpgv)
   _log_and_show "${_installing} Necessary dependencies..."
   _debug_log "${_installing} apt-transport-https, ca-certificates, curl, software-properties-common gnugpg"
-  _install_packages "${pre_requisite_packages[@]}"
+  _install_dependencies "${pre_requisite_packages[@]}"
 
 }
 
@@ -1629,8 +1634,8 @@ function disable_external_repos()
 
   if [ "$bool_is_debian" == "false" ]; then
     _log_and_show "${_deleting} External repositoris"
-    _install_packages "${dependency_packages[@]}"
     # Function Reads the file ${dir}/data/ppa.list and purges the ppa one by one
+    _install_dependencies "${dependency_packages[@]}"
       for index in "${parsed_ppa_list[@]}"; do
             _log_and_show "${_purge} $index..."
             _debug_log "Purging: $index"
