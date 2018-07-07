@@ -102,3 +102,25 @@
   to = "/deploy-params.txt"
   status = 301
   force = true
+
+#Config.yml
+[[redirects]]
+  from = "api/config"
+  query = {name = ":name"}
+  to = "api/config.yml?name=name"
+  status = 301
+  force = true
+
+#Config.yml Default
+[[redirects]]
+  from = "api/config/default"
+  to = "api/config.yml"
+  status = 301
+  force = true
+
+# Version  to version.yml
+[[redirects]]
+  from = "api/version"
+  to = "api/version.yml"
+  status = 301
+  force = true
