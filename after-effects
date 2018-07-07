@@ -1055,7 +1055,7 @@ function _set_remote_config()
     readonly parsed_productivity_packages=("${config__install__apt__productivity_[@]}")
     readonly parsed_multimedia_packages=("${config__install__apt__multimedia_[@]}")
     readonly parsed_development_packages=("${config__install__apt__development_[@]}")
-    readonly parsed_other_packages=("${config__install__apt__others_[@]}")
+    readonly parsed_other_packages=("${config__install__apt__other_[@]}")
     readonly parsed_external_packages=("${config__install__apt__external_[@]}")
 
     #--------------------------------------------------------------------------------
@@ -1180,7 +1180,7 @@ function _install_dependencies()
 
     exit_status=$?
     if [ $exit_status -eq 0 ]; then
-       _log_and_show "${_installed} packages in the list $line."
+       _log_and_show "${_installed} dependency packages."
     else
       _log_and_show "${_oh_no} Something went wrong while installing dependencies."
       set_blue;
@@ -1771,7 +1771,7 @@ function purge_not_required()
       exit_status=$?
       set_yellow
       if [[ $exit_status -eq 0 ]]; then
-        _log_and_show "${_purge} packages in the list successfully."
+        _log_and_show "${_purge} Success!"
       else
         set_yellow;
         _log_and_show "${_oh_no} Something went wrong while purging packages."
@@ -1846,7 +1846,7 @@ function install_apps()
       exit_status=$?
       unset packages;
       if [[ $exit_status -eq 0 ]]; then
-      _log_and_show "${_installed} packages in the list $index."
+      _log_and_show "${_installed} $array packages."
       else
       set_yellow;
       _log_and_show "${_oh_no} Something went wrong while installing packages in $index."
@@ -1929,7 +1929,7 @@ function _install_pip_python()
       exit_status=$?
 
       if [[ $exit_status -eq 0 ]]; then
-        _log_and_show "${_installed} packages in the list $pip_dependency_list."
+        _log_and_show "${_installed} Dependency packages."
       else
         set_yellow;
         _log_and_show "${_oh_no} Something went wrong while installing dependencies."
@@ -2389,8 +2389,8 @@ function main()
     _autopilot_check_task_flag_and_run "$ae_task_pip3" "install_pip_packages_3"
     _autopilot_check_task_flag_and_run "$ae_task_purge" "purge_not_required"
   else
-  #_process_menu;
-  _log_and_show "DEBUG: Options Processed"
+  _process_menu;
+  #_log_and_show "DEBUG: Options Processed"
   fi
 
   _script_exit_log;
