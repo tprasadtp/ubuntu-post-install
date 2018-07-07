@@ -621,7 +621,6 @@ function _test_conflicting_apps ()
     if ps -U root -u root u | grep $lock | grep -v grep > /dev/null;
        then
          _log_and_show "${_error} Installation won't work. Please close $lock first then try again."
-         _script_exit_log
          exit 15;
        else
         _debug_log "$lock not is running."
@@ -2351,6 +2350,10 @@ function main()
   _init_script_variables;
   _init_print_basic_info;
 
+  # I dont like when someone else is occupying my room
+  # Test if any apt-get ops are running
+  _test_conflicting_apps;
+
   # Did I tell you that I need to call My friends over internet?
   _test_internet_connection;
 
@@ -2360,16 +2363,12 @@ function main()
   # Take care of Mint and other distros
   _fix_ubuntu_derivatives;
 
-  # I dont like when someone else is occupying my room
-  # Test if any apt-get ops are running
-  _test_conflicting_apps;
-
  # Set API Endpoints
   _set_custom_api_nodes;
 
   # Get Remote Config File/s, check version & configure
   _version_checks;
-  _set_remote_config;
+  _set_yaml_config;
 
   # Autopilot
   if [[ "$AUTOPILOT" == "true" ]]; then
