@@ -78,7 +78,7 @@
 [[redirects]]
   from = "/pr"
   query = {id = ":id"}
-  to = "https://github.com/tprasadtp/ubuntu-post-install/pulls/:id"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/pull/:id"
   status = 301
   force = true
 

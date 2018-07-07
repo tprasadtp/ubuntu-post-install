@@ -32,7 +32,7 @@ readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 readonly YELLOW=$(tput setaf 3)
 readonly NC=$(tput sgr 0)
 ignore_git_folder="false"
-use_remote_config="false"
+use_yml_config="true"
 GET_BASE_URL="https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master"
 GET_LIST_BASE_URL="https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/data"
 function check_dependencies()
