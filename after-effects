@@ -662,38 +662,38 @@ function _set_custom_api_nodes ()
 
 
 function parse_yaml() {
-    local yaml_file=$1
-    local prefix=$2
-    local s
-    local w
-    local fs
+  local yaml_file=$1
+  local prefix=$2
+  local s
+  local w
+  local fs
 
-    s='[[:space:]]*'
-    w='[a-zA-Z0-9_.-]*'
-    fs="$(echo @|tr @ '\034')"
+  s='[[:space:]]*'
+  w='[a-zA-Z0-9_.-]*'
+  fs="$(echo @|tr @ '\034')"
 
-    (
-        sed -ne '/^--/s|--||g; s|\"|\\\"|g; s/\s*$//g;' \
-            -e "/#.*[\"\']/!s| #.*||g; /^#/s|#.*||g;" \
-            -e  "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
-            -e "s|^\($s\)\($w\)$s[:-]$s\(.*\)$s\$|\1$fs\2$fs\3|p" |
+  (
+      sed -ne '/^--/s|--||g; s|\"|\\\"|g; s/\s*$//g;' \
+          -e "/#.*[\"\']/!s| #.*||g; /^#/s|#.*||g;" \
+          -e  "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
+          -e "s|^\($s\)\($w\)$s[:-]$s\(.*\)$s\$|\1$fs\2$fs\3|p" |
 
-        awk -F"$fs" '{
-            indent = length($1)/2;
-            if (length($2) == 0) { conj[indent]="+";} else {conj[indent]="";}
-            vname[indent] = $2;
-            for (i in vname) {if (i > indent) {delete vname[i]}}
-                if (length($3) > 0) {
-                    vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("__")}
-                    printf("local %s%s%s%s=(\"%s\")\n", "'"$prefix"'",vn, $2, conj[indent-1],$3);
-                }
-            }' |
+      awk -F"$fs" '{
+          indent = length($1)/2;
+          if (length($2) == 0) { conj[indent]="+";} else {conj[indent]="";}
+          vname[indent] = $2;
+          for (i in vname) {if (i > indent) {delete vname[i]}}
+              if (length($3) > 0) {
+                  vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("__")}
+                  printf("%s%s%s%s=(\"%s\")\n", "'"$prefix"'",vn, $2, conj[indent-1],$3);
+              }
+          }' |
 
-        sed -e 's/_=/+=/g' \
-            -e '/\..*=/s|\.|_|' \
-            -e '/\-.*=/s|\-|_|'
+      sed -e 's/_=/+=/g' \
+          -e '/\..*=/s|\.|_|' \
+          -e '/\-.*=/s|\-|_|'
 
-    ) < "$yaml_file"
+) < "$yaml_file"
 }
 
 function _check_file()
@@ -1467,7 +1467,7 @@ function add_repositories()
     if [ "$ARCH" == "amd64" ]; then
       _log_and_show "${_repo} Visual Studio Code repository"
       _debug_log "Getting GPG keys for repository"
-      curl -s https://packages.microsoft.com/keys/microsoft.asc > microsoft.asc
+      wget -q https://packages.microsoft.com/keys/microsoft.asc -O microsoft.asc 2>&1 "${log_file}"
       _debug_log "Adding Key to trusted GPG keys directory"
       apt-key add microsoft.asc 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Visual Studio Code key failed"
       echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list
@@ -1952,7 +1952,7 @@ function _install_pip_python()
   _log_and_show "${_installing} Installing python packages"
   _debug_log "Requirements file: ${requirements_file}"
    rm -f ${requirements_file} || _log_and_exit "Failed to remove ${requirements_file}" "38"
-   printf '%s\n' "${python_packages[@]}" > "${requirements_file}"
+   printf "%s\n" "${python_packages[@]}" > "${requirements_file}"
   # Check if pip package list is empty
   if [[ ${#python_packages[@]} -eq 0 ]]; then
     set_yellow;
@@ -2221,7 +2221,7 @@ function _ci_cloud_and_container_checks()
     _log_and_show "${_info} Running on EC2"
 
   #------------------------------- GCP ---------------------------------------------
-  elif wget -q -O- --timeout=5 --tries=3 -nc --header="Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/virtual-clock/drift-token ; then
+elif wget -q -O- --timeout=5 --tries=3 -nc --header="Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/virtual-clock/drift-token > /dev/null; then
     _log_and_show "${_info} Running on Google Compute"
 
   elif wget -q -O- --timeout=5 --tries=3 -nc  http://169.254.169.254/metadata/v1/id; then
@@ -2338,7 +2338,7 @@ function main()
                                   _log_and_show "${_info} Using custom version info file"
                                   ;;
           -L | --use-lists )      readonly bool_prefer_local_flags="true"; _log_and_show "Ignoring remote config";;
-          -n | --name)            shift readonly bool_custom_remote_config_name="true"; readonly custom_remote_config_name="${1}";;
+          -n | --name)            shift; readonly bool_custom_remote_config_name="true"; readonly custom_remote_config_name="${1}";;
           -v | --version )        _log_and_exit "-v or --version should be the only argument and should be used as first argument only." "23";;
            * )                    _log_and_exit "${_error} Invalid option: $1" "22";;
       esac
