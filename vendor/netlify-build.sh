@@ -86,6 +86,7 @@ function jekyll_branch()
   mkdocs build;
   echo "---> Copying Static Files"
   echo "Generate JSON"
+  mkdir -p ./api/json
   for file in ./api/*.yml;
   do
     printf "Linting Converting File  to JSON : ${file}\n"
