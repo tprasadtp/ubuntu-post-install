@@ -2043,18 +2043,18 @@ function install_debs ()
       _log_and_show "${_oh_no} Some error occured during downloading and installing $index."
       $?="0"
     fi
+    # Delete DEBs
+    if [ "$bool_preserve_debs" == "false" ];then
+      _log_and_show "${_deb} Deleting ownloaded DEB Packages"
+      (
+        rm -f "${dir}/${deb_name}" >> "$log_file"
+      )
+    else
+      _debug_log "Keeping Downloaded DEB Packages"
+    fi
   done
 
-      # Delete DEBs
-  if [ "$bool_preserve_debs" == "false" ];then
-    _log_and_show "${_deb} Deleting ownloaded DEB Packages"
-    (
-      rm -f "${dir}"/*.deb "${dir}"/*.DEB "${dir}"/*.deb.* "${dir}"/*.DEB.* >> "$log_file"
-    )
-    _clean_apt_cache;
-  else
-    _debug_log "Keeping Downloaded DEB Packages"
-  fi
+  _clean_apt_cache;
   _line_fill >> "$log_file"
 }
 
