@@ -32,9 +32,9 @@ readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 readonly YELLOW=$(tput setaf 3)
 readonly NC=$(tput sgr 0)
 ignore_git_folder="false"
-use_yml_config="true"
 GET_BASE_URL="https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master"
 GET_LIST_BASE_URL="https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/data"
+GET_YAML_BASE_URL="https://new-badges--ubuntu-post-install.netlify.com"
 function check_dependencies()
 {
   #Function to check is dependencies are available
@@ -69,7 +69,7 @@ function get-after-effects()
   wget -q  "${GET_BASE_URL}"/after-effects
   printf "${YELLOW}Changing file permissions...${NC}\n"
   chmod +x ./after-effects
-  if [ "$use_yaml" != "true" ]; then
+  if [ "$use_yaml" == "false" ]; then
     printf "${YELLOW}Getting Data and Lists...${NC}\n"
     wget -q "${GET_LIST_BASE_URL}"/get.mlist
     mkdir -p data
@@ -79,6 +79,8 @@ function get-after-effects()
         wget -q -P ./data/ "${GET_LIST_BASE_URL}"/"$line"
       done <get.mlist
   else
+    wget -q "${GET_YAML_BASE_URL}/api/config.yml" -O example-config.yaml
+    wget -q "${GET_YAML_BASE_URL}/api/version.yml" -O version.yml
     printf "[   Info  ] Be sure to pass the right flags while running the script\n"
   fi
   printf "${YELLOW}Please Run the script after-effects as root\n"
