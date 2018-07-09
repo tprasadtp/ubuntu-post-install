@@ -3,7 +3,7 @@ api: 1
 # Configuraion
 version:
   number: 44
-  name: 5.0 Alpha
+  name: 4.1 Beta
 # Stats reporting
 stats:
   report: true

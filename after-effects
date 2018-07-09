@@ -1576,7 +1576,7 @@ function add_repositories()
   # Default is true
   # _fix_ubuntu_derivatives will take care of this and bool_config_partner_repo is set to true only if
   # Ubuntu and its flavors are used.
-  if [ "$bool_config_partner_repo" != "false" ] || [ "$bool_is_debian" != "true" ]; then
+  if [ "$bool_config_partner_repo" == "true" ] && [ "$bool_is_debian" != "true" ]; then
     _log_and_show "${_repo} Canonical partner repositoris"
     add-apt-repository "deb http://archive.canonical.com/ubuntu $code_name partner" >> "$log_file"
   else
