@@ -22,7 +22,7 @@ function main()
   dir=$(echo "${dir/tests/}")
   log_file="$dir"/logs/after-effects.log
   # set eo on script.
-  sed -i 's/set -o pipefail/set -eo pipefail/g' "$dir"/after-effects
+  #sed -i 's/set -o pipefail/set -eo pipefail/g' "$dir"/after-effects
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo "Building Bionic Docker Image"
   docker build -t  ubuntu:ae-bionic ./dockerfiles/bionic
