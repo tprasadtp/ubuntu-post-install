@@ -32,7 +32,7 @@ function gen_metadata()
   echo ">>---------------------------- Build Metadata -------------------------------------<<" >>${DEPLOY_PARAM}
   echo "This Version of Website was Generated On ${DATE} By Netlify Build Bots." >> ${DEPLOY_PARAM}
   printf "${spacing_string}: $BRANCH\n" "Branch" >>${DEPLOY_PARAM}
-  printf "${spacing_string}: $PULL_REQUEST\n" "Is Pull Request" >>${DEPLOY_PARAM}
+  printf "${spacing_string}: $PULL_REQUEST\n" "Is PR" >>${DEPLOY_PARAM}
   printf "${spacing_string}: ${COMMIT_REF:0:7}\n" "Commit" >>${DEPLOY_PARAM}
   printf "${spacing_string}: $CONTEXT\n" "Deploy Type" >>${DEPLOY_PARAM}
   printf "${spacing_string}: $DEPLOY_URL\n" "Deploy URL" >>${DEPLOY_PARAM}
@@ -85,7 +85,23 @@ function jekyll_branch()
   echo "---> Building Website with Branch"
   mkdocs build;
   echo "---> Copying Static Files"
-  cp -R ./cfg/ ./_site/cfg/
+  echo "Generate JSON"
+  mkdir -p ./api/json
+  for file in ./api/*.yml;
+  do
+    printf "Linting Converting File  to JSON : ${file}\n"
+    file_name_json=$(basename ./api/"${file}" .yml)
+    file_name_json+=".json"
+    yamllint "${file}" && yml2json "${file}" | python -m json.tool > ./api/json/"${file_name_json}"
+    index=$((index + 1))
+  done
+  cp -R ./api/ ./_site/api/
+  echo "Copying Signature file"
+  if [ -f after-effects.asc ]; then
+    cp ./after-effects.asc ./api/gpg/after-effects
+  elif [ -f after-effects.sig ]; then
+    cp ./after-effects.asc ./api/gpg/after-effects
+  fi
   gen_metadata;
 }
 
@@ -95,15 +111,14 @@ function usage()
   #Prints out help menu
 cat <<EOF
 Usage: netlify-deploy [OPTIONS]
-[-p --production]        [Master Deployment]
-[-b --branch]        [Branch Deployment]
-[-pr --pull-request] [Pull request deployment(Same as branch)]
+[-p --production]       [Production Deployment (Master Branch)]
+[-b --branch]           [Branch Deployment]
+[-pr --pull-request]    [Pull request deployment (Same as branch)]
 EOF
 }
 
 function install_dependencies()
 {
-  pip install --upgrade pip
   pip install -r ./dockerfiles/mkdocs/requirements.txt
   mkdocs --version
   #bundle install

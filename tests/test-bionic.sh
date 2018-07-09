@@ -20,23 +20,19 @@ function main()
   dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
   #shellcheck disable=SC2116
   dir=$(echo "${dir/tests/}")
-  log_file="$dir"/after-effects-logs/after-effects.log
+  log_file="$dir"/logs/after-effects.log
   # set eo on script.
   sed -i 's/set -o pipefail/set -eo pipefail/g' "$dir"/after-effects
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo "Building Bionic Docker Image"
   docker build -t  ubuntu:ae-bionic ./dockerfiles/bionic
-  echo "Adding Xenial and above list to app-list.list"
-  echo "./data/xenial-above.list" >> ./data/app-list.list
-  echo "Adding External Repos"
-  echo "./data/extern-repo.list" >> ./data/app-list.list
   echo "Running in Docker Bionic"
 
   docker run -it -e TRAVIS="$TRAVIS" \
   --hostname=Docker-Bionic \
   -v "$(pwd)":/shared \
   ubuntu:ae-bionic \
-  ./after-effects --fix --simulate --yes --enable-pre --enable-post --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/cfg
+  ./after-effects --fix --simulate --yes --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/api
 
   exit_code_from_container="$?"
   echo "Exit code from docker run is: $exit_code_from_container"

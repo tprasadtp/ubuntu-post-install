@@ -9,16 +9,30 @@ set -e pipefail
 spacing_string="%-15s"
 
 ## Install Python packages
-pip install --upgrade pip
 pip install -r ./dockerfiles/mkdocs/requirements.txt
 # Build Static
 echo "Building Docs"
 mkdocs build -v -s
+echo "Generate JSON"
+for file in ./api/*.yml;
+do
+	printf "Linting Converting File  to JSON : ${file}\n"
+  file_name_json=$(basename ./api/"${file}" .yml)
+  file_name_json+=".json"
+  yamllint "${file}" && yml2json "${file}" | python -m json.tool > ./api/"${file_name_json}"
+	index=$((index + 1))
+done
+
 echo "Copy API Files"
-cp -R ./cfg/ ./_site/cfg/
+cp -R ./api/ ./_site/api/
+echo "Copying Signature file"
+if [ -f after-effects.asc ]; then
+	cp ./after-effects.asc ./api/gpg/after-effects
+elif [ -f after-effects.sig ]; then
+	cp ./after-effects.asc ./api/gpg/after-effects
+fi
 echo "Copy Netlify Files"
-cp -R ./vendor/ ./_site/vendor/
-cp -R ./netlify.toml ./_site/netlify.toml
+cp  ./netlify.toml ./_site/netlify.toml
 echo "Commit Info"
 true > ./_site/commit.txt
 printf "${spacing_string}: ${TRAVIS_COMMIT:0:7}\n" "SRC Commit ID"  | tee -a ./_site/commit.txt

@@ -1,0 +1,30 @@
+{
+  "git.autofetch": true,
+  "editor.formatOnPaste": true,
+  "files.trimTrailingWhitespace": true,
+  "trailing-spaces.trimOnSave": true,
+  "editor.tabSize": 2,
+  "editor.minimap.enabled": false,
+  "explorer.openEditors.visible": 0,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "files.autoGuessEncoding": true,
+  "files.eol": "\n",
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true
+  },
+  "files.trimFinalNewlines": true,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/.saas-cache": true
+  },
+  "telemetry.enableCrashReporter": false,
+  "telemetry.enableTelemetry": false,
+  "python.autoComplete.addBrackets": true,
+  "git.autorefresh": true,
+  "git.ignoreLimitWarning": true
+}

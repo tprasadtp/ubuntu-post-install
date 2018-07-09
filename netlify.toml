@@ -20,3 +20,107 @@
 # an active Deploy Preview will inherit these settings.
 [context.branch-deploy]
   command = "./vendor/netlify-build.sh --branch"
+
+# Redirects
+# SEO
+[[redirects]]
+  from = "http://after-effects.prasadt.com/*"
+  to = "http://ae.prasadt.com/:splat"
+  status = 301
+  force = true
+
+
+[[redirects]]
+  from = "https://after-effects.prasadt.com/*"
+  to = "https://ae.prasadt.com/:splat"
+  status = 301
+  force = true
+
+
+# Country specific rules
+#[[redirects]]
+#  from = "/"
+#  to = "/unavailable"
+#  status = 302
+#  force = true
+#  conditions = {Country = ["CN","HK","TW","CU","IR","PK","SD","SA","TR","RU","YE","BD"]}
+
+# GH URLs
+[[redirects]]
+  from = "/git"
+  to = "https://github.com/tprasadtp/ubuntu-post-install"
+  status = 301
+  force = true
+
+
+[[redirects]]
+  from = "/github"
+  to = "https://github.com/tprasadtp/ubuntu-post-install"
+  status = 301
+  force = true
+
+# Issues
+[[redirects]]
+  from = "/issue"
+  query = {id = ":id"}
+  to = "https://github.com/tprasadtp/ubuntu-post-install/issues/:id"
+  status = 301
+  force = true
+
+
+[[redirects]]
+  from = "/issues"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/issues"
+  status = 301
+  force = true
+
+# Pulls
+[[redirects]]
+  from = "/pr"
+  query = {id = ":id"}
+  to = "https://github.com/tprasadtp/ubuntu-post-install/pull/:id"
+  status = 301
+  force = true
+
+
+[[redirects]]
+  from = "/prs"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/pulls"
+  status = 301
+  force = true
+
+# Deploy Data
+[[redirects]]
+  from = "/dp"
+  to = "/deploy-params.txt"
+  status = 301
+  force = true
+
+
+[[redirects]]
+  from = "/build"
+  to = "/deploy-params.txt"
+  status = 301
+  force = true
+
+#Config.yml
+[[redirects]]
+  from = "api/config"
+  query = {name = ":name"}
+  to = "api/config.yml?name=name"
+  status = 301
+  force = true
+
+#Config.yml Default
+[[redirects]]
+  from = "api/config/default"
+  to = "api/config.yml"
+  status = 301
+  force = true
+
+# Version  to version.yml
+[[redirects]]
+  from = "api/version"
+  to = "api/version.yml"
+  status = 301
+  force = true

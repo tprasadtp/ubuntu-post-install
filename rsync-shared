@@ -4,24 +4,83 @@ YELLOW=$(tput setaf 3)
 BLUE=$(tput setaf 6)
 #RED=$(tput setaf 1)
 NC=$(tput sgr 0)
-#default config-files directory
-SHARED_DIR="/home/$USER/Desktop"
 
-if command -v rsync >&/dev/null; then
-  printf "${BLUE}Copying files to ${SHARED_DIR}...${NC}\n"
-  rsync -Ea --recursive \
-  --exclude '*.md*' \
-  --exclude '*.MD*' \
-  --exclude '.git' \
-  --exclude 'rsync-shared' \
-  --exclude '.gitignore' \
-  --exclude '.travis.yml' \
-  --exclude 'screenshots' \
-  --exclude 'LICENSE' \
-  --exclude 'dockerfiles' \
-  --exclude 'tests' \
-  ./ "${SHARED_DIR}" && printf "[ INFO ] Copied\n"
-else
-  printf "${YELLOW}Program rsync is not installed. Please install rsync.\nThis script requires rsync.\n${NC}";
-  return 1;
-fi
+
+function rsync_to_test_folder()
+{
+  local SHARED_DIR="/home/$USER/Desktop/Test"
+  if command -v rsync >&/dev/null; then
+    printf "${BLUE}[ INFO ] Copying files to ${SHARED_DIR}...${NC}\n"
+    rsync -Ea --recursive \
+    --exclude '*.md*' \
+    --exclude '*.MD*' \
+    --exclude '.git' \
+    --exclude 'rsync-shared' \
+    --exclude '.gitignore' \
+    --exclude '.travis.yml' \
+    --exclude 'screenshots' \
+    --exclude 'LICENSE' \
+    --exclude 'dockerfiles' \
+    --exclude 'tests' \
+    --exclude 'docs' \
+    --exclude 'vendor' \
+    --exclude '.github' \
+    --exclude '.vscode' \
+    --exclude '.editorconfig' \
+    --exclude '.gitattributes' \
+    --exclude 'mkdocs.yl' \
+    --exclude 'test-yaml.sh' \
+    --exclude 'api' \
+    --exclude 'netlify.toml' \
+    ./ "${SHARED_DIR}" && printf "[ INFO ] Copied\n"
+  else
+    printf "${YELLOW}Program rsync is not installed. Please install rsync.\nThis script requires rsync.\n${NC}";
+    return 1;
+  fi
+}
+
+
+
+function rsync_to_host_folder()
+{
+
+  local SHARED_DIR="/home/$USER/thinclient_drives/F:/ubuntu-post-install-test"
+  if command -v rsync >&/dev/null; then
+    printf "${BLUE}[ INFO ] Copying files to ${SHARED_DIR}...${NC}\n"
+    rsync -Ea --recursive ./ "${SHARED_DIR}" && printf "[ INFO ] Copied\n"
+  else
+    printf "${YELLOW}Program rsync is not installed. Please install rsync.\nThis script requires rsync.\n${NC}";
+    return 1;
+  fi
+}
+
+function rsync_to_guest_folder()
+{
+
+  local SHARED_DIR="/home/$USER/Desktop/upi"
+  mkdir -p "$SHARED_DIR"
+  if command -v rsync >&/dev/null; then
+    printf "${BLUE}[ INFO ] Copying files to ${SHARED_DIR}...${NC}\n"
+    rsync -Ea --recursive ./ "${SHARED_DIR}" && printf "[ INFO ] Copied\n"
+  else
+    printf "${YELLOW}Program rsync is not installed. Please install rsync.\nThis script requires rsync.\n${NC}";
+    return 1;
+  fi
+}
+
+function main()
+{
+  if [[ $# -eq 0 ]]; then
+    printf "Use --host to copy to host. or --guest to copy to guest.\n"
+    exit 1;
+  fi
+
+  case ${1} in
+         -t | --test )               rsync_to_test_folder;;
+         -h | --host )               rsync_to_host_folder;;
+         -g | --guest )              rsync_to_guest_folder;;
+         * )                         printf "Invalid argument.\n"; exit 1;;
+  esac
+}
+
+main "$@"

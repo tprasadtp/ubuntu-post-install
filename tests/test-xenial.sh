@@ -21,20 +21,18 @@ function main()
   dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
   #shellcheck disable=SC2116
   dir=$(echo "${dir/tests/}")
-  log_file="$dir"/after-effects-logs/after-effects.log
+  log_file="$dir"/logs/after-effects.log
   # set eo on script.
   sed -i 's/set -o pipefail/set -eo pipefail/g' "$dir"/after-effects
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo "Building Xenial Docker Image"
   docker build -t  ubuntu:ae-xenial ./dockerfiles/xenial
-  echo "Adding External Repos"
-  echo "./data/extern-repo.list" >> ./data/app-list.list
   echo "Running in Docker Xenial"
   docker run -it -e TRAVIS="$TRAVIS" \
   --hostname=Docker-Xenial \
   -v "$(pwd)":/shared \
   ubuntu:ae-xenial \
-  ./after-effects --simulate --yes --enable-pre --enable-post --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/cfg
+  ./after-effects --simulate --yes --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/api
 
   exit_code_from_container="$?"
   echo "Exit code from docker run is: $exit_code_from_container"

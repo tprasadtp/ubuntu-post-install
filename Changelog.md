@@ -2,7 +2,7 @@
 
 ## _v4.0_
 
-- Pre and Post Hooks for scripts.
+- Pre and Post Hooks for scripts. PS: Later thought: [WHY DID I DO IT?? WITH JUST BASH ITS PIA]
 - Custom list of scripts can be run Before and after all the tasks.
 
 ## _v3.6_
@@ -17,7 +17,7 @@
 - Delete cached and downloaded DEBs. (Can be changed with `-k` flag )
 - Remove Gnome Specific stuff from default list
 - Remove PPAs incompatible with bionic
-- Bionic is supported with --pre-release flag only with default list. 
+- Bionic is supported with --pre-release flag only with default list.
 
 ## _v3.3_
 

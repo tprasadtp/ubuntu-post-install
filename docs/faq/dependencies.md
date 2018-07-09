@@ -14,6 +14,7 @@ The script depends on following utilities which are usually present on a typical
 - `wget`, to get deb packages, report stats, get version information.
 - `iputils-ping`, to test connectivity.
 - `procps` to check running processes
+- `gpg` or `gpgv` to check signatures
 - bash
 
 !!! warning "Note on Debian"
