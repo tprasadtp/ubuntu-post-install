@@ -101,57 +101,53 @@ func main() {
 		vrsn      bool
 		tmpret    []byte
 	)
-	flag.StringVar(&filename, "file", "config.yml", "Specify YAML file to use. Defaults to config.yml in current directory.\n")
-	flag.StringVar(&filetype, "t", "config", "Type of config file to parse.\n It can be either config or version. Default is config.\n")
+	flag.StringVar(&filename, "f", "config.yml", "Specify YAML file to use. Defaults to config.yml in current directory.\n")
+	flag.StringVar(&filetype, "t", "config", "Type of config file to parse.\n")
 	flag.BoolVar(&vrsn, "v", false, "Display Version of the parser\n")
 	flag.Parse()
 	// get git commit
-	tmpret, err := exec.Command("git", "rev-parse", "--short HEAD").Output()
+	tmpret, err := exec.Command("git", "rev-parse", "--short", "HEAD").Output()
 	if err != nil {
 		panic(err)
 	}
 	GITCOMMIT = string(tmpret)
 
 	if vrsn {
-		fmt.Printf("Parser Version : %s, build : %s\n", VERSION, GITCOMMIT)
+		fmt.Printf("Parser Version : %10s\nBuilt from commit : %10s\n", VERSION, GITCOMMIT)
 		return
 	}
 
 	//deal with it
-	if flag.NArg() == 2 {
-		//Check filename is present
-		if len(filename) == 0 {
-			fmt.Printf("Error! Filename cannot be Empty\n")
-			flag.Usage()
-			os.Exit(1)
-		}
-		//If flagtype is empty error, change input to lowercase if not empty.
-		if len(filetype) != 0 {
-			filetype = strings.ToLower(filename)
-		} else {
-			fmt.Printf("Error! Type argument cannot be empty!\n")
-			flag.Usage()
-			os.Exit(1)
-		}
 
-		//check filetype
-		switch filetype {
-		case "config":
-			parseConfig(filename)
-		case "version":
-			parseVersion(filename)
-		default:
-			fmt.Printf("Error! Not a valid config type.\n")
-			flag.Usage()
-			os.Exit(1)
-
-		}
-
-		//exit if args are more than 2 or less than two
-	} else {
+	//Check filename is present
+	if len(filename) == 0 {
+		fmt.Printf("Error! Filename cannot be Empty\n")
 		flag.Usage()
 		os.Exit(1)
 	}
+	//If flagtype is empty error, change input to lowercase if not empty.
+	if len(filetype) != 0 {
+		filetype = strings.ToLower(filename)
+	} else {
+		fmt.Printf("Error! Type argument cannot be empty!\n")
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	//check filetype
+	switch filetype {
+	case "config":
+		parseConfig(filename)
+	case "version":
+		parseVersion(filename)
+	default:
+		fmt.Printf("Error! Not a valid config type.\n")
+		flag.Usage()
+		os.Exit(1)
+
+	}
+
+	//exit if args are more than 2 or less than two
 }
 
 func parseConfig(filename string) {

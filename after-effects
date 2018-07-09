@@ -1514,9 +1514,9 @@ function add_repositories()
     if [ "$ARCH" == "amd64" ]; then
       _log_and_show "${_repo} Visual Studio Code repository"
       _debug_log "Getting GPG keys for repository"
-      wget -q https://packages.microsoft.com/keys/microsoft.asc -O microsoft.asc 2>&1 "${log_file}"
+      curl -s https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
       _debug_log "Adding Key to trusted GPG keys directory"
-      apt-key add microsoft.asc 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "${_error} Adding Visual Studio Code key failed"
+      apt-key add microsoft.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "${_error} Adding Visual Studio Code key failed"
       echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list
     else
       _log_and_show "Architecture: $ARCH is not supported by Visual studio Code."
