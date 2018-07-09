@@ -1164,7 +1164,7 @@ function _show_confirmation_dialog_for_tasks()
   # To overide and say yes to all dialog pass -y as command line option while running the script.
   local name_of_task="${1}" #Name of the task to be perfromed
   local confirm_msg="${2}" #Message shown in Confirmation dialogue
-  local readonly exec_function="${3}" #Function to run if user selected yes
+  readonly local exec_function="${3}" #Function to run if user selected yes
   COLUMNS=$(tput cols)
   LINES=$(tput lines)
   export COLUMNS LINES
@@ -2116,7 +2116,7 @@ function _autopilot_check_task_flag_and_run()
   # ARG -1 : global flag variable to check
   # ARG -2: Function Name to execute
   local flag=${1}
-  local readonly runnable=${2}
+  readonly local runnable=${2}
 
   if [ "${flag}" == "true" ]; then
     "$runnable"
