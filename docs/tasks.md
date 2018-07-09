@@ -17,7 +17,7 @@ This can add the following repositories.
     Please note that the above repositories are sometimes not updated for latest Ubuntu release and most certainly will not be available for upcoming release of Ubuntu(Alpha/Beta). It might take some time till the repositories are available for the latest release. Use -f or --fix command line option or --pre-release in case you are using a Development version of ubuntu to revert using latest available version of repositories (usually previous Ubuntu release or in case of Beta/Alpha latest stable release of ubuntu). [For more info see command line options.](/clioptions/#fix-for-latest-ubuntu-releases)
 
 ??? tip "Controlling which repository is added using config file"
-    You can set your YML file to decide which repository is added. Some repositories may no be suppoted on your architecture or distribution. Take a look at [config.yml](/api/config.yml) for example. If you omit a value, it defaults to false **ALWAYS**. do note that if you are using lists default values are different, they are mentioned in below.
+    You can set your YML file to decide which repository is added. Some repositories may no be suppoted on your architecture or distribution. Take a look at [config.yml](/api/yaml) for example. If you omit a value, it defaults to false **ALWAYS**. do note that if you are using lists default values are different, they are mentioned in below.
 
 
 ??? note "Default Variables if using Lists"

@@ -212,7 +212,7 @@ Example version files are in `api` directory. All the fields are mandatory.
     ```
     OR
     ```
-    ./after-effects --no-reporting
+    ./after-effects -S
     ```
 Disables reporting statistics back to server.
 
