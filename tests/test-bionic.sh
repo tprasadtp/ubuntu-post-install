@@ -32,7 +32,7 @@ function main()
   --hostname=Docker-Bionic \
   -v "$(pwd)":/shared \
   ubuntu:ae-bionic \
-  ./after-effects --fix --simulate --yes --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/api
+  ./after-effects --fix --yaml --simulate --yes --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/api
 
   exit_code_from_container="$?"
   echo "Exit code from docker run is: $exit_code_from_container"

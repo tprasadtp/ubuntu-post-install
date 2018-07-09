@@ -26,5 +26,6 @@
   "telemetry.enableTelemetry": false,
   "python.autoComplete.addBrackets": true,
   "git.autorefresh": true,
-  "git.ignoreLimitWarning": true
+  "git.ignoreLimitWarning": true,
+  "go.autocompleteUnimportedPackages":true
 }

@@ -20,10 +20,13 @@
 | 22 | Invalid flag passed |
 | 23 | Invalid argument position. |
 | 24 | Not Running the latest version |
+| 25 | Incompatible arguments |
 | 28 | Getting API response failed |
 | 29 | Stat reporting failed |
 | 35 | Not a valid config file type |
 | 36 | file defined does not exist/not accessible |
 | 37 | Configuration error. Expects Boolean but found something else. |
 | 38 | Failed to delete a file |
+| 51 | GPG signature checks failed |
+| 52 | SHA checksums did not match |
 | 255 | Test Exit code |

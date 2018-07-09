@@ -32,7 +32,7 @@ function main()
   --hostname=Docker-Xenial \
   -v "$(pwd)":/shared \
   ubuntu:ae-xenial \
-  ./after-effects --simulate --yes --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/api
+  ./after-effects --simulate --yes --yaml --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/api
 
   exit_code_from_container="$?"
   echo "Exit code from docker run is: $exit_code_from_container"

@@ -52,8 +52,14 @@ Please see [Configuration](https://ae.prasadt.com/config/#package-lists) & [Task
 
 Run the script as **root**. You will get an error if you do not run the script as root.
 
+- To use default YAML configuration, which can be found here `https://ae.prasadt.com/api/config.yml`
+  ```sh
+    sudo ./after-effects -Y
+  ```
+
+- To use local list files in `data`
 ```sh
-sudo ./after-effects
+  sudo ./after-effects -L
 ```
 
 > If you are running this in a docker container, you probably are root and its possible that you might be missing `sudo`. So In that case just run it as `./after-effects`. Be warned! You might be missing several dependencies of the script!!
@@ -116,6 +122,5 @@ Debian 9         | Stretch           | Yes         |
 See [Contributing and forks](./.github/CONTRIBUTING)
 
 ## Credits
-1. [JSON-to-Go](https://mholt.github.io/json-to-go/)
 
 [![Analytics](https://ga-beacon.prasadt.com/UA-101760811-3/github/ubuntu-post-install?flat)](https://prasadt.com/google-analytics-beacon)
