@@ -180,7 +180,7 @@ func parseVersion(filename string) {
 	fmt.Printf("Value: %q\n", v.Version.Name)
 }
 
-//CheckBool ... Function to check is boolean  present
+//CheckBool ... Function to check if boolean is present
 func CheckBool(booltocheck bool, varname string, defaultvalue bool) {
 	fmt.Printf("WIP\n")
 }
