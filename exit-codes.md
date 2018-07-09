@@ -27,6 +27,7 @@
 | 36 | file defined does not exist/not accessible |
 | 37 | Configuration error. Expects Boolean but found something else. |
 | 38 | Failed to delete a file |
+| 39 | Custom remote config name cannot be empty |
 | 51 | GPG signature checks failed |
 | 52 | SHA checksums did not match |
 | 255 | Test Exit code |

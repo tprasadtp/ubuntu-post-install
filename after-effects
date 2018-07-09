@@ -156,7 +156,7 @@ function _log_and_exit()
     printf "[$(date)] ${msg}\n" >> "$log_file";
     printf "\nFinished %s on $(date).\nLast exit code was: %d\n" "$SCRIPT" "$?"
   } >> "$log_file"
-
+  report_stats
   set_yellow
   _line_fill | tee -a "$log_file"
   set_default
@@ -295,7 +295,6 @@ function _init_script_variables()
   bool_preserve_debs="false"
 
   # Default Stats Server name & Stats reporting flag
-  bool_report_stats="true"
   #shellcheck disable=SC2034
   stats_node="https://stats.ae.prasadt.com/report"
 
@@ -434,7 +433,7 @@ function verify_gpg_signature()
 
   # Checks if file is present
   if ! [ -f "${1}" ]; then
-    printf "${YELLOW} Error! Signature file not found.${NC}\n"
+    printf "${YELLOW}Error! Signature file not found.${NC}\n"
     exit 51;
   fi
 
@@ -697,21 +696,6 @@ function parse_yaml() {
 ) < "$yaml_file"
 }
 
-function _check_file()
-{
-  # Function to check if a file exists and is not empty or is a block device.
-  # Accepts one argument.
-  # If file not found exits with code 36
-  # If file is empty exits with code 37
-  # If file is blk device exits with code 38
-  # ARG 1: path to file
-  local file_name=${1}
-
-  if [ "$#" -ne 1 ]; then
-    _log_and_exit "${_error} Not enough arguments for file checks." "19"
-  fi
-}
-
 
 function _get_remote_file()
 {
@@ -766,11 +750,11 @@ function _version_checks ()
       fi
 
       # Parse YAML to variables
-      _debug_log "Parsing Version Config File "
+      _debug_log "Parsing Version Config File"
       eval "$(parse_yaml "$version_yaml_file")"
       {
       _line_fill
-      declare -p
+      #declare -p
       _line_fill
       } >> "${log_file}"
       # Assign them to local variables as sometimes bash if does not handle array elements very well.
@@ -820,18 +804,22 @@ function _check_bool()
   # Accepted are true and false
   # If invalid, defaults to false.
   # Accepts global var and bool to check as arguments
-  local g_var parm_bool cfg_bool
+  local g_var param_bool
   g_var="${1}"
   param_bool="${2}"
+  _debug_log "Globar var is : $g_var, Param from cfg is $param_bool"
   if ([[ $param_bool == true ]] || [[ $param_bool == True ]] || [[ $param_bool == Yes ]] || [[ $param_bool == yes ]] || [[ $param_bool == YES ]]) ; then
+  # shellcheck disable=SC2086
     declare -g ${g_var}="true"
     _debug_log "Variable : <$g_var> is set to true"
   elif ([[ $param_bool == false ]] || [[ $param_bool == False ]] || [[ $param_bool == No ]] || [[ $param_bool == no ]] || [[ $param_bool == No ]]) ; then
+    # shellcheck disable=SC2086
     declare -g ${g_var}="false"
     _debug_log "Variable : <$g_var> is set to false"
   else
     _log_and_show "${_cfg} Invalid value for param : $g_var. It can either be t[T]rue or f[F]alse."
     _log_and_show "${_cfg} Setting $g_var to default. (false)"
+    # shellcheck disable=SC2086
     declare -g ${g_var}="false"
     _debug_log "Variable : <$g_var> is set to false"
   fi
@@ -839,7 +827,7 @@ function _check_bool()
 
 }
 
-function _setup_remote_config()
+function _set_yaml_config()
 {
 
 
@@ -1090,7 +1078,7 @@ function _setup_remote_config()
 
   {
   _line_fill
-  declare -p
+  #declare -p
   _line_fill
   } >> "${log_file}"
 
@@ -1123,8 +1111,7 @@ function _set_list_config()
     # Keep Downloaded DEB packages
     bool_preserve_debs="false"
 
-    # Default Stats Server name & Stats reporting flag
-    bool_report_stats="true"
+    # Default Stats Server name
     #shellcheck disable=SC2034
     stats_node="https://stats.ae.prasadt.com/report"
 
@@ -1177,7 +1164,7 @@ function _show_confirmation_dialog_for_tasks()
   # To overide and say yes to all dialog pass -y as command line option while running the script.
   local name_of_task="${1}" #Name of the task to be perfromed
   local confirm_msg="${2}" #Message shown in Confirmation dialogue
-  local exec_function="${3}" #Function to run if user selected yes
+  local readonly exec_function="${3}" #Function to run if user selected yes
   COLUMNS=$(tput cols)
   LINES=$(tput lines)
   export COLUMNS LINES
@@ -1188,7 +1175,7 @@ function _show_confirmation_dialog_for_tasks()
         _debug_log "User selected yes, Proceed with $name_of_task"
         # execute the function
         _debug_log "Executing: $exec_function"
-        eval "$($exec_function)"
+        $exec_function
     else
         _debug_log "Selected No for $name_of_task , Returning to Main menu."
         _process_menu;
@@ -1227,8 +1214,8 @@ function _install_dependencies()
   local packages=("$@")
   _debug_log "Installing Packages"
   {
-    printf "Following packages will be installed\n"
-    printf "[$(date)] ${_array} %s\n" "${packages[@]}"
+    _debug_log "Following packages will be installed\n"
+    _debug_log "[$(date)] ${_array} %s\n" "${packages[@]}"
   } >> "${log_file}"
   # Check if array is empty
   if [[ ${#packages[@]} -eq 0 ]]; then
@@ -1389,16 +1376,16 @@ function add_repositories()
       wget -q  https://dl.google.com/linux/linux_signing_key.pub -O linux_signing_key.pub >> $"$log_file"
       _debug_log "Adding Google key to trusted keys list"
       apt-key add linux_signing_key.pub 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_show "Adding trusted keys for Google failed."
+      || _log_and_show "${_error} Adding trusted keys for Google failed."
 
       _log_and_show "${_repo} Google Chrome repository"
       echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main #Google-Chrome" > ${SOURCES_FILE_DIR}/google-chrome.list \
-      || _log_and_show "Adding Google Chrome Repository failed"
+      || _log_and_show "${_error} Adding Google Chrome Repository failed"
 
       _log_and_show "${_repo} Google Earth repository"
 
       echo "deb [arch=amd64] http://dl.google.com/linux/earth/deb/ stable main #Google-Earth" > ${SOURCES_FILE_DIR}/google-earth.list \
-      || _log_and_show "Adding Google Chrome repository failed"
+      || _log_and_show "${_error} Adding Google Chrome repository failed"
 
     else
       _log_and_show "Architecture: $ARCH is not supported for Chrome. Please use Chromium"
@@ -1414,10 +1401,10 @@ function add_repositories()
     _debug_log "Adding Spotify keys"
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0DF731E45CE24F27EEEB1450EFDC8610341D9410  2>&1 \
     |_add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_show "Adding Spotify repository failed"
+    || _log_and_show "${_error} Adding Spotify repository failed"
 
     echo "deb http://repository.spotify.com stable non-free #Spotify For Linux" > ${SOURCES_FILE_DIR}/spotify.list \
-    || _log_and_show "Adding Spotify Repository Failed"
+    || _log_and_show "${_error} Adding Spotify Repository Failed"
   else
     _log_and_show "${_repo} Spotify repository is set to false. Skipping."
   fi
@@ -1428,10 +1415,10 @@ function add_repositories()
     _debug_log "Adding Insync keys"
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ACCAF35C  2>&1 \
     | _add_timestamp_to_logs "${_apt_key_logs}" \
-    || _log_and_show "Adding Insync Repository failed"
+    || _log_and_show "${_error} Adding Insync Repository failed"
 
     echo "deb http://apt.insynchq.com/${OS_DISTRIBUTION} $code_name non-free contrib #Insync Client" > ${SOURCES_FILE_DIR}/insync.list \
-    || _log_and_show "Adding Insync Repository failed"
+    || _log_and_show "${_error} Adding Insync Repository failed"
 
   elif [ "$add_insync_repo" == "true" ] && [ "$bool_is_debian" == "true" ]; then
     set_yellow;
@@ -1454,11 +1441,11 @@ function add_repositories()
     apt-key add apt-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"
     _log_and_show "${_repo} Google-Cloud-SDK repository"
     echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main #Google Cloud SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  \
-    || _log_and_show "Adding GCSFUSE Repository failed"
+    || _log_and_show "${_error} Adding GCSFUSE Repository failed"
 
     _log_and_show "${_repo} GCSFUSE repository"
     echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list  \
-    || _log_and_show "Adding Google Cloud SDK Repository failed"
+    || _log_and_show "${_error} Adding Google Cloud SDK Repository failed"
 
   else
     _log_and_show "${_repo} Google Cloud SDK repository is set to false. Skipping."
@@ -1476,10 +1463,10 @@ function add_repositories()
     wget -q https://dl.winehq.org/wine-builds/Release.key -O wine-hq-sigining-key.key >> "$log_file"  2>&1
     _debug_log "Adding WineHQ key"
     apt-key add wine-hq-sigining-key.key 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-    || _log_and_show "Adding WineHQ keys failed"
+    || _log_and_show "${_error} Adding WineHQ keys failed"
     _debug_log "Adding WineHQ repository"
     echo "deb https://dl.winehq.org/wine-builds/${OS_DISTRIBUTION}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list \
-    || _log_and_show "Adding WineHQ repository failed"
+    || _log_and_show "${_error} Adding WineHQ repository failed"
   else
     _log_and_show "${_repo} WineHQ repository is set to false. Skipping."
   fi
@@ -1493,10 +1480,10 @@ function add_repositories()
       wget -q https://download.docker.com/linux/"${OS_DISTRIBUTION}"/gpg -O docker-key.gpg >> "$log_file"  2>&1
       _debug_log "Adding Docker repository key"
       apt-key add docker-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_show "Adding Docker-CE keys failed"
+      || _log_and_show "${_error} Adding Docker-CE keys failed"
       _debug_log "${_repo} Docker-CE"
       echo "deb [arch=$ARCH] https://download.docker.com/linux/${OS_DISTRIBUTION}  ${code_name} stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list \
-      || _log_and_show "Adding Docker-CE repository failed"
+      || _log_and_show "${_error} Adding Docker-CE repository failed"
     else
       _log_and_show "${_error} Architecture not supported!. Please use docker.io package from your distro."
     fi
@@ -1512,9 +1499,9 @@ function add_repositories()
       wget -q https://repo.skype.com/data/SKYPE-GPG-KEY -O skype-linux-key.gpg >> "$log_file"
       _debug_log "Adding Skype keys to trusted list"
       apt-key add skype-linux-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_show "Adding Skype for linux key failed"
+      || _log_and_show "${_error} Adding Skype for linux key failed"
       echo "deb [arch=$ARCH] https://repo.skype.com/deb stable main #Skype for Linux" > $SOURCES_FILE_DIR/skype-stable.list \
-      || _log_and_show "Adding Skype for linux repository failed"
+      || _log_and_show "${_error} Adding Skype for linux repository failed"
     else
       _log_and_show "${_error} Skype doesnot support this architecture"
     fi
@@ -1529,7 +1516,7 @@ function add_repositories()
       _debug_log "Getting GPG keys for repository"
       wget -q https://packages.microsoft.com/keys/microsoft.asc -O microsoft.asc 2>&1 "${log_file}"
       _debug_log "Adding Key to trusted GPG keys directory"
-      apt-key add microsoft.asc 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "Adding Visual Studio Code key failed"
+      apt-key add microsoft.asc 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "${_error} Adding Visual Studio Code key failed"
       echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list
     else
       _log_and_show "Architecture: $ARCH is not supported by Visual studio Code."
@@ -1544,7 +1531,7 @@ function add_repositories()
       _log_and_show "${_repo} Signal repository"
       wget -q https://updates.signal.org/desktop/apt/keys.asc -O signal.asc >> "$log_file"
       apt-key add signal.asc  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_show "Adding Signal Key Failed"
+      || _log_and_show "${_error} Adding Signal Key Failed"
       echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/signal-xenial.list
     else
         _log_and_show "Architecture: $ARCH is not supported by Signal"
@@ -1559,7 +1546,7 @@ function add_repositories()
     if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "armhf" ] || [ "$ARCH" == "arm64" ] ; then
       curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg > kubernetes.gpg >> "$log_file"
       apt-key add signal.asc  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_show "Adding Signal Key Failed"
+      || _log_and_show "${_error} Adding Signal Key Failed"
       echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > ${SOURCES_FILE_DIR}/kubernetes.list
     else
         _log_and_show "Architecture: $ARCH is not supported. You might manually compile from source."
@@ -1573,7 +1560,7 @@ function add_repositories()
     if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "i386" ] ; then
       _log_and_show "${_repo} Mendeley repository"
       apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_show "Adding Mendeley Desktop Key Failed"
+      || _log_and_show "${_error} Adding Mendeley Desktop Key Failed"
       echo "deb https://desktop-download.mendeley.com/download/apt stable main #Mendeley-Desktop"  > ${SOURCES_FILE_DIR}/mendeleydesktop.list
     else
       _log_and_show "Architecture: $ARCH is not supported. You might manually compile from source."
@@ -1677,19 +1664,15 @@ function  upgrade_system()
   upgrade_apps;
 }
 
-
-function disable_external_repos()
+function purge_ppa()
 {
-  # Function to disable external repositoris added by this script.
   # PPAs added or repositoris added by actions other than this script are not removed.
-  # Repositoris added by dpkg post install scripts and deb files will not be removed!!
   # Simulate option has no effect on this function. PPAs will be purged irrespective of its value.
   local exit_status index dependency_packages
   dependency_packages=(ppa-purge)
-  local old_path
 
   if [ "$bool_is_debian" == "false" ]; then
-    _log_and_show "${_deleting} External repositoris"
+    _log_and_show "${_purge} PPAs"
     _install_dependencies "${dependency_packages[@]}"
       for index in "${parsed_ppa_list[@]}"; do
             _log_and_show "${_purge} $index..."
@@ -1710,10 +1693,20 @@ function disable_external_repos()
 
       # Clean -k flag.
       _clean_apt_cache;
+      _log_and_show "${_purge} Complete. Please check the logs for errors."
 
     elif [ "$bool_is_debian" == "true" ]; then
       _log_and_show "PPA's are not available, because this is Debian."
     fi
+}
+
+
+function disable_external_repos()
+{
+  # Function to disable external repositoris added by this script.
+  # PPAs added or repositoris added by actions other than this script are not removed.
+  # Repositoris added by dpkg post install scripts and deb files will not be removed!!
+  # Simulate option has no effect on this function. PPAs will be purged irrespective of its value.
 
     # Remove keys and list files.
     _log_and_show "${_deleting} Keys and external repositoris"
@@ -1746,9 +1739,6 @@ function disable_external_repos()
     _log_and_show "${_deleting} WineHQ signing key   5FCBF54A"
     apt-key del 5FCBF54A  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_and_show "${_deleting}  WineHQ keys failed."
-    _log_and_show "${_deleting} Google Cloud key     A73170BF"
-    apt-key del A73170BF  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_show "${_deleting}  Google Cloud keys failed."
     _log_and_show "${_deleting} InSync signing key   ACCAF35C"
     apt-key del ACCAF35C  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_and_show "${_deleting}  InSync keys failed."
@@ -1794,7 +1784,7 @@ function disable_external_repos()
     fi
     set_default;
     cd "$old_path" || return
-    _log_and_show "${_removed} PPAs and Repositories. Please check the logs for errors."
+    _log_and_show "${_removed} Repositories. Please check the logs for errors."
 
     _line_fill >> "$log_file"
 
@@ -2126,10 +2116,10 @@ function _autopilot_check_task_flag_and_run()
   # ARG -1 : global flag variable to check
   # ARG -2: Function Name to execute
   local flag=${1}
-  local runnable=${2}
+  local readonly runnable=${2}
 
   if [ "${flag}" == "true" ]; then
-    eval "$runnable"
+    "$runnable"
   else
     _debug_log "Task : $runnable is not enabled"
   fi
@@ -2178,6 +2168,7 @@ function _process_menu
       all_in_one             'Add Repositories, PPAs, Install Apps, DEBs & Python modules' \
       add_repositories       'Add Repositories' \
       add_ppas               'Add PPAs' \
+      purge_ppa              'Purge PPAs' \
       install_apps           'Install Packages' \
       install_debs           'Install DEB packages' \
       install_pip_packages_2 'Install Python 2 packages via pip' \
@@ -2220,6 +2211,10 @@ function _process_menu
     disable_external_repos )  _show_confirmation_dialog_for_tasks \
                               "Remove External Repositories" \
                               "I can remove External Repositories added and PPAs in the ppa.list. Apps installed via ppa will be reverted to original versions/uninstalled. Apps from Repositories will be kept as it is.\n\nShall I do it for you?" \
+                              "$task"
+                              ;;
+    purge_ppa)                _show_confirmation_dialog_for_tasks "Purge PPAs is ppa.list or mentioned in config."\
+                              "PPAs listed in ppa.list or under YAML key config.ppa will be purged.\nhis will install ppa-purge on your system.\n\n Continue"
                               "$task"
                               ;;
     purge_not_required )      _show_confirmation_dialog_for_tasks \
@@ -2271,20 +2266,29 @@ function _ci_cloud_and_container_checks()
   #================================ CI =============================================
   if [ "$TRAVIS" == "true" ]; then
     AUTOPILOT="true"
+    bool_say_yes_to_all="true"
     _log_and_show "${_ci} Running in Travis CI :|"
   elif [ "$APPVEYOR" == "true" ]; then
     AUTOPILOT="true"
+    bool_say_yes_to_all="true"
     _log_and_show "${_ci} Running in Appveyor CI :|"
-  elif [ -z ${JENKINS_URL+none} ]; then
+  elif [ ! "${JENKINS_URL}" == "" ]; then
     AUTOPILOT="true"
+    bool_say_yes_to_all="true"
     _log_and_show "${_ci} Probably running on Jenkins CI :|"
   elif [ "$CI" == "true" ]; then
     AUTOPILOT="true"
+    bool_say_yes_to_all="true"
     _log_and_show "${_ci} I'm running in  CI :|"
   else
     _debug_log "Probably not running in a CI"
   fi
 
+  if [ "$(uname -r | cut -f3 -d '-')" == "Microsoft" ]; then
+    set_yellow
+    _log_and_show "${_warn} Running on Windows Subsystem for Linux."
+    set_default
+  fi
   #============================ Docker =============================================
   if grep docker /proc/1/cgroup -qa; then
     _log_and_show "${_info} Running in Docker."
@@ -2413,9 +2417,10 @@ function main()
                                   shift; readonly custom_api_node="${1}";
                                   ;;
        --no-version-checks )      bool_check_version="false";;
-          -S |  --no-stats )      set_default;
+          -S |  --no-stats )      set_yellow;
                                   readonly bool_report_stats="false";
                                   _log_and_show "${_info} Statistis will not be reported."
+                                  set_default;
                                   ;;
           -C | --config-file )    shift;
                                   readonly custom_config_file="${1}";
@@ -2460,18 +2465,28 @@ function main()
  # Set API Endpoints
   _set_custom_api_nodes;
 
+  if [ "$bool_custom_config_file" == "true" ] && [ ! -f "$custom_config_file" ]; then
+    _log_and_exit "${_error} Custom Config file you have specified is not found or not accessible" "36"
+  fi
+  if [ "$bool_custom_version_file" == "true" ] && [ ! -f "$custom_version_file" ]; then
+    _log_and_exit "${_error} Custom Version info file you have specified is not found or not accessible" "36"
+  fi
+  if [ "$bool_custom_remote_config_name" == "true" ] && [ "$custom_remote_config_name" == "" ]; then
+    _log_and_exit "${_error} Custom remote config cannot be empty" "39"
+  fi
+
   # Get Remote Config File/s, check version & configure
   _version_checks;
 
   if [ "$bool_use_yaml" == "true" ] && [ "$bool_use_lists" != "true" ]; then
-   _set_remote_config;
+   _set_yaml_config;
   elif [ "$bool_use_lists" == "true" ] && [ "$bool_use_yaml" != "true" ]; then
     _set_list_config;
   elif  [ "$bool_use_lists" == "true" ] && [ "$bool_use_yaml" == "true" ]; then
     _log_and_exit "${_error} -Y --yaml and -L --lists cannot be used together." "25"
   else
     _log_and_show "${_error} You need to specify config type to use."
-    _log_and_exit "${_info} -Y or --yaml for YAMLs or -L or --lists for Lists"
+    _log_and_exit "${_info} -Y or --yaml for YAMLs or -L or --lists for Lists" "25"
   fi
   # Autopilot
   if [[ "$AUTOPILOT" == "true" ]]; then
