@@ -1,5 +1,21 @@
 # Command line options
 
+## Configuration Data type
+You have two options of configuring this script.
+1. via lists
+  ```
+    ./after-effects --yaml
+  ```
+2. Using YAML files [they can be local or remote]
+  ```
+    ./after-effects --lists
+  ```
+You need to specify which type to use. Not specifying will throw an error. You cannot mix configurations in YAML and lists.
+
+
+!!! tip "Shorthand flags"
+    You can also use short hand version of the flags `-Y` for YAML and `-L` for lists. Please note that smaller case options have dfferent meaning than uppercase ones.
+
 ## Simulating package installation
 
 !!! snippet "Usage"
@@ -146,22 +162,19 @@ Default behavior is to clean apt cache and delete downloaded DEB packages.
     Python package installation does not honor this flag.
 
 
-## Prefer Local Flags & configuration ang ignore Remote configs
+## Prefer Local lists
 
 !!! snippet "Usage"
     ```
-    ./after-effects --prefer-local
+    ./after-effects -L
     ```
     OR
     ```
-    ./after-effects --local
+    ./after-effects --lists
     ```
 
-Using this option, you can chose to ignore remote configuration and prefer local flags and configuration files and list files.
+Using this option, you can chose to use the lists file which you have locally and not worry about YAML and shit.
 
-!!! bug "Exceptions"
-    - You cannot ignore version checks with this option. please use `--no-version-check` for skipping version checks.
-    - Stats reporting & stats servers are always determined based on remote configuration file. You cannot overrride this.
 
 ## Use Custom Configration file
 
@@ -171,10 +184,24 @@ Using this option, you can chose to ignore remote configuration and prefer local
     ```
     OR
     ```
-    ./after-effects -c <filename>
+    ./after-effects -C <filename>
     ```
 
 You can prefer using custom configuration file you have stored locally [It should be available via local paths or network share. not via ftp or http]. Enabling this option will disable fetching configuration from api-endpoints mentioned or default endpoints.
+
+## Use Custom Version information file
+
+Script always checks if its running the latest version available. If not it throws ann error and exits. If you wish to skip that, please use `--no-version-check`. This is always recommended over using a custom version info file. However it is possible to provide a custom version info file, a YAML file which holds version information.
+
+!!! snippet "Usage"
+    ```
+    ./after-effects --version-file <filename>
+    ```
+    OR
+    ```
+    ./after-effects -V <filename>
+    ``
+Example version files are in `api` directory. All the fields are mandatory.
 
 ## Do not report statistics
 
@@ -202,8 +229,19 @@ Following things are reported. (Nothing more than that)
 - Timezone and system language.
 
 ??? question "Privacy Concerns?"
-    - If you are freaking out, its a shell script !! You can literally look into it and check what's collected. Why if you ask? I mostly use it on a bunch of machines and would like to keep an eye on how it did.
+    - If you are freaking out, its a shell script !! You can literally look into it and check what's collected. Why if you ask? I mostly use it on a bunch of machines/VMs and would like to keep an eye on how it did.
     - Data will be stored in AWS DynamoDB and Google Firebase Real-time Database.
     Data will not be shared with any third party. Period. Only me or my team members will have access
     to it. If you run a search query on google, it probably collects more data than me. API endpoints may log your IP addresses. (Github, Google and AWS).
     - If you flood the reporting endpoints, you might get HTTP 429 errors as reporting endpoints have rate limits. Script will exit with code 29.
+
+## Version
+!!! snippet "Usage"
+    ```
+    ./after-effect -v
+    ```
+    OR
+    ```
+    ./after-effects --version
+    ```
+This will provide version info o the script. You do not have to be root to run this. For all the other tasks you need to be root or use sudo.

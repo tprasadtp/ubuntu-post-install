@@ -1147,7 +1147,18 @@ function _set_list_config()
 
     #Kubernetes
     add_kubernetes_repo=false
-    #_parse_local_lists;
+
+
+    ae_task_update="true"
+    ae_task_upgrade="true"
+    ae_task_repo="true"
+    ae_task_ppa="true"
+    ae_task_apt="true"
+    ae_task_debs="true"
+    ae_task_pip2="true"
+    ae_task_pip3="true"
+    ae_task_purge="true"
+
     _log_and_exit "Feature not yet available" "254"
   fi
 }

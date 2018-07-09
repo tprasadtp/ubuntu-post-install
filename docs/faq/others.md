@@ -9,14 +9,9 @@ Its in the pipeline, but I cannot guarantee anything. Since I do not use anythin
 - Change add-repositories function to point to .repo files
 - Debian users might be able to use this script, but PPA function cannot be used.
 
-### What about Settings?
-
-On the way!
 
 ## To-Do
 
-- [ ] Create a script chain to execute other scripts once all the tasks are complete.
 - [ ] Gsettings and dotfiles
 - [ ] Option to upload log file to pastebin
-- [ ] Fork and add Open SUSE support
 - [ ] Send a notification (Slack? Hipchat? Hangouts Chat?) after tasks are complete. Helpful if you are using ssh.

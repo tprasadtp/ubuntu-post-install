@@ -4,7 +4,7 @@ Effortless way to setup your fresh Ubuntu, Linux Mint, Debian installs. Please r
 before trying out.
 
 [![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.svg?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
-[![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=flat&url=https://new-badges--ubuntu-post-install.netlify.com/api/json/version.json&query=version.number&prefix=v)](https://github.com/tprasadtp/ubuntu-post-install/)
+[![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=flat&url=https://ae.prasadt.com/api/json/version.json&query=version.number&prefix=v)](https://github.com/tprasadtp/ubuntu-post-install/)
 
 ## URLs
 
@@ -52,12 +52,12 @@ Please see [Configuration](https://ae.prasadt.com/config/#package-lists) & [Task
 
 Run the script as **root**. You will get an error if you do not run the script as root.
 
-- To use default YAML configuration, which can be found here `https://ae.prasadt.com/api/config.yml`
+- To use default YAML configuration, which can be found here `https://ae.prasadt.com/api/config.yml` Recommended
   ```sh
     sudo ./after-effects -Y
   ```
 
-- To use local list files in `data`
+- To use local list files in `data` [WIP]
 ```sh
   sudo ./after-effects -L
 ```
@@ -75,7 +75,6 @@ See /docs or visit [https://after-effects.prasadt.com](https://after-effects.pra
 
 ## Security
 Well, this isn't very secure or meant to be.
-- The script is signed with gpg key id `BA19B5162553B1BF`.
 - You can verify them manually or via `./after-effects --verify`
 - GPG signature of the script is also available at `api/gpg?version="VERSION_NUMBER"`
 

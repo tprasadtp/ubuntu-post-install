@@ -10,15 +10,16 @@ The script depends on following utilities which are usually present on a typical
 
 - `lsb-release`, for determining the release and distribution.
 - `whiptail`, to display the menu.
-- `coreutils` cu, tr, grep etc.
+- `coreutils` cut, tr, grep etc.
 - `wget`, to get deb packages, report stats, get version information.
 - `iputils-ping`, to test connectivity.
 - `procps` to check running processes
-- `gpg` or `gpgv` to check signatures
-- bash
+- `gpg`, `gpgv` to check signatures & add repositories
+- 'awk`, `sed` to parse configs
+- bash (4.x)
 
 !!! warning "Note on Debian"
-    Debian releases, especially docekr images sometimes do not have `ps` binary from `procps` pre installed. Please install the packages before continuing.
+    On Debian releases, especially in docker images sometimes do not have `ps` binary from `procps` pre installed. Please install the packages before continuing.
 
 ## Additional packages installed
 

@@ -8,21 +8,14 @@ These files contain list of apt packages which can be installed. Please see [Ins
 
 | File | Contents | Present in app-list |
 |:-----|:---------|:--------|
-| linux-mint.list | Specific for Linux Mint | No |
-| gnome-online-accounts.list | Specific for 16.04. For 17.04 and above use `goa.list` | No |
 | basic | List of packages which usually come pre-installed. Please don't add if you are not sure what you are doing. | No |
-| github-bot-essentials.list | Project specific | No |
 | administration | Administration Tools like Synaptic | Yes |
 | development | Used for development tasks eg: rake | Yes |
-| exten-repo | Packages from PPAs or External repositories. eg : Google Chrome, Spotify, Visual Studio Code, Google Cloud SDKs | No (But is added during Travis tests for supported releases) |
-| goa | Gnome online accounts specific packages. These are necessary to get Gnome-Online-Accounts working properly in Empathy. Use only on 17.04 and above. For 16.04 use gnome-online-accounts | Yes |
+| exten- | Packages from PPAs or External repositories. eg : Google Chrome, Spotify, Visual Studio Code, Google Cloud SDKs | No (But is added during Travis tests for supported releases) |
 | multimedia | Tools to edit photos and videos, video players and editors. | Yes |
 | productivity | Email, Chat, Office tools, Document converters etc. | Yes |
 | security | Security related tools | Yes |
 | utilities | Utilities and Tools | Yes except on debian. |
-| wine | Wine related packages like winetricks | No (But is added during Travis tests for supported releases)|
-| xenial-above | Packages are not available in Xenial or below in Ubuntu repositories, but are available in 16.10 and later. | No (But is added during Travis tests for supported releases) |
-| latex | Latex related packages | Yes |
 
 ---
 Non package related lists (settings, deb files, delete packages list). The use and format is explained in individual sections.
@@ -35,9 +28,6 @@ Non package related lists (settings, deb files, delete packages list). The use a
 | deb-files | List of DEB files to be installed (csv) | `install_debs` | [Link](tasks/#install-debian-package-package-archives-deb-files) |
 | get.mlist | Used by get-after-effects.sh to download required list files | NA | [get-after-effects.sh](https://github.com/tprasadtp/ubuntu-post-install/blob/master/get-after-effects.sh) | --- |
 |pip2/pip3| Python packages (Installed System wide) | _install_pip_packages | [Link](tasks/#install-python-packages-via-pip)
-|pip-dep.apt | Any APT dependencies which might be required by pip packages | [Link](tasks/#install-python-packages-via-pip) |
-|pre-script | List of bash scripts to be run before any of the tasks begin | NA |
-|post-script | List of scripts which can be run after all the tasks are completed | NA |
 
 !!! tip
     After you customize, might want to use simulate flag. `sudo ./after-effects -s`
@@ -73,3 +63,15 @@ The script fetches data from remote default remote endpoint or the one mentioned
 
 !!! tip "Use local file while testing"
     If you are testing, it might be a good idea to use a local file which holds this configuration data. In that  case use `-c <filename>` option.
+
+## Automate
+Setting "AUTOPILOT=true" will run all the tasks specified in the yml file, or if `-L` list option is used, then all tasks are run in folowing order
+1. Update
+2. Upgrade
+3. Add Reposiories
+4. Add PPAs [if supported]
+5. Install packages
+6. Install DEB packages
+7. Install Python2 Modules
+8. Install Python 3 Modules
+9. Purge unwanted Packages

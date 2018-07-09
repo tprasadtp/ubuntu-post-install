@@ -79,7 +79,7 @@ function get-after-effects()
         wget -q -P ./data/ "${GET_LIST_BASE_URL}"/"$line"
       done <get.mlist
   else
-    wget -q "${GET_YAML_BASE_URL}/api/config.yml" -O example-config.yaml
+    wget -q "${GET_YAML_BASE_URL}/api/config.yml" -O example-config.yml
     wget -q "${GET_YAML_BASE_URL}/api/version.yml" -O version.yml
     printf "[   Info  ] Be sure to pass the right flags while running the script\n"
   fi
