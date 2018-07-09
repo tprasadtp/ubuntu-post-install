@@ -1,20 +1,21 @@
 # Command line options
 
-## Configuration Data type
+## Configuration type
 You have two options of configuring this script.
-1. via lists
+
+1. using .list file in `data`
   ```
-    ./after-effects --yaml
+    ./after-effects --lists
   ```
 2. Using YAML files [they can be local or remote]
   ```
-    ./after-effects --lists
+    ./after-effects --yaml
   ```
 You need to specify which type to use. Not specifying will throw an error. You cannot mix configurations in YAML and lists.
 
 
 !!! tip "Shorthand flags"
-    You can also use short hand version of the flags `-Y` for YAML and `-L` for lists. Please note that smaller case options have dfferent meaning than uppercase ones.
+    You can also use short hand version of the flags `-Y` for YAML and `-L` for lists. Please note that lowercase case options have dfferent meaning than uppercase ones.
 
 ## Simulating package installation
 

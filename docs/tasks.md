@@ -72,8 +72,8 @@ This can add the following repositories.
 
 ## Add personal package archives (PPA)
 
-- PPAs can be added using the configuration file in data directory `./data/ppa.list`
-- This file **SHOULD** contain only one ppa entry per line (No comments or anything else anywhere in the file) in the format ppa:<author>/ppa for example `ppa:mozillateam/firefox-next` The file will be read and the PPAs will be added from the list.
+- PPAs can be added using the configuration file in data directory `./data/ppa.list` or in the YML file.
+- Only one ppa entry per line (No comments or anything else anywhere in the file) in the format ppa:<author>/ppa for example `ppa:mozillateam/firefox-next` The file will be read and the PPAs will be added from the list.
 - Logs will  show entry in the format `[<date and time>] [  PPA-Logs  ] <log>`
 
 !!! warning
@@ -82,33 +82,57 @@ This can add the following repositories.
 
 ## Install apt packages
 
-- Packages can be installed by using configuration lists in the data directory. This works similar to ppa list However its slightly different.
-- There is one **master list** or **list of lists** which contains the path to the list files from which the packages are to be installed.
-- This master list should contain the path to list files relative to script in following manner, `<dir-relative-to-script>/<list file>`. For example if you have a list file security.list in data directory, then entry should look exactly like `data/security.list`
-- packages in the files will not be installed if that file does not appear in the master list.
-- It helps keeping things separate for separate machines or needs. Minimal edit is required to switch from one list to another than rewriting the entire list file.
-- The Master list is named `app-list.list` and **MUST** only contain the list files one entry per line. **NO** comments or anything else is allowed.
-- Individual list files for different needs are to be written in similar way containing name of the package to be installed in one package per line format as before. similar to all the lists there **SHOULD NOT** be any comments or text or empty lines in those list files.
-- You can split files according to your needs and write your list of packages to be installed and only include the lists in the master list file which you intend to install.
-- It is a good idea to include packages from external repositories in a different list than others because they might fail sometimes.
+- Packages can be installed by using configuration lists in the data directory. This works similar to ppas
+```
+    #--------------------------------------------------------------------------------
+    #                               APT Lists
+    #--------------------------------------------------------------------------------
+    # There are Seven lists under key config.install.apt.[mentioned from 1-7]
+    # 1. administration : Contains Administrative packages
+    # 2. security       : contains Security related tools and packages
+    # 3. productivity   : Office tools, writing tools, lates, document tools and other
+    #                     productivity tools, Email clients, browsers, IM clients etc.
+    #                   : Example : LateX, TeXStudio, Libre office, pandoc empathy, thunderbird
+    # 4. Multimedia     : Multimedia tools like media players, audio converters and playes etc.
+    # 5. development    : IDEs [Spyder, Jetbeans etc], languagues [go, python, ruby, rust, java etc],
+    #                   : Containers [docker lxc rkt etc], Python libraries, compilers [gcc, clang]
+    #                   : SDKs [AWS SDK, Coogle Cloud SDK, open-jdk, Tensor Flow], headers and libraries[ocl-icd-dev],
+    #                   : Anything related to development and *-dev or *-devl packages.
+    # 6. other          : Everything which doesnot fit in the above categories.
+    #                   : Themes, Tools, Utilities like htop etc.
+    # 7. External       : Any packages which are provided by ppas, or repositories not present in
+    #                   : base *buntu distribution. Theres a possibility that the repository might not
+    #                   : be added or may be unavailable or offline. So Keeping the list seperate from
+    #                   : others packges minimizes errors if there are any.
+    # This classification is only for ease of use and need not be strictly followed. You can put
+    # vlc package in 'security', it will still install fine. This classification helps
+    # while writing configs and editing them. Its advised to follow it if your configs
+    # tend to get to couple of hundreds of lines. Also YAML file should be a valid YAML.
+
+    #--------------------------------------------------------------------------------
+    #                             Special list - Purge list
+    #--------------------------------------------------------------------------------
+    # There is a special package list under key, config.purge or purge.list, which contains list of apt packages to be
+    # purges from the system if present.
+```
 - Make sure that all the packages in the lists are available for your release. Using `-s` command line option helps. Also check for the logs for any errors or conflicts.
 
 ## Install Debian package archives (.deb files)
-This will install deb files specified in the list deb-files.list
+This will install deb files specified in the list deb-files.list or config file.
 
 - Logs will  show entry in the format `[<date and time>] [  PKG  ] <log>` for dpkg actions and
 - APT Logs will  show entry in the format `[<date and time>] [  APT  ] <log>` for actions performed by apt commands. (`apt-get install -f` for missing packages)
 - **Simulate** option will use `--dry-run` option in dpkg to Simulate DEB installation.
 - Configuration file is a `csv` file without headers. first column corresponds to URL ans the second field the file name under which the file is saved.
 - Each DEB file to be installed should have following entry.
-- URL to the deb file which can be accessed using wget  [ tab or space ] Name of the deb file without any spaces or special chars except hyphen.
-- For example to install Atom Editor the deb-files.list should look like below.
+- URL to the deb file which can be accessed using wget`,`Name of the deb file without any spaces or special chars except hyphen.
+- For example to install Atom Editor the entry should look like below.
 
 ```csv
 https://atom-installer.github.com/v1.21.1/atom-amd64.deb,ATOM-Editor.deb
 ```
 
-- First part is the URL to the deb file separated by ',' of the file.
+- First part is the URL to the deb file separated by ',' name of the file.
 
 !!! note "Note on file names in configuration"
     Please note that deb file will be  saved with the name mentioned in the file. (DEB file is named **exactly** as mentioned in the second field. So if you want them to be named with extension .deb include that in the second field and avoid illegal chars)
@@ -128,7 +152,7 @@ Pre-requisite is that python-pip package is pre installed, If not , will be inst
 
 This will purge Unwanted packages from the system.
 
-- The packages mentioned in the list purge.list will be purged
+- The packages mentioned in the list purge.list or config yml will be purged
 - The format of the purge.list is similar to that of packages, one packages per line of the file and no comments or anything else.
 
 !!! warning
@@ -136,7 +160,7 @@ This will purge Unwanted packages from the system.
 
 ## Reset repositories / Purge PPAs
 
-- This will reset the repositories added by this script, and purge ppas added by this script in the list ppa.list.
+- This will reset the repositories added by this script, and purge ppas added by this script in the list ppa.list or config yaml.
 - This will **NOT** reset or remove repositories added by the DEB files.
 - Simulate option has no effect on this action and ppa-purge **WILL** downgrade packages if necessary.
 

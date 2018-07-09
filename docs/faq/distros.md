@@ -2,8 +2,9 @@
 
 In short? Ubuntu, its official flavors (Kubuntu,Ubuntu Mate etc), Linux Mint and Elementary.
 
-??? info "About 32 bit Support"
-    - Though 32 bit is supported, Testing in Travis CI, containers and locally all are done using 64 bit machine and containers. If something breaks please report it and use it with caution on 32 bit machines.
+??? info "About 32 bit & ARM Support"
+    - Though 32 bit & ARM is supported, Testing in Travis CI, containers and locally all are done using 64 bit machine and containers. If something breaks please report it and use it with caution on 32 bit machines.
+    - Some repositories are not available for ARM and 32 bit architecture.
     - Since 17.10 Ubuntu no longer provides 32 bit ISO images. You have to use Ubuntu flavors like Lubuntu. Xubuntu or use minimal ISO.
 
 !!! warning "Warning!"
