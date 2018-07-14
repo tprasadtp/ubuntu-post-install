@@ -402,7 +402,7 @@ function _check_dependencies()
    dep_res=$?
    if [ "$dep_res" -eq 1 ]; then
      set_red;
-     _log_and_show "${_error} $dep is not installed!${NC}"
+     _log_and_show "${_error} $dependency is not installed!${NC}"
      set_default;
      dependency_check_failed_count=$((dependency_check_failed_count+1))
    fi
