@@ -36,3 +36,11 @@ You might see ans error like this,
 [    Notice     ] Please use a supported version of Ubuntu.
 [     Info      ] Please visit the link below for information on how to upgrade.
 ```
+
+## SSL Errors
+```
+[     Error!    ] Something went wrong while retrieving /tmp/api-version.yml.
+[     Error!    ] Error Getting file.
+``
+Try running wget https://ae.prasadt.com/api/version.yml. If you see SSL errors, that means that your CA bundle is out of date.
+This project uses Amazon Root CA & LetsEncrypt for SSL, make sure that your System trusts these.

@@ -1884,12 +1884,12 @@ function install_apps()
       external)               packages=("${parsed_external_packages[@]}");;
       *)                      _log_and_exit "${_error} Critical error. Invalid array type" "19";;
     esac
-    _log_and_show "${_installing} packages $array"
+    _log_and_show "${_apt} Installing Packages : $array"
 
     # Chek if array is empty
     if [[ ${#packages[@]} -eq 0 ]]; then
       set_yellow;
-      _log_and_show "${_error} Package array is empty!";
+      _log_and_show "${_notice} Package array is empty!";
       set_default;
       continue
     else
@@ -1907,7 +1907,7 @@ function install_apps()
       exit_status=$?
       unset packages;
       if [[ $exit_status -eq 0 ]]; then
-      _log_and_show "${_installed} $array packages."
+      _log_and_show "${_apt} Success!"
       else
       set_yellow;
       _log_and_show "${_oh_no} Something went wrong while installing packages in $index."

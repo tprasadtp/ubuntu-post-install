@@ -1,0 +1,67 @@
+# Install Config
+version: 3
+name: Polaris
+author: Prasad T
+# Configuraion
+config:
+  # Enabled Tasks
+  tasks:
+    update: true
+    upgrade: false
+    # Add Repos
+    # individual repos flags are mentioned under config.add_repo key
+    repo: false
+    # Add PPAs
+    ppa: false
+    # APT Packages
+    apt: true
+    # Whether to purge packages mentioned in config.purge key
+    purge: false
+    debs: false
+    pip2: false
+    pip3: false
+
+  # Repository Flags
+  add_repo:
+    winehq: false
+    docker: false
+    mendeley: false
+    googlecloud: false
+    spotify: false
+    vscode: false
+    skype: true
+    signal: false
+    insync: false
+    google: false
+    kubernetes: false
+  # Flags
+  flags:
+  # Simulate flag will never be overridden by remote config.
+    purge_enabled: false
+    preserve_debs: false
+    auto_yes: true
+
+  # Install components
+  # APT Packages, Python Modules, Debian packages
+  install:
+    apt:
+      # Admin related Stuff
+      administration:
+        - aptitude
+        - htop
+      # Tools related to development.
+      development:
+        - curl
+        - git
+        - shellcheck
+        - clinfo
+        - ruby
+        - ruby-dev
+        - python-magic
+        - python3-pip
+        - golang
+        - neovim
+        - terminix
+      # Everything Else
+      other:
+        - neofetch
