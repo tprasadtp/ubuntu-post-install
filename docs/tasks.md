@@ -140,8 +140,8 @@ https://atom-installer.github.com/v1.21.1/atom-amd64.deb,ATOM-Editor.deb
 
 ## Install python packages (via pip)
 
-This will install system wide python packages using pip. There are two lists. `pip.list` and `pip3.list` for python 2 and python 3 respectively.
-Pre-requisite is that python-pip package is pre installed, If not , will be installed anyway.
+This will install system wide python packages using pip. There are two lists. `pip.list` and `pip3.list` for python 2 and python 3 respectively. Alternatively you can specify in YAML config under `config.install.python2` or `config.install.python3`
+This task requires `python-pip package` is installed, If not , will be installed anyway.
 
 - The list files follow similar configuration as package list files. One item per line. however you can specify version requirements as you would for requirements file.
 - Simulate flag will skip installing packages, unless `TRAVIS=true`.
@@ -153,11 +153,11 @@ Pre-requisite is that python-pip package is pre installed, If not , will be inst
 
 This will purge Unwanted packages from the system.
 
-- The packages mentioned in the list purge.list or config yml will be purged
+- The packages mentioned in the list purge.list or under `config.purge` in yaml will be purged
 - The format of the purge.list is similar to that of packages, one packages per line of the file and no comments or anything else.
 
 !!! warning
-    It is necessary to pass command line argument `-d` or `--deboalt` to run this task if you are using lists mode. With YML you can set the flag in config and `-d` is not necessary.
+    It is necessary to pass command line argument `-d` or `--deboalt` to run this task if you are using lists mode. With YML you can set the flag  `config.flags.purge_enabled: true` in config and `-d` is not necessary.
 
 ## Reset repositories / Purge PPAs
 

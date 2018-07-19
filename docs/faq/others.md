@@ -13,6 +13,7 @@ Its in the pipeline, but I cannot guarantee anything. Since I do not use anythin
 ## To-Do
 
 - [ ] Gsettings
+- [ ] Replace stupid bash parser with parser written in Go 
 - [ ] Nod Modules & Ruby Gem installations
 - [ ] Option to upload log file to pastebin
 - [ ] Send a notification (Slack? Hipchat? Hangouts Chat?) after tasks are complete. Helpful if you are using ssh.
