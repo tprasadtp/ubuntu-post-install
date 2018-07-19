@@ -11,4 +11,4 @@
 
 
 !!! tip
-    In rare cases where your Script/Ubuntu crashed while installing a DEB file, which has unmet dependencies, you might see broken packages error. In that case, run `sudo apt-get install -f` to fix the broken packages and re run the script. If you see any errors or script crashes please do not hesitate to open an issue on [Github](https://github.com/tprasadtp/ubuntu-post-install/issues/new).
+    In rare cases where your Script crashed while installing a DEB file, which has unmet dependencies, you might see broken packages error. In that case, run `sudo apt-get install -f` to fix the broken packages and run the script again. If you see any errors or script crashes please do not hesitate to open an issue on [Github](https://github.com/tprasadtp/ubuntu-post-install/issues/new).

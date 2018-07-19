@@ -76,7 +76,6 @@ config:
         - gparted
         - synaptic
         - bleachbit
-        - nautilus-admin
       # Security Related Stuff
       security:
         - gufw
@@ -140,13 +139,9 @@ config:
       # Everything Else
       # Which is conditional
       other:
-        - mesa-opencl-icd
-        - icedtea-8-plugin
         - openjdk-8-jre
         - neofetch
         - gnome-online-miners
-        - telepathy-accounts-signon
-        - signon-ui-service
       # Packages supplied by external repositories & PPAs
       # Dont Mix packages provided by distribution and PPAs
       # Sometimes external repos and ppas fail, so better isolate it.

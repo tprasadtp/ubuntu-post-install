@@ -2078,7 +2078,7 @@ function _install_pip_python()
     fi
     exit_status=$?
     if [[ $exit_status -eq 0 ]]; then
-      _log_and_show "${_installed} python modules from ${pip_list}"
+      _log_and_show "${_installed} python - ${1} modules"
     else
       set_yellow;
       _log_and_show "${_error} Something went wrong while installing packages in $pip_list."

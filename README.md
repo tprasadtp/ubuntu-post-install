@@ -23,13 +23,13 @@ Install your choice of Ubuntu/Debian or its derivative as you would( If you wish
 
 Run this in Terminal
 
-```sh
+```console
 wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash
 ```
 
 Or if you want to use YAML configuration & not download or use .list files
 
-```sh
+```console
 wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash -s -- -r
 ```
 
@@ -37,7 +37,7 @@ wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master
 
 If you already have git on your system already you can use,
 
-```bash
+```console
 git clone --depth 1 https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install
 ```
 
@@ -53,12 +53,12 @@ Please see [Configuration](https://ae.prasadt.com/config/#package-lists) & [Task
 Run the script as **root**. You will get an error if you do not run the script as root.
 
 - To use default YAML configuration, which can be found here `https://ae.prasadt.com/api/config.yml` Recommended
-  ```sh
+  ```console
     sudo ./after-effects -Y
   ```
 
 - To use local list files in `data` [WIP]
-```sh
+```console
   sudo ./after-effects -L
 ```
 

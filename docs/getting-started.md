@@ -9,13 +9,13 @@ Install (if you haven't already) your choice of Ubuntu/Derivative as you would( 
 
 Run this in Terminal
 
-```sh
+```console
 wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash
 ```
 
 Or if you want to use remote configuration & not download or use .list files
 
-```sh
+```console
 wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash -s -- -r
 ```
 
@@ -44,7 +44,7 @@ sudo ./after-effects -Y -C <your config.yml>
 ```
 
 To use lists
-```sh
+```console
 sudo ./after-effects -L
 ```
 
