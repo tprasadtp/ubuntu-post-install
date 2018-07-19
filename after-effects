@@ -797,7 +797,7 @@ function _version_checks ()
 function _check_bool()
 {
   # Function to check if config has valid values for bools.
-  # Accepted are true and false
+  # Accepted values are true and false
   # If invalid, defaults to false.
   # Accepts global var and bool to check as arguments
   local g_var param_bool
@@ -805,19 +805,20 @@ function _check_bool()
   param_bool="${2}"
   _debug_log "Globar var is : $g_var, Param from cfg is $param_bool"
   case "${param_bool}" in
-    true | True | TRUE | Yes | yes | YES | 1 )      declare -g ${g_var}="true"
-                                                    _debug_log "Variable : <$g_var> is set to true"
-                                                    ;;
-    false | False | FALSE | No | no | NO | 0 )      declare -g ${g_var}="false"
-                                                    _debug_log "Variable : <$g_var> is set to false"
-                                                    ;;
-
-    *)                                              declare -g ${g_var}="false"
-                                                    _log_and_show "${_cfg} Invalid value for param : $g_var. It can either be t[T]rue or f[F]alse."
-                                                    _log_and_show "${_cfg} Setting $g_var to default. (false)"
-                                                    ;;
+    true | True | TRUE | Yes | yes | YES | 1 )  declare -g ${g_var}="true"
+                                                _debug_log "Variable : <$g_var> is set to true"
+                                                ;;
+    false | False | FALSE | No | no | NO | 0 )  declare -g ${g_var}="false"
+                                                _debug_log "Variable : <$g_var> is set to false"
+                                                ;;
+    *)                                          declare -g ${g_var}="false"
+                                                _log_and_show "${_cfg} Invalid value for param : $g_var."
+                                                _log_and_show "${_cfg} It can either be t[T]rue or f[F]alse."
+                                                _log_and_show "${_cfg} Setting $g_var to default. (false)"
+                                                ;;
   esac
 }
+
 
 function _set_yaml_config()
 {
@@ -1264,7 +1265,7 @@ function _show_confirmation_dialog_for_tasks()
   # To overide and say yes to all dialog pass -y as command line option while running the script.
   local name_of_task="${1}" #Name of the task to be perfromed
   local confirm_msg="${2}" #Message shown in Confirmation dialogue
-  local exec_function="${3}" #Function to run if user selected yes
+  local readonly exec_function="${3}" #Function to run if user selected yes
   COLUMNS=$(tput cols)
   LINES=$(tput lines)
   export COLUMNS LINES
@@ -1287,6 +1288,7 @@ function _show_confirmation_dialog_for_tasks()
   else
     _debug_log "Illegal value for bool_say_yes_to_all."
   fi
+  unset exec_function
 }
 
 
@@ -2219,13 +2221,15 @@ function _autopilot_check_task_flag_and_run()
   # ARG -1 : global flag variable to check
   # ARG -2: Function Name to execute
   local flag=${1}
-  local runnable=${2}
+  local readonly runnable=${2}
 
   if [ "${flag}" == "true" ]; then
+    _debug_log "Executing Function $runnable"
     "$runnable"
   else
     _debug_log "Task : $runnable is not enabled"
   fi
+  unset runnable
 }
 
 
@@ -2261,96 +2265,87 @@ function _process_menu
       --notags \
       --backtitle "$SCRIPT" \
       --title "Ubuntu Post-Install Script" \
-      --menu "\nWhat would you like me to do?\nLogs will be written to\
-              ${dir}/after-effects-logs/after-effects.log.\
-              \nCheck the logs for details and errors." \
+      --menu "\nWhat would you like me to do?\nCheck the logs for details and errors." \
       --cancel-button "Quit" \
       $LINES $COLUMNS $(( LINES - 12 )) \
-      update_repos           'Update Repository Metadata' \
-      upgrade_system         'Upgrade Packages' \
-      all_in_one             'Add Repositories, PPAs, Install Apps, DEBs & Python modules' \
-      add_repositories       'Add Repositories' \
-      add_ppas               'Add PPAs' \
-      purge_ppa              'Purge PPAs' \
-      install_apps           'Install Packages' \
-      install_debs           'Install DEB packages' \
-      install_pip_packages_2 'Install Python 2 packages via pip' \
-      install_pip_packages_3 'Install Python 3 packages via pip3' \
-      disable_external_repos 'Reset Repositories for cleanup' \
-      purge_not_required     'Purge not required Packages' \
-      delete_log_file        "Delete Script logs" \
+      update     'Update Repository Metadata' \
+      upgrade    'Upgrade Packages' \
+      all        'APT+PIP+PPA+REPO+DEB=All' \
+      repo       'Add Repositories' \
+      ppas       'Add PPAs' \
+      purge      'Purge not required packages' \
+      apps       'Install Packages' \
+      debs       'Install DEB packages' \
+      pip2       'Install Python 2 packages via pip' \
+      pip3       'Install Python 3 packages via pip3' \
+      repo_rst   'Reset Repositories for cleanup' \
+      ppa_rst    'Purge PPAs' \
+      logdel     'Delete Script logs' \
       3>&1 1>&2 2>&3)
-
 
     whiptail_exitstatus=$?
     _debug_log "Whiptail Exit status is : $whiptail_exitstatus"
     if [ $whiptail_exitstatus = 0 ]; then
       _debug_log "Whiptail Choice is: $task"
-        case $task in
-    update_repos )            _show_confirmation_dialog_for_tasks \
-                              "Update Repositories metadata/index" \
-                              "Update Repositories index/metadata?" \
-                              "$task"
-                              ;;
-    upgrade_system )          _show_confirmation_dialog_for_tasks \
-                              "Upgrade Packages" \
-                              "This will upgrade all your installed apt packages to the \
-                              latest version available.\n\nContinue?" \
-                              "$task"
-                              ;;
-    add_ppas )                _show_confirmation_dialog_for_tasks "Add Additional PPAs" \
-                              "This task will add PPAs specified in config file.\n\nWould you like to continue?" \
-                              "$task"
-                              ;;
-    add_repositories )        _show_confirmation_dialog_for_tasks "Add Additional Repositories" \
-                              "Adding additional repositories is set as follows.\n Google Chrome & Google Earth : $add_google_repo,\n Google Cloud SDK : $add_googlecloud_repo\n Visual Studio Code : $add_vscode_repo\n Docker : $add_docker_repo\n Insync : $add_insync_repo\n Spotify : $add_spotify_repo\n Wine-HQ : $add_winehq_repo\n Skype : $add_skype_repo\n Kubernetes : $add_kubernetes_repo\n Signal Desktop : $add_signal_repo.\n Shall I do it?" \
-                              "$task"
-                              ;;
-    install_apps )            _show_confirmation_dialog_for_tasks \
-                              "Install Apps" \
-                              "I can Install the packages listed in lists files mentioned in app-list.list.\nNo checks are being made on the validity of the list. Be careful while installing graphic drivers and core system componetnts.\n\nShall I do it?" \
-                              "$task"
-                              ;;
-    disable_external_repos )  _show_confirmation_dialog_for_tasks \
-                              "Remove External Repositories" \
-                              "I can remove External Repositories added and PPAs in the ppa.list. Apps installed via ppa will be reverted to original versions/uninstalled. Apps from Repositories will be kept as it is.\n\nShall I do it for you?" \
-                              "$task"
-                              ;;
-    purge_ppa)                _show_confirmation_dialog_for_tasks "Purge PPAs is ppa.list or mentioned in config."\
-                              "PPAs listed in ppa.list or under YAML key config.ppa will be purged.\nhis will install ppa-purge on your system.\n\n Continue"
-                              "$task"
-                              ;;
-    purge_not_required )      _show_confirmation_dialog_for_tasks \
-                              "Purge Unwanted Packages" \
-                              "Shall I Purge Unwanted packages mentioned in purge.list?" \
-                              "$task"
-                              ;;
-    all_in_one )              _show_confirmation_dialog_for_tasks \
-                              "All In One" "This task will do the following.\nUpdate Repositories\nUpgrade Packages\nAdd Repositories and PPAs\nInstall apps from List\nPurge Unwanted Packages\n\nContinue?" \
-                              "$task"
-                              ;;
-    install_debs )            _show_confirmation_dialog_for_tasks \
-                              "Download & Install DEB files" "DEB Files in the list deb-files.list will be Download and installed. Proceed with the task?" \
-                              "$task"
-                              ;;
-    set_gsettings )           _show_confirmation_dialog_for_tasks \
-                              "Apply Custom gsettings" \
-                              "Gsettings mentioned in the file gsettings.list will be Applied. \n Proceed?" \
-                              "$task"
-                              ;;
-    install_pip_packages_2 )  _show_confirmation_dialog_for_tasks \
-                              "Install Python2 packages" "Python packaes for Python 2 mentioned in pip.list will be installed via pip. If necessary python-pip package will be installed from apt. \n\nProceed?" \
-                              "$task"
-                              ;;
-    install_pip_packages_3 )  _show_confirmation_dialog_for_tasks \
-                              "Install Python3 packages" \
-                              "Python packaes for Python 3 mentioned in pip3.list will be installed via pip. If necessary python3-pip package will be installed from apt.\n\nProceed?" \
-                              "$task"
-                              ;;
-    delete_log_file )         _debug_log "Delete log selected"
-                              delete_log_file;
-                              ;;
-        esac
+      case $task in
+      update)     _show_confirmation_dialog_for_tasks \
+                  "Update APT index" \
+                  "Update Repositories index/metadata?" \
+                  "update_repos"
+                  ;;
+      upgrade)    _show_confirmation_dialog_for_tasks \
+                  "Upgrade Packages" \
+                  "This will upgrade all installed packages to the latest version.\n\nContinue?"
+                  "upgrade_apps"
+                  ;;
+      ppas)       _show_confirmation_dialog_for_tasks "Add Additional PPAs" \
+                  "This will add PPAs specified in config file.\n\nWould you like to continue?" \
+                  "add_ppas"
+                  ;;
+      repo)       _show_confirmation_dialog_for_tasks "Add Additional Repositories" \
+                  "Adding additional repositories is set as follows.\n Google Chrome & Google Earth : $add_google_repo,\n Google Cloud SDK : $add_googlecloud_repo\n Visual Studio Code : $add_vscode_repo\n Docker : $add_docker_repo\n Insync : $add_insync_repo\n Spotify : $add_spotify_repo\n Wine-HQ : $add_winehq_repo\n Skype : $add_skype_repo\n Kubernetes : $add_kubernetes_repo\n Signal Desktop : $add_signal_repo.\n Shall I do it?" \
+                  "add_repositories"
+                  ;;
+      apps)       _show_confirmation_dialog_for_tasks \
+                  "Install Apps" \
+                  "I can Install the packages listed in lists files mentioned in app-list.list.\nNo checks are being made on the validity of the list.\n\nShall I do it?" \
+                  "install_apps"
+                  ;;
+      repo_rst)   _show_confirmation_dialog_for_tasks \
+                  "Remove External Repositories" \
+                  "I can remove External Repositories added and PPAs in the ppa.list. Apps installed via ppa will be reverted to original versions/uninstalled.\n\nShall I do it for you?" \
+                  "disable_external_repos"
+                  ;;
+      ppa_rst)    _show_confirmation_dialog_for_tasks "Purge PPAs is ppa.list or mentioned in config."\
+                  "PPAs listed in ppa.list or under YAML key config.ppa will be purged.\nhis will install ppa-purge on your system.\n\n Continue"
+                  "purge_ppa"
+                  ;;
+      purge)      _show_confirmation_dialog_for_tasks \
+                  "Purge Unwanted Packages" \
+                  "Shall I Purge Unwanted packages mentioned in purge.list?" \
+                  "purge_not_required"
+                  ;;
+      all)        _show_confirmation_dialog_for_tasks \
+                  "All In One" "This task will do the following.\nUpdate Repositories\nUpgrade Packages\nAdd Repositories and PPAs\nInstall apps from List\nPurge Unwanted Packages\n\nContinue?" \
+                  "all_in_one"
+                  ;;
+      debs)       _show_confirmation_dialog_for_tasks \
+                  "Download & Install DEB files" "DEB Files in the list deb-files.list will be Download and installed. Proceed with the task?" \
+                  "install_debs"
+                  ;;
+      pip2)       _show_confirmation_dialog_for_tasks \
+                  "Install Python2 packages" "Python packaes for Python 2 mentioned in pip.list will be installed via pip. If necessary python-pip package will be installed from apt. \n\nProceed?" \
+                  "install_pip_packages_2"
+                  ;;
+      pip3)       _show_confirmation_dialog_for_tasks \
+                  "Install Python3 packages" \
+                  "Python packaes for Python 3 mentioned in pip3.list will be installed via pip. If necessary python3-pip package will be installed from apt.\n\nProceed?" \
+                  "install_pip_packages_3"
+                  ;;
+      log)        _debug_log "Delete log selected"
+                  delete_log_file;
+                  ;;
+    esac
     else
       _debug_log "Whiptail Exit code : $whiptail_exitstatus"
       _debug_log "Exiting because user selected Quit or Whiptail has non zero exit code."
@@ -2363,8 +2358,6 @@ function _ci_cloud_and_container_checks()
   _log_and_show "${_running} Some checks..."
   # Check if running in CI & Containers
   # VMs, GCP, AWS, Docker. If running in CI Assign AUTOPILOT=true
-
-  #================================ CI =============================================
 
   #================================ CI =============================================
   if [ "$TRAVIS" == "true" ]; then
@@ -2482,67 +2475,79 @@ function main()
 
   # Process command line arguments.
   while [ "${1}" != "" ]; do
-      case ${1} in
-          -s | --simulate )       readonly simulate_apt_install="true";
-                                  set_yellow;
-                                  _log_and_show "${_simulate} is set to true";
-                                  set_default;
-                                  ;;
-          -f | --fix )            bool_fix_repo_not_available_for_latest="true";
-                                  set_yellow;
-                                  _log_and_show "${_fix_repo} is set to true. Using codename: $codename_previous_release.";
-                                  set_default;
-                                  ;;
-          -p | --pre-release )    bool_fix_repo_not_available_for_upcoming_release="true";
-                                  set_magenta;
-                                  _log_and_show "${_fix_repo} for upcoming release is set to true.";
-                                  set_default;
-                                  ;;
-          -d | --purge )          bool_purge_not_required_pkgs="true";
-                                  set_yellow;
-                                  _log_and_show "${_purge} Purge packages is set to true."
-                                  _log_and_show "${_warn} No checks are being made on the Packages in the list."
-                                  _log_and_show "${_warn} Use carefully!. Purging something like sudo is stupid idea!"
-                                  set_default;
-                                  ;;
-          -y | --yes )            bool_say_yes_to_all="true";
-                                  set_yellow;
-                                  _log_and_show "${_warn} Will automatically assume yes, for all the confirmation dialogs.";
-                                  set_default;
-                                  ;;
-          -l | --delete-log )     delete_log_file;;
-          -k | --keep-debs )      set_default;
-                                  bool_preserve_debs="true";
-                                  _log_and_show "${_info} Will keep downloaded DEB packages."
-                                  ;;
-          -e | --api-endpoint )   set_default;
-                                  readonly bool_custom_api_node="true";
-                                  shift; readonly custom_api_node="${1}";
-                                  ;;
-       --no-version-checks )      bool_check_version="false";;
-          -S |  --no-stats )      set_yellow;
-                                  readonly bool_report_stats="false";
-                                  _log_and_show "${_info} Statistis will not be reported."
-                                  set_default;
-                                  ;;
-          -C | --config-file )    shift;
-                                  readonly custom_config_file="${1}";
-                                  readonly bool_custom_config_file="true"
-                                  _log_and_show "${_info} Using custom Config file"
-                                  ;;
-          -V | --version-file )   shift;
-                                  readonly custom_version_file="${1}";
-                                  readonly bool_custom_version_file="true"
-                                  _log_and_show "${_info} Using custom version info file"
-                                  ;;
-          -Y | --yaml )           readonly bool_use_yaml="true"; _log_and_show "${_info} Using Remote YAML file...";;
-          -L | --lists)           readonly bool_use_lists="true"; _log_and_show "${_info} Using local Lists...";;
-          -n | --name)            shift; readonly bool_custom_remote_config_name="true"; readonly custom_remote_config_name="${1}";;
-          --hide-config)          readonly bool_hide_config="true"; _log_and_show "YAML config will not be displayed";;
-          -v | --version )        _log_and_exit "-v or --version should be the only argument and should be used as first argument only." "23";;
-          --verify)               _log_and_exit "--verify should be the only argument and should be used as first argument only." "23";;
-           * )                    _log_and_exit "${_error} Invalid option: $1" "22";;
-      esac
+    case ${1} in
+      -s | --simulate )       readonly simulate_apt_install="true";
+                              set_yellow;
+                              _log_and_show "${_simulate} is set to true";
+                              set_default;
+                              ;;
+      -f | --fix )            bool_fix_repo_not_available_for_latest="true";
+                              set_yellow;
+                              _log_and_show "${_fix_repo} is set to true. Using codename: $codename_previous_release.";
+                              set_default;
+                              ;;
+      -p | --pre-release )    bool_fix_repo_not_available_for_upcoming_release="true";
+                              set_magenta;
+                              _log_and_show "${_fix_repo} for upcoming release is set to true.";
+                              set_default;
+                              ;;
+      -d | --purge )          bool_purge_not_required_pkgs="true";
+                              set_yellow;
+                              _log_and_show "${_purge} Purge packages is set to true."
+                              _log_and_show "${_warn} No checks are being made on the Packages in the list."
+                              _log_and_show "${_warn} Use carefully!. Purging something like sudo is stupid idea!"
+                              set_default;
+                              ;;
+      -y | --yes )            bool_say_yes_to_all="true";
+                              set_yellow;
+                              _log_and_show "${_warn} Will automatically assume yes, for all the confirmation dialogs.";
+                              set_default;
+                              ;;
+      -l | --delete-log )     delete_log_file;;
+      -k | --keep-debs )      set_default;
+                              bool_preserve_debs="true";
+                              _log_and_show "${_info} Will keep downloaded DEB packages."
+                              ;;
+      -e | --api-endpoint )   set_default;
+                              readonly bool_custom_api_node="true";
+                              shift; readonly custom_api_node="${1}";
+                              ;;
+      --no-version-checks )   bool_check_version="false";;
+      -S |  --no-stats )      set_yellow;
+                              readonly bool_report_stats="false";
+                              _log_and_show "${_info} Statistis will not be reported."
+                              set_default;
+                              ;;
+      -C | --config-file )    shift;
+                              readonly custom_config_file="${1}";
+                              readonly bool_custom_config_file="true"
+                              _log_and_show "${_info} Using custom config file"
+                              ;;
+      -V | --version-file )   shift;
+                              readonly custom_version_file="${1}";
+                              readonly bool_custom_version_file="true"
+                              _log_and_show "${_info} Using custom version yml file"
+                              ;;
+      -Y | --yaml )           readonly bool_use_yaml="true";
+                              set_yellow;
+                              _log_and_show "${_info} Using YAML config..."
+                              set_default;
+                              ;;
+      -L | --lists)           readonly bool_use_lists="true";
+                              set_yellow;
+                              _log_and_show "${_info} Using local Lists..."
+                              set_default;
+                              ;;
+      -n | --name)            shift;
+                              readonly bool_custom_remote_config_name="true";
+                              readonly custom_remote_config_name="${1}";;
+      --hide-config)          readonly bool_hide_config="true";
+                              _log_and_show "${_info} YAML config will not be displayed."
+                              ;;
+      -v | --version )        _log_and_show "-v or --version should be the only argument." "23";;
+      --verify)               _log_and_exit "--verify should be the only argument." "23";;
+       * )                    _log_and_exit "${_error} Invalid option: $1" "22";;
+    esac
     shift
   done
 
@@ -2570,10 +2575,10 @@ function main()
   _set_custom_api_nodes;
 
   if [ "$bool_custom_config_file" == "true" ] && [ ! -f "$custom_config_file" ]; then
-    _log_and_exit "${_error} Custom Config file you have specified is not found or not accessible" "36"
+    _log_and_exit "${_error} Custom config file you have specified is not found or not accessible" "36"
   fi
   if [ "$bool_custom_version_file" == "true" ] && [ ! -f "$custom_version_file" ]; then
-    _log_and_exit "${_error} Custom Version info file you have specified is not found or not accessible" "36"
+    _log_and_exit "${_error} Custom version info file you have specified is not found or not accessible" "36"
   fi
   if [ "$bool_custom_remote_config_name" == "true" ] && [ "$custom_remote_config_name" == "" ]; then
     _log_and_exit "${_error} Custom remote config cannot be empty" "39"
@@ -2590,8 +2595,9 @@ function main()
     _log_and_exit "${_error} -Y --yaml and -L --lists cannot be used together." "25"
   else
     _log_and_show "${_error} You need to specify config type to use."
-    _log_and_exit "${_info} -Y or --yaml for YAMLs or -L or --lists for Lists" "25"
+    _log_and_exit "${_info} -Y or --yaml for YAML or -L or --lists for Lists" "25"
   fi
+
   # Autopilot
   if [[ "$AUTOPILOT" == "true" ]]; then
     set_blue;
