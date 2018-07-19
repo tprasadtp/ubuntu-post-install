@@ -80,6 +80,8 @@ function _init_printf_variables()
     readonly         _rtasks="[    R-Tasks    ]"
     readonly             _ci="[      C-I      ]"
     readonly          _table="[  ---Table---  ]"
+    readonly          _array="[   PKG Array   ]"
+    readonly            _apt="[  APT-Packges  ]"
     #readonly           _falg="[     Flag      ]"
 
     #colors for display
@@ -1038,21 +1040,21 @@ function _set_yaml_config()
     # Lets get em, shall we?
 
     # Copy package list
-    readonly parsed_purge_packages=("${config__purge_[@]}")
-    readonly parsed_administration_packages=("${config__install__apt__administration_[@]}")
-    readonly parsed_secutity_packages=("${config__install__apt__security_[@]}")
-    readonly parsed_productivity_packages=("${config__install__apt__productivity_[@]}")
-    readonly parsed_multimedia_packages=("${config__install__apt__multimedia_[@]}")
-    readonly parsed_development_packages=("${config__install__apt__development_[@]}")
-    readonly parsed_other_packages=("${config__install__apt__other_[@]}")
-    readonly parsed_external_packages=("${config__install__apt__external_[@]}")
+    declare -gar parsed_purge_packages=("${config__purge_[@]}")
+    declare -gar parsed_administration_packages=("${config__install__apt__administration_[@]}")
+    declare -gar parsed_secutity_packages=("${config__install__apt__security_[@]}")
+    declare -gar parsed_productivity_packages=("${config__install__apt__productivity_[@]}")
+    declare -gar parsed_multimedia_packages=("${config__install__apt__multimedia_[@]}")
+    declare -gar parsed_development_packages=("${config__install__apt__development_[@]}")
+    declare -gar parsed_other_packages=("${config__install__apt__other_[@]}")
+    declare -gar parsed_external_packages=("${config__install__apt__external_[@]}")
 
     #--------------------------------------------------------------------------------
     #                             PPA Lists
     #--------------------------------------------------------------------------------
     # Config file contains list of PPAs to be added under key
     # config.ppa
-    readonly parsed_ppa_list=("${config__ppa_[@]}")
+    declare -gar parsed_ppa_list=("${config__ppa_[@]}")
 
     #--------------------------------------------------------------------------------
     #                             Debian packages
@@ -1061,7 +1063,7 @@ function _set_yaml_config()
     # config.install.debian_packages
     # The configuration is not simple URL its csv. <URL to Deb file>,<Name of the Package>
     # This is for compatiblity reasons
-    readonly parsed_deb_files_list=("${config__install__debian_packages_[@]}")
+    declare -gar parsed_deb_files_list=("${config__install__debian_packages_[@]}")
 
     #--------------------------------------------------------------------------------
     #                             Python Modules
@@ -1069,14 +1071,14 @@ function _set_yaml_config()
     # There are two keys under config.install.python(2/3) which contain Python 2 and Python 3
     # Modules respectively. Please donot mix python 2 Modules with Python 3.
 
-    readonly parsed_pip2_packages=("${config__install__python2_[@]}")
-    readonly parsed_pip3_packages=("${config__install__python3_[@]}")
+    declare -gar parsed_pip2_packages=("${config__install__python2_[@]}")
+    declare -gar parsed_pip3_packages=("${config__install__python3_[@]}")
 
  fi
 
   {
   _line_fill
-  #declare -p
+#  declare -p
   _line_fill
   } >> "${log_file}"
 
@@ -1645,10 +1647,11 @@ function upgrade_apps()
   else
     # If  simulate is true, set exit status as 0
     # Simulate flag skips the section above. No point in Checking for exit status
+    set_blue;
     _log_and_show "${_simulate} is set to True. Not performing upgrade!"
+    set_default;
     exit_status=0
   fi
-  set_yellow;
   if [[ $exit_status -eq 0 ]]; then
     _log_and_show "${_upgrade} Completed successfully!"
   else
@@ -1880,7 +1883,7 @@ function install_apps()
       external)               packages=("${parsed_external_packages[@]}");;
       *)                      _log_and_exit "${_error} Critical error. Invalid array type" "19";;
     esac
-    _log_and_show "${_apt} Installing Packages : $array"
+    _log_and_show "${_apt} Installing $array packages"
 
     # Chek if array is empty
     if [[ ${#packages[@]} -eq 0 ]]; then
@@ -1915,7 +1918,11 @@ function install_apps()
     fi
     unset packages
   done
-
+  {
+    _line_fill
+    #declare -p
+    _line_fill
+  } >> "$log_file"
   # Delete DEBs
   _clean_apt_cache;
 
