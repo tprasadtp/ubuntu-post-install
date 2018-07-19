@@ -1197,7 +1197,7 @@ function _set_list_config()
 
     #shellcheck disable=SC2034
     local list_file line tmp_arr
-    local readonly lists=(
+    readonly local lists=(
                           administration.list
                           security.list
                           productivity.list
@@ -1217,9 +1217,10 @@ function _set_list_config()
       {
         touch /tmp/cleaned.clist && truncate -s 0 /tmp/cleaned.clist
         # Clean comments & empty spaces
-        grep -v -e ^\% -e ^\# -e '^[[:space:]]*$' "${dir}/data/${list}" > /tmp/cleaned.clist
+        grep -v -e ^% -e ^\# -e '^[[:space:]]*$' "${dir}/data/${list}" > /tmp/cleaned.clist
         _debug_log "Cleaned List is below"
         _line_fill >> "${log_file}"
+        # shellcheck disable=SC2002
         cat /tmp/cleaned.clist | _add_timestamp_to_logs "${_list}"
       } ||
       {
@@ -1265,7 +1266,7 @@ function _show_confirmation_dialog_for_tasks()
   # To overide and say yes to all dialog pass -y as command line option while running the script.
   local name_of_task="${1}" #Name of the task to be perfromed
   local confirm_msg="${2}" #Message shown in Confirmation dialogue
-  local readonly exec_function="${3}" #Function to run if user selected yes
+  readonly local exec_function="${3}" #Function to run if user selected yes
   COLUMNS=$(tput cols)
   LINES=$(tput lines)
   export COLUMNS LINES
@@ -1954,7 +1955,7 @@ function install_apps()
   #Install starts here
   local packages exit_status index
   #shellcheck disable=SC2034
-  local readonly package_arrays=(
+  readonly local package_arrays=(
                               administration
                               security
                               productivity
@@ -2221,7 +2222,7 @@ function _autopilot_check_task_flag_and_run()
   # ARG -1 : global flag variable to check
   # ARG -2: Function Name to execute
   local flag=${1}
-  local readonly runnable=${2}
+  readonly local runnable=${2}
 
   if [ "${flag}" == "true" ]; then
     _debug_log "Executing Function $runnable"
