@@ -887,11 +887,9 @@ function _set_yaml_config()
     #################################################################################
     _check_bool "add_docker_repo" "${config__add_repo__docker[0]}"
     #add_docker_repo="${config__add_repo__docker[0]}"
-    printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
 
     _check_bool "add_winehq_repo" "${config__add_repo__winehq[0]}"
     #add_winehq_repo="${config__add_repo__winehq[0]}"
-    printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
 
     _check_bool "add_mendeley_repo" "${config__add_repo__mendeley[0]}"
     #add_mendeley_repo="${config__add_repo__mendeley[0]}"
@@ -899,106 +897,145 @@ function _set_yaml_config()
 
     _check_bool "add_googlecloud_repo" "${config__add_repo__googlecloud[0]}"
     #add_googlecloud_repo="${config__add_repo__googlecloud[0]}"
-    printf "${_cfg} %-20s | %-10s |\n" "Google Cloud SDK" "$add_googlecloud_repo"
 
     _check_bool "add_spotify_repo" "${config__add_repo__spotify[0]}"
     #add_spotify_repo="${config__add_repo__spotify[0]}"
-    printf "${_cfg} %-20s | %-10s |\n" "Spotify" "$add_spotify_repo"
 
     _check_bool "add_skype_repo" "${config__add_repo__skype[0]}"
     #add_skype_repo="${config__add_repo__skype[0]}"
-    printf "${_cfg} %-20s | %-10s |\n" "Skype" "$add_skype_repo"
 
     _check_bool "add_vscode_repo" "${config__add_repo__vscode[0]}"
     #add_vscode_repo="${config__add_repo__vscode[0]}"
-    printf "${_cfg} %-20s | %-10s |\n" "Visual Studio Code" "$add_vscode_repo"
 
     _check_bool "add_insync_repo" "${config__add_repo__insync[0]}"
     #add_insync_repo="${config__add_repo__insync[0]}"
-    printf "${_cfg} %-20s | %-10s |\n" "Insync" "$add_insync_repo"
 
     _check_bool "add_signal_repo" "${config__add_repo__signal[0]}"
     #add_signal_repo="${config__add_repo__signal[0]}"
-    printf "${_cfg} %-20s | %-10s |\n" "Signal for Desktop" "$add_signal_repo"
 
     _check_bool "add_google_repo" "${config__add_repo__google[0]}"
     #add_google_repo="${config__add_repo__google[0]}"
-    printf "${_cfg} %-20s | %-10s |\n" "Google Chrome & Earh" "$add_google_repo"
 
     _check_bool "add_kubernetes_repo" "${config__add_repo__kubernetes[0]}"
     #add_kubernetes_repo="${config__add_repo__kubernetes[0]}"
-    printf "${_cfg} %-20s | %-10s |\n" "Kubernetes" "$add_kubernetes_repo"
 
     # Other Script Flags
-    set_default;
-    _line_fill;
-    printf "${_table} %-20s | %-10s |\n" "Other Flags" "Config"
-    _line_fill;
-    set_blue
+
     #################################################################################
     # Purge Packages
     _check_bool "bool_purge_not_required_pkgs" "${config__flags__purge_enabled[0]}"
     #bool_purge_not_required_pkgs="${config__flags__purge_enabled[0]}"
-    printf "${_cfg} %-20s | %-10s |\n" "Purge Enabled" "$bool_purge_not_required_pkgs"
 
     # Keep Debs
     _check_bool "bool_preserve_debs" "${config__flags__preserve_debs[0]}"
     #bool_preserve_debs="${config__flags__preserve_debs[0]}"
-    printf "${_cfg} %-20s | %-10s |\n" "Keep DEBs/APT cache" "$bool_preserve_debs"
 
     # Yes
     _check_bool "bool_say_yes_to_all" "${config__flags__auto_yes[0]}"
     #bool_say_yes_to_all="${config__flags__auto_yes[0]}"
-    printf "${_cfg} %-20s | %-10s |\n" "Dont confirm" "$bool_say_yes_to_all"
 
-
-    set_default;
     # Tasks Flags
     ##################################################################################
 
-    _line_fill;
-    printf "${_table} %-20s | %-10s |\n" "Task" "Config"
-    _line_fill;
-    set_magenta
+
 
     #ae_task_update="${config__tasks__update[0]}"
     _check_bool "ae_task_update" "${config__tasks__update[0]}"
-    printf "${_rtasks} %-20s | %-10s |\n" "Update" "$ae_task_update"
 
     #ae_task_upgrade="${config__tasks__upgrade[0]}"
     _check_bool "ae_task_upgrade" "${config__tasks__upgrade[0]}"
-    printf "${_rtasks} %-20s | %-10s |\n" "Upgrade" "$ae_task_upgrade"
 
     #ae_task_repo="${config__tasks__repo[0]}"
     _check_bool "ae_task_repo" "${config__tasks__repo[0]}"
-    printf "${_rtasks} %-20s | %-10s |\n" "Add Repos" "$ae_task_repo"
 
     #ae_task_ppa="${config__tasks__ppa[0]}"
     _check_bool "ae_task_ppa" "${config__tasks__ppa[0]}"
-    printf "${_rtasks} %-20s | %-10s |\n" "Add PPA" "$ae_task_ppa"
 
     #ae_task_apt="${config__tasks__apt[0]}"
     _check_bool "ae_task_apt" "${config__tasks__apt[0]}"
-    printf "${_rtasks} %-20s | %-10s |\n" "APT packages" "$ae_task_apt"
 
     #ae_task_debs="${config__tasks__debs[0]}"
     _check_bool "ae_task_debs" "${config__tasks__debs[0]}"
-    printf "${_rtasks} %-20s | %-10s |\n" "DEB packages" "$ae_task_debs"
 
     #ae_task_purge="${config__tasks__purge[0]}"
     _check_bool "ae_task_purge" "${config__tasks__purge[0]}"
-    printf "${_rtasks} %-20s | %-10s |\n" "Purge packages" "$ae_task_purge"
 
     #ae_task_pip2="${config__tasks__pip2[0]}"
     _check_bool "ae_task_pip2" "${config__tasks__pip2[0]}"
-    printf "${_rtasks} %-20s | %-10s |\n" "Python 2 Modules" "$ae_task_pip2"
 
     #ae_task_pip3="${config__tasks__pip3[0]}"
     _check_bool "ae_task_pip3" "${config__tasks__pip3[0]}"
-    printf "${_rtasks} %-20s | %-10s |\n" "Python 3 Modules" "$ae_task_pip3"
 
-    set_default;
-    _line_fill;
+    if [ "${bool_hide_config}" != "false" ]; then
+      printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
+      printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
+      printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
+      printf "${_cfg} %-20s | %-10s |\n" "Google Cloud SDK" "$add_googlecloud_repo"
+      printf "${_cfg} %-20s | %-10s |\n" "Spotify" "$add_spotify_repo"
+      printf "${_cfg} %-20s | %-10s |\n" "Skype" "$add_skype_repo"
+      printf "${_cfg} %-20s | %-10s |\n" "Visual Studio Code" "$add_vscode_repo"
+      printf "${_cfg} %-20s | %-10s |\n" "Insync" "$add_insync_repo"
+      printf "${_cfg} %-20s | %-10s |\n" "Signal for Desktop" "$add_signal_repo"
+      printf "${_cfg} %-20s | %-10s |\n" "Google Chrome & Earh" "$add_google_repo"
+      printf "${_cfg} %-20s | %-10s |\n" "Kubernetes" "$add_kubernetes_repo"
+      set_default;
+      _line_fill;
+      printf "${_table} %-20s | %-10s |\n" "Other Flags" "Config"
+      _line_fill;
+      set_blue
+      printf "${_cfg} %-20s | %-10s |\n" "Purge Enabled" "$bool_purge_not_required_pkgs"
+      printf "${_cfg} %-20s | %-10s |\n" "Keep DEBs/APT cache" "$bool_preserve_debs"
+      printf "${_cfg} %-20s | %-10s |\n" "Dont confirm" "$bool_say_yes_to_all"
+      _line_fill;
+      printf "${_table} %-20s | %-10s |\n" "Task" "Config"
+      _line_fill;
+      set_magenta
+      printf "${_rtasks} %-20s | %-10s |\n" "Update" "$ae_task_update"
+      printf "${_rtasks} %-20s | %-10s |\n" "Upgrade" "$ae_task_upgrade"
+      printf "${_rtasks} %-20s | %-10s |\n" "Add Repos" "$ae_task_repo"
+      printf "${_rtasks} %-20s | %-10s |\n" "Add PPA" "$ae_task_ppa"
+      printf "${_rtasks} %-20s | %-10s |\n" "APT packages" "$ae_task_apt"
+      printf "${_rtasks} %-20s | %-10s |\n" "DEB packages" "$ae_task_debs"
+      printf "${_rtasks} %-20s | %-10s |\n" "Purge packages" "$ae_task_purge"
+      printf "${_rtasks} %-20s | %-10s |\n" "Python 2 Modules" "$ae_task_pip2"
+      printf "${_rtasks} %-20s | %-10s |\n" "Python 3 Modules" "$ae_task_pip3"
+      set_default;
+      _line_fill;
+    else
+      _log_and_show "${_cfg} Remote configuration is hidden."
+      _log_and_show "${_cfg} Please check the logfile or dont use --hide-config to display configuration."
+      {
+        printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
+        printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
+        printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
+        printf "${_cfg} %-20s | %-10s |\n" "Google Cloud SDK" "$add_googlecloud_repo"
+        printf "${_cfg} %-20s | %-10s |\n" "Spotify" "$add_spotify_repo"
+        printf "${_cfg} %-20s | %-10s |\n" "Skype" "$add_skype_repo"
+        printf "${_cfg} %-20s | %-10s |\n" "Visual Studio Code" "$add_vscode_repo"
+        printf "${_cfg} %-20s | %-10s |\n" "Insync" "$add_insync_repo"
+        printf "${_cfg} %-20s | %-10s |\n" "Signal for Desktop" "$add_signal_repo"
+        printf "${_cfg} %-20s | %-10s |\n" "Google Chrome & Earh" "$add_google_repo"
+        printf "${_cfg} %-20s | %-10s |\n" "Kubernetes" "$add_kubernetes_repo"
+        printf "${_table} %-20s | %-10s |\n" "Other Flags" "Config"
+        _line_fill;
+        printf "${_cfg} %-20s | %-10s |\n" "Purge Enabled" "$bool_purge_not_required_pkgs"
+        printf "${_cfg} %-20s | %-10s |\n" "Keep DEBs/APT cache" "$bool_preserve_debs"
+        printf "${_cfg} %-20s | %-10s |\n" "Dont confirm" "$bool_say_yes_to_all"
+        _line_fill;
+        printf "${_table} %-20s | %-10s |\n" "Task" "Config"
+        printf "${_rtasks} %-20s | %-10s |\n" "Update" "$ae_task_update"
+        printf "${_rtasks} %-20s | %-10s |\n" "Upgrade" "$ae_task_upgrade"
+        printf "${_rtasks} %-20s | %-10s |\n" "Add Repos" "$ae_task_repo"
+        printf "${_rtasks} %-20s | %-10s |\n" "Add PPA" "$ae_task_ppa"
+        printf "${_rtasks} %-20s | %-10s |\n" "APT packages" "$ae_task_apt"
+        printf "${_rtasks} %-20s | %-10s |\n" "DEB packages" "$ae_task_debs"
+        printf "${_rtasks} %-20s | %-10s |\n" "Purge packages" "$ae_task_purge"
+        printf "${_rtasks} %-20s | %-10s |\n" "Python 2 Modules" "$ae_task_pip2"
+        printf "${_rtasks} %-20s | %-10s |\n" "Python 3 Modules" "$ae_task_pip3"
+        _line_fill;
+        _line_fill;
+      } >> "${log_file}"
+    fi
     #################################################################################
     #                              Parse Arrays
     #################################################################################
@@ -2449,6 +2486,7 @@ function main()
           -Y | --yaml )           readonly bool_use_yaml="true"; _log_and_show "${_info} Using Remote YAML file...";;
           -L | --lists)           readonly bool_use_lists="true"; _log_and_show "${_info} Using local Lists...";;
           -n | --name)            shift; readonly bool_custom_remote_config_name="true"; readonly custom_remote_config_name="${1}";;
+          --hide-config)          readonly bool_hide_config="true"; _log_and_show "YAML config will not be displayed";;
           -v | --version )        _log_and_exit "-v or --version should be the only argument and should be used as first argument only." "23";;
           --verify)               _log_and_exit "--verify should be the only argument and should be used as first argument only." "23";;
            * )                    _log_and_exit "${_error} Invalid option: $1" "22";;

@@ -163,6 +163,14 @@ Default behavior is to clean apt cache and delete downloaded DEB packages.
     Python package installation does not honor this flag.
 
 
+## Hide Remote/local YAML configuration data
+
+!!! snippet "Usage"
+    ```
+    ./after-effects --hide-config
+    ```
+Hides displaying YAML configuration data in the output.
+
 ## Prefer Local lists
 
 !!! snippet "Usage"
