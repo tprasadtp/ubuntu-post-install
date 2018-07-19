@@ -139,8 +139,7 @@ config:
       # Everything Else
       # Which is conditional
       other:
-        - openjdk-8-jre
-        - neofetch
+        - screenfetch
         - gnome-online-miners
       # Packages supplied by external repositories & PPAs
       # Dont Mix packages provided by distribution and PPAs
