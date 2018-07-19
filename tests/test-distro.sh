@@ -18,25 +18,38 @@ case "${TRAVIS_EVENT_TYPE}" in
   push | cron | api )      branch="${TRAVIS_BRANCH}";;
   * )                      branch="$(git rev-parse --abbrev-ref HEAD)";;
 esac
-dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+#dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 #shellcheck disable=SC2116
-dir=$(echo "${dir/tests/}")
-log_file="$dir"/logs/after-effects.log
+
+#dir=$(echo "${dir/tests/}")
+#log_file="$dir"/logs/after-effects.log
 # set eo on script.
 sed -i 's/set -o pipefail/set -eo pipefail/g' "$dir"/after-effects
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-echo "Building $distro:$release Docker Image"
-docker build -t "${distro}:${release}" ./dockerfiles/"${release}"
-echo "Running in ${TEST_ENV}"
 
 if [[ $release == trusty ]]; then
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo "Testing On HOST"
   echo "Testing with YAML"
   sudo ./after-effects --yes --yaml --simulate --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/api --name trusty
+  exit_code="$?"
+  echo "Exit code for YAML is $exit_code"
+  if [[ $exit_code -ne 0 ]]; then
+    return "$exit_code"
+  fi
+
   echo "Testing with Lists"
   sudo ./after-effects --yes --lists --simulate --name trusty
+  exit_code="$?"
+  echo "Exit code for LIST is $exit_code"
+  if [[ $exit_code -ne 0 ]]; then
+    return "$exit_code"
+  fi
+
 else
+  echo "Building $distro:$release Docker Image"
+  docker build -t "${distro}:${release}" ./dockerfiles/"${release}"
+  echo "Running in ${TEST_ENV}"
   echo "Testing with YAML"
   docker run -it -e TRAVIS="$TRAVIS" \
   --hostname="${TEST_ENV}" \
@@ -47,7 +60,11 @@ else
    --simulate \
    --yes \
    --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/api
-
+  exit_code="$?"
+  echo "Exit code for YAML is $exit_code"
+  if [[ $exit_code -ne 0 ]]; then
+    return "$exit_code"
+  fi
   echo "Testing With Lists"
   docker run -it -e TRAVIS="$TRAVIS" \
     --hostname="${TEST_ENV}" \
@@ -57,12 +74,11 @@ else
     --lists \
     --simulate \
     --yes
-fi
 
-echo "Print Logs is set to: $PRINT_LOGS"
-if [ "$PRINT_LOGS" == "true" ]; then
-  echo " "
-  echo " "
-  echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-  cat "$log_file"
-fi
+    exit_code="$?"
+    echo "Exit code for LIST is $exit_code"
+    if [[ $exit_code -ne 0 ]]; then
+      return "$exit_code"
+    fi
+
+  fi
