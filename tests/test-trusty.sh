@@ -7,13 +7,11 @@
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 set -o pipefail
 branch=master
-if [ "$TRAVIS_EVENT_TYPE" == "pull_request" ];then
-  branch="$TRAVIS_PULL_REQUEST_BRANCH"
-elif [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
-  branch="$TRAVIS_BRANCH"
-elif [ "$TRAVIS_EVENT_TYPE" == "cron" ] || [ "$TRAVIS_EVENT_TYPE" == "api" ] ; then
-  branch="$TRAVIS_BRANCH"
-fi
+case "${TRAVIS_EVENT_TYPE}" in
+  pull_request )           branch="${TRAVIS_PULL_REQUEST_BRANCH}";;
+  push | cron | api )      branch="${TRAVIS_BRANCH}";;
+  * )                      branch="${TRAVIS_BRANCH}";;
+esac
 function main()
 {
   dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)

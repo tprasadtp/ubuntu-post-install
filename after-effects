@@ -209,25 +209,25 @@ function _init_script_variables()
   # Achtung: Do not set code_name as readonly!!
   code_name=$(lsb_release -cs)
   readonly architecture=$(dpkg --print-architecture)
-  if [ "$architecture" == "amd64" ];then
-    _debug_log "Architecture is 64 bit."
-    readonly ARCH=amd64
-  elif [ "$architecture" == "i386" ]; then
-    _debug_log "Architecture is 32 bit."
-    readonly ARCH=i386
-  elif [ "$architecture" == "armhf" ]; then
-    _debug_log "This is an ARM CPU with HW Floating point Processor"
-    readonly ARCH=armhf
-  elif [ "$architecture" == "arm64" ]; then
-    _log_and_show "This is an ARM 64. Please be advised that not all reposirories support this arch."
-    readonly ARCH=arm64
-  else
-    set_yellow;
-    _log_and_show "${_error} This architecture is not supported by this script!"
-    set_default;
-    _log_and_exit "Unsupported Architecture. $(architecture)" "11"
-  fi
-
+  case "${architecture}" in
+    amd64)          _debug_log "Architecture is 64 bit.";
+                    readonly ARCH="amd64";
+                    ;;
+    i386)           _debug_log "Architecture is 32 bit.";
+                    readonly ARCH="i386";
+                    ;;
+    armhf)          _debug_log "Running on ARM CPU with HW Floating point Processor";
+                    readonly ARCH="armhf";
+                    ;;
+    arm64)           _debug_log "This is an ARM 64. Please be advised that not all reposirories support this arch.";
+                    readonly ARCH="arm64";
+                    ;;
+    * )             set_yellow;
+                    _log_and_show "${_error} Sorry! This architecture is not supported by this script!"
+                    set_default;
+                    _log_and_exit "Unsupported Architecture. $(architecture)" "11"
+                    ;;
+  esac
 
   # Get Hostname
   readonly CLIENT_NAME=$(hostname)
@@ -617,12 +617,11 @@ function _test_conflicting_apps ()
   for lock in synaptic update-manager software-center apt-get dpkg aptitude
   do
     # shellcheck disable=SC2009
-    if ps -U root -u root u | grep $lock | grep -v grep > /dev/null;
-       then
-         _log_and_show "${_error} Installation won't work. Please close $lock first then try again."
-         exit 15;
-       else
-        _debug_log "$lock not is running."
+    if ps -U root -u root u | grep $lock | grep -v grep > /dev/null; then
+      _log_and_show "${_error} Installation won't work. Please close $lock first then try again."
+      exit 15;
+    else
+      _debug_log "$lock not is running."
      fi
    done
    _log_and_show "${_conflicts} None detected."
@@ -723,6 +722,8 @@ function _get_remote_file()
       _log_and_show "${_error} Something went wrong while retrieving ${file_name}."
       _log_and_exit "${_error} Error Getiing file." "28"
     fi
+  else
+    _log_and_exit "${_error} Invalid number of arguments <_get_remote_file> Requires 2, got $#." "19"
   fi
 
 }
@@ -808,23 +809,20 @@ function _check_bool()
   g_var="${1}"
   param_bool="${2}"
   _debug_log "Globar var is : $g_var, Param from cfg is $param_bool"
-  if ([[ $param_bool == true ]] || [[ $param_bool == True ]] || [[ $param_bool == Yes ]] || [[ $param_bool == yes ]] || [[ $param_bool == YES ]]) ; then
-  # shellcheck disable=SC2086
-    declare -g ${g_var}="true"
-    _debug_log "Variable : <$g_var> is set to true"
-  elif ([[ $param_bool == false ]] || [[ $param_bool == False ]] || [[ $param_bool == No ]] || [[ $param_bool == no ]] || [[ $param_bool == No ]]) ; then
-    # shellcheck disable=SC2086
-    declare -g ${g_var}="false"
-    _debug_log "Variable : <$g_var> is set to false"
-  else
-    _log_and_show "${_cfg} Invalid value for param : $g_var. It can either be t[T]rue or f[F]alse."
-    _log_and_show "${_cfg} Setting $g_var to default. (false)"
-    # shellcheck disable=SC2086
-    declare -g ${g_var}="false"
-    _debug_log "Variable : <$g_var> is set to false"
-  fi
+  case "${param_bool}" in
+    true | True | TRUE | Yes | yes | YES | 1 )      declare -g ${g_var}="true"
+                                                    _debug_log "Variable : <$g_var> is set to true"
+                                                    ;;
 
+    false | False | FALSE | No | no | NO | 0 )      declare -g ${g_var}="false"
+                                                    _debug_log "Variable : <$g_var> is set to false"
+                                                    ;;
 
+    *)                                              declare -g ${g_var}="false"
+                                                    _log_and_show "${_cfg} Invalid value for param : $g_var. It can either be t[T]rue or f[F]alse."
+                                                    _log_and_show "${_cfg} Setting $g_var to default. (false)"
+                                                    ;;
+  esac
 }
 
 function _set_yaml_config()
@@ -1002,7 +1000,7 @@ function _set_yaml_config()
     #################################################################################
     #                              Parse Arrays
     #################################################################################
-    # Config file YAML has list of apt files and other lists as well.
+    # Config file YAML has arrays of apt packages.
     # We need to parse apt packages, ppa's, deb packages, python modules listed in yaml
     # to bash arrays.
 
@@ -1059,7 +1057,7 @@ function _set_yaml_config()
     #--------------------------------------------------------------------------------
     #                             Debian packages
     #--------------------------------------------------------------------------------
-    # Config file contains list of PPAs to be added under key
+    # Config file contains list of DEB packages to be downloaded & installed under key
     # config.install.debian_packages
     # The configuration is not simple URL its csv. <URL to Deb file>,<Name of the Package>
     # This is for compatiblity reasons
@@ -1325,8 +1323,6 @@ fi
 function add_ppas()
 {
   # Function to add ppa by reading ppas from ppa.list of from YAML key config.ppa
-  # and is parsed and saved to ppas_to_add
-  # file in /data directory.
   # List/Config file should contain ppas in following format
   # ppa:ppa:<author>/<ppa> for example, ppa:mozillateam/firefox-nex for adding firefox next/Beta PPA
   _debug_log "Adding PPA Fucntion"
