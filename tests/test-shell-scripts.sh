@@ -15,8 +15,8 @@ ERRORS=()
 for file in $(find . -type f -not -iwholename '*.git*' -executable | sort -u); do
 	if file "${file}" ; then
 		{
-			# ignore unused variables in pf 2059, double  quote strings  2086 2034 unused strings
-			shellcheck -e SC2154 "${file}" && printf " [ OK ]: sucessfully linted %s\n\n" "${file}"
+			# ignore , double  quote strings  2086 
+			shellcheck -e SC2154 -e SC2086 "${file}" && printf " [ OK ]: sucessfully linted %s\n\n" "${file}"
 
 		} ||
 		{

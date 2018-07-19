@@ -815,7 +815,6 @@ function _check_bool()
     true | True | TRUE | Yes | yes | YES | 1 )      declare -g ${g_var}="true"
                                                     _debug_log "Variable : <$g_var> is set to true"
                                                     ;;
-
     false | False | FALSE | No | no | NO | 0 )      declare -g ${g_var}="false"
                                                     _debug_log "Variable : <$g_var> is set to false"
                                                     ;;
@@ -1997,7 +1996,7 @@ function _install_pip_python()
   local exit_status pip_command pip_loc python_packages requirements_file
   local pip_ver="${1}"
   _debug_log "Option: Install Python packages via PIP, Function name: _install_pip_python"
-  _debug_log "pip Version : ${pip_ver}, List File : ${pip_list}"
+  _debug_log "pip Version : ${pip_ver}"
 
   # Check Python Version
   case ${pip_ver} in
@@ -2254,7 +2253,7 @@ function _process_menu
                               "$task"
                               ;;
     add_ppas )                _show_confirmation_dialog_for_tasks "Add Additional PPAs" \
-                              "This task will add PPAs specified in $ppa_list file.\n\nWould you like to continue?" \
+                              "This task will add PPAs specified in config file.\n\nWould you like to continue?" \
                               "$task"
                               ;;
     add_repositories )        _show_confirmation_dialog_for_tasks "Add Additional Repositories" \
