@@ -84,7 +84,6 @@ config:
       productivity:
         - empathy
         - evolution
-        - polari
         - realmd
         - pandoc-data
         - pandoc
@@ -142,9 +141,6 @@ config:
       # Which is conditional
       other:
         - mesa-opencl-icd
-        - opencl-clhpp-headers
-        - opencl-c-headers
-        - arc-theme
         - icedtea-8-plugin
         - openjdk-8-jre
         - neofetch
