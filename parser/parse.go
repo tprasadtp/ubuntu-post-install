@@ -147,7 +147,6 @@ func main() {
 
 	}
 
-	//exit if args are more than 2 or less than two
 }
 
 func parseConfig(filename string) {

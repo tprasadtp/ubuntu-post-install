@@ -17,7 +17,7 @@ This can add the following repositories.
     Please note that the above repositories are sometimes not updated for latest Ubuntu release and most certainly will not be available for upcoming release of Ubuntu(Alpha/Beta). It might take some time till the repositories are available for the latest release. Use -f or --fix command line option or --pre-release in case you are using a Development version of ubuntu to revert using latest available version of repositories (usually previous Ubuntu release or in case of Beta/Alpha latest stable release of ubuntu). [For more info see command line options.](/clioptions/#fix-for-latest-ubuntu-releases)
 
 ??? tip "Controlling which repository is added using config file"
-    You can set your YML file to decide which repository is added. Some repositories may no be suppoted on your architecture or distribution. Take a look at [config.yml](/api/yaml) for example. If you omit a value, it defaults to false **ALWAYS**. do note that if you are using lists default values are different, they are mentioned in below.
+    You can set your YML file to decide which repository is added. Some repositories may no be suppoted on your architecture or distribution. Take a look at [config.yml](/api/yaml) for example. If you omit a value, it defaults to false **ALWAYS**. Do note that if you are using lists default values are different, they are mentioned in below.
 
 
 ??? note "Default Variables if using Lists"
@@ -65,9 +65,10 @@ This can add the following repositories.
 
   Canonical partner repositories are not configured or enabled for derivatives of Ubuntu because thee might be some conflicts.
 
-!!! bug "Note on 32 bit Architecture"
+!!! bug "Note on 32 bit & ARM Architecture"
     - Please note that Google Chrome doesn't support 32 bit architecture, please use Chromium.
-    - Signal and Visual studio code do not support 32 bit architecture either.
+    - Signal, Skype, Mendeley and Visual studio code do not support 32 bit architecture.
+    - Some repositories are not available for ARM architecture.
 
 
 ## Add personal package archives (PPA)
@@ -90,20 +91,20 @@ This can add the following repositories.
     # There are Seven lists under key config.install.apt.[mentioned from 1-7]
     # 1. administration : Contains Administrative packages
     # 2. security       : contains Security related tools and packages
-    # 3. productivity   : Office tools, writing tools, lates, document tools and other
+    # 3. productivity   : Office tools, writing tools, LateX, document tools and other
     #                     productivity tools, Email clients, browsers, IM clients etc.
-    #                   : Example : LateX, TeXStudio, Libre office, pandoc empathy, thunderbird
+    #                   : Example : LateX, TeXStudio, Libre office, pandoc empathy, Thunderbird
     # 4. Multimedia     : Multimedia tools like media players, audio converters and playes etc.
-    # 5. development    : IDEs [Spyder, Jetbeans etc], languagues [go, python, ruby, rust, java etc],
+    # 5. development    : IDEs [Spyder, Jetbeans etc], languages [go, python, ruby, rust, java etc],
     #                   : Containers [docker lxc rkt etc], Python libraries, compilers [gcc, clang]
     #                   : SDKs [AWS SDK, Coogle Cloud SDK, open-jdk, Tensor Flow], headers and libraries[ocl-icd-dev],
     #                   : Anything related to development and *-dev or *-devl packages.
     # 6. other          : Everything which doesnot fit in the above categories.
     #                   : Themes, Tools, Utilities like htop etc.
     # 7. External       : Any packages which are provided by ppas, or repositories not present in
-    #                   : base *buntu distribution. Theres a possibility that the repository might not
+    #                   : base *buntu distribution. There's a possibility that the repository might not
     #                   : be added or may be unavailable or offline. So Keeping the list seperate from
-    #                   : others packges minimizes errors if there are any.
+    #                   : others packages minimizes errors if there are any.
     # This classification is only for ease of use and need not be strictly followed. You can put
     # vlc package in 'security', it will still install fine. This classification helps
     # while writing configs and editing them. Its advised to follow it if your configs
@@ -156,7 +157,7 @@ This will purge Unwanted packages from the system.
 - The format of the purge.list is similar to that of packages, one packages per line of the file and no comments or anything else.
 
 !!! warning
-    It is necessary to pass command line argument `-d` or `--deboalt` to run this task if you are using lists mode. With YML you can set the flag in config and `-d` is not neccessary.
+    It is necessary to pass command line argument `-d` or `--deboalt` to run this task if you are using lists mode. With YML you can set the flag in config and `-d` is not necessary.
 
 ## Reset repositories / Purge PPAs
 
