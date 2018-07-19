@@ -25,7 +25,7 @@ Non package related lists (settings, deb files, delete packages list). The use a
 | gsettings | Various gsettings | None Yet | NA |
 | purge | List of packages to be purged | `purge_not_required` | [Link](tasks/#purge-unwanted-packages) |
 | ppa | List of ppas to be added | `add_ppas` | [Link](tasks/#add-personal-package-archives-ppa) |
-| deb-files | List of DEB files to be installed (csv) | `install_debs` | [Link](tasks/#install-debian-package-package-archives-deb-files)|
+| deb | List of DEB files to be installed (csv) | `install_debs` | [Link](tasks/#install-debian-package-package-archives-deb-files)|
 | get.mlist | Used by get-after-effects.sh to download required list files | NA | [get-after-effects.sh](https://github.com/tprasadtp/ubuntu-post-install/blob/master/get-after-effects.sh) | --- |
 |pip2/pip3| Python packages (Installed System wide) | _install_pip_packages | [Link](tasks/#install-python-packages-via-pip)
 

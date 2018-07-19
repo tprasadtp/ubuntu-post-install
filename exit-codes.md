@@ -28,6 +28,8 @@
 | 37 | Configuration error. Expects Boolean but found something else. |
 | 38 | Failed to delete a file |
 | 39 | Custom remote config name cannot be empty |
+| 40 | Failed to unset an array |
+| 41 | Failed to truncate clist file |
 | 51 | GPG signature checks failed |
 | 52 | SHA checksums did not match |
 | 255 | Test Exit code |

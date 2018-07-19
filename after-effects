@@ -82,6 +82,7 @@ function _init_printf_variables()
     readonly          _table="[  ---Table---  ]"
     readonly          _array="[   PKG Array   ]"
     readonly            _apt="[  APT-Packges  ]"
+    readonly           _list="[  Cleaned List ]"
     #readonly           _falg="[     Flag      ]"
 
     #colors for display
@@ -242,14 +243,6 @@ function _init_script_variables()
 
   # Ping URL
   readonly PING_URL="www.google.com"
-
-  # Define List Files
-  readonly list_file_deb="$dir/data/deb-files.list"
-  readonly list_file_ppa="$dir/data/ppa.list"
-  readonly list_file_apt="$dir/data/app-list.list"
-  readonly list_file_purge="$dir/data/purge.list"
-  readonly list_file_pip3="$dir/data/pip3.list"
-  readonly list_file_pip2="$dir/data/pip2.list"
 
 
   #-------------------------- Release codenames --------------------------------------
@@ -965,7 +958,7 @@ function _set_yaml_config()
     #ae_task_pip3="${config__tasks__pip3[0]}"
     _check_bool "ae_task_pip3" "${config__tasks__pip3[0]}"
 
-    if [ "${bool_hide_config}" != "false" ]; then
+    if [ "${bool_hide_config}" != "true" ]; then
       printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
@@ -1134,7 +1127,6 @@ function _set_list_config()
   # We need to just parse the .list files in data.Flags will be local and can be alterd via options or editing the
   # Script itself.
   if [ "$bool_use_lists" == "true" ]; then
-    set_blue;
     _log_and_show "${_cfg} Local Flags and Configs are preferred."
     _log_and_show "${_cfg} Parsing local lists..."
     # Parse local lists to appropriate variables, arrays and inject them in script.
@@ -1202,7 +1194,61 @@ function _set_list_config()
     ae_task_pip3="true"
     ae_task_purge="true"
 
-    _log_and_exit "Feature not yet available" "254"
+    #shellcheck disable=SC2034
+    local list_file line tmp_arr
+    local readonly lists=(
+                          administration.list
+                          security.list
+                          productivity.list
+                          multimedia.list
+                          development.list
+                          others.list
+                          external.list
+                          ppa.list
+                          deb.list
+                          purge.list
+                          pip.list
+                          pip3.list
+                        )
+
+    for list in "${lists[@]}"; do
+      _debug_log "Processing List : $list"
+      {
+        touch /tmp/cleaned.clist && truncate -s 0 /tmp/cleaned.clist
+        # Clean comments & empty spaces
+        grep -v -e ^\% -e ^\# -e '^[[:space:]]*$' "${dir}/data/${list}" > /tmp/cleaned.clist
+        _debug_log "Cleaned List is below"
+        _line_fill >> "${log_file}"
+        cat /tmp/cleaned.clist | _add_timestamp_to_logs "${_list}"
+      } ||
+      {
+        _log_and_exit "Failed to clean list" "41"
+      }
+      # Read line by line & Parse array
+      i=0;
+      local tmp_arr
+      while IFS= read -r line; do
+        tmp_arr[i]="${line}"; ((i++))
+      done < /tmp/cleaned.clist
+      _debug_log "Parsed $list"
+      case "${list}" in
+        administration.list)  declare -gar parsed_administration_packages=("${tmp_arr[@]}");;
+        security.list)        declare -gar parsed_secutity_packages=("${tmp_arr[@]}");;
+        productivity.list)    declare -gar parsed_productivity_packages=("${tmp_arr[@]}");;
+        multimedia.list)      declare -gar parsed_multimedia_packages=("${tmp_arr[@]}");;
+        others.list)          declare -gar parsed_other_packages=("${tmp_arr[@]}");;
+        development.list)     declare -gar parsed_development_packages=("${tmp_arr[@]}");;
+        external.list)        declare -gar parsed_external_packages=("${tmp_arr[@]}");;
+        ppa.list)             declare -gar parsed_ppa_list=("${tmp_arr[@]}");;
+        deb.list)             declare -gar parsed_deb_files_list=("${tmp_arr[@]}");;
+        purge.list)           declare -gar parsed_purge_packages=("${tmp_arr[@]}");;
+        pip.list)             declare -gar parsed_pip2_packages=("${tmp_arr[@]}");;
+        pip3.list)            declare -gar parsed_pip3_packages=("${tmp_arr[@]}");;
+      esac
+      # Unset local array
+      unset tmp_arr || _log_and_exit "Unable to unset array" "40"
+    done
+
   fi
 }
 

@@ -119,7 +119,7 @@ This can add the following repositories.
 - Make sure that all the packages in the lists are available for your release. Using `-s` command line option helps. Also check for the logs for any errors or conflicts.
 
 ## Install Debian package archives (.deb files)
-This will install deb files specified in the list deb-files.list or config file.
+This will install deb files specified in the list `deb.list` or YAML config under `config.install.debian_packages`.
 
 - Logs will  show entry in the format `[<date and time>] [  PKG  ] <log>` for dpkg actions and
 - APT Logs will  show entry in the format `[<date and time>] [  APT  ] <log>` for actions performed by apt commands. (`apt-get install -f` for missing packages)
