@@ -1196,7 +1196,7 @@ function _set_list_config()
     ae_task_purge="true"
 
     #shellcheck disable=SC2034
-    local list_file line tmp_arr
+    local list_file line
     readonly local lists=(
                           administration.list
                           security.list
@@ -1213,8 +1213,9 @@ function _set_list_config()
                         )
 
     for list in "${lists[@]}"; do
+      declare -a tmp_arr
       _debug_log "Processing List : $list"
-      {
+      if [ -f "${dir}/data/${list}" ]; then
         touch /tmp/cleaned.clist && truncate -s 0 /tmp/cleaned.clist
         # Clean comments & empty spaces
         grep -v -e ^% -e ^\# -e '^[[:space:]]*$' "${dir}/data/${list}" > /tmp/cleaned.clist
@@ -1222,32 +1223,30 @@ function _set_list_config()
         _line_fill >> "${log_file}"
         # shellcheck disable=SC2002
         cat /tmp/cleaned.clist | _add_timestamp_to_logs "${_list}"
-      } ||
-      {
-        _log_and_exit "Failed to clean list" "41"
-      }
-      # Read line by line & Parse array
-      i=0;
-      local tmp_arr
-      while IFS= read -r line; do
-        tmp_arr[i]="${line}"; ((i++))
-      done < /tmp/cleaned.clist
-      _debug_log "Parsed $list"
-      case "${list}" in
-        administration.list)  declare -gar parsed_administration_packages=("${tmp_arr[@]}");;
-        security.list)        declare -gar parsed_secutity_packages=("${tmp_arr[@]}");;
-        productivity.list)    declare -gar parsed_productivity_packages=("${tmp_arr[@]}");;
-        multimedia.list)      declare -gar parsed_multimedia_packages=("${tmp_arr[@]}");;
-        others.list)          declare -gar parsed_other_packages=("${tmp_arr[@]}");;
-        development.list)     declare -gar parsed_development_packages=("${tmp_arr[@]}");;
-        external.list)        declare -gar parsed_external_packages=("${tmp_arr[@]}");;
-        ppa.list)             declare -gar parsed_ppa_list=("${tmp_arr[@]}");;
-        deb.list)             declare -gar parsed_deb_files_list=("${tmp_arr[@]}");;
-        purge.list)           declare -gar parsed_purge_packages=("${tmp_arr[@]}");;
-        pip.list)             declare -gar parsed_pip2_packages=("${tmp_arr[@]}");;
-        pip3.list)            declare -gar parsed_pip3_packages=("${tmp_arr[@]}");;
-      esac
-      # Unset local array
+        # Read line by line & Parse array
+        i=0;
+        while IFS= read -r line; do
+          tmp_arr[i]="${line}" && ((++i))
+        done < /tmp/cleaned.clist
+        _debug_log "Parsed $list"
+        case "${list}" in
+          administration.list)  declare -gar parsed_administration_packages=("${tmp_arr[@]}");;
+          security.list)        declare -gar parsed_secutity_packages=("${tmp_arr[@]}");;
+          productivity.list)    declare -gar parsed_productivity_packages=("${tmp_arr[@]}");;
+          multimedia.list)      declare -gar parsed_multimedia_packages=("${tmp_arr[@]}");;
+          others.list)          declare -gar parsed_other_packages=("${tmp_arr[@]}");;
+          development.list)     declare -gar parsed_development_packages=("${tmp_arr[@]}");;
+          external.list)        declare -gar parsed_external_packages=("${tmp_arr[@]}");;
+          ppa.list)             declare -gar parsed_ppa_list=("${tmp_arr[@]}");;
+          deb.list)             declare -gar parsed_deb_files_list=("${tmp_arr[@]}");;
+          purge.list)           declare -gar parsed_purge_packages=("${tmp_arr[@]}");;
+          pip.list)             declare -gar parsed_pip2_packages=("${tmp_arr[@]}");;
+          pip3.list)            declare -gar parsed_pip3_packages=("${tmp_arr[@]}");;
+        esac
+        # Unset local array
+      else
+        _log_and_show "${_warn} $list not found under data directory."
+      fi
       unset tmp_arr || _log_and_exit "Unable to unset array" "40"
     done
 
