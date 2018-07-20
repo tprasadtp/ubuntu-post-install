@@ -57,7 +57,7 @@ Run the script as **root**. You will get an error if you do not run the script a
     sudo ./after-effects -Y
   ```
 
-- To use local list files in `data` [WIP]
+- To use local list files in `data`
 ```console
   sudo ./after-effects -L
 ```
@@ -110,9 +110,9 @@ Bodhi Linux      | 4                 | Yes         | (Based on Ubuntu 16.04)
 Debian 8         | Jessie            | Yes         |
 Debian 9         | Stretch           | Yes         |
 
-## Oh no! It crashed :(
+## Oh no! It broke :(
 
-- Well that shouldn't have happened. If it does, see [Script Crashes](https://ae.prasadt.com/faq/crash/) and consider opening an issue on Github.
+- Well that shouldn't have happened. If it does, see [Script Errors](https://ae.prasadt.com/faq/crash/) and consider opening an issue on Github.
 - Please include the log file and terminal output if you can in the issue..
 - **Never** set environment variable `CI=true` & `TRAVIS=true` unless you are running CI tests or are sure of its effects.
 

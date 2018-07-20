@@ -4,7 +4,6 @@ python:
 - '2.7'
 services:
 - docker
-# Block gh-pages branch
 branches:
   except:
   - gh-pages
@@ -33,21 +32,32 @@ jobs:
     env: TEST_ENV="Docs-Build"
     script: "./tests/test-docs.sh"
     deploy:
-      provider: pages
+    - provider: pages
       skip_cleanup: true
       deployment-file: false
       local-dir: _site
       skip-cleanup: true
       keep-history: true
-      name:
-        secure: uOHmZ2xquc+P2t3XIXqo6JdK4Vpkp+4xESQ8mYtODXNeZaaXfsTPxLa6o62Jd4pjFisOxTiOjIzzSifbgHB5Ouwt5hEOx70zKsdkikDl87lMfA8Zh+yS4R1AgwS7Z45hfXUiJZbriuLG7y2OQPrhK9Qd/BEUws6j83QOLvvvd+AfRy/FHoY9p7cx9huVgJr2aHM9VrFoi1GViUe4kQFlcWrgz5LWk1ehDD70K8TuOh6BodU4or26aHQ8c5fAMJziSBsjiv1yx6pIdUSQ4lFGhxXQhwcdewQLCUHdMgpCEbcVemUzEfUUFrulJY70DOWm4EHna/p17+Nb24d4tyY7BcFFZiNBu1bZg/JVDr5T7+Wx4e4/x9g3s0jx3dR9Q/0W/kZzIYC1vhN7yGAdpPro1KNkfYQC6JjtSro74DivQOS63Gkh9RYDadYyiKIlaZxcUgE16uNTJiRq04JrvUqrb37YTJoKbpn4lVQizyBe+KXjoX3G7rFUwi6RGJQ/+uOF2W8U8ihrfrrZ/S34CbzsfewRXudkGU1AdAQJp9l2vGjNsjma+gph4MS/s/C8Hvh5vrzak1igmfuPphr8WYzO0877NOItFCEmhsvQHh8sV/dDLOZR8YoRMa6YJCvTtWW/enQ16AmWIbNiaT02UBiywMWRiem+iuzCpr4rbQ67EWg=
       target-branch: gh-pages
       email:
-        secure: bAT5IL5bgMl1TxFzqo4987SeufXMf9MzMTI7bBd6vYVqiq9IcFDp0mZMmHmwsqhEOMejz6qa2/mMvOuTZiu6bb106JJV7KbRTYnFw1UbbMewGvprHf8AxiDiOOBxNThT1SsBmEaLwy/eeLKp43e5mQ1IT4UQLt6ymI1glRlFYyqfTL/Swlu7W9PNZys7iJDKK58GJZhZZiPrKenRiIPG8dAxYZXzzepL+JtNnrnrQtD4IMzp2iUoYQQVRXvETlA7oYGVrBKRCTJaK7b7QWtHE1vA8jld3TQDtxVevfeT0Bq6p/BQFF8b3yHzrP8U0URmzLRwe4tD2bsrWSqyEHNNGBhPMaq1Rx2Ce/fLPIuc0DLfMoixjPrLEngCrm40nKsNQfiXs85EjxrcrigRDvdYVvs337DJv6T2JUH+KlOG2N4tUafp3Lyl6lTQfnKptjMBn7PC7OzVQQbKu/68ij1woGvff5J84jQm+ZHcHaKDOATvA5XpmIk8jySGvI6x6Oj/Kd6rVorMYemAnxsA+FW3EHvYTgB0EIShIvh+wyHhEF4mDfT4EIsBMpxXYeOKtZ167bgyx+T8u8tIIJKhvR5rr0dcN/Dz6LLKlyK3s9r5g0lNORtDWa1+0aDwJWaLTj16zww5yiksQWCf8FMbP+iIhWgKRyspf9VHH9qXDHnDzF4=
+        secure: dq/+hKw1qcf0OzeqPmcXZJMrOTn/sEEa0SuqagtzVchbvrkBc3gNWcRnG960nlZS7sL4Jdtmp3rm1dfPJl9a3R9Ra6rWzK8j1MEA8/N8BCi0y1NbQP/gHCHooEDJq3Jz2PJzZA/f5+qlR7b7Vs0xmZRfHwcsQy9FKd8mwTcQ8n4V7P3F/1FfrOgNyr5J/r5zlzHNhwVbshrJyDivX7rl6rpIKsDmXNEM7DEws9AeNlsLgeQRtl77+U04h4CHQD8Y9N5hj+Rh4OJL5V1NVhN8/zOMsfp1lZuj9OWWapRDmpV7Y9CDY8bGAmxuG5QP6CIe2f+PoSXWZw4Y20pLN2ke4GSHhWzX0nElKh9iv3v/wb6Hitsbk4xvSAJ71+BNzQFJOIBwCdBTNMQY3JExG9CrxPylMlGFnyEfQytYnEZAzwSy26smJREvcDi+d1eM5I8RLhp3OhOaQw6/xxTEcMCf5qCuYbDVGnx3mO8UQ52c6Fjd+CQ5BVaKAK1uSSRfIyxQS2CgVVrIKVT1s+ooChuM1BHjn3CW1EcMWiQ/KJO1hjTJ+GV7CB5xA99m04GsI5QASfFvPO1xzlx7elI6vPkIvjVH38ixMEo/evVZN35HlUgpEgQ7YNgRnP4iyAmPcYGmjpzXKl7CZtjpIamWiLQX8xrF15+enxueAznJLCvJ5vk=
+      name:
+        secure: baNHTRiPiXoa/qEuSjnIvzoxvHZ+RlQZdI+dcvoCQR+aJaJxB9iOR/i/T1qvjaB6meHjwQuSoXYssaKRlrjM4baQJbaN+7aHh8N9x9l7kUaG9tPmIwV78FRAjYlu1jNiFwnTzZyA2kYbQRUdren2sSbBZl31CCOQ/ykMvg3NbYx6po+bE5JrNuGZtKCdtw6Yh9TD/wDlPQS9b3czztyT1GjSW5Lkkrm0USSy4weY905K1drQTmhYMWWQ66qyApqD8QVxqM0EG+PCkZloq+X8qZXC5Q/6Z+V1XTHOP6xrZZpZmh/WoHsJT/LiQxxnlAAHZMx2PEA/S/c+0cLEIQh4NQ5IGrGfhNgWoV4mzR9iWgALEeaVMM5O4sk0Lg2/NvyvIEWQrdUdgF4sTNTUv8RFBa+MrVbwz3TvmS/BQDPTZ1GhephIm0T47w8l+bILfSNayqNDDcM0ltMNUemwifH5BmB9P2ut3RNvp916wvpE++0qNHxHD1ylpvMCvsPqyGXGCPfayQ7kpRjA3Tjx8ZZteTmAFFzb6U0H75CEtINr3jBtvuNYlse8oI9s6SGCW3ZCCzpZsZPOkk1DveQ2BlgKJrBoqqwE8h5p17zQp8fyj7ckV9QlM4eHJB0jf930czUOMUcJcomjlR9EDn2ddNlAPxuAU12z1EX2F0oS0+DZA7M=
       github-token:
-        secure: T74WS1ef76XD7gGzUZw6lSVT0043nYBJ9xob3BvWEAI3IWPeGTJD0rceh40DO8UjTm+S3H32JetzQ5uqAoL+YUfucTEjHEViyDo52n2RMtvmUWnT9Bu0ywcc0OnC4lmIxv6S9frYxnE00/rjhSUz4QEfVnLk0ZShVnjHfCIzOyv/vQukPgjIKwB0gjVjm0bYLO/WILgOsCMYGz6Rt3edfR3dw4+9Ja4qnZNE9HEJtodhlCSCChwysi+Yle5mATy6wiGGWHEKqo+5YjRJ7Te64Sfh9MiwFAIUPec9bhGgBb/Gz+lfC/VWa9r3MxI8hZdx9KAvXkSd4gickmB6sZSlh+UhGk/Z/09JRHKsxPXSnONjwMSmSJy9FhD37YFwJTSofp+TDswRQ7s0o8r+oR1tKKq2bXUHmLxXQD9T3dtImdkvDTkcsBUwSbe/LSR+wkYvmIEweMzJgmuKTB+o1cKWj3Ons4rwrn5UaAYsoAFAVy4sGqOxdJGwDv+xLuGir0EUC5NpmgmheQxnoFLVGfDLRptMEIhb65/uWiNKvYT0GKUSBaVi36LrVL43T0jLFCdcWhQ6VtfLPrW3hzabTmk0VWps3F3OCwNPkGyf615FB/DtHG1vxNlx2FYEAw8PkKh5hCfRaOpgK8syJh/P9zc/e1Qtu7scAIFiAyq6ce1DNCs=
+        secure: oRr7HXuHUseOhfI7+gIP9pKleVed+6X8iS/aCSPnZxWPISemFAxki5Kx5sLr+6O6u3Sm1pZ4aVE5KDQ8akNmuoAeeC0UVgjYnt1vlbHaMYCzTkRW4ObrB6QjGQHOJuFUaTZPEX06LfdRJPiz2qfkZQGubVlrUWojAWF2Ps+LE6V/7mU9nYnylIherxtw4FeEP0x3DYd453o/qwon1qDWAkS34YDkg+eqFUuTkov6JHyWcne47CqB/HmI5luav6V0FzLkaDuhxlAnUh2cdEMPFWa3m5XKkU69Tbiuy22FELTExwSFpNzkndB+QHoEqfdh9W70mUS/B3cAJdv/L8YLHW/WB7bPaV0kx7sUsosBWYidEaW9MHNddS2YDFoxlqFMYzQ8qRmSWw21xszzw+0KDUe5AC5eo0vOjtIeZ/IPrz0f9oHZ0INQtoT8b9mDv4GrHnvPDkKsWz9YlUDeah5iMeVNjRf21mZL4/VfphklERJKw+8QT7eLc2RfBQHH4+LPRYMQp67W3B2zjxX1OWZJa5zIYXotU5TziLEb+zgypkzO372WJzzLXfT91i/4w3X4kcb7NHm8XWFQ1EW6+KMzXEIP4dwLIRAYvFk9KUn0+kXzw9CL7ZGj30hCgagIGm+W9002fq1q8jXSytZMd6i0fvJXKcSZIu9Mps4oXbO12a8=
       on:
         branch: master
+    - provider: releases
+      api_key:
+        secure: ZgSKh4vMer7Wq1pKlf8CAtc0o0r3ztJtsQrHq5SRnnc8FQ+y92T05KBrExNz4DymSnI1PFrc0nqOKYZ3+VHzy/MUS/J0dyLklHUxxF0kKdpVfvYY7TxIzVrF9gXUnlSI1q5aov+MR8JGXmyvWNbNY8ihjUlc2Wl6/fGa1gHeeuoILc/YiOq4rlRe69x/aykt9O9wUnsIGrjCwujcwizlgBcG4BSf20zNGrBdFeU44yBhJUSdSPQ9F3the0r9J8LPkWJtMi7WKc1agHw8nZy1cfO1O1X1+s8/ScbldQVZKpnQra53Y5scqoosJw8gfOGuI/ifAtZhT0V0HWeobJFo0Lo4lcGaaJ1Hc508XbgNcCcchI9kCwVarnRAlqrfUj5Rj1AUKdcN97K2UFpdswZBvEjiMbtqRRrSdBwHuArhhQPZfqYnjVxPiPVBJ8WlsvnHbA+ePtj177bgcImteoJcjza02tR12ynN0lHs/U0RglUED04uPh5Q5nr9xNaeSzC4zOrjN3ui8R2e/6ACMROrs6V/LYPzdC22kbX/8NS+VBHgCFKtzTeCUGp9wFGN7rGWE52YoeBK+Y6qTtIHxnewbxz8sYpnMDw80xUPn2Kx2I5jfAEyWVx7NVi2Iiy08aV5e47JnGs6LQzfSh4BpEs7x8sGbXEFiShsgazQG0XmJxw=
+      file:
+      - after-effects
+      - after-effects.asc
+      skip_cleanup: true
+      overwrite: true
+      on:
+        branch: master
+        tags: true
 matrix:
   fast_finish: true
   allow_failures:

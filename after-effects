@@ -2288,7 +2288,7 @@ function _process_menu
                   ;;
       apps)       _show_confirmation_dialog_for_tasks \
                   "Install Apps" \
-                  "I can Install the packages listed in lists files mentioned in app-list.list.\nNo checks are being made on the validity of the list.\n\nShall I do it?" \
+                  "I can Install the packages listed in lists files.\nNo checks are being made on the validity of the list.\n\nShall I do it?" \
                   "install_apps"
                   ;;
       repo_rst)   _show_confirmation_dialog_for_tasks \

@@ -66,7 +66,8 @@ function get-after-effects()
   fi
 
   echo "Getting: after-effects"
-  wget -q  "${GET_BASE_URL}"/after-effects
+  wget -q "${GET_BASE_URL}"/after-effects
+  wget -q "${GET_BASE_URL}"/after-effects.asc
   printf "${YELLOW}Changing file permissions...${NC}\n"
   chmod +x ./after-effects
   if [ "$use_yaml" == "false" ]; then
