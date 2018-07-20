@@ -8,8 +8,6 @@ before trying out.
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE)
 ![GitHub repo size in bytes](https://img.shields.io/github/repo-size/tprasadtp/ubuntu-post-install.svg)
 
-
-
 ## URLs
 
 ```bash
@@ -57,6 +55,7 @@ Run the script as **root**. You will get an error if you do not run the script a
   ```
 
 - To use local list files in `data`
+
   ```console
     sudo ./after-effects -L
   ```
@@ -74,7 +73,6 @@ See /docs or visit [https://after-effects.prasadt.com](https://after-effects.pra
 
 ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
 ![Uptime Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
-
 
 ## Supported Distributions
 

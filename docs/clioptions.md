@@ -1,6 +1,7 @@
 # Command line options
 
 ## Configuration type
+
 You have two options of configuring this script.
 
 1. using .list files in `data`
@@ -16,7 +17,6 @@ You have two options of configuring this script.
   ```
 
 You need to specify which type to use. Not specifying will throw an error. You cannot mix configurations in YAML and lists.
-
 
 !!! tip "Shorthand flags"
     You can also use short hand version of the flags `-Y` for YAML and `-L` for lists. Please note that lowercase case options have different meaning than uppercase ones.
@@ -118,6 +118,7 @@ readonly codename_upcoming_release="cosmic"
 ## Skip confirmation prompts
 
 !!! snippet "Usage"
+
     ```console
     ./after-effects -y
     ```
@@ -208,6 +209,7 @@ Hides displaying YAML configuration data in the output.
     ```console
     ./after-effects -L
     ```
+
     OR
 
     ```console

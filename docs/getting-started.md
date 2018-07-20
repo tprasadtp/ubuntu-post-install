@@ -18,7 +18,7 @@ wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master
 
 If you already have git on your system already you can use,
 
-```bash
+```console
 git clone --depth 1 https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install
 ```
 
@@ -34,11 +34,12 @@ Run the script as **root**. You will get an error if you do not run the script a
 !!! tip
     Before you run the script, make sure that its executable.
 
-```sh
-sudo ./after-effects -Y -C <your config.yml>
+```console
+  sudo ./after-effects -Y -C <your config.yml>
 ```
 
 To use lists
+
 ```console
 sudo ./after-effects -L
 ```

@@ -22,6 +22,7 @@ This can add the following repositories.
 
 
 ??? note "Default Variables if using Lists"
+
     ```bash
     #============================ Switches/ bools ================================
 

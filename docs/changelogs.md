@@ -81,21 +81,23 @@ if using beta/alpha Ubuntu release.
 
 - Add Confirmation dialog using whiptail for Actions like Adding PPA,
 Repositories, Installing Apps, and Deb files
+
 - Provide an option via command line to bypass the confirmation dialog
 for ci and automated environments or when its too annoying
+
 - If the simulate option is selected then Only calculate
 the upgrade but do not perform upgrade.
+
 - Added improved Simulate options. Helpful when just want to change
-somethings and test scripts without really downloading and installing packages
+  somethings and test scripts without really downloading and installing packages
 - Simulate option is by default false and can be toggled by passing
-`-s` or `--simulate` while running the script via command line
+  `-s` or `--simulate` while running the script via command line
 - Do not Enable Canonical Partner repositories in Ubuntu derivatives as
-they are enabled in installer or are different than Ubuntu.
-This leaves Partner repositories as they were before
+  they are enabled in installer or are different than Ubuntu.
+  This leaves Partner repositories as they were before
 - Add Feature: Purge Unwanted Packages
 - Improved logging . Redirecting errors and adding time-stamps works better.
 - Travis CI and Docker Testing
-
 
 ## Version 2.0
 
