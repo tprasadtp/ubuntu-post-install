@@ -58,9 +58,9 @@ Run the script as **root**. You will get an error if you do not run the script a
   ```
 
 - To use local list files in `data`
-```console
-  sudo ./after-effects -L
-```
+  ```console
+    sudo ./after-effects -L
+  ```
 
 > If you are running this in a docker container, you probably are root and its possible that you might be missing `sudo`. So In that case just run it as `./after-effects`. Be warned! You might be missing several dependencies of the script!!
 
