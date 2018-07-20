@@ -1,6 +1,7 @@
 # What can it do?
 
 ## Add Repositories
+
 This can add the following repositories.
 
 - Google Earth
@@ -75,7 +76,7 @@ This can add the following repositories.
 
 - PPAs can be added using the configuration file in data directory `./data/ppa.list` or in the YML file.
 - Only one ppa entry per line (No comments or anything else anywhere in the file) in the format ppa:<author>/ppa for example `ppa:mozillateam/firefox-next` The file will be read and the PPAs will be added from the list.
-- Logs will  show entry in the format `[<date and time>] [  PPA-Logs  ] <log>`
+- Logs will  show entry in the format `[date and time] [  PPA-Logs  ] <log>`
 
 !!! warning
     - PPAs should be checked before they are added to the list. Sometimes PPAs listed in the file may not be available for all releases.
@@ -84,41 +85,44 @@ This can add the following repositories.
 ## Install apt packages
 
 - Packages can be installed by using configuration lists in the data directory. This works similar to ppas
-```
-    #--------------------------------------------------------------------------------
-    #                               APT Lists
-    #--------------------------------------------------------------------------------
-    # There are Seven lists under key config.install.apt.[mentioned from 1-7]
-    # 1. administration : Contains Administrative packages
-    # 2. security       : contains Security related tools and packages
-    # 3. productivity   : Office tools, writing tools, LateX, document tools and other
-    #                     productivity tools, Email clients, browsers, IM clients etc.
-    #                   : Example : LateX, TeXStudio, Libre office, pandoc empathy, Thunderbird
-    # 4. Multimedia     : Multimedia tools like media players, audio converters and playes etc.
-    # 5. development    : IDEs [Spyder, Jetbeans etc], languages [go, python, ruby, rust, java etc],
-    #                   : Containers [docker lxc rkt etc], Python libraries, compilers [gcc, clang]
-    #                   : SDKs [AWS SDK, Coogle Cloud SDK, open-jdk, Tensor Flow], headers and libraries[ocl-icd-dev],
-    #                   : Anything related to development and *-dev or *-devl packages.
-    # 6. other          : Everything which doesnot fit in the above categories.
-    #                   : Themes, Tools, Utilities like htop etc.
-    # 7. External       : Any packages which are provided by ppas, or repositories not present in
-    #                   : base *buntu distribution. There's a possibility that the repository might not
-    #                   : be added or may be unavailable or offline. So Keeping the list seperate from
-    #                   : others packages minimizes errors if there are any.
-    # This classification is only for ease of use and need not be strictly followed. You can put
-    # vlc package in 'security', it will still install fine. This classification helps
-    # while writing configs and editing them. Its advised to follow it if your configs
-    # tend to get to couple of hundreds of lines. Also YAML file should be a valid YAML.
 
-    #--------------------------------------------------------------------------------
-    #                             Special list - Purge list
-    #--------------------------------------------------------------------------------
-    # There is a special package list under key, config.purge or purge.list, which contains list of apt packages to be
-    # purges from the system if present.
-```
+    ```console
+        --------------------------------------------------------------------------------
+                                      APT Lists
+        --------------------------------------------------------------------------------
+        There are Seven lists under key config.install.apt.[mentioned from 1-7]
+        1. administration : Contains Administrative packages
+        2. security       : contains Security related tools and packages
+        3. productivity   : Office tools, writing tools, LateX, document tools and other
+                            productivity tools, Email clients, browsers, IM clients etc.
+                          : Example : LateX, TeXStudio, Libre office, pandoc empathy, Thunderbird
+        4. Multimedia     : Multimedia tools like media players, audio converters and playes etc.
+        5. development    : IDEs [Spyder, Jetbeans etc], languages [go, python, ruby, rust, java etc],
+                          : Containers [docker lxc rkt etc], Python libraries, compilers [gcc, clang]
+                          : SDKs [AWS SDK, Coogle Cloud SDK, open-jdk, Tensor Flow], headers and libraries[ocl-icd-dev],
+                          : Anything related to development and *-dev or *-devl packages.
+        6. other          : Everything which doesnot fit in the above categories.
+                          : Themes, Tools, Utilities like htop etc.
+        7. External       : Any packages which are provided by ppas, or repositories not present in
+                          : base *buntu distribution. There's a possibility that the repository might not
+                          : be added or may be unavailable or offline. So Keeping the list seperate from
+                          : others packages minimizes errors if there are any.
+        This classification is only for ease of use and need not be strictly followed. You can put
+        vlc package in 'security', it will still install fine. This classification helps
+        while writing configs and editing them. Its advised to follow it if your configs
+        tend to get to couple of hundreds of lines. Also YAML file should be a valid YAML.
+
+        --------------------------------------------------------------------------------
+                                    Special list - Purge list
+        --------------------------------------------------------------------------------
+        There is a special package list under key, config.purge or purge.list, which contains list of apt packages to be
+        purges from the system if present.
+    ```
+
 - Make sure that all the packages in the lists are available for your release. Using `-s` command line option helps. Also check for the logs for any errors or conflicts.
 
 ## Install Debian package archives (.deb files)
+
 This will install deb files specified in the list `deb.list` or YAML config under `config.install.debian_packages`.
 
 - Logs will  show entry in the format `[<date and time>] [  PKG  ] <log>` for dpkg actions and
@@ -182,6 +186,7 @@ This will perform Following actions. (In the following order)
 This option will honor --yes and --simulate options as individual tasks would do.
 
 ### AUTOPILOT Mode
+
 `AUTOPILOT=true` will execute this task.
 
 ## Delete logs

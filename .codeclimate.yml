@@ -1,5 +1,13 @@
 plugins:
   markdownlint:
     enabled: true
+    checks:
+      MD006:
+        enabled: false
+      MD013:
+        enabled: false
   shellcheck:
     enabled: true
+    checks:
+      SC2154:
+        enabled: false

@@ -32,7 +32,6 @@ Non package related lists (settings, deb files, delete packages list). The use a
 !!! tip
     After you customize, might want to use simulate flag. `sudo ./after-effects -s -L`
 
-
 ## YAML File
 
 The script can fetch data from remote default remote endpoint or the one mentioned via --api-endpoint. This file or API response is in yaml. It contains following details.
@@ -47,14 +46,15 @@ The script can fetch data from remote default remote endpoint or the one mention
     - After you customize, might want to use simulate flag. `sudo ./after-effects -s -C config.yml -Y`
 
 ## Automate
+
 Setting `"AUTOPILOT=true"` will run all the tasks specified in the YAML file, or if `-L` list option is used, then all tasks are run in following order
 
-1. Update
-2. Upgrade
-3. Add Reposiories
-4. Add PPAs [if supported]
-5. Install packages
-6. Install DEB packages
-7. Install Python2 Modules
-8. Install Python 3 Modules
-9. Purge unwanted Packages
+- Update
+- Upgrade
+- Add Reposiories
+- Add PPAs [if supported]
+- Install packages
+- Install DEB packages
+- Install Python2 Modules
+- Install Python 3 Modules
+- Purge unwanted Packages

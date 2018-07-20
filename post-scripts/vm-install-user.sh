@@ -5,13 +5,13 @@ git clone https://github.com/tprasadtp/dotfiles
 chmod +x ./dotfiles/cp2stow
 echo "Copying Dotfiles"
 (
-cd ./dotfiles
+cd ./dotfiles || return
 ./cp2stow -c
 )
 echo "Symlinking Dotfiles"
 (
 rm -f ~/.bashrc
-cd ~/Dotfiles
+cd ~/Dotfiles || return
 ./stow-dotfiles -s
 )
 echo "Setting up GPG Public keys"

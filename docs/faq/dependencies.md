@@ -1,6 +1,6 @@
 # Dependencies
 
-## What do I need to run this?
+## What do I need to run this
 
 Usually nothing extra! Your base Ubuntu install comes with all the commands/utilities this script uses, unless you are running this on Ubuntu docker image.
 
@@ -9,6 +9,7 @@ Usually nothing extra! Your base Ubuntu install comes with all the commands/util
 The script depends on following utilities which are usually present on a typical Ubuntu/Ubuntu based installation. If these packages are not installed, script will exit with error code 1.
 
 !!! tip "Install Dependencies"
+
     ```console
     sudo apt-get install -y --no-install-recommends lsb-release curl whiptail coreutils iputils-ping procps awk gpgv wget
     ```
@@ -32,6 +33,7 @@ Some tasks might install packages automatically, which are required to perform c
 
 ???+ info "Additional APT packages installed"
     Some apt packages will be installed automatically, as they are necessary to perform selected tasks.
+
     ### For repository related tasks
     - apt-transport-https
     - ca-certificates

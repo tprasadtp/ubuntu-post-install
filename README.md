@@ -1,10 +1,14 @@
-# Ubuntu Post Installation Script : after-effects
+# Ubuntu Post Installation Script - after-effects
 
 Effortless way to setup your fresh Ubuntu, Linux Mint, Debian installs. Please read the [FAQ](https://ae.prasadt.com/faq/dependencies/) & the [Docs](https://ae.prasadt.com/getting-started/)
 before trying out.
 
 [![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.svg?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
-[![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=flat&url=https://ae.prasadt.com/api/json/version.json&query=version.number&prefix=v)](https://github.com/tprasadtp/ubuntu-post-install/)
+[![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=flat&url=https://ae.prasadt.com/api/json/version.json&query=version.name&prefix=V-)](https://github.com/tprasadtp/ubuntu-post-install/)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE)
+![GitHub repo size in bytes](https://img.shields.io/github/repo-size/tprasadtp/ubuntu-post-install.svg)
+
+
 
 ## URLs
 
@@ -13,7 +17,7 @@ Github URL: https://github.com/tprasadtp/ubuntu-post-install
 Github URL: https://github.com/tprasadtp/after-effects-ubuntu
 ```
 
-## How to use this?
+## How to use this
 
 Install your choice of Ubuntu/Debian or its derivative as you would( If you wish to automate that too, you can use `preseed.cfg file`)
 
@@ -47,6 +51,7 @@ Please see [Configuration](https://ae.prasadt.com/config/#package-lists) & [Task
 Run the script as **root**. You will get an error if you do not run the script as root.
 
 - To use default YAML configuration, which can be found here `https://ae.prasadt.com/api/config.yml` Recommended
+
   ```console
     sudo ./after-effects -Y
   ```
@@ -58,7 +63,7 @@ Run the script as **root**. You will get an error if you do not run the script a
 
 > If you are running this in a docker container, you probably are root and its possible that you might be missing `sudo`. So In that case just run it as `./after-effects`. Be warned! You might be missing several dependencies of the script!!
 
-### Step 4: Contribute!
+### Step 4: Contribute
 
 Contribute tweaks, improvements ideas back upstream.
 Please note that `gh-pages` branch is complete derivative of master. Please checks docs directory for documentation. This project uses `mkdocs` for documentation. You can use docker-compose to test documentation site.
@@ -66,6 +71,10 @@ Please note that `gh-pages` branch is complete derivative of master. Please chec
 ## FAQ & Documentation
 
 See /docs or visit [https://after-effects.prasadt.com](https://after-effects.prasadt.com).
+
+![Uptime Robot status](https://img.shields.io/uptimerobot/status/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
+![Uptime Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
+
 
 ## Supported Distributions
 
@@ -99,7 +108,7 @@ Bodhi Linux      | 4                 | Yes         | (Based on Ubuntu 16.04)
 Debian 8         | Jessie            | Yes         |
 Debian 9         | Stretch           | Yes         |
 
-## Oh no! It broke :(
+## Oh no! It broke
 
 - Well that shouldn't have happened. If it does, see [Script Errors](https://ae.prasadt.com/faq/crash/) and consider opening an issue on Github.
 - Please include the log file and terminal output if you can in the issue..

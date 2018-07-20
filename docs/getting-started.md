@@ -1,11 +1,12 @@
 # How to use?
 
 ## Install Ubuntu
+
 Install (if you haven't already) your choice of Ubuntu/Derivative as you would( If you wish to automate that too, you can use preseed.cfg file)
 
 ## Step 1: Get the script
 
-#### Without Git
+### Without Git
 
 Run this in Terminal
 
@@ -13,7 +14,7 @@ Run this in Terminal
 wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash
 ```
 
-#### With Git
+### With Git
 
 If you already have git on your system already you can use,
 

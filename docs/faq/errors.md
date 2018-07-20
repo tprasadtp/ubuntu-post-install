@@ -27,7 +27,6 @@ You might see ans error like this,
 - Install `lsb-release` package using `apt-get -y install lsb-release`
 - In the case above you are probably missing other dependencies as well. It might be a good idea to install those dependencies first.
 
-
 ## What if I get an error saying this release of Ubuntu is no longer supported?
 
 ```console
@@ -43,5 +42,5 @@ You might see ans error like this,
 [     Error!    ] Something went wrong while retrieving /tmp/api-version.yml.
 [     Error!    ] Error Getting file.
 ```
-Try running wget https://ae.prasadt.com/api/version.yml. If you see SSL errors, that means that your CA bundle is out of date.
+Try running `wget https://ae.prasadt.com/api/version.yml`. If you see SSL errors, that means that your CA bundle is out of date.
 This project uses Amazon Root CA & LetsEncrypt for SSL, make sure that your System trusts these.
