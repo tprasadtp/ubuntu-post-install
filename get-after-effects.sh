@@ -33,8 +33,6 @@ readonly YELLOW=$(tput setaf 3)
 readonly NC=$(tput sgr 0)
 ignore_git_folder="false"
 GET_BASE_URL="https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master"
-GET_LIST_BASE_URL="https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/data"
-GET_YAML_BASE_URL="https://new-badges--ubuntu-post-install.netlify.com"
 function check_dependencies()
 {
   #Function to check is dependencies are available
@@ -56,34 +54,24 @@ function get-after-effects()
   # Function to get after-effects main module
   if [ -d .git ] && [ "$ignore_git_folder" != "true" ]; then
     printf "This directory seems to be a git repository. Please use git pull or git fetch to update the script.\n"
-    printf "If its not, please delete the .git folder and try again. Use -f opion to ignore this.\n"
-  elif [ -d .git ] && [ "$ignore_git_folder" == "true" ]; then
-    printf "This directory seems to be a git repository.\nSince --force is used, Cleaning up...\n"
-    rm -f ./* ./.* ./docs/**/*.* ./docs/*.* ./api/* ./data/* ./tests/* ./vendor/* ./.vscode/* ./dockerfiles/* ./.github/* ./after-effects ./after-effects.* ./*.mlist ./*.mlist.*
-  else
-    printf "${YELLOW}Removing old files...${NC}\n"
-    rm -f after-effects ./after-effects.* get.mlist .data/*.list ./get.mlist.* ./README.md ./README.md.* ./data/*.list ./data/*.list.*
+    printf "If its not, please delete the .git folder and try again.\n"
+    exit 1;
   fi
+  rm -f after-effects ./after-effects.* get.mlist .data/*.list ./get.mlist.* ./README.md ./README.md.* ./data/*.list ./data/*.list.*
 
   echo "Getting: after-effects"
-  wget -q "${GET_BASE_URL}"/after-effects
-  wget -q "${GET_BASE_URL}"/after-effects.asc
+  wget -q "${GET_BASE_URL}"/after-effects -O after-effects
+  wget -q "${GET_BASE_URL}"/after-effects.asc -O after-effects.asc
+  wget -q "${GET_BASE_URL}"/data/get.mlist -O get.mlist
   printf "${YELLOW}Changing file permissions...${NC}\n"
   chmod +x ./after-effects
-  if [ "$use_yaml" == "false" ]; then
-    printf "${YELLOW}Getting Data and Lists...${NC}\n"
-    wget -q "${GET_LIST_BASE_URL}"/get.mlist
-    mkdir -p data
-    while IFS= read -r line
-      do
-        echo "Getting: $line"
-        wget -q -P ./data/ "${GET_LIST_BASE_URL}"/"$line"
-      done <get.mlist
-  else
-    wget -q "${GET_YAML_BASE_URL}/api/config.yml" -O example-config.yml
-    wget -q "${GET_YAML_BASE_URL}/api/version.yml" -O version.yml
-    printf "[   Info  ] Be sure to pass the right flags while running the script\n"
-  fi
+  while IFS= read -r line; do
+    echo "Getting: $line"
+    wget -NNv -q -P ./data/ "${GET_LIST_BASE_URL}/data/${line}"
+  done <get.mlist
+  wget -q -P  "${GET_BASE_URL}"/api/version.yml -O version.yml
+  wget -q -P  "${GET_BASE_URL}"/api/config.yml -O config.yml
+  wget -q "${GET_BASE_URL}"/after-effects.asc
   printf "${YELLOW}Please Run the script after-effects as root\n"
   printf "${YELLOW}sudo ./after-effects\n"
   printf "${YELLOW}For documentation visit: https://ae.prasadt.com${NC}\n"
@@ -92,21 +80,6 @@ function get-after-effects()
 
 function main()
 {
-  while [ "$1" != "" ]; do
-        case ${1} in
-            -y | --yaml )           use_yaml=true;
-                                    printf "[   Info  ] Not Downloading list. Using YAML configurations.\n"
-                                    ;;
-            -f | --force )          ignore_git_folder=true
-                                    printf "[   Info  ] Will ignore existing \'.git\' folder.\n"
-                                    ;;
-                * )                 printf "[  Error! ] Invalid option: $1\n"
-                                    exit 1;
-                                    ;;
-      esac
-    shift
-  done
-
   check_dependencies
   get-after-effects
 }

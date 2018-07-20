@@ -27,12 +27,6 @@ Run this in Terminal
 wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash
 ```
 
-Or if you want to use YAML configuration & not download or use .list files
-
-```console
-wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash -s -- -
-```
-
 #### With Git
 
 If you already have git on your system already you can use,
