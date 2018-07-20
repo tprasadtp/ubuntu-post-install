@@ -8,20 +8,18 @@
 set -o pipefail
 export PRE_REL_CODENAME="cosmic"
 branch=master
-if [ "$TRAVIS_EVENT_TYPE" == "pull_request" ];then
-  branch="$TRAVIS_PULL_REQUEST_BRANCH"
-elif [ "$TRAVIS_EVENT_TYPE" == "push" ]; then
-  branch="$TRAVIS_BRANCH"
-elif [ "$TRAVIS_EVENT_TYPE" == "cron" ] || [ "$TRAVIS_EVENT_TYPE" == "api" ] ; then
-  branch="$TRAVIS_BRANCH"
-fi
+case "${TRAVIS_EVENT_TYPE}" in
+  pull_request )           branch="${TRAVIS_PULL_REQUEST_BRANCH}";;
+  push | cron | api )      branch="${TRAVIS_BRANCH}";;
+  * )                      branch="${TRAVIS_BRANCH}";;
+esac
 
 function main()
 {
   dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
   #shellcheck disable=SC2116
   dir=$(echo "${dir/tests/}")
-  log_file="$dir"/after-effects-logs/after-effects.log
+  log_file="$dir"/logs/after-effects.log
   # set eo on script.
   sed -i 's/set -o pipefail/set -eo pipefail/g' "$dir"/after-effects
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
@@ -30,17 +28,13 @@ function main()
   ls -a
   echo "Building $PRE_REL_CODENAME Docker Image"
   docker build -t ubuntu:ae-pre-release ./dockerfiles/pre-release
-  echo "Adding Xenial and above list to app-list.list"
-  echo "./data/xenial-above.list" >> ./data/app-list.list
-  echo "Adding External Repos"
-  echo "./data/extern-repo.list" >> ./data/app-list.list
   echo "Codename : $PRE_REL_CODENAME"
 
   docker run -it -e TRAVIS="$TRAVIS" \
   --hostname=Docker-Pre-Release \
   -v "$(pwd)":/shared \
   ubuntu:ae-pre-release \
-  ./after-effects --simulate --yes --pre-release --enable-pre --enable-post --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/cfg
+  ./after-effects --simulate -Y --yes --pre-release --api-endpoint https://"${branch}"--ubuntu-post-install.netlify.com/api
 
   exit_code_from_container="$?"
   echo "Exit code from docker run is: $exit_code_from_container"

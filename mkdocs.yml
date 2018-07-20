@@ -59,7 +59,7 @@ extra:
 markdown_extensions:
   - markdown.extensions.admonition
   - markdown.extensions.codehilite:
-      guess_lang: false
+      guess_lang: true
   - markdown.extensions.def_list
   - markdown.extensions.footnotes
   - markdown.extensions.meta
@@ -71,8 +71,6 @@ markdown_extensions:
   - pymdownx.caret
   - pymdownx.critic
   - pymdownx.details
-  - pymdownx.emoji:
-      emoji_generator: !!python/name:pymdownx.emoji.to_svg
   - pymdownx.inlinehilite
   - pymdownx.keys
   - pymdownx.magiclink
@@ -96,6 +94,7 @@ pages:
   - Options: clioptions.md
   - What can it do?: tasks.md
   - Configuration: config.md
+  - Example Config YAML: yaml.md
   - Logs: logs.md
   - Testing: testing.md
   - Changelogs: changelogs.md

@@ -1,0 +1,10 @@
+# Version Config
+api: 1
+# Configuraion
+version:
+  number: 44
+  name: 4.1 Beta
+# Stats reporting
+stats:
+  report: true
+  node: https://stats.ae.prasadt.com/report

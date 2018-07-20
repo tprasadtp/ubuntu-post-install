@@ -1,4 +1,4 @@
-# Configuration for no-response 
+# Configuration for no-response
 
 # Number of days of inactivity before an Issue is closed for lack of response
 daysUntilClose: 14

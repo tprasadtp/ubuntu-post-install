@@ -5,7 +5,7 @@
 That usually means you are running a Distribution which is not supported or too old or a derivative which is not recognized by the script. However it also might be possible that `lsb-release` package is missing from your system. Since the script depends on it for determining what is the code-name of the release it will fail.
 You might see ans error like this,
 
-``` log
+```console
 ./after-effects: line 41: lsb_release: command not found
 ./after-effects: line 42: lsb_release: command not found
 ./after-effects: line 43: lsb_release: command not found
@@ -30,9 +30,18 @@ You might see ans error like this,
 
 ## What if I get an error saying this release of Ubuntu is no longer supported?
 
-``` none
+```console
 [      EOL      ] This release of Ubuntu is no longer supported.
 [    Notice     ] zesty reached EOL on January 13th, 2018.
 [    Notice     ] Please use a supported version of Ubuntu.
 [     Info      ] Please visit the link below for information on how to upgrade.
 ```
+
+## SSL Errors
+
+```console
+[     Error!    ] Something went wrong while retrieving /tmp/api-version.yml.
+[     Error!    ] Error Getting file.
+```
+Try running wget https://ae.prasadt.com/api/version.yml. If you see SSL errors, that means that your CA bundle is out of date.
+This project uses Amazon Root CA & LetsEncrypt for SSL, make sure that your System trusts these.

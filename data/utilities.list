@@ -4,15 +4,11 @@ chromium-browser
 p7zip-full
 imwheel
 lm-sensors
-intel-microcode
 stow
 virtualbox
 virtualbox-qt
 remmina
-remmina-plugin-rdp
-remmina-plugin-vnc
 sshfs
-nautilus-sendto
 scdaemon
 opensc
 xca

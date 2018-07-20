@@ -8,16 +8,23 @@ Usually nothing extra! Your base Ubuntu install comes with all the commands/util
 
 The script depends on following utilities which are usually present on a typical Ubuntu/Ubuntu based installation. If these packages are not installed, script will exit with error code 1.
 
+!!! tip "Install Dependencies"
+    ```console
+    sudo apt-get install -y --no-install-recommends lsb-release curl whiptail coreutils iputils-ping procps awk gpgv wget
+    ```
+
 - `lsb-release`, for determining the release and distribution.
 - `whiptail`, to display the menu.
-- `coreutils` cu, tr, grep etc.
+- `coreutils` cut, tr, grep etc.
 - `wget`, to get deb packages, report stats, get version information.
 - `iputils-ping`, to test connectivity.
 - `procps` to check running processes
-- bash
+- `gpg`, `gpgv` to check signatures & add repositories
+- `awk`, `sed` to parse configs
+- bash (4.x)
 
 !!! warning "Note on Debian"
-    Debian releases, especially docekr images sometimes do not have `ps` binary from `procps` pre installed. Please install the packages before continuing.
+    Debian releases, [especially in docker] images sometimes do not have `ps` binary from `procps` pre installed. Please install the dependency packages before running the script.
 
 ## Additional packages installed
 

@@ -4,21 +4,14 @@ Package lists
 
 | File | Contents | Present in app-list |
 |:-----|:---------|:--------|
-| linux-mint.list | Specific for Linux Mint | No |
-| gnome-online-accounts.list | Specific for 16.04. For 17.04 and above use `goa.list` | No |
-| basic | List of packages which usually come pre-installed. Please don't add if you are not sure what you are doing. | No |
 | github-bot-essentials.list | Project specific | No |
 | administration | Administration Tools like Synaptic | Yes |
 | development | Used for development tasks eg: rake | Yes |
-| exten-repo | Packages from PPAs or External repositories. eg : Google Chrome, Spotify, Visual Studio Code, Google Cloud SDKs | Yes |
-| goa | Gnome online accounts specific packages. These are necessary to get goa working properly in Empathy. Use only on 17.04 and above. For 16.04 use gnome-online-accounts | Yes |
+| exten | Packages from PPAs or External repositories. eg : Google Chrome, Spotify, Visual Studio Code, Google Cloud SDKs | Yes |
 | multimedia | Tools to edit photos and videos, video players and editors and downloaders. Tools like mpv, darktable, kdenlive. | Yes |
 | productivity | Email, Chat, Office tools, Document converters etc. | Yes |
 | security | Security related tools | Yes |
 | utilities | Utilities and Tools | Yes |
-| wine | Wine related packages like winetricks | Yes |
-| xenial-above | Packages re not available in xenial or below in Ubuntu repositories, but are available in 16.10 and later. | No (But is added during travis tests) |
-| latex | Latex related packages | Yes |
 
 ---
 Non package related lists (settings, deb files, delete packages list). The use and format is explained in individual sections.
