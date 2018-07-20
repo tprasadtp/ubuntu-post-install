@@ -1130,26 +1130,6 @@ function _set_list_config()
   if [ "$bool_use_lists" == "true" ]; then
     _log_and_show "${_cfg} Local Flags and Configs are preferred."
     _log_and_show "${_cfg} Parsing local lists..."
-    # Parse local lists to appropriate variables, arrays and inject them in script.
-    # Only supports 5 APT lists, Purge, DEB, PPA. PIP2, PIP3 lists
-      # Purge not required packages
-    # Default is false
-    # Requires commad line option -d to be passed via command line otherwise it will not work.
-    # Set this to true if you dont want to pass -d every time
-    bool_purge_not_required_pkgs="false"
-
-    # Say yes to all (No whiptail dialogs)
-    # Default is false
-    # Can be set to true and dialog boxes will be skipped if command line option -y is passed.
-    # Set this to true if you dont want to pass -y every time
-    bool_say_yes_to_all="false"
-
-    # Keep Downloaded DEB packages
-    bool_preserve_debs="false"
-
-    # Default Stats Server name
-    #shellcheck disable=SC2034
-    stats_node="https://stats.ae.prasadt.com/report"
 
     # Latest wine builds
     add_winehq_repo=true
@@ -2470,7 +2450,7 @@ function main()
     _init_logging
     _debug_log "OK! running as root."
   fi
-
+  _init_script_variables;
 
 
   # Process command line arguments.
@@ -2555,7 +2535,7 @@ function main()
   # Initialize variables and checks
   local after_effects_core_dependencies=(wget lsb_release whiptail ping ps grep cut tr)
   _check_dependencies "${after_effects_core_dependencies[@]}"
-  _init_script_variables;
+
   _init_print_basic_info;
 
   # I dont like when someone else is occupying my room

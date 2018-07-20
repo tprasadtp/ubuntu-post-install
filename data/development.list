@@ -3,12 +3,10 @@ spyder
 spyder3
 git
 shellcheck
-ocl-icd-dev
 opencl-headers
 clinfo
 vainfo
 vdpauinfo
-ocl-icd-libopencl1
 ruby
 ruby-dev
 python-magic
