@@ -33,7 +33,7 @@ if [ -f after-effects.asc ]; then
 fi
 echo "Copy Netlify Files"
 cp  ./netlify.toml ./_site/netlify.toml
-cp ./vendor/netlify.sh ./_site/vendor/netlify.sh
+cp ./vendor/netlify-build.sh ./_site/vendor/netlify-build.sh
 echo "Commit Info"
 true > ./_site/commit.txt
 printf "${spacing_string}: ${TRAVIS_COMMIT:0:7}\n" "SRC Commit ID"  | tee -a ./_site/commit.txt
