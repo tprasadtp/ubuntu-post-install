@@ -1,5 +1,20 @@
 # Change logs
 
+## Version 5.0
+
+- Remove Pre and Post Hooks.
+- Configuration can be now done using YAML file. Its easer & gives more flexibility
+- Lot of improvements & bug fixes
+- Now tagged versions are released to Github releases.
+- Consolidate test scripts
+- Artful is now EOL
+- Add support for Elementary OS 5 - Juno & Mint 19 Tara
+- Version checks also use YAML files
+- ARM support for some repositories. (not all repos support ARM)
+- Move .redirects data to netlify toml
+- Groundwork to move to parser written in Go
+- YAML provides more configuration options. Individual repos & taks can now be controlled via YAML file.
+
 ## Version 4.0
 
 - Pre and Post Hooks for scripts.

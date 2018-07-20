@@ -54,6 +54,9 @@ jobs:
       - after-effects
       - after-effects.asc
       skip_cleanup: true
+      prerelease: true
+      name: Relesae - ${TRAVIS_TAG}
+      body: Please check the Changelogs at https://ae.prasadt.com/changelogs/.
       overwrite: true
       on:
         branch: master

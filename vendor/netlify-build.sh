@@ -98,8 +98,7 @@ function jekyll_branch()
   cp -R ./api/ ./_site/api/
   echo "Copying Signature file"
   if [ -f after-effects.asc ]; then
-    cp ./after-effects.asc ./api/gpg/after-effects
-  elif [ -f after-effects.sig ]; then
+    mkdir -p ./api/gpg
     cp ./after-effects.asc ./api/gpg/after-effects
   fi
   gen_metadata;
