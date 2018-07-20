@@ -33,6 +33,7 @@ if [ -f after-effects.asc ]; then
 fi
 echo "Copy Netlify Files"
 cp  ./netlify.toml ./_site/netlify.toml
+mkdir -p ./_site/vendor
 cp ./vendor/netlify-build.sh ./_site/vendor/netlify-build.sh
 echo "Commit Info"
 true > ./_site/commit.txt
