@@ -89,7 +89,7 @@ function jekyll_branch()
   mkdir -p ./api/json
   for file in ./api/*.yml;
   do
-    printf "Linting Converting File  to JSON : ${file}\n"
+    printf "Linting & Converting File  to JSON : ${file}\n"
     file_name_json=$(basename ./api/"${file}" .yml)
     file_name_json+=".json"
     yamllint "${file}" && yml2json "${file}" | python -m json.tool > ./api/json/"${file_name_json}"
