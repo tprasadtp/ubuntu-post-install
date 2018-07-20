@@ -67,11 +67,6 @@ Please note that `gh-pages` branch is complete derivative of master. Please chec
 
 See /docs or visit [https://after-effects.prasadt.com](https://after-effects.prasadt.com).
 
-## Security
-Well, this isn't very secure or meant to be.
-- You can verify them manually or via `./after-effects --verify`
-- GPG signature of the script is also available at `api/gpg?version="VERSION_NUMBER"`
-
 ## Supported Distributions
 
 A Complete  list of supported distributions is given below.
