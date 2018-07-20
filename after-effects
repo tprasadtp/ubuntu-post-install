@@ -266,7 +266,7 @@ function _init_script_variables()
   bool_check_version="true"
 
   # Define API endpoint for version and config
-  readonly default_api_endpoint="https://new-badges--ubuntu-post-install.netlify.com/api"
+  readonly default_api_endpoint="https://ae.prasadt.com/api"
 
   # Achtung!!
   # ========================================================================================= #
