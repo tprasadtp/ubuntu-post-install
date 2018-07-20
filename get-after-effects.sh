@@ -94,7 +94,7 @@ function main()
 {
   while [ "$1" != "" ]; do
         case ${1} in
-            -l | --list )           use_yaml=false;
+            -y | --yaml )           use_yaml=true;
                                     printf "[   Info  ] Not Downloading list. Using YAML configurations.\n"
                                     ;;
             -f | --force )          ignore_git_folder=true

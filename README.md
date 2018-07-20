@@ -30,7 +30,7 @@ wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master
 Or if you want to use YAML configuration & not download or use .list files
 
 ```console
-wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash -s -- -r
+wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash -s -- -
 ```
 
 #### With Git
