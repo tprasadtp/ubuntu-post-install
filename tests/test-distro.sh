@@ -41,7 +41,7 @@ function main()
     fi
 
     echo "Testing with Lists"
-    sudo ./after-effects --yes --lists --simulate --name trusty
+    sudo ./after-effects --yes --lists -d --simulate --name trusty
     exit_code="$?"
     echo "Exit code for LIST is $exit_code"
     if [[ $exit_code -ne 0 ]]; then
@@ -72,7 +72,7 @@ function main()
       --hostname="${TEST_ENV}" \
       -v "$(pwd)":/shared \
       "${distro}:${release}" \
-      ./after-effects \
+      ./after-effects -d \
       --lists \
       --simulate \
       --yes
