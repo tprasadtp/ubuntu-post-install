@@ -15,7 +15,7 @@ What if your script could be "configured"? Just add the package you want to inst
 
 [![Bash](https://static.prasadt.com/logo64/bash.png)](https://ae.prasadt.com)
 
-Yes! Because it has almost zero dependencies. No need to have Python or Ruby or other dependencies. Its simple and efficient. Someone can edit it to fit their needs too.
+Yes! Because it has almost zero dependencies. No need to have Python or Ruby or other dependencies. Someone can edit it to fit their needs too.
 
 ## How to
 
@@ -34,7 +34,7 @@ See [Getting Started](/getting-started.md).
 [![Linux-Mint](https://static.prasadt.com/logo64/linux-mint.png)](https://www.linuxmint.com/)
 [![Debian](https://static.prasadt.com/logo64/debian.png)](https://www.debian.org/)
 
-I have not tested the script on following distros, but since they use ubuntu as their base,
+I have not tested the script on following distros. Because they use ubuntu as their base,
 It should work fine. But no promises.
 
 [![Kde-Neon](https://static.prasadt.com/logo64/kde-neon.png)](https://neon.kde.org/)
@@ -44,7 +44,7 @@ It should work fine. But no promises.
 [![Zorin-OS](https://static.prasadt.com/logo64/zorin-os.png)](https://zorinos.com/)
 
 !!! tip "Tip"
-    Please check [![Supported-Distros](https://img.shields.io/badge/Info-Supported%20Distros-green.svg)](/faq/distros/) for complete list of supported distros.
+    Please check [Supported-Distros](/faq/distros/) for complete list of supported distros.
 
 ## Screenshots
 

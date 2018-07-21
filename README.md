@@ -71,7 +71,7 @@ Run the script as **root**. You will get an error if you do not run the script a
 ### Step 4: Contribute
 
 Contribute tweaks, improvements ideas back upstream.
-Please note that `gh-pages` branch is complete derivative of master. Please checks docs directory for documentation. This project uses `mkdocs` for documentation. You can use docker-compose to test documentation site.
+Please note that `gh-pages` branch is derivative master. Please checks docs directory for documentation. This project uses `mkdocs` for documentation. You can use docker-compose to test documentation site.
 
 ## FAQ & Documentation
 
@@ -93,7 +93,7 @@ See /docs or visit [https://after-effects.prasadt.com](https://after-effects.pra
 [![Linux-Mint](https://static.prasadt.com/logo64/linux-mint.png)](https://www.linuxmint.com/)
 [![Debian](https://static.prasadt.com/logo64/debian.png)](https://www.debian.org/)
 
-I have not tested the script on following distros, but since they use ubuntu as their base,
+I have not tested the script on following distros. Because they use ubuntu as their base,
 It should work fine. But no promises.
 
 [![Kde-Neon](https://static.prasadt.com/logo64/kde-neon.png)](https://neon.kde.org/)
@@ -134,6 +134,16 @@ A Complete  list of supported distributions is given below.
 | KDE Neon          | Based on Ubuntu LTS   | Might be buggy | Not Tested                    |
 | Peppermint 9      | Based on Ubuntu 18.04 | Yes            | Not Tested                    |
 | Peppermint 8      | Based on Ubuntu 16.04 | Yes            | Not tested                    |
+
+## Features
+
+[![APT-Packages](https://img.shields.io/badge/Install_Packages-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-apt-packages)
+[![Add-Repo](https://img.shields.io/badge/Add_Repositories-Limited-yellow.svg)](https://ae.prasadt.com/tasks/#add-repositories)
+[![Remove-Pre-installed](https://img.shields.io/badge/Purge_Pre_Installed-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#purge-unwanted-packages)
+[![PIP](https://img.shields.io/badge/PIP_Packages-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-python-packages-via-pip)
+[![Add-PPA](https://img.shields.io/badge/Add_PPAs-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#add-personal-package-archives-ppa)
+[![Purge-PPA](https://img.shields.io/badge/Purge_PPA-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#what-can-it-do)
+[![Install-Debs](https://img.shields.io/badge/Install_.DEB_Packages-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files)
 
 ## Issues & Help
 
