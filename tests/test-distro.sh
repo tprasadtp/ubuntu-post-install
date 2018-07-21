@@ -11,12 +11,12 @@ set -o pipefail
 function main()
 {
   if [[ $# -lt 2 ]]; then
-    echo "You need to specify distro name & release name "
+    echo "You need to specify distro name & release name"
   fi
   distro="$1"
   release="$2"
   case "${TRAVIS_EVENT_TYPE}" in
-    pull_request )           branch="${TRAVIS_PULL_REQUEST_BRANCH}";;
+    pull_request )           branch="deploy-preview-${TRAVIS_PULL_REQUEST}";;
     push | cron | api )      branch="${TRAVIS_BRANCH}";;
     * )                      branch="$(git rev-parse --abbrev-ref HEAD)";;
   esac
@@ -26,6 +26,7 @@ function main()
   #dir=$(echo "${dir/tests/}")
   #log_file="$dir"/logs/after-effects.log
   # set eo on script.
+  branch=$(echo $branch | tr -s . - | tr -s / -)
   sed -i 's/set -o pipefail/set -eo pipefail/g' ./after-effects
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
