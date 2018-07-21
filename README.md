@@ -77,37 +77,55 @@ See /docs or visit [https://after-effects.prasadt.com](https://after-effects.pra
 
 ## Supported Distributions
 
+<img alt="xubuntu-logo" src="https://static.xubuntu.org/xubuntu_brand/Logo/SVG/icon.svg" width="64">
+<img alt="mate-ubuntu-logo" src="https://upload.wikimedia.org/wikipedia/commons/0/07/Ubuntu_MATE_rondel_logo.svg" width="64">
+<img alt="ubuntu-budgie" src="https://raw.githubusercontent.com/UbuntuBudgie/assets/master/Logos/budgie-remix-logo-large.svg?sanitize=true" width="64">
+<img alt="lubuntu" src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Lubuntu_logo_only.svg" width="64">
+<img alt="ubuntu-logo" src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Logo-ubuntu_cof-orange-hex.svg" width="64">
+<img alt="kubuntu-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Kubuntu_logo.svg/100px-Kubuntu_logo.svg.png" width="64">
+<img alt="mint-logo" src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Linux_Mint_logo_without_wordmark.svg" width="64">
+<img alt="elementary-logo" src="https://upload.wikimedia.org/wikipedia/commons/d/db/Elementary_logo.svg" width="64">
+<img alt="debian-logo" src="https://upload.wikimedia.org/wikipedia/commons/6/66/Openlogo-debianV2.svg" width="56">
+<img alt="ubuntu-studio-logo" src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Ubuntustudio_v3_logo_only.svg" width="64">
+<img alt="bodhi-linux-logo" src="https://upload.wikimedia.org/wikipedia/commons/8/8f/Bodhi_linux_logo.png" width="64">
+<img alt="kde-neon-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Neon-logo.svg/240px-Neon-logo.svg.png" width="64">
+<img alt="peppermint-logo" src="https://upload.wikimedia.org/wikipedia/commons/6/62/PEPPERMINT.png" width="64">
+<img alt="zorin-logo" src="https://upload.wikimedia.org/wikipedia/commons/0/0f/Zorin_OS_7_logo.png" width="64">
+
 A Complete  list of supported distributions is given below.
 
- Distribution    | Code name/Version |  Supported  | Notes
-:----------------|:------------------|-------------|:------
-Ubuntu 18.04     | Bionic Beaver     | Yes         |
-Ubuntu 16.04     | Xenial Xerus      | Yes         |
-Ubuntu 14.04     | Trusty Thar       | Yes         |
-Ubuntu 18.10     | Cosmic Cuttlefish | --          | Only use it for testing
-Ubuntu 17.10     | Artful Aardvark   | No          | Reached EOL July 2018
-Ubuntu 17.10     | Zesty Zapus       | No          | Reached EOL Jan 13th 2018
-Linux Mint 17    | Quina             | Yes         |
-Linux-Mint 17.1  | Rebecca           | Yes         |
-Linux-Mint 17.2  | Rafaela           | Yes         |
-Linux-Mint 17.3  | Rosa              | Yes         |
-Linux Mint 18    | Sarah             | Yes         |
-Linux-Mint 18.1  | Serena            | Yes         |
-Linux-Mint 18.2  | Sonya             | Yes         |
-Linux-Mint 18.3  | Sylvia            | Yes         |
-Linux Mint 19    | Tara              | Yes         | Not tested
-Elementary-OS    | Freya             | Yes         | Not tested
-Elementary-OS    | Loki              | Yes         | Not tested
-Elementary-OS    | Juno              | Yes         | Not tested
-Budgie Remix     | 16.04             | Yes         |
-PoP! OS          | 17.10 & 18.04     | Yes         | Not tested
-Linux-Lite       | 3.X               | Yes         | (Based on Ubuntu 16.04)
-Zorin-OS         | 12.X              | Yes         | (Based on Ubuntu 16.04)
-Bodhi Linux      | 4                 | Yes         | (Based on Ubuntu 16.04)
-Debian 8         | Jessie            | Yes         |
-Debian 9         | Stretch           | Yes         |
+| Distribution      | Code name/Version     | Supported      | Notes                        |
+| :---------------- | :-------------------- | -------------- | :--------------------------- |
+| Ubuntu 18.04      | Bionic Beaver         | Yes            |
+| Ubuntu 16.04      | Xenial Xerus          | Yes            |
+| Ubuntu 14.04      | Trusty Thar           | Yes            |
+| Ubuntu 18.10      | Cosmic Cuttlefish     | --             | Only use it for testing      |
+| Ubuntu 17.10      | Artful Aardvark       | No             | Reached EOL in July 2018     |
+| Ubuntu 17.10      | Zesty Zapus           | No             | Reached EOL in Jan 13th 2018 |
+| Linux Mint 17     | Quina                 | Yes            |
+| Linux-Mint 17.1   | Rebecca               | Yes            |
+| Linux-Mint 17.2   | Rafaela               | Yes            |
+| Linux-Mint 17.3   | Rosa                  | Yes            |
+| Linux Mint 18     | Sarah                 | Yes            |
+| Linux-Mint 18.1   | Serena                | Yes            |
+| Linux-Mint 18.2   | Sonya                 | Yes            |
+| Linux-Mint 18.3   | Sylvia                | Yes            |
+| Linux Mint 19     | Tara                  | Yes            | Not tested                   |
+| Elementary-OS     | Freya                 | Yes            | Not tested                   |
+| Elementary-OS 0.4 | Loki                  | Yes            | Not tested                   |
+| Elementary-OS 5.0 | Juno                  | Yes            | Not tested                   |
+| Budgie Remix      | 16.04                 | Yes            |
+| PoP! OS           | 17.10 & 18.04         | Yes            | Not tested                   |
+| Linux-Lite        | 3.X                   | Yes            | (Based on Ubuntu 16.04)      |
+| Zorin-OS          | 12.X                  | Yes            | (Based on Ubuntu 16.04)      |
+| Bodhi Linux       | 4                     | Yes            | (Based on Ubuntu 16.04)      |
+| Debian 8          | Jessie                | Yes            |
+| Debian 9          | Stretch               | Yes            |
+| Kde Neon          | Based on Ubuntu LTS   | Might be buggy | Not Tested                   |
+| Peppermint 9      | Based on Ubuntu 18.04 | Yes            | Not Tested                   |
+| Peppermint 8      | Based on Ubuntu 16.04 | Yes            | Not tested                   |
 
-## Oh no! It broke
+## Oh no! It didn't work
 
 - Well that shouldn't have happened. If it does, see [Script Errors](https://ae.prasadt.com/faq/crash/) and consider opening an issue on Github.
 - Please include the log file and terminal output if you can in the issue..
@@ -115,7 +133,7 @@ Debian 9         | Stretch           | Yes         |
 
 ## Contributing & Forks
 
-See [Contributing and forks](./.github/CONTRIBUTING)
+See [Contributing and forks](/CONTRIBUTING)
 
 ## Credits
 
