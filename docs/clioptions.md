@@ -10,7 +10,7 @@ You have two options of configuring this script.
     ./after-effects --lists
   ```
 
--  Using YAML files [they can be local or remote]
+- Using YAML files [they can be local or remote]
 
   ```console
     ./after-effects --yaml

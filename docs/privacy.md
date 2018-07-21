@@ -4,8 +4,8 @@ Our privacy policy related to website is available [here](https://prasadt.com/pr
 
 ## Anonymous stats collection
 
- !!! info
-     Your passwords, usernames, environment variables or anything sensitive is not collected.
+!!! info
+    Your passwords, usernames, environment variables or anything sensitive is not collected.
 
 The script `after-effects` collects anonymous usage statistics. The following might be collected.
 
