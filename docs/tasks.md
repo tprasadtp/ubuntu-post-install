@@ -67,10 +67,10 @@ This can add the following repositories.
   Canonical partner repositories are not configured or enabled for derivatives of Ubuntu because thee might be some conflicts.
 
 !!! bug "Note on 32 bit & ARM Architecture"
+
     - Please note that Google Chrome doesn't support 32 bit architecture, please use Chromium.
     - Signal, Skype, Mendeley and Visual studio code do not support 32 bit architecture.
     - Some repositories are not available for ARM architecture.
-
 
 ## Add personal package archives (PPA)
 
@@ -79,6 +79,7 @@ This can add the following repositories.
 - Logs will  show entry in the format `[date and time] [  PPA-Logs  ] <log>`
 
 !!! warning
+
     - PPAs should be checked before they are added to the list. Sometimes PPAs listed in the file may not be available for all releases.
     - Debian does not support PPAs.
 

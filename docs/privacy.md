@@ -23,5 +23,6 @@ The script `after-effects` collects anonymous usage statistics. The following mi
 - Host-name.
 
 !!! tip
+
     - No personally identifiable information is collected or reported back.
     - This feature can be disabled via `--no-stats` flag.

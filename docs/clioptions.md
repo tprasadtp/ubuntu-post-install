@@ -4,13 +4,13 @@
 
 You have two options of configuring this script.
 
-1. using .list files in `data`
+- Using .list files in `data`
 
   ```console
     ./after-effects --lists
   ```
 
-2. Using YAML files [they can be local or remote]
+-  Using YAML files [they can be local or remote]
 
   ```console
     ./after-effects --yaml

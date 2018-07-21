@@ -45,5 +45,6 @@ sudo ./after-effects -L
 ```
 
 ???+ warning "Note for using this script inside docker containers"
+
     - If you are running this in a docker container, you probably are root.
     - Its possible that you might be missing `sudo` package. So In that case just run it as `./after-effects`. Be warned! You probably are missing several dependencies of the script!

@@ -42,6 +42,7 @@ The script can fetch data from remote default remote endpoint or the one mention
 - Use a simple node or any other server which returns a valid configuration in `yaml` based on a query string appended to api-endpoint.
 
 !!! tip "Use local file"
+
     - If you are testing, it might be a good idea to use a local file which holds this configuration data. In that  case use `-C <filename>` option.
     - After you customize, might want to use simulate flag. `sudo ./after-effects -s -C config.yml -Y`
 

@@ -13,8 +13,7 @@
 - ARM support for some repositories. (not all repos support ARM)
 - Move .redirects data to netlify toml
 - Groundwork to move to parser written in Go
-- YAML provides more configuration options. Individual repos &
-tasks can now be controlled via YAML file.
+- YAML provides more configuration options. Individual repos & tasks can now be controlled via YAML file.
 
 ## Version 4.0
 
