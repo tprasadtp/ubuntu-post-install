@@ -1,5 +1,9 @@
 # Change logs
 
+## Version 5.1.0
+
+- Specify YAML config via URL. You can use config YAMLS saved as gists.
+
 ## Version 5.0
 
 - Remove Pre and Post Hooks.

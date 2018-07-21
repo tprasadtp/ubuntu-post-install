@@ -30,8 +30,8 @@ readonly EXEC_START=$(date +%s)
 readonly DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.0.1 Beta"
-readonly REL_NUM=51
+readonly REL_NAME="5.1.0 Beta"
+readonly REL_NUM=510
 
 function _init_printf_variables()
 {
@@ -266,7 +266,7 @@ function _init_script_variables()
   bool_check_version="true"
 
   # Define API endpoint for version and config
-  readonly default_api_endpoint="https://ae.prasadt.com/api"
+  readonly metadata_endpoint="https://ae.prasadt.com/api"
 
   # Achtung!!
   # ========================================================================================= #
@@ -625,18 +625,6 @@ function _test_conflicting_apps ()
 
 function _set_custom_api_nodes ()
 {
-  # Set custom api endpoints
-  if [[ "$bool_custom_api_endpoint" == "true" ]]; then
-   _log_and_show "${_info} Custom API node is set."
-   readonly api_endpoint="$custom_api_endpont"
-   _log_and_show "${_api} API endpoint is set as below.\n${_api} $api_endpoint"
-  #elif [ "$bool_use_default_endpoint" == "true" ]; then
-  else
-   _log_and_show "${_api} Using default endpoint"
-    readonly api_endpoint="${default_api_endpoint}"
-    _log_and_show "${_api} API endpoint is set as below.\n${_api} $api_endpoint"
-  fi
-
   # Custom Remote Config name as Query parameter name
   if [ "$bool_custom_remote_config_name" == "true" ]; then
    readonly remote_config_name="$custom_remote_config_name"
@@ -644,13 +632,18 @@ function _set_custom_api_nodes ()
    readonly remote_config_name="default"
   fi
 
+  # Set custom YAML urls
+  if [[ "$bool_remote_yaml" == "true" ]]; then
+   readonly api_config_url="$url_remote_yaml?name=${remote_config_name}"
+  else
+   _log_and_show "${_info} Using default YAML"
+    readonly api_config_url="${metadata_endpoint}/config.yml"
+  fi
+
   # Version, Config ang GPG signature URLS
-  readonly api_version_url="${default_api_endpoint}/version.yml"
+  readonly api_version_url="${metadata_endpoint}/version.yml"
   _debug_log "Version Info URL is: ${api_version_url}"
-  readonly api_config_url="${api_endpoint}/config.yml?name=${remote_config_name}"
-  _debug_log "Config URL is: ${api_config_url}"
-  readonly api_script_gpg_sig_url="${default_api_endpoint}/gpg/after-effects?version=$REL_NUM"
-  _debug_log "GPG Signature URL is: ${api_script_gpg_sig_url}"
+  _log_and_show "${_info} Using Config YAML file at : $api_config_url"
 }
 
 
@@ -734,7 +727,7 @@ function _version_checks ()
       _debug_log "Version Checks are enabled."
       _log_and_show "${_version} Checking for Updates..."
       if [ "$bool_custom_version_file" != "true" ]; then
-        _log_and_show "${_cfg} Using Remote Config file."
+        _debug_log "${_cfg} Using Remote Config file."
         _debug_log "Deleting old YAMLS"
         rm -f /tmp/api-version.yml || _debug_log "Deleting old version YAML failed."
         readonly version_yaml_file="/tmp/api-version.yml"
@@ -2488,9 +2481,10 @@ function main()
                               bool_preserve_debs="true";
                               _log_and_show "${_info} Will keep downloaded DEB packages."
                               ;;
-      -e | --api-endpoint )   set_default;
-                              readonly bool_custom_api_node="true";
-                              shift; readonly custom_api_node="${1}";
+      -R | --remote-yaml )    set_default;
+                              _log_and_show "${_info} Using Remote YAML"
+                              readonly bool_remote_yaml="true";
+                              shift; readonly url_remote_yaml="${1}";
                               ;;
       --no-version-checks )   bool_check_version="false";;
       -S |  --no-stats )      set_yellow;

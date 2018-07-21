@@ -231,7 +231,7 @@ Using this option, you can chose to use the lists file which you have locally an
     ./after-effects -C <filename>
     ```
 
-You can prefer using custom configuration file you have stored locally [It should be available via local paths or network share. not via ftp or http]. Enabling this option will disable fetching configuration from api-endpoints mentioned or default endpoints.
+You can prefer using custom configuration file you have stored locally [It should be available via local paths or network share. not via ftp or http]. Enabling this option will disable fetching remote configuration even if you have specified `--remote-yaml`
 
 ## Use Custom Version information file
 
@@ -250,6 +250,22 @@ Script always checks if its running the latest version available. If not it thro
     ```
 
 Example version files are in `api` directory. All the fields are mandatory.
+
+## Remote YAML configuration file
+
+!!! snippet "Usage"
+
+    ```console
+    ./after-effects --remote-yaml <URL to YAML file>
+    ```
+
+    OR
+
+    ```console
+    ./after-effects -R <URL to YAML file>
+    ```
+
+You can specify YAML file to use. Script will fetch it and parse it. Please note that local Config file specified takes priority over `-R`. If both -C & -R are used, only local config file is considered. The file should be available without any soft of interactive logins.
 
 ## Do not report statistics
 
