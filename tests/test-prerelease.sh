@@ -9,11 +9,11 @@ set -o pipefail
 export PRE_REL_CODENAME="cosmic"
 branch=master
 case "${TRAVIS_EVENT_TYPE}" in
-  pull_request )           branch="${TRAVIS_PULL_REQUEST_BRANCH}";;
+  pull_request )           branch="deploy-preview-${TRAVIS_PULL_REQUEST}";;
   push | cron | api )      branch="${TRAVIS_BRANCH}";;
-  * )                      branch="${TRAVIS_BRANCH}";;
+  * )                      branch="$(git rev-parse --abbrev-ref HEAD)";;
 esac
-
+branch=$(echo $branch | tr -s . - | tr -s / -)
 function main()
 {
   dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
