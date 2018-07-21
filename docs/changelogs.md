@@ -72,29 +72,19 @@ tasks can now be controlled via YAML file.
 - Allow Bionic tests to fail on Travis CI.
 - Dockerfiles & tests for bionic.
 - Inform in script if running on Upcoming release.
-- Drop google-cloud-sdk from fixreponotavailable. Use `--pre-release`
-if using beta/alpha Ubuntu release.
+- Drop google-cloud-sdk from fix_repo_not_available. Use `--pre-release` if using beta/alpha Ubuntu release.
 - Add Visual studio to repos instead of deb files
 - Rename logging directory to after-effects
 
 ## Version 3.0
 
-- Add Confirmation dialog using whiptail for Actions like Adding PPA,
-Repositories, Installing Apps, and Deb files
+- Add Confirmation dialog using whiptail for Actions like Adding PPA, Repositories, Installing Apps, and Deb files
 
-- Provide an option via command line to bypass the confirmation dialog
-for ci and automated environments or when its too annoying
-
-- If the simulate option is selected then Only calculate
-the upgrade but do not perform upgrade.
-
-- Added improved Simulate options. Helpful when just want to change
-  somethings and test scripts without really downloading and installing packages
-- Simulate option is by default false and can be toggled by passing
-  `-s` or `--simulate` while running the script via command line
-- Do not Enable Canonical Partner repositories in Ubuntu derivatives as
-  they are enabled in installer or are different than Ubuntu.
-  This leaves Partner repositories as they were before
+- Provide an option via command line to bypass the confirmation dialog for ci and automated environments or when its too annoying
+- If the simulate option is selected then Only calculate the upgrade but do not perform upgrade.
+- Added improved Simulate options. Helpful when just want to change somethings and test scripts without really downloading and installing packages
+- Simulate option is by default false and can be toggled by passing `-s` or `--simulate` while running the script via command line
+- Do not Enable Canonical Partner repositories in Ubuntu derivatives as they are enabled in installer or are different than Ubuntu. This leaves Partner repositories as they were before
 - Add Feature: Purge Unwanted Packages
 - Improved logging . Redirecting errors and adding time-stamps works better.
 - Travis CI and Docker Testing
@@ -107,8 +97,7 @@ the upgrade but do not perform upgrade.
 - Flexible with packages and deb files
 - Reduced complex dependencies
 - Easy to configure
-- Add Simulate install option for installing deb files and apps.
-Easier to test scripts now .
+- Add Simulate install option for installing deb files and apps. Easier to test scripts now .
 
 ## Version 1.0
 

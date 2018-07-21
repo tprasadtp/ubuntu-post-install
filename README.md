@@ -5,8 +5,10 @@ before trying out.
 
 [![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.svg?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
 [![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=flat&url=https://ae.prasadt.com/api/json/version.json&query=version.name&prefix=V-)](https://github.com/tprasadtp/ubuntu-post-install/)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE)
-![GitHub repo size in bytes](https://img.shields.io/github/repo-size/tprasadtp/ubuntu-post-install.svg)
+[![license](https://img.shields.io/github/license/tprasadtp/ubuntu-post-install.svg?style=flat)](https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE)
+![GitHub repo size in bytes](https://img.shields.io/github/repo-size/tprasadtp/ubuntu-post-install.svg?style=flat)
+[![Code Climate](https://shields-staging.herokuapp.com/codeclimate/issues/tprasadtp/ubuntu-post-install.svg?style=flat&label=Shellcheck%20and%20Markdown%20Issues)](https://codeclimate.com/github/tprasadtp/ubuntu-post-install/issues)
+
 
 ## URLs
 

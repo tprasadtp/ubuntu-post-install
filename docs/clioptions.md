@@ -191,7 +191,6 @@ Default behavior is to clean apt cache and delete downloaded DEB packages.
 !!! bug "Python packages"
     Python package installation does not honor this flag.
 
-
 ## Hide Remote/local YAML configuration data
 
 !!! snippet "Usage"
@@ -217,7 +216,6 @@ Hides displaying YAML configuration data in the output.
     ```
 
 Using this option, you can chose to use the lists file which you have locally and not worry about YAML and shit.
-
 
 ## Use Custom Configuration file
 

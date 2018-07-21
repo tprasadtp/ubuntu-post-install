@@ -20,7 +20,6 @@ This can add the following repositories.
 ??? tip "Controlling which repository is added using config file"
     You can set your YML file to decide which repository is added. Some repositories may no be suppoted on your architecture or distribution. Take a look at [config.yml](/api/yaml) for example. If you omit a value, it defaults to false **ALWAYS**. Do note that if you are using lists default values are different, they are mentioned in below.
 
-
 ??? note "Default Variables if using Lists"
 
     ```bash
