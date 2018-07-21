@@ -23,7 +23,7 @@ You might see ans error like this,
 [    Notice     ] This Script is not designed to run on this () distro/release.
 ```
 
-- It means that you do not have _lsb-release_ package installed. It happens usually on docker containers. See [What are its dependencies? What do I need on my system to run this?](#what-are-its-dependencies-what-do-i-need-on-my-system-to-run-this)
+- It means that you do not have _lsb-release_ package installed. It happens usually on docker containers. See [What are its dependencies? What do I need on my system to run this?](/faq/dependencies/#what-do-i-need-to-run-this)
 - Install `lsb-release` package using `apt-get -y install lsb-release`
 - In the case above you are probably missing other dependencies as well. It might be a good idea to install those dependencies first.
 

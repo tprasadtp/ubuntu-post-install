@@ -43,8 +43,8 @@ It should work fine. But no promises.
 [![Elementary-OS](https://static.prasadt.com/logo64/elementary-os.png)](https://elementary.io/)
 [![Zorin-OS](https://static.prasadt.com/logo64/zorin-os.png)](https://zorinos.com/)
 
-??? tip "Tip"
-    Please check [here](https://ae.prasadt.com/faq/distros/) for complete list of supported distros.
+!!! tip "Tip"
+    Please check [![Supported-Distros](https://img.shields.io/badge/Info-Supported%20Distros-green.svg)](/faq/distros/) for complete list of supported distros.
 
 ## Screenshots
 
