@@ -71,7 +71,7 @@ Run the script as **root**. You will get an error if you do not run the script a
 ### Step 4: Contribute
 
 Contribute tweaks, improvements ideas back upstream.
-Please note that `gh-pages` branch is derivative master. Please checks docs directory for documentation. This project uses `mkdocs` for documentation. You can use docker-compose to test documentation site.
+Please note that `gh-pages` branch is derivative master. This project uses `mkdocs` for documentation. You can use docker-compose to test documentation site.
 
 ## FAQ & Documentation
 
@@ -97,6 +97,7 @@ I have not tested the script on following distros. Because they use ubuntu as th
 It should work fine. But no promises.
 
 [![Kde-Neon](https://static.prasadt.com/logo64/kde-neon.png)](https://neon.kde.org/)
+[![Pop-OS](https://static.prasadt.com/logo64/pop-os.png)](https://system76.com/pop)
 [![Bodhi-Linux](https://static.prasadt.com/logo64/bodhi-linux.png)](https://www.bodhilinux.com/)
 [![Peppermint-OS](https://static.prasadt.com/logo64/peppermint-os.png)](https://peppermintos.com/)
 [![Elementary-OS](https://static.prasadt.com/logo64/elementary-os.png)](https://elementary.io/)
@@ -120,7 +121,9 @@ A Complete  list of supported distributions is given below.
 | Linux-Mint 18.1   | Serena                | Yes            |
 | Linux-Mint 18.2   | Sonya                 | Yes            |
 | Linux-Mint 18.3   | Sylvia                | Yes            |
-| Linux Mint 19     | Tara                  | Yes            |                               |
+| Linux Mint 19     | Tara                  | Yes            |
+| Debian 8          | Jessie                | Yes            |
+| Debian 9          | Stretch               | Yes            |
 | Elementary-OS     | Freya                 | Yes            | Not tested                    |
 | Elementary-OS 0.4 | Loki                  | Yes            | Not tested                    |
 | Elementary-OS 5.0 | Juno                  | Yes            | Not tested                    |
@@ -129,8 +132,6 @@ A Complete  list of supported distributions is given below.
 | Linux-Lite        | 3.X                   | Yes            | (Based on Ubuntu 16.04)       |
 | Zorin-OS          | 12.X                  | Yes            | (Based on Ubuntu 16.04)       |
 | Bodhi Linux       | 4                     | Yes            | (Based on Ubuntu 16.04)       |
-| Debian 8          | Jessie                | Yes            |
-| Debian 9          | Stretch               | Yes            |
 | KDE Neon          | Based on Ubuntu LTS   | Might be buggy | Not Tested                    |
 | Peppermint 9      | Based on Ubuntu 18.04 | Yes            | Not Tested                    |
 | Peppermint 8      | Based on Ubuntu 16.04 | Yes            | Not tested                    |
