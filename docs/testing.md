@@ -1,7 +1,7 @@
 # CI and Testing
 
 !!! bug "Test Scripts"
-    Test Scripts assume that you are running on Travis. So They might fails if some  environment variables are not set. Please see, [Travis environment variables](https://docs.travis-ci.com/user/environment-variables/).
+    Test Scripts assume that you are running on Travis. So They might fails if some environment variables are not set. Please see, [Travis environment variables](https://docs.travis-ci.com/user/environment-variables/).
 
 Following Tests are done on Travis-CI.
 
@@ -17,7 +17,7 @@ Following Tests are done on Travis-CI.
 !!! info
     Trusty tests do not install indicator-kdeconnect, peek, openjdk-8-jdk, gnome-todo , gnome-calendar, polari and their PPAs. Please modify your lists accordingly.
 
-- Tests on Cosmic Cuttlefish (Job #build.8) use base image from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
+- Tests on Cosmic Cuttlefish use base image from `http://cdimage.ubuntu.com/ubuntu-base/daily/`
 - Dockerfiles used for building the image are in `/dockerfiles` directory, they use official Ubuntu base images with script dependencies.
 - Test scripts are located in `/tests` directory.
 - Since its a time consuming process only simulated install is done on CI. Linux mint and Elementary are not tested in containers as of now, but will be in the future.

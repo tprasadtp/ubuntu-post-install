@@ -23,7 +23,7 @@ You might see ans error like this,
 [    Notice     ] This Script is not designed to run on this () distro/release.
 ```
 
-- It means that you do not have _lsb-release_ package installed. It happens usually on docker containers. See [What are its dependencies? What do I need on my system to run this?](#what-are-its-dependencies-what-do-i-need-on-my-system-to-run-this)
+- It means that you do not have _lsb-release_ package installed. It happens usually on docker containers. See [What are its dependencies? What do I need on my system to run this?](/faq/dependencies/#what-do-i-need-to-run-this)
 - Install `lsb-release` package using `apt-get -y install lsb-release`
 - In the case above you are probably missing other dependencies as well. It might be a good idea to install those dependencies first.
 
@@ -45,3 +45,22 @@ You might see ans error like this,
 
 Try running `wget https://ae.prasadt.com/api/version.yml`. If you see SSL errors, that means that your CA bundle is out of date.
 This project uses Amazon Root CA & LetsEncrypt for SSL, make sure that your System trusts these.
+
+## Script throws a bunch of errors or got struck or hangs
+
+!!! question "Report"
+    Well, that shouldn't have happened. Please consider opening an issue on [Github](https://github.com/tprasadtp/ubuntu-post-install/issues/new).
+
+### How to recover
+
+- If you know where it was stuck/errored, just re-run the task(s) which were not completed. If you don't know, go and check log file. Each task is labeled and is clearly logged before starting and after completing. Just run the tasks which did not complete. You don't have to re-download the packages you have already downloaded, because they are already cached by apt-get.
+- Remember, some operations of the script can be very lengthy and can involve lots of downloads (If you used default list files, expect up to 2 GB of traffic). So, it might appear that script is stuck because cursor stops blinking. However it is not the case. If you are unsure please check the logs.
+
+!!! tip
+    In rare cases where your Script exited while installing a DEB file, which has unmet dependencies, you might see broken packages error. In that case, run `sudo apt-get install -f` to fix the broken packages and run the script again.
+
+## Issues not mentioned above?
+
+If you see any errors or script hangs/errors please do not hesitate to open an issue on [Github](https://github.com/tprasadtp/ubuntu-post-install/issues/new).
+
+![GitHub issues](https://img.shields.io/github/issues/tprasadtp/ubuntu-post-install.svg)

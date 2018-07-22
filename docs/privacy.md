@@ -1,6 +1,6 @@
 # Privacy Policy
 
-Our privacy policy related to website is available [here](https://prasadt.com/privacy-policy).
+Privacy policy related to website is available [here](https://prasadt.com/privacy-policy).
 
 ## Anonymous stats collection
 

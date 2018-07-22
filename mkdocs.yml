@@ -87,10 +87,9 @@ pages:
   - Getting Started: getting-started.md
   - FAQ:
     - Dependecies: faq/dependencies.md
-    - Supported: faq/distros.md
-    - Errors: faq/errors.md
+    - Distros: faq/distros.md
+    - Errors & Issues: faq/errors.md
     - Linux Mint: faq/linuxmint.md
-    - Crashes: faq/crash.md
   - Options: clioptions.md
   - What can it do?: tasks.md
   - Configuration: config.md
