@@ -1785,7 +1785,6 @@ function disable_external_repos()
     # Remove keys and list files.
     _log_and_show "${_deleting} Keys and external repositoris"
     set_default
-    old_path=$(pwd)
     _log_and_show "${_deleting} Google signing key   7FAC5991"
     apt-key del 7FAC5991  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_and_show "${_deleting}  Google signing key -1 failed."
