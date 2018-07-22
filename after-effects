@@ -30,8 +30,8 @@ readonly EXEC_START=$(date +%s)
 readonly DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.1.0 Beta"
-readonly REL_NUM=510
+readonly REL_NAME="5.1.1 Beta"
+readonly REL_NUM=511
 
 function _init_printf_variables()
 {
@@ -1857,7 +1857,6 @@ function disable_external_repos()
       _log_and_show "${_notice} Please see the log file for more details."
     fi
     set_default;
-    cd "$old_path" || return
     _log_and_show "${_removed} Repositories. Please check the logs for errors."
 
     _line_fill >> "$log_file"

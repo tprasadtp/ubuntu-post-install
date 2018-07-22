@@ -1,11 +1,8 @@
 {
   "git.autofetch": true,
-  "editor.formatOnPaste": true,
   "files.trimTrailingWhitespace": true,
   "trailing-spaces.trimOnSave": true,
   "editor.tabSize": 2,
-  "editor.minimap.enabled": false,
-  "explorer.openEditors.visible": 0,
   "diffEditor.ignoreTrimWhitespace": false,
   "files.autoGuessEncoding": true,
   "files.eol": "\n",
@@ -24,7 +21,6 @@
   },
   "telemetry.enableCrashReporter": false,
   "telemetry.enableTelemetry": false,
-  "python.autoComplete.addBrackets": true,
   "git.autorefresh": true,
   "git.ignoreLimitWarning": true,
   "go.autocompleteUnimportedPackages":true

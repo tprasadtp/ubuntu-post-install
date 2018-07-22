@@ -6,4 +6,5 @@ guidelines and info which might help you.
 ## Branches
 
 Please create a separate branch which does not have your edits in data directory.
-Please do not submit/add lists unless the default lists are causing errors. the script. Apps and ppas are user preference and should be left to end user.
+Please do not submit/add lists unless the default lists are causing errors.
+Apps and PPAs are user preference and should be left to end user.

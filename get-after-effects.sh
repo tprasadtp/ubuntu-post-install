@@ -67,7 +67,7 @@ function get-after-effects()
   chmod +x ./after-effects
   while IFS= read -r line; do
     echo "Getting: $line"
-    wget -NNv -q -P ./data/ "${GET_LIST_BASE_URL}/data/${line}"
+    wget -Nnv -q -P ./data/ "${GET_LIST_BASE_URL}/data/${line}"
   done <get.mlist
   wget -q -P  "${GET_BASE_URL}"/api/version.yml -O version.yml
   wget -q -P  "${GET_BASE_URL}"/api/config.yml -O config.yml
