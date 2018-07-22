@@ -9,7 +9,7 @@ site_dir: '_site/'
 # Repository
 repo_name: ubuntu-post-install
 repo_url: https://github.com/tprasadtp/ubuntu-post-install
-edit_uri: "blob/version_checks_api/docs/"
+edit_uri: "blob/master/docs/"
 remote_branch: gh-pages
 remote_name: origin
 
@@ -19,7 +19,7 @@ copyright: 'Copyright &copy; 2018 Prasad Tengse'
 # Configuration
 theme:
   name: material
-  tasks_dir: 'docs/theme-overrides/'
+  custom_dir: 'docs/theme-overrides/'
 
   # 404 page
   static_templates:
@@ -90,6 +90,7 @@ pages:
     - Distros: faq/distros.md
     - Errors & Issues: faq/errors.md
     - Linux Mint: faq/linuxmint.md
+    - Others: faq/others.md
   - Options: clioptions.md
   - What can it do?: tasks.md
   - Configuration: config.md
