@@ -30,8 +30,8 @@ readonly EXEC_START=$(date +%s)
 readonly DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.1.1 Beta"
-readonly REL_NUM=511
+readonly REL_NAME="5.1.2 Beta"
+readonly REL_NUM=512
 
 function _init_printf_variables()
 {
@@ -206,7 +206,7 @@ function _init_script_variables()
   # should be called first before choices are made, always.
 
   # Grabbing OS info
-  readonly OS_DISTRIBUTION=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
+  distro_name=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
   readonly VERSION=$(lsb_release -rs)
   readonly LONG_VERSION=$(lsb_release -ds)
   # Achtung: Do not set code_name as readonly!!
@@ -347,7 +347,7 @@ function _init_print_basic_info()
   _log_and_show "${_notice} Following details are recognised by the Script."
   _log_and_show "${_info} Hostname: ${CLIENT_NAME}"
   _log_and_show "${_info} UUID for Run: ${CLIENT_ID}"
-  _log_and_show "${_info} Distro: ${OS_DISTRIBUTION}"
+  _log_and_show "${_info} Distro: ${distro_name}"
   _log_and_show "${_info} Version: ${VERSION}"
   _log_and_show "${_info} Code Name: ${code_name}"
   _log_and_show "${_info} Architecture: ${ARCH}"
@@ -535,12 +535,12 @@ function _fix_ubuntu_derivatives()
                                             ;;
       sarah | serena | sonya | sylvia )     _log_and_show "${_linuxmint} Release is Linux mint 18.X."
                                             _log_and_show "${_notice} Setting additional repositoris to follow Ubuntu 16.04."
-                                            code_name="xenial"
+                                            code_name="xenial";distro_name="ubuntu"
                                             _log_and_show "${_linuxmint} Changed codename to $code_name"
                                             ;;
       tara )                                _log_and_show "${_linuxmint} Release is Linux mint 19.X."
                                             _log_and_show "${_notice} Setting additional repositoris to follow Ubuntu 18.04."
-                                            code_name="bionic"
+                                            code_name="bionic";distro_name="ubuntu"
                                             _log_and_show "${_linuxmint} Changed codename to $code_name"
                                             ;;
       freya )                               _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 14.04 Trusty."
@@ -1476,7 +1476,7 @@ function add_repositories()
     |_add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_and_show "${_error} Adding Spotify repository failed"
 
-    echo "deb http://repository.spotify.com stable non-free #Spotify For Linux" > ${SOURCES_FILE_DIR}/spotify.list \
+    echo "deb http://repository.spotify.com stable non-free #Spotify" > ${SOURCES_FILE_DIR}/spotify.list \
     || _log_and_show "${_error} Adding Spotify Repository Failed"
   else
     _log_and_show "${_repo} Spotify repository is set to false. Skipping."
@@ -1490,7 +1490,7 @@ function add_repositories()
     | _add_timestamp_to_logs "${_apt_key_logs}" \
     || _log_and_show "${_error} Adding Insync Repository failed"
 
-    echo "deb http://apt.insynchq.com/${OS_DISTRIBUTION} $code_name non-free contrib #Insync Client" > ${SOURCES_FILE_DIR}/insync.list \
+    echo "deb http://apt.insynchq.com/${distro_name} $code_name non-free contrib #Insync-Client" > ${SOURCES_FILE_DIR}/insync.list \
     || _log_and_show "${_error} Adding Insync Repository failed"
 
   elif [ "$add_insync_repo" == "true" ] && [ "$bool_is_debian" == "true" ]; then
@@ -1513,7 +1513,7 @@ function add_repositories()
     wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg >> "$log_file"
     apt-key add apt-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"
     _log_and_show "${_repo} Google-Cloud-SDK repository"
-    echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main #Google Cloud SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  \
+    echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  \
     || _log_and_show "${_error} Adding GCSFUSE Repository failed"
 
     _log_and_show "${_repo} GCSFUSE repository"
@@ -1538,7 +1538,7 @@ function add_repositories()
     apt-key add wine-hq-sigining-key.key 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
     || _log_and_show "${_error} Adding WineHQ keys failed"
     _debug_log "Adding WineHQ repository"
-    echo "deb https://dl.winehq.org/wine-builds/${OS_DISTRIBUTION}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list \
+    echo "deb https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list \
     || _log_and_show "${_error} Adding WineHQ repository failed"
   else
     _log_and_show "${_repo} WineHQ repository is set to false. Skipping."
@@ -1550,12 +1550,12 @@ function add_repositories()
       _debug_log "Adding Docker repository is set to true"
       _log_and_show "${_repo} Docker-CE repository"
       _debug_log "Getting Docker-CE repository Key"
-      wget -q https://download.docker.com/linux/"${OS_DISTRIBUTION}"/gpg -O docker-key.gpg >> "$log_file"  2>&1
+      wget -q https://download.docker.com/linux/"${distro_name}"/gpg -O docker-key.gpg >> "$log_file"  2>&1
       _debug_log "Adding Docker repository key"
       apt-key add docker-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_and_show "${_error} Adding Docker-CE keys failed"
       _debug_log "${_repo} Docker-CE"
-      echo "deb [arch=$ARCH] https://download.docker.com/linux/${OS_DISTRIBUTION}  ${code_name} stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list \
+      echo "deb [arch=$ARCH] https://download.docker.com/linux/${distro_name}  ${code_name} stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list \
       || _log_and_show "${_error} Adding Docker-CE repository failed"
     else
       _log_and_show "${_error} Architecture not supported!. Please use docker.io package from your distro."
@@ -1573,7 +1573,7 @@ function add_repositories()
       _debug_log "Adding Skype keys to trusted list"
       apt-key add skype-linux-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_and_show "${_error} Adding Skype for linux key failed"
-      echo "deb [arch=$ARCH] https://repo.skype.com/deb stable main #Skype for Linux" > $SOURCES_FILE_DIR/skype-stable.list \
+      echo "deb [arch=$ARCH] https://repo.skype.com/deb stable main #Skype" > $SOURCES_FILE_DIR/skype-stable.list \
       || _log_and_show "${_error} Adding Skype for linux repository failed"
     else
       _log_and_show "${_error} Skype doesnot support this architecture"
@@ -1617,10 +1617,10 @@ function add_repositories()
   # Kubernetes
   if [ "$add_kubernetes_repo" == "true" ]; then
     if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "armhf" ] || [ "$ARCH" == "arm64" ] ; then
-      curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg > kubernetes.gpg >> "$log_file"
-      apt-key add signal.asc  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_show "${_error} Adding Signal Key Failed"
-      echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > ${SOURCES_FILE_DIR}/kubernetes.list
+      wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg -O kubernetes.gpg >> "$log_file"
+      apt-key add kubernetes.gpg  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
+      || _log_and_show "${_error} Adding Kubernetes Key Failed"
+      echo "deb http://apt.kubernetes.io/ kubernetes-${code_name} main #Kubernetes" > ${SOURCES_FILE_DIR}/kubernetes.list
     else
         _log_and_show "Architecture: $ARCH is not supported. You might manually compile from source."
     fi

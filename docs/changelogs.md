@@ -1,5 +1,10 @@
 # Change logs
 
+## Version 5.1.2
+
+- Fix get script URLS.
+- Fix kubernetes repo url & repos for mint
+
 ## Version 5.1.0
 
 - Specify YAML config via URL. You can use config YAMLS saved as gists.
