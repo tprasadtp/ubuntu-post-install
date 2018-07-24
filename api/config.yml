@@ -71,7 +71,7 @@ config:
     # Follows same pattern as Debian packages
     # Name to be saved is second field
     binaries:
-      - https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m),docker-compose
+      - https://github.com/docker/compose/releases/download/1.21.2/docker-compose-docker-compose-linux-x86_64),docker-compose
       - https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64,minikube
       - https://github.com/kubernetes/kompose/releases/download/v1.15.0/kompose-linux-amd64,kompose
     apt:
