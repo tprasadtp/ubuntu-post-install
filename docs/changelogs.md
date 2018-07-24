@@ -1,5 +1,10 @@
 # Change logs
 
+## Version 5.2.0
+
+- New Feature, static binaries installation (kompose,docker-compose etc)
+- All scrip tmp files are now at /tmp/ae/
+
 ## Version 5.1.2
 
 - Fix get script URLS.

@@ -30,8 +30,8 @@ readonly EXEC_START=$(date +%s)
 readonly DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.1.2 Beta"
-readonly REL_NUM=512
+readonly REL_NAME="5.2.0 Beta"
+readonly REL_NUM=520
 
 function _init_printf_variables()
 {
@@ -100,7 +100,20 @@ function _init_logging()
   # Only variables necessary for logging & start logging
   # Script relatead variables are defined in _init_script_variables
   readonly log_file="$dir"/logs/after-effects.log
-  mkdir -p "$dir"/logs
+  {
+    mkdir -p "$dir"/logs
+  } ||
+  {
+    printf "${_error} Failed to Create logs folder\n"; exit 2
+  }
+  # tmp dir
+  {
+    rm -rf /tmp/ae/*
+    mkdir -p /tmp/ae/
+  } ||
+  {
+    printf "${_error} Failed to Create tmp folder\n"; exit 2
+  }
   _debug_log "Executing Script"
   _line_fill >> "$log_file"
 }
@@ -591,13 +604,13 @@ function _test_internet_connection ()
 {
   # Function to check internet connection
   _log_and_show "${_checking} Internet connection..."
-  if wget --tries=3 --timeout=15 "$PING_URL" -O /tmp/testinternet &>/dev/null 2>&1; then
+  if wget --tries=3 --timeout=15 "$PING_URL" -O /tmp/ae/testinternet &>/dev/null 2>&1; then
     _log_and_show "${_checking} Connectivity"
-    rm -f /tmp/testinternet
+    rm -f /tmp/ae/testinternet
   else
     set_yellow;
     _log_and_show "${_oh_no} Booooooo! You are not connected to the Internet!. Please check your Internet connection and try again."
-    rm -f /tmp/testinternet || _debug_log "Failed to remove temp network connectivity resp file"
+    rm -f /tmp/ae/testinternet || _debug_log "Failed to remove temp network connectivity resp file"
     set_default;
     exit 14;
   fi
@@ -729,8 +742,8 @@ function _version_checks ()
       if [ "$bool_custom_version_file" != "true" ]; then
         _debug_log "${_cfg} Using Remote Config file."
         _debug_log "Deleting old YAMLS"
-        rm -f /tmp/api-version.yml || _debug_log "Deleting old version YAML failed."
-        readonly version_yaml_file="/tmp/api-version.yml"
+        rm -f "/tmp/ae/api-version.yml" || _debug_log "Deleting old version YAML failed."
+        readonly version_yaml_file="/tmp/ae/api-version.yml"
         # Get response/file
         _get_remote_file "$version_yaml_file" "$api_version_url"
       else
@@ -850,8 +863,8 @@ function _set_yaml_config()
     if [ "$bool_custom_config_file" != "true" ]; then
       _log_and_show "${_cfg} Using Remote Config file."
       _debug_log "Deleting old YAMLS"
-      rm -f /tmp/api-config.yml || _debug_log "Deleting old version YAML failed."
-      readonly config_yaml_file="/tmp/api-config.yml"
+      rm -f "/tmp/ae/api-config.yml" || _debug_log "Deleting old version YAML failed."
+      readonly config_yaml_file="/tmp/ae/api-config.yml"
       # Get response/file
       _get_remote_file "$config_yaml_file" "$api_config_url"
     else
@@ -952,6 +965,9 @@ function _set_yaml_config()
     #ae_task_pip3="${config__tasks__pip3[0]}"
     _check_bool "ae_task_pip3" "${config__tasks__pip3[0]}"
 
+    # Binaries Install
+    _check_bool "ae_task_bin" "${config__tasks__binaries[0]}"
+
     if [ "${bool_hide_config}" != "true" ]; then
       printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
@@ -985,6 +1001,7 @@ function _set_yaml_config()
       printf "${_rtasks} %-20s | %-10s |\n" "Purge packages" "$ae_task_purge"
       printf "${_rtasks} %-20s | %-10s |\n" "Python 2 Modules" "$ae_task_pip2"
       printf "${_rtasks} %-20s | %-10s |\n" "Python 3 Modules" "$ae_task_pip3"
+      printf "${_rtasks} %-20s | %-10s |\n" "Static Binaries" "$ae_task_bin"
       set_default;
       _line_fill;
     else
@@ -1018,6 +1035,7 @@ function _set_yaml_config()
         printf "${_rtasks} %-20s | %-10s |\n" "Purge packages" "$ae_task_purge"
         printf "${_rtasks} %-20s | %-10s |\n" "Python 2 Modules" "$ae_task_pip2"
         printf "${_rtasks} %-20s | %-10s |\n" "Python 3 Modules" "$ae_task_pip3"
+        printf "${_rtasks} %-20s | %-10s |\n" "Static Binaries" "$ae_task_bin"
         _line_fill;
         _line_fill;
       } >> "${log_file}"
@@ -1103,7 +1121,7 @@ function _set_yaml_config()
 
     declare -gar parsed_pip2_packages=("${config__install__python2_[@]}")
     declare -gar parsed_pip3_packages=("${config__install__python3_[@]}")
-
+    declare -gar parsed_bin_packages=("${config__install__binaries_[@]}")
  fi
 
   {
@@ -1167,6 +1185,7 @@ function _set_list_config()
     ae_task_pip2="true"
     ae_task_pip3="true"
     ae_task_purge="true"
+    ae_task_bin="true"
 
     #shellcheck disable=SC2034
     local list_file line
@@ -1183,24 +1202,25 @@ function _set_list_config()
                           purge.list
                           pip.list
                           pip3.list
+                          bin.list
                         )
 
     for list in "${lists[@]}"; do
       declare -a tmp_arr
       _debug_log "Processing List : $list"
       if [ -f "${dir}/data/${list}" ]; then
-        touch /tmp/cleaned.clist && truncate -s 0 /tmp/cleaned.clist
+        touch /tmp/ae/cleaned.clist && truncate -s 0 /tmp/ae/cleaned.clist
         # Clean comments & empty spaces
-        grep -v -e ^% -e ^\# -e '^[[:space:]]*$' "${dir}/data/${list}" > /tmp/cleaned.clist
+        grep -v -e ^% -e ^\# -e '^[[:space:]]*$' "${dir}/data/${list}" > /tmp/ae/cleaned.clist
         _debug_log "Cleaned List is below"
         _line_fill >> "${log_file}"
         # shellcheck disable=SC2002
-        cat /tmp/cleaned.clist | _add_timestamp_to_logs "${_list}"
+        cat /tmp/ae/cleaned.clist | _add_timestamp_to_logs "${_list}"
         # Read line by line & Parse array
         i=0;
         while IFS= read -r line; do
           tmp_arr[i]="${line}" && ((++i))
-        done < /tmp/cleaned.clist
+        done < /tmp/ae/cleaned.clist
         _debug_log "Parsed $list"
         case "${list}" in
           administration.list)  declare -gar parsed_administration_packages=("${tmp_arr[@]}");;
@@ -1215,6 +1235,7 @@ function _set_list_config()
           purge.list)           declare -gar parsed_purge_packages=("${tmp_arr[@]}");;
           pip.list)             declare -gar parsed_pip2_packages=("${tmp_arr[@]}");;
           pip3.list)            declare -gar parsed_pip3_packages=("${tmp_arr[@]}");;
+          bin.list)             declare -gar parsed_bin_packages=("${tmp_arr[@]}");;
         esac
         # Unset local array
       else
@@ -1446,9 +1467,9 @@ function add_repositories()
     _log_and_show "${_repo} Google repositories"
     if [ "$ARCH" == "amd64" ]; then
         _debug_log "Adding Google package siging Key"
-      wget -q  https://dl.google.com/linux/linux_signing_key.pub -O linux_signing_key.pub >> $"$log_file"
+      wget -q  https://dl.google.com/linux/linux_signing_key.pub -O /tmp/ae/linux_signing_key.pub >> $"$log_file"
       _debug_log "Adding Google key to trusted keys list"
-      apt-key add linux_signing_key.pub 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
+      apt-key add /tmp/ae/linux_signing_key.pub 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_and_show "${_error} Adding trusted keys for Google failed."
 
       _log_and_show "${_repo} Google Chrome repository"
@@ -1510,8 +1531,8 @@ function add_repositories()
     GCSFUSE_REPO="gcsfuse-${code_name}"
     _log_and_show "${_repo} Adding GCP Repositories"
     _debug_log "Adding Google-Cloud repository sigining key"
-    wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg >> "$log_file"
-    apt-key add apt-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"
+    wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg -O /tmp/ae/googlecloud.gpg >> "$log_file"
+    apt-key add /tmp/ae/googlecloud.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"
     _log_and_show "${_repo} Google-Cloud-SDK repository"
     echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  \
     || _log_and_show "${_error} Adding GCSFUSE Repository failed"
@@ -1533,9 +1554,9 @@ function add_repositories()
 
     _log_and_show "${_repo} WineHQ repository"
     _debug_log "Getting WineHQ repository Key"
-    wget -q https://dl.winehq.org/wine-builds/Release.key -O wine-hq-sigining-key.key >> "$log_file"  2>&1
+    wget -q https://dl.winehq.org/wine-builds/Release.key -O /tmp/ae/wine-hq-sigining-key.key >> "$log_file"  2>&1
     _debug_log "Adding WineHQ key"
-    apt-key add wine-hq-sigining-key.key 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
+    apt-key add /tmp/ae/wine-hq-sigining-key.key 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
     || _log_and_show "${_error} Adding WineHQ keys failed"
     _debug_log "Adding WineHQ repository"
     echo "deb https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list \
@@ -1550,9 +1571,9 @@ function add_repositories()
       _debug_log "Adding Docker repository is set to true"
       _log_and_show "${_repo} Docker-CE repository"
       _debug_log "Getting Docker-CE repository Key"
-      wget -q https://download.docker.com/linux/"${distro_name}"/gpg -O docker-key.gpg >> "$log_file"  2>&1
+      wget -q https://download.docker.com/linux/"${distro_name}"/gpg -O /tmp/ae/docker-key.gpg >> "$log_file"  2>&1
       _debug_log "Adding Docker repository key"
-      apt-key add docker-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
+      apt-key add /tmp/ae/docker-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_and_show "${_error} Adding Docker-CE keys failed"
       _debug_log "${_repo} Docker-CE"
       echo "deb [arch=$ARCH] https://download.docker.com/linux/${distro_name}  ${code_name} stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list \
@@ -1569,9 +1590,9 @@ function add_repositories()
     if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "i386" ]; then
       _log_and_show "${_repo} Skype for Linux repository"
       _debug_log "Getting Skype repository key"
-      wget -q https://repo.skype.com/data/SKYPE-GPG-KEY -O skype-linux-key.gpg >> "$log_file"
+      wget -q https://repo.skype.com/data/SKYPE-GPG-KEY -O /tmp/ae/skype-linux-key.gpg >> "$log_file"
       _debug_log "Adding Skype keys to trusted list"
-      apt-key add skype-linux-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
+      apt-key add /tmp/ae/skype-linux-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_and_show "${_error} Adding Skype for linux key failed"
       echo "deb [arch=$ARCH] https://repo.skype.com/deb stable main #Skype" > $SOURCES_FILE_DIR/skype-stable.list \
       || _log_and_show "${_error} Adding Skype for linux repository failed"
@@ -1587,9 +1608,9 @@ function add_repositories()
     if [ "$ARCH" == "amd64" ]; then
       _log_and_show "${_repo} Visual Studio Code repository"
       _debug_log "Getting GPG keys for repository"
-      curl -s https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+      wget -q https://packages.microsoft.com/keys/microsoft.asc -O /tmp/ae/microsoft.asc
       _debug_log "Adding Key to trusted GPG keys directory"
-      apt-key add microsoft.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "${_error} Adding Visual Studio Code key failed"
+      apt-key add /tmp/ae/microsoft.asc 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "${_error} Adding Visual Studio Code key failed"
       echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list
     else
       _log_and_show "Architecture: $ARCH is not supported by Visual studio Code."
@@ -1602,8 +1623,8 @@ function add_repositories()
   if [ "$add_signal_repo" == "true" ]; then
    if [ "$ARCH" == "amd64" ]; then
       _log_and_show "${_repo} Signal repository"
-      wget -q https://updates.signal.org/desktop/apt/keys.asc -O signal.asc >> "$log_file"
-      apt-key add signal.asc  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
+      wget -q https://updates.signal.org/desktop/apt/keys.asc -O /tmp/ae/signal.asc >> "$log_file"
+      apt-key add /tmp/ae/signal.asc  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_and_show "${_error} Adding Signal Key Failed"
       echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/signal-xenial.list
     else
@@ -1617,8 +1638,8 @@ function add_repositories()
   # Kubernetes
   if [ "$add_kubernetes_repo" == "true" ]; then
     if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "armhf" ] || [ "$ARCH" == "arm64" ] ; then
-      wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg -O kubernetes.gpg >> "$log_file"
-      apt-key add kubernetes.gpg  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
+      wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg -O /tmp/ae/kubernetes.gpg >> "$log_file"
+      apt-key add /tmp/ae/kubernetes.gpg  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_and_show "${_error} Adding Kubernetes Key Failed"
       echo "deb http://apt.kubernetes.io/ kubernetes-${code_name} main #Kubernetes" > ${SOURCES_FILE_DIR}/kubernetes.list
     else
@@ -1659,9 +1680,9 @@ function add_repositories()
   # Remove artifacts and keys
   _debug_log "Removing keys and converted files from current directory"
   (
-    rm  -f "${dir}"/*.gpg "${dir}"/*.asc "${dir}"/*.pub "${dir}"/Release \
-        "${dir}"/*.Release "${dir}"/*.key "${dir}"/*.pub.* "${dir}"/*.asc.* \
-        "${dir}"/*.key.* "${dir}"/*.gpg.* >> "$log_file"
+    rm  -f /tmp/ae/*.gpg /tmp/ae/*.asc /tmp/ae/*.pub /tmp/ae/Release \
+        /tmp/ae/*.Release /tmp/ae/*.key /tmp/ae/*.pub.* /tmp/ae/*.asc.* \
+        /tmp/ae/*.key.* /tmp/ae/*.gpg.* >> "$log_file"
   )
   _line_fill >> "$log_file"
 }
@@ -2022,12 +2043,12 @@ function _install_pip_python()
     2 | python2 )   readonly pip_command="pip"
                     dependency_packages=(python-pip)
                     python_packages=("${parsed_pip2_packages[@]}")
-                    requirements_file="/tmp/requirements2.txt"
+                    requirements_file="/tmp/ae/requirements2.txt"
                     ;;
     3 | python3 )   readonly pip_command="pip3";
                     dependency_packages=(python3-pip)
                     python_packages=("${parsed_pip3_packages[@]}")
-                    requirements_file="/tmp/requirements3.txt"
+                    requirements_file="/tmp/ae/requirements3.txt"
                     ;;
               * )   _log_and_exit "Internal Function Error. Arguments for python version." "19";;
   esac
@@ -2185,6 +2206,49 @@ function install_debs ()
 }
 
 
+function install_binaries ()
+{
+
+  # Function to get the binaries files from URL in the ${dir}/data/bin.list
+  # The list file has following format
+  # <URL>,<filename>
+  # If ypu want to specify relative path you
+  # can do so relative to /usr/local/bin
+  # Be careful not to rename existing ones
+
+  local index bin_url line bin_name
+  local exit_status
+  _debug_log "Option: Install Bin Files, Function name: install_binaries"
+  # Check if simulate is true
+  for index in "${parsed_bin_packages[@]}"; do
+    _debug_log "$index"
+    bin_url=$(echo "$index" | cut -d ',' -f1 )
+    bin_name=$(echo "$index" | cut -d ',' -f2 )
+    _debug_log "BIN file url: $bin_url"
+    _debug_log "BIN file name: $bin_name"
+    _log_and_show "${_info} Downloading $bin_name"
+    wget -q "$bin_url" -O "/tmp/ae/${bin_name}" >> "$log_file"
+    exit_status="$?"
+    if [ $exit_status -eq 0 ]; then
+      _log_and_show "${_installing} $bin_name..."
+       if [ "$simulate_apt_install" == "true" ]; then
+         set_yellow
+         _log_and_show "${_simulate} Skipping Installation!!"
+         set_default
+       else
+        {
+          cp -rf "/tmp/ae/${bin_name}" /usr/local/bin/"${bin_name}"
+        } || _log_and_show "${_error} Failed to copy $bin_name";
+        _debug_log "Setting Permissions..."
+        chmod +x /usr/local/bin/"$bin_name" >> "${log_file}"
+      fi
+    else
+      _log_and_show "${_error} Failed to download $bin_name."
+    fi
+  done
+  _line_fill >> "$log_file"
+}
+
 function _autopilot_check_task_flag_and_run()
 {
   # checks flags set for each task/function and runs it
@@ -2218,6 +2282,8 @@ function all_in_one()
   install_debs;
   install_pip_packages_2;
   install_pip_packages_3;
+  purge_not_required;
+  install_binaries;
   _line_fill;
   set_default;
 }
@@ -2249,6 +2315,7 @@ function _process_menu
       debs       'Install DEB packages' \
       pip2       'Install Python 2 packages via pip' \
       pip3       'Install Python 3 packages via pip3' \
+      bin        'Download & Install Static Binaries' \
       repo_rst   'Reset Repositories for cleanup' \
       ppa_rst    'Purge PPAs' \
       logdel     'Delete Script logs' \
@@ -2310,8 +2377,13 @@ function _process_menu
                   ;;
       pip3)       _show_confirmation_dialog_for_tasks \
                   "Install Python3 packages" \
-                  "Python packaes for Python 3 mentioned in pip3.list will be installed via pip. If necessary python3-pip package will be installed from apt.\n\nProceed?" \
+                  "Python packaes for Python 3 listed in pip3.list will be installed via pip. If necessary python3-pip package will be installed from apt.\n\nProceed?" \
                   "install_pip_packages_3"
+                  ;;
+      bin)        _show_confirmation_dialog_for_tasks \
+                  "Install Static Binaries" \
+                  "Download & Install binaries listed in bin.list or config.install.binaries?" \
+                  "install_binaries"
                   ;;
       log)        _debug_log "Delete log selected"
                   delete_log_file;
@@ -2587,6 +2659,7 @@ function main()
     _autopilot_check_task_flag_and_run "$ae_task_pip2" "install_pip_packages_2"
     _autopilot_check_task_flag_and_run "$ae_task_pip3" "install_pip_packages_3"
     _autopilot_check_task_flag_and_run "$ae_task_purge" "purge_not_required"
+    _autopilot_check_task_flag_and_run "$ae_task_bin" "install_binaries"
   else
   _process_menu;
   #_log_and_show "DEBUG: Options Processed"

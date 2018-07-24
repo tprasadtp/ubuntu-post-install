@@ -20,7 +20,7 @@ config:
     debs: true
     pip2: true
     pip3: true
-
+    binaries: true
   # Repository Flags
   add_repo:
     winehq: true
@@ -66,6 +66,14 @@ config:
     debian_packages:
       - https://atom-installer.github.com/v1.28.0/atom-amd64.deb,Atom-Editor.deb
       - https://download.teamviewer.com/download/teamviewer_i386.deb,Teamviewer.deb
+    # Static Binaries which will be placed in /usr/local/bin
+    # Minikube, Coker compose, etc.
+    # Follows same pattern as Debian packages
+    # Name to be saved is second field
+    binaries:
+      - https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m),docker-compose
+      - https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64,minikube
+      - https://github.com/kubernetes/kompose/releases/download/v1.15.0/kompose-linux-amd64,kompose
     apt:
       # Admin related Stuff
       administration:

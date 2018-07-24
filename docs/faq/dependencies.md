@@ -11,7 +11,7 @@ The script depends on following utilities which are usually present on a typical
 !!! tip "Install Dependencies"
 
     ```console
-    sudo apt-get install -y --no-install-recommends lsb-release curl whiptail coreutils iputils-ping procps awk gpgv wget
+    sudo apt-get install -y --no-install-recommends lsb-release curl whiptail coreutils iputils-ping procps gpgv wget
     ```
 
 - `lsb-release`, for determining the release and distribution.

@@ -124,3 +124,28 @@
   to = "api/version.yml"
   status = 301
   force = true
+
+# Scripts
+[[redirects]]
+  from = "/get"
+  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/dl/*"
+  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/dl"
+  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/after-effects"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/gpg"
+  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/after-effects.asc"
+  status = 200
+  force = true

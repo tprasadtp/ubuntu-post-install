@@ -183,6 +183,9 @@ This will perform Following actions. (In the following order)
 - Add PPAs in the list file
 - Install Apps
 - Install DEB files
+- Install Python 2 modules
+- Install Python 3 Modules
+- Install Static binaries
 
 This option will honor --yes and --simulate options as individual tasks would do.
 
