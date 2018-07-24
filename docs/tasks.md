@@ -143,6 +143,27 @@ https://atom-installer.github.com/v1.21.1/atom-amd64.deb,ATOM-Editor.deb
 !!! note "Note on file names in configuration"
     Please note that deb file will be  saved with the name mentioned in the file. (DEB file is named **exactly** as mentioned in the second field. So if you want them to be named with extension .deb include that in the second field and avoid illegal chars)
 
+## Install Static binaries to /usr/local/bin
+
+This will install binaries `bin.list` or YAML config under `config.install.binaries`.
+
+- APT Logs will  show entry in the format `[<date and time>] [  APT  ] <log>` for actions performed by apt commands. (`apt-get install -f` for missing packages)
+- **Simulate** option will only download the package but not install it.
+- Configuration file is a `csv` file without headers. first column corresponds to URL ans the second field the file name under which the file is saved.
+- Each DEB file to be installed should have following entry.
+- URL to the deb file which can be accessed using wget`,`Name of the deb file without any spaces or special chars except hyphen.
+- For example to install kubernetes compose the entry should look like below.
+
+```csv
+https://github.com/kubernetes/kompose/releases/download/v1.15.0/kompose-linux-amd64,kompose
+```
+
+- First part is the URL to the deb file separated by ',' name of the file.
+
+!!! note "Note on file names in configuration"
+    Please note that file will be saved with the name mentioned in the file & can be executed as such.
+
+
 ## Install python packages (via pip)
 
 This will install system wide python packages using pip. There are two lists. `pip.list` and `pip3.list` for python 2 and python 3 respectively. Alternatively you can specify in YAML config under `config.install.python2` or `config.install.python3`

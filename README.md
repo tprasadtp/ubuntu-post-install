@@ -145,7 +145,7 @@ A Complete  list of supported distributions is given below.
 [![Add-PPA](https://img.shields.io/badge/Add_PPAs-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#add-personal-package-archives-ppa)
 [![Purge-PPA](https://img.shields.io/badge/Purge_PPA-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#what-can-it-do)
 [![Install-Debs](https://img.shields.io/badge/Install_.DEB_Packages-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files)
-[![Install-Static-Binaries](https://img.shields.io/badge/Install-Static-Binaries-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-static-binaries)
+[![Install-Static-Binaries](https://img.shields.io/badge/Install_Static_Binaries-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-static-binaries)
 
 ## Issues & Help
 
