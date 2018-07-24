@@ -30,7 +30,13 @@ Run this in Terminal
 
 ```console
 wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash
+
+If you prefer a shorter url,
+
+wget -Nnv https://ae.prasadt.com/get -O - | bash
 ```
+
+> Shorter URL redirects to same file on GitHub, but is cached & proxies to GitHub at CDN.
 
 #### With Git
 

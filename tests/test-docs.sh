@@ -24,8 +24,17 @@ do
 	index=$((index + 1))
 done
 
+# Some checksumming
+echo "Checksums"
+touch sha1.txt sha256.txt
+sha1sum after-effects get-after-effects.sh | tee -a sha1.txt
+sha256sum after-effects get-after-effects.sh | tee -a sha256.txt
+echo "Copying Checksums"
+mkdir -p ./_site/ || echo "Failed to create dir _site"
+cp *.txt ./_site/ || echo "Failed to copy SHA Checksums"
 echo "Copy API Files"
-cp -R ./api/ ./_site/api/
+cp -R ./api/ ./_site/api/ || echo "Failed to copy config files"
+
 echo "Copying Signature file"
 if [ -f after-effects.asc ]; then
   mkdir -p ./_site/api/gpg

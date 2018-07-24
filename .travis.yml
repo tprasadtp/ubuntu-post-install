@@ -52,6 +52,8 @@ jobs:
       file:
       - after-effects
       - after-effects.asc
+      - sha1.txt
+      - sha256.txt
       skip_cleanup: true
       prerelease: true
       name: Relesae - ${TRAVIS_TAG}
