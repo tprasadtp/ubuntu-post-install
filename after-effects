@@ -2227,7 +2227,13 @@ function install_binaries ()
     _debug_log "BIN file url: $bin_url"
     _debug_log "BIN file name: $bin_name"
     _log_and_show "${_info} Downloading $bin_name"
-    wget -q "$bin_url" -O "/tmp/ae/${bin_name}" >> "$log_file"
+    {
+      wget -q "$bin_url" -O "/tmp/ae/${bin_name}" >> "$log_file"
+    } ||
+    {
+      _log_and_show "${_error} Downloading $bin_name failed."
+      continue
+    }
     exit_status="$?"
     if [ $exit_status -eq 0 ]; then
       _log_and_show "${_installing} $bin_name..."
