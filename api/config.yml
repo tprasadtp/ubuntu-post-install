@@ -1,5 +1,5 @@
 # Install Config
-version: 3
+version: 4
 name: Polaris
 author: Prasad T
 # Configuraion
@@ -21,6 +21,8 @@ config:
     pip2: true
     pip3: true
     binaries: true
+    flatpakrepo: true
+    flatpackapps: true
   # Repository Flags
   add_repo:
     winehq: true
@@ -40,7 +42,11 @@ config:
     purge_enabled: true
     preserve_debs: true
     auto_yes: true
-
+  flatpak:
+    repos:
+      - https://flathub.org/repo/flathub.flatpakrepo,flathub
+    apps:
+      - com.slack.Slack
   # Packages to purge
   purge:
     - gnome-mines

@@ -83,6 +83,7 @@ function _init_printf_variables()
     readonly          _array="[   PKG Array   ]"
     readonly            _apt="[  APT-Packges  ]"
     readonly           _list="[  Cleaned List ]"
+    readonly       _flatpack="[    Flatpack   ]"
     #readonly           _falg="[     Flag      ]"
 
     #colors for display
@@ -968,6 +969,10 @@ function _set_yaml_config()
     # Binaries Install
     _check_bool "ae_task_bin" "${config__tasks__binaries[0]}"
 
+    # Flatpack
+    _check_bool "ae_task_flatpaklrepo" "${config__tasks__flatpackrepo}"
+    _check_bool "ae_task_flatpakapps" "${config__tasks__flatpackapps}"
+
     if [ "${bool_hide_config}" != "true" ]; then
       printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
@@ -1002,6 +1007,8 @@ function _set_yaml_config()
       printf "${_rtasks} %-20s | %-10s |\n" "Python 2 Modules" "$ae_task_pip2"
       printf "${_rtasks} %-20s | %-10s |\n" "Python 3 Modules" "$ae_task_pip3"
       printf "${_rtasks} %-20s | %-10s |\n" "Static Binaries" "$ae_task_bin"
+      printf "${_rtasks} %-20s | %-10s |\n" "Flatpack Repos" "$ae_task_flatpakrepo"
+      printf "${_rtasks} %-20s | %-10s |\n" "Flatpack Repos" "$ae_task_flatpakapps"
       set_default;
       _line_fill;
     else
@@ -1036,6 +1043,8 @@ function _set_yaml_config()
         printf "${_rtasks} %-20s | %-10s |\n" "Python 2 Modules" "$ae_task_pip2"
         printf "${_rtasks} %-20s | %-10s |\n" "Python 3 Modules" "$ae_task_pip3"
         printf "${_rtasks} %-20s | %-10s |\n" "Static Binaries" "$ae_task_bin"
+        printf "${_rtasks} %-20s | %-10s |\n" "Flatpack Repos" "$ae_task_flatpakrepo"
+        printf "${_rtasks} %-20s | %-10s |\n" "Flatpack Repos" "$ae_task_flatpakapps"
         _line_fill;
         _line_fill;
       } >> "${log_file}"
@@ -1203,6 +1212,8 @@ function _set_list_config()
                           pip.list
                           pip3.list
                           bin.list
+                          flatpackrepo.list
+                          flatpak.list
                         )
 
     for list in "${lists[@]}"; do
@@ -1236,6 +1247,8 @@ function _set_list_config()
           pip.list)             declare -gar parsed_pip2_packages=("${tmp_arr[@]}");;
           pip3.list)            declare -gar parsed_pip3_packages=("${tmp_arr[@]}");;
           bin.list)             declare -gar parsed_bin_packages=("${tmp_arr[@]}");;
+          flatpakrepo.list)     declare -gar parsed_flatpack_repos=("${tmp_arr[@]}");;
+          flatpak.list)         declare -gar parsed_flatpack_apps=("${tmp_arr[@]}");;
         esac
         # Unset local array
       else
@@ -2255,6 +2268,180 @@ function install_binaries ()
   _line_fill >> "$log_file"
 }
 
+function __install_flatpack_ppa()
+{
+  # Adds Flatpack PPA
+  _install_pre_requisites
+  add-apt-repository ppa:alexlarsson/flatpak 2>&1 \
+  | _add_timestamp_to_logs "${_ppa_logs}"
+  apt-update && sudo apt install -y flatpak 2>&1 \
+  | _add_timestamp_to_logs "${_apt_logs}"
+  exit_status=$?
+  if [[ $exit_status -ne 0 ]]; then
+    _log_and_exit "${_flatpack} Failed to add flatpack PPA" "21"
+  fi
+
+}
+
+
+function __install_flatpack_base()
+{
+  # Install base dependencies & pacakges for flatpack
+  readonly local distro="$(lsb_release -cs | tr '[:upper:]' '[:lower:]')"
+  case "${distro}" in
+    sarah | serena | sonya )  __install_flatpack_ppa;;
+    xenial | trusty | bionic) __install_flatpack_ppa;;
+    sylvia | tara )           _log_and_show "${_flatpack} No need to install dependencies for Mint 18.3 & above";;
+    loki | juno)              __install_flatpack_ppa;;
+    stretch )                 _install_dependencies "flatpak";; # Backports must be enabled
+    jessie )                  _install_dependencies "flatpak";; # Backports must be enabled
+    *)                        _log_and_exit "${_error} Flatpack is not supported." "16"
+  esac
+}
+
+function add_flatpak_repos()
+{
+  # Function to Add flatpack remotes
+  # The list file has following format
+  # List: flatpackrepo.list
+  # YAML: Under config.flatpack.repos
+  # <flatpack remote>,<url to flatpackrepo file>
+  local index fltpk_url fltpk_name
+  local exit_status
+  _debug_log "Option: Install Flatpack repos , Function name: add_flatpak_repos"
+  _install_flatpack_base
+  for index in "${parsed_flatpack_repos[@]}"; do
+    _debug_log "$index"
+    fltpk_url=$(echo "$index" | cut -d ',' -f1 )
+    fltpk_name=$(echo "$index" | cut -d ',' -f2 )
+    _debug_log "Flatpack file url: $fltpk_url"
+    _debug_log "Flatpack name: $fltpk_name"
+  	_debug_log "Adding Flatpack Remotes"
+  	# Check if already added
+  	if flatpak remotes --system | grep -q "${fltpk_name}"; then
+  		_log_and_show "${_flatpack} Repository already added."
+  	else
+  		# Add repository
+  		_log_and_show "${_flatpack} Adding $index repository"
+  		flatpak remote-add --system --if-not-exists "${flatpack_name}" "${flatpak_url}" 2>&1 \
+      | _add_timestamp_to_logs "${_flatpack}"
+      exit_status="$?"
+      # check if successful
+      if [ "$exit_status" = "0" ]; then
+       _log_and_show "${_flatpack} Added $fltpk_name successfully."
+      else
+        set_yellow
+       _log_and_show "${_flatpack} Failed to add $fltpk_name"
+       set_default
+      fi
+  	 fi
+   done
+}
+
+
+function remove_flatpak_repos()
+{
+  # Function to Remove flatpack remotes
+  # The list file has following format
+  # List: flatpackrepo.list
+  # YAML: Under config.flatpack.repos
+  # <flatpack remote>,<url to flatpackrepo file>
+  __install_flatpack_base
+  local index fltpk_name
+  local exit_status
+  _debug_log "Option: Remove Flatpack repos , Function name: remove_flatpak_repos"
+  for index in "${parsed_flatpack_repos[@]}"; do
+    _debug_log "$index"
+    fltpk_name=$(echo "$index" | cut -d ',' -f2 )
+    _debug_log "Flatpack name: $fltpk_name"
+  	_debug_log "Removing Flatpack Remotes"
+  	# Check if already added
+  	if flatpak remotes --system | grep -v -q "${fltpk_name}"; then
+  		_log_and_show "${_flatpack} Repository already added."
+  	else
+  		# Add repository
+  		_log_and_show "${_flatpack} Adding $index repository"
+  		flatpak remote-delete --system --force "${flatpack_name}" 2>&1 \
+      | _add_timestamp_to_logs "${_flatpack}"
+      exit_status="$?"
+      # check if successful
+      if [ "$exit_status" = "0" ]; then
+       _log_and_show "${_flatpack} Removed $fltpk_name successfully."
+      else
+        set_yellow;
+       _log_and_show "${_flatpack} Failed to remove $fltpk_name."
+       set_default;
+      fi
+  	 fi
+   done
+}
+
+
+function install_flatpack_apps()
+{
+  local exit_status index
+  # Installs flatpack apps from either
+  # List: flatpack.list
+  # YAML: Under config.flatpack.apps
+  __install_flatpack_base
+  _log_and_show "${_flatpack} Installing $index"
+  for index in "${parsed_flatpack_apps[@]}"; do
+    if [ "$simulate_apt_install" == "true" ]; then
+      set_yellow;
+      _log_and_show "${_simulate} Flatpack installs cannot be simulated."
+      set_default;
+    else
+      flatpak --assumeyes --reinstall --system  install "${index}" \
+      | _add_timestamp_to_logs "${_flatpack}"
+    fi
+    exit_status=$?
+    unset packages;
+    if [[ $exit_status -eq 0 ]]; then
+    _log_and_show "${_flatpack} Success!"
+    else
+    set_yellow;
+    _log_and_show "${_flatpack} Something went wrong while installing $index."
+    set_blue;
+    _log_and_show "${_notice} Please see the log file for more details."
+    set_default;
+    fi
+  done
+
+}
+
+
+function uninstall_flatpack_apps()
+{
+  local exit_status index
+  # Uninstall flatpack apps from either
+  # List: flatpack.list
+  # YAML: Under config.flatpack.apps
+  __install_flatpack_base
+  _log_and_show "${_flatpack} Removing $index"
+  for index in "${parsed_flatpack_apps[@]}"; do
+    if [ "$simulate_apt_install" == "true" ]; then
+      set_yellow;
+      _log_and_show "${_simulate} Flatpack uninstall cannot be simulated."
+      set_default;
+    else
+      flatpak --assumeyes --system --force-remove uninstall "${index}" \
+      | _add_timestamp_to_logs "${_flatpack}"
+    fi
+    exit_status=$?
+    unset packages;
+    if [[ $exit_status -eq 0 ]]; then
+    _log_and_show "${_flatpack} Success!"
+    else
+    set_yellow;
+    _log_and_show "${_flatpack} Failed to uninstall $index."
+    set_blue;
+    _log_and_show "${_notice} Please see the log file for more details."
+    set_default;
+    fi
+  done
+}
+
+
 function _autopilot_check_task_flag_and_run()
 {
   # checks flags set for each task/function and runs it
@@ -2666,6 +2853,8 @@ function main()
     _autopilot_check_task_flag_and_run "$ae_task_pip3" "install_pip_packages_3"
     _autopilot_check_task_flag_and_run "$ae_task_purge" "purge_not_required"
     _autopilot_check_task_flag_and_run "$ae_task_bin" "install_binaries"
+    _autopilot_check_task_flag_and_run "$ae_task_flatpaklrepo" "add_flatpak_repos"
+    _autopilot_check_task_flag_and_run "$ae_task_flatpakapps" "install_flatpack_apps"
   else
   _process_menu;
   #_log_and_show "DEBUG: Options Processed"
