@@ -970,8 +970,8 @@ function _set_yaml_config()
     _check_bool "ae_task_bin" "${config__tasks__binaries[0]}"
 
     # Flatpack
-    _check_bool "ae_task_flatpaklrepo" "${config__tasks__flatpackrepo}"
-    _check_bool "ae_task_flatpakapps" "${config__tasks__flatpackapps}"
+    _check_bool "ae_task_flatpaklrepo" "${config__tasks__flatpakrepo}"
+    _check_bool "ae_task_flatpakapps"  "${config__tasks__flatpackapps}"
 
     if [ "${bool_hide_config}" != "true" ]; then
       printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
@@ -1008,7 +1008,7 @@ function _set_yaml_config()
       printf "${_rtasks} %-20s | %-10s |\n" "Python 3 Modules" "$ae_task_pip3"
       printf "${_rtasks} %-20s | %-10s |\n" "Static Binaries" "$ae_task_bin"
       printf "${_rtasks} %-20s | %-10s |\n" "Flatpack Repos" "$ae_task_flatpakrepo"
-      printf "${_rtasks} %-20s | %-10s |\n" "Flatpack Repos" "$ae_task_flatpakapps"
+      printf "${_rtasks} %-20s | %-10s |\n" "Flatpack Apps" "$ae_task_flatpakapps"
       set_default;
       _line_fill;
     else
@@ -1044,7 +1044,7 @@ function _set_yaml_config()
         printf "${_rtasks} %-20s | %-10s |\n" "Python 3 Modules" "$ae_task_pip3"
         printf "${_rtasks} %-20s | %-10s |\n" "Static Binaries" "$ae_task_bin"
         printf "${_rtasks} %-20s | %-10s |\n" "Flatpack Repos" "$ae_task_flatpakrepo"
-        printf "${_rtasks} %-20s | %-10s |\n" "Flatpack Repos" "$ae_task_flatpakapps"
+        printf "${_rtasks} %-20s | %-10s |\n" "Flatpack Apps"  "$ae_task_flatpakapps"
         _line_fill;
         _line_fill;
       } >> "${log_file}"
@@ -1131,6 +1131,8 @@ function _set_yaml_config()
     declare -gar parsed_pip2_packages=("${config__install__python2_[@]}")
     declare -gar parsed_pip3_packages=("${config__install__python3_[@]}")
     declare -gar parsed_bin_packages=("${config__install__binaries_[@]}")
+    declare -gar parsed_bin_packages=("${config__flatpack__repos_[@]}")
+    declare -gar parsed_bin_packages=("${config__flatpack__apps_[@]}")
  fi
 
   {
