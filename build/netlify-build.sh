@@ -96,6 +96,7 @@ function jekyll_branch()
   done
   echo "---> Copying Config Files"
   rsync -Ea --recursive ./config/ ./_site/config/ && echo "Done!"
+  find ./_site/config -type f
   echo "---> Copying Signature file"
   if [ -f after-effects.asc ]; then
     mkdir -p ./config/gpg
