@@ -74,7 +74,7 @@ function jekyll_production()
   --exclude 'LICENSE' \
   --exclude 'dockerfiles' \
   --exclude 'tests' \
-  ./ ./_site && printf "[ INFO ] Copied gh-pages\n"
+  ./ ./_site && printf "---> Copied gh-pages\n"
   gen_metadata;
 
 }
@@ -84,8 +84,7 @@ function jekyll_branch()
   install_dependencies;
   echo "---> Building Website with Branch"
   mkdocs build;
-  echo "---> Copying Static Files"
-  echo "Generate JSON"
+  echo "---> Convering to JSON"
   mkdir -p ./config/json
   for file in ./config/*.yml;
   do
@@ -95,8 +94,9 @@ function jekyll_branch()
     yamllint "${file}" && yml2json "${file}" | python -m json.tool > ./config/json/"${file_name_json}"
     index=$((index + 1))
   done
-  cp -R ./config/ ./_site/config/
-  echo "Copying Signature file"
+  echo "---> Copying Config Files"
+  cp -R ./config/ ./_site/config/ && echo "Done!"
+  echo "---> Copying Signature file"
   if [ -f after-effects.asc ]; then
     mkdir -p ./config/gpg
     cp ./after-effects.asc ./config/gpg/after-effects
@@ -128,7 +128,7 @@ function main()
 {
       #check if no args
       if [ $# -eq 0 ]; then
-              echo "------> No arguments found. See usage below."
+              echo "---> No arguments found. See usage below."
               usage;
       		    exit 1;
       fi;

@@ -105,23 +105,16 @@
 
 #Config.yml
 [[redirects]]
-  from = "config/config"
+  from = "/config"
   query = {name = ":name"}
-  to = "config/config.yml?name=name"
-  status = 301
-  force = true
-
-#Config.yml Default
-[[redirects]]
-  from = "config/config/default"
-  to = "config/config.yml"
+  to = "/config/default.yml"
   status = 301
   force = true
 
 # Version  to version.yml
 [[redirects]]
-  from = "config/version"
-  to = "config/version.yml"
+  from = "/version"
+  to = "/config/version.yml"
   status = 301
   force = true
 
