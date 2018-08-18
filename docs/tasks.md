@@ -163,7 +163,6 @@ https://github.com/kubernetes/kompose/releases/download/v1.15.0/kompose-linux-am
 !!! note "Note on file names in configuration"
     Please note that file will be saved with the name mentioned in the file & can be executed as such.
 
-
 ## Install python packages (via pip)
 
 This will install system wide python packages using pip. There are two lists. `pip.list` and `pip3.list` for python 2 and python 3 respectively. Alternatively you can specify in YAML config under `config.install.python2` or `config.install.python3`

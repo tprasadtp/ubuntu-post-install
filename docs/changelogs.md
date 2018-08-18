@@ -1,5 +1,11 @@
 # Change logs
 
+## Version 5.3.0
+
+- Move config files from /api to /config
+- Update spotify Keys [Fixes Spotify repos]
+- Fix a bug which prevented Insync Repo being added
+
 ## Version 5.2.0
 
 - New Feature, static binaries installation (kompose,docker-compose etc)
