@@ -103,14 +103,6 @@
   status = 301
   force = true
 
-#Config.yml
-[[redirects]]
-  from = "/config"
-  query = {name = ":name"}
-  to = "/config/default.yml"
-  status = 301
-  force = true
-
 # Version  to version.yml
 [[redirects]]
   from = "/version"
