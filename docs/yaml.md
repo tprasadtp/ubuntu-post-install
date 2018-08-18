@@ -1,6 +1,6 @@
 # YAML Config
 
-The configuration file is pretty much self explanatory so, I am going to just post a sample config file below. All Boolean fields are optional and if not provided or if found to be invalid, fallback to false.
+The configuration file is pretty much self explanatory so, I am going to just post a sample config file below. All Boolean fields are optional and if not provided or if found to be invalid, fallback to false. Default and sample configs can be found in config directory.
 
 ```yml
 # Install Config

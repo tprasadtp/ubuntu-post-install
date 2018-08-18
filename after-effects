@@ -279,7 +279,7 @@ function _init_script_variables()
   bool_check_version="true"
 
   # Define API endpoint for version and config
-  readonly metadata_endpoint="https://ae.prasadt.com/api"
+  readonly metadata_endpoint="https://ae.prasadt.com/config"
 
   # Achtung!!
   # ========================================================================================= #

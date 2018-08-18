@@ -1,6 +1,6 @@
 # Overview of Configuration files
 
-This Script is designed to be flexible. Configurations live in directory `/data` & sample YAML configurations are in `api`.
+This Script is designed to be flexible. Configurations live in directory `/data` & sample YAML configurations are in `config`.
 
 ## Configuration using  lists
 
