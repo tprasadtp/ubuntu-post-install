@@ -93,7 +93,7 @@ pages:
     - Others: faq/others.md
   - Options: clioptions.md
   - What can it do?: tasks.md
-  - Configuration: config.md
+  - Configuration: configuration.md
   - Example Config YAML: yaml.md
   - Logs: logs.md
   - Testing: testing.md
