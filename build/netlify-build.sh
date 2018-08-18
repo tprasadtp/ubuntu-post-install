@@ -95,7 +95,7 @@ function jekyll_branch()
     index=$((index + 1))
   done
   echo "---> Copying Config Files"
-  cp -R ./config/ ./_site/config/ && echo "Done!"
+  rsync -Ea --recursive ./config/ ./_site/config/ && echo "Done!"
   echo "---> Copying Signature file"
   if [ -f after-effects.asc ]; then
     mkdir -p ./config/gpg
