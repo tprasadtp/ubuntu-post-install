@@ -14,13 +14,13 @@ pip install -r ./dockerfiles/mkdocs/requirements.txt
 echo "Building Docs"
 mkdocs build -v -s
 echo "Generate JSON"
-for file in ./yml/*.yml;
+for file in ./config/*.yml;
 do
 	printf "Linting Converting File  to JSON : ${file}\n"
-  file_name_json=$(basename ./api/"${file}" .yml)
+  file_name_json=$(basename ./config/"${file}" .yml)
   file_name_json+=".json"
-  mkdir -p ./yml/json/
-  yamllint "${file}" && yml2json "${file}" | python -m json.tool > ./api/json/"${file_name_json}"
+  mkdir -p ./config/json/
+  yamllint "${file}" && yml2json "${file}" | python -m json.tool > ./config/json/"${file_name_json}"
 	index=$((index + 1))
 done
 
@@ -33,18 +33,18 @@ echo "Copying Checksums"
 mkdir -p ./_site/ || echo "Failed to create dir _site"
 cp ./*.txt ./_site/ || echo "Failed to copy SHA Checksums"
 echo "Copy API Files"
-cp -R ./yml/ ./_site/yml/ || echo "Failed to copy config files"
+cp -R ./config/ ./_site/config/ || echo "Failed to copy config files"
 
 echo "Copying Signature file"
 if [ -f after-effects.asc ]; then
-  mkdir -p ./_site/yml/gpg || echo "Failed to create dir _site"
-	cp ./after-effects.asc ./_site/yml/gpg/after-effects \
+  mkdir -p ./_site/config/gpg || echo "Failed to create dir _site"
+	cp ./after-effects.asc ./_site/config/gpg/after-effects \
 		|| echo "Failed to copy gpg files"
 fi
 echo "Copy Netlify Files"
 cp  ./netlify.toml ./_site/netlify.toml
-mkdir -p ./_site/vendor
-cp ./vendor/netlify-build.sh ./_site/vendor/netlify-build.sh
+mkdir -p ./_site/build
+cp ./build/netlify-build.sh ./_site/build/netlify-build.sh
 echo "Commit Info"
 true > ./_site/commit.txt
 printf "${spacing_string}: ${TRAVIS_COMMIT:0:7}\n" "SRC Commit ID"  \

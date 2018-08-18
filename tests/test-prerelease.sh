@@ -34,7 +34,7 @@ function main()
   --hostname=Docker-Pre-Release \
   -v "$(pwd)":/shared \
   ubuntu:ae-pre-release \
-  ./after-effects --simulate -Y --yes --pre-release  --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/api/config.yml
+  ./after-effects --simulate -Y --yes --pre-release  --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/default.yml
 
   exit_code_from_container="$?"
   echo "Exit code from docker run is: $exit_code_from_container"

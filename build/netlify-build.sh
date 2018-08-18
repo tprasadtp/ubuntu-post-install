@@ -86,20 +86,20 @@ function jekyll_branch()
   mkdocs build;
   echo "---> Copying Static Files"
   echo "Generate JSON"
-  mkdir -p ./api/json
-  for file in ./api/*.yml;
+  mkdir -p ./config/json
+  for file in ./config/*.yml;
   do
     printf "Linting & Converting File  to JSON : ${file}\n"
-    file_name_json=$(basename ./api/"${file}" .yml)
+    file_name_json=$(basename ./config/"${file}" .yml)
     file_name_json+=".json"
-    yamllint "${file}" && yml2json "${file}" | python -m json.tool > ./api/json/"${file_name_json}"
+    yamllint "${file}" && yml2json "${file}" | python -m json.tool > ./config/json/"${file_name_json}"
     index=$((index + 1))
   done
-  cp -R ./api/ ./_site/api/
+  cp -R ./config/ ./_site/config/
   echo "Copying Signature file"
   if [ -f after-effects.asc ]; then
-    mkdir -p ./api/gpg
-    cp ./after-effects.asc ./api/gpg/after-effects
+    mkdir -p ./config/gpg
+    cp ./after-effects.asc ./config/gpg/after-effects
   fi
   gen_metadata;
 }

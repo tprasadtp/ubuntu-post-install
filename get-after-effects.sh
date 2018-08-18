@@ -63,8 +63,8 @@ function get-after-effects()
     echo "Getting: $line"
     wget -Nnv -q -P data/ "${GET_BASE_URL}/data/${line}"
   done <get.mlist
-  wget -q "${GET_BASE_URL}/api/version.yml" -O version.yml
-  wget -q "${GET_BASE_URL}/api/config.yml" -O config.yml
+  wget -q "${GET_BASE_URL}/config/version.yml" -O version.yml
+  wget -q "${GET_BASE_URL}/config/default.yml" -O config.yml
   printf "${YELLOW}Please Run the script after-effects as root\n"
   printf "${BLUE}For documentation visit: https://ae.prasadt.com${NC}\n"
 }

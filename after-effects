@@ -650,7 +650,7 @@ function _set_custom_api_nodes ()
    readonly api_config_url="$url_remote_yaml?name=${remote_config_name}"
   else
    _log_and_show "${_info} Using default YAML"
-    readonly api_config_url="${metadata_endpoint}/config.yml"
+    readonly api_config_url="${metadata_endpoint}/default.yml"
   fi
 
   # Version, Config ang GPG signature URLS

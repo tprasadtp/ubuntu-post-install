@@ -34,7 +34,7 @@ function main()
     echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     echo "Testing On HOST"
     echo "Testing with YAML"
-    sudo ./after-effects --yes --yaml --simulate --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/api/config.yml --name trusty
+    sudo ./after-effects --yes --yaml --simulate --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/default.yml --name trusty
     exit_code="$?"
     echo "Exit code for YAML is $exit_code"
     if [[ $exit_code -ne 0 ]]; then
@@ -62,7 +62,7 @@ function main()
      --yaml \
      --simulate \
      --yes \
-    --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/api/config.yml
+    --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/default.yml
     exit_code="$?"
     echo "Exit code for YAML is $exit_code"
     if [[ $exit_code -ne 0 ]]; then

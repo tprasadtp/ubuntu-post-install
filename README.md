@@ -60,7 +60,7 @@ Please see [Configuration](https://ae.prasadt.com/config/#package-lists) & [Task
 
 Run the script as **root**. You will get an error if you do not run the script as root.
 
-- To use default YAML configuration, which can be found here `https://ae.prasadt.com/config/config.yml`
+- To use default YAML configuration, which can be found here `https://ae.prasadt.com/config/default.yml`
 
   ```console
     sudo ./after-effects -Y
