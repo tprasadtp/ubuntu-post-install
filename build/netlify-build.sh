@@ -74,7 +74,7 @@ function jekyll_production()
   --exclude 'LICENSE' \
   --exclude 'dockerfiles' \
   --exclude 'tests' \
-  ./ ./_site && printf "---> Copied gh-pages\n"
+  ./ ./_site && echo "---> Copied gh-pages"
   gen_metadata;
 
 }
