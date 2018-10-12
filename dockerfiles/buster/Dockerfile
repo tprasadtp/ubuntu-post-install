@@ -1,5 +1,5 @@
 # Base docker image
-FROM debian:jessie
+FROM debian:buster
 LABEL maintainer "Prasad Tengse <code@prasadt.com>"
 ENV DEBIAN_FRONTEND noninteractive
 # Install essentials
