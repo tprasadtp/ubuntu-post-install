@@ -2,8 +2,8 @@
 api: 1
 # Configuraion
 version:
-  number: 521
-  name: 5.2.1 Beta
+  number: 530
+  name: 5.3.0 Beta
 # Stats reporting
 stats:
   report: true
