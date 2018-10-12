@@ -48,7 +48,7 @@ function get-after-effects()
   # Function to get after-effects main module
   if [ -d .git ] && [ "$ignore_git_folder" != "true" ]; then
     printf "This directory seems to be a git repository. Please use git pull or git fetch to update the script.\n"
-    printf "If its not, please delete the .git folder and try again.\n"
+    printf "If its not, please delete the .git folder and try again. Alternatively you can also try running this\nfrom a different directory.\n"
     exit 1;
   fi
   rm -f after-effects ./after-effects.* get.mlist ./get.mlist.* ./README.md ./README.md.* ./data/*.list ./data/*.list.* ./after-effects.asc ./after-effects.asc.*
