@@ -2,8 +2,8 @@
 api: 1
 # Configuraion
 version:
-  number: 530
-  name: 5.3.0 Beta
+  number: 531
+  name: 5.3.1 (Buster Support in Testing)
 # Stats reporting
 stats:
   report: true

@@ -93,7 +93,7 @@ Script will warn you and exit if you are not running latest version of the scrip
      - Docker Community Edition
      - Wine HQ
 
-Usually it takes a while for additional Repositories (Docker, Google Cloud SDK etc) to add support for latest release of Ubuntu. However we can use the previous release for which packages are available. So, using packages built for previous release works fine most of the time. This is also good fix if you are running a alpha or beta release of Ubuntu.
+Usually it takes a while for additional Repositories (Docker, Google Cloud SDK etc) to add support for latest release of Ubuntu. However we can use the previous release for which packages are available. So, using packages built for previous release works fine most of the time. This is also good fix if you are running a alpha or beta release of Ubuntu. These options only work on Ubuntu or distros using ubuntu codenames. They **DO NOT** work on Debian or Linux Mint.
 
 - By default this option is disabled.
 - Use `sudo ./after-effects -f` or `sudo ./after-effects --fix` to enable this.

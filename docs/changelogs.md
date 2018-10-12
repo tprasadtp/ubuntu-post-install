@@ -5,10 +5,11 @@
 - Move config files from /api to /config
 - Update spotify Keys [Fixes Spotify repos]
 - Fix a bug which prevented Insync Repo being added
+- Add priliminary support for Debian 10 Buster.
 
 ## Version 5.2.0
 
-- New Feature, static binaries installation (kompose,docker-compose etc)
+- New Feature: Static binaries installation (kompose,docker-compose etc)
 - All scrip tmp files are now at /tmp/ae/
 
 ## Version 5.1.2

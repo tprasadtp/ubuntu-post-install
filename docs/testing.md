@@ -1,7 +1,7 @@
 # CI and Testing
 
 !!! bug "Test Scripts"
-    Test Scripts assume that you are running on Travis. So They might fails if some environment variables are not set. Please see, [Travis environment variables](https://docs.travis-ci.com/user/environment-variables/).
+    Test Scripts assume that you are running on Travis. So They might fail if some environment variables are not set. Please see, [Travis environment variables](https://docs.travis-ci.com/user/environment-variables/).
 
 Following Tests are done on Travis-CI.
 
@@ -12,7 +12,8 @@ Following Tests are done on Travis-CI.
 - Test on Debian 9 Stretch (Job #build.5)
 - Test on Debian 8 Jessie (Job #build.6)
 - Test on Ubuntu Cosmic  (Job #build.7)
-- Build, Test & deploy documentation (Job #build.8).
+- Test on Debian 10 Buster (Job #build.8)
+- Build, Test & deploy documentation (Job #build.9).
 
 !!! info
     Trusty tests do not install indicator-kdeconnect, peek, openjdk-8-jdk, gnome-todo , gnome-calendar, polari and their PPAs. Please modify your lists accordingly.
