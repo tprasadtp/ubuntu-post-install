@@ -12,9 +12,19 @@ function main()
 {
   if [[ $# -lt 2 ]]; then
     echo "You need to specify distro name & release name"
+    exit -1
   fi
   distro="$1"
   release="$2"
+
+  # Use Default config YML if not specified
+  if [[ $3 == "" ]] || [[ $3 == " " ]]; then
+    config_yml="default.yml"
+  else
+    config_yml="$3"
+  fi
+
+  # Brach name based on Event Types. (cope with Netlify branch URLs hosting config file)
   case "${TRAVIS_EVENT_TYPE}" in
     pull_request )           branch="deploy-preview-${TRAVIS_PULL_REQUEST}";;
     push | cron | api )      branch="${TRAVIS_BRANCH}";;
@@ -62,7 +72,7 @@ function main()
      --yaml \
      --simulate \
      --yes \
-    --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/default.yml
+    --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/"${config_yml}"
     exit_code="$?"
     echo "Exit code for YAML is $exit_code"
     if [[ $exit_code -ne 0 ]]; then
