@@ -30,8 +30,8 @@ readonly EXEC_START=$(date +%s)
 readonly DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.3.0 Beta"
-readonly REL_NUM=530
+readonly REL_NAME="5.3.1 Beta"
+readonly REL_NUM=531
 
 function _init_printf_variables()
 {
