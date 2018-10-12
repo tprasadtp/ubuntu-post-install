@@ -585,9 +585,8 @@ function _fix_ubuntu_derivatives()
                                             _log_and_show "${_warn} This is a pre-release of Ubuntu Which is in early stages of development. Use with caution"
                                             _log_and_show "${_warn} Packages and PPAs might not work with this release!"
                                             ;;
-      stretch | jessie )                    bool_is_debian="true";
+      stretch | jessie | buster )           bool_is_debian="true";
                                             _log_and_show "${_notice} This is Debian. PPAs are disabled."
-
                                             ;;
       *)                                    _log_and_show "${_error} Unknown Distribution/Release."
                                             _log_and_show "${_notice} This Script is not designed to run on this ($code_name) distro/release."
