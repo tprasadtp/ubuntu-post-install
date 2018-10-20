@@ -3,7 +3,7 @@
 ## What if I get an error saying Unknown Distribution/Release?
 
 That usually means you are running a Distribution which is not supported or too old or a derivative which is not recognized by the script. However it also might be possible that `lsb-release` package is missing from your system. Since the script depends on it for determining what is the code-name of the release it will fail.
-You might see ans error like this,
+You might see an error like this,
 
 ```console
 ./after-effects: line 41: lsb_release: command not found
@@ -44,7 +44,7 @@ You might see ans error like this,
 ```
 
 Try running `wget https://ae.prasadt.com/api/version.yml`. If you see SSL errors, that means that your CA bundle is out of date.
-This project uses Amazon Root CA & LetsEncrypt for SSL, make sure that your System trusts these.
+This project uses Amazon Root CA & LetsEncrypt for SSL, make sure that your system trusts these.
 
 ## Script throws a bunch of errors or got struck or hangs
 
@@ -57,7 +57,7 @@ This project uses Amazon Root CA & LetsEncrypt for SSL, make sure that your Syst
 - Remember, some operations of the script can be very lengthy and can involve lots of downloads (If you used default list files, expect up to 2 GB of traffic). So, it might appear that script is stuck because cursor stops blinking. However it is not the case. If you are unsure please check the logs.
 
 !!! tip
-    In rare cases where your Script exited while installing a DEB file, which has unmet dependencies, you might see broken packages error. In that case, run `sudo apt-get install -f` to fix the broken packages and run the script again.
+    In rare cases where your script exited while installing a DEB file, which has unmet dependencies, you might see broken packages error. In that case, run `sudo apt-get install -f` to fix the broken packages and run the script again.
 
 ## Issues not mentioned above?
 

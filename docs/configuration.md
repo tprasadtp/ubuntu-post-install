@@ -1,6 +1,7 @@
 # Overview of Configuration files
 
-This Script is designed to be flexible. Configurations live in directory `/data` & sample YAML configurations are in `config`.
+This Script is designed to be flexible. You have two options of configuring this script.
+`list` files directory `/data` & YAML configurations are in `config`.
 
 ## Configuration using  lists
 
@@ -39,18 +40,19 @@ The script can fetch remote YAML data from given url. Use `--remote-yaml` URL If
 - Remote configuration is displayed as `[  R-Config  ]` in the logs and on the screen. To hide it use `--hide-config`
 - Check [Sample YAML](/yaml/#yaml-config) configuration file [here.](/yaml/#yaml-config)
 
-!!! tip "Use local file"
+!!! tip "Using local file"
 
     - If you are testing, it might be a good idea to use a local file which holds this configuration data. In that  case use `-C <filename>` option.
     - After you customize, might want to use simulate flag. `sudo ./after-effects -s -C config.yml -Y`
+    - If both `-C` and `--remote-yaml` are used, local config file takes priority, and remote file is **completely** ignored.
 
 ## Automate
 
-Setting `"AUTOPILOT=true"` will run all the tasks specified in the YAML file, or if `-L` list option is used, then all tasks are run in following order
+Setting `"AUTOPILOT=true"` will run all the tasks specified in the YAML file, or if `-L` list option is used, then all tasks are executed. the order in which tasks are run is as follows.
 
 - Update
 - Upgrade
-- Add Reposiories
+- Add Repositories
 - Add PPAs [if supported]
 - Install packages
 - Install DEB packages

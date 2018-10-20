@@ -1,8 +1,8 @@
 # Install Config
-version: 3
+version: 5
 name: Polaris
 author: Prasad T
-# Configuraion
+# Configuration
 config:
   # Enabled Tasks
   tasks:
@@ -67,7 +67,7 @@ config:
       - https://atom-installer.github.com/v1.28.0/atom-amd64.deb,Atom-Editor.deb
       - https://download.teamviewer.com/download/teamviewer_i386.deb,Teamviewer.deb
     # Static Binaries which will be placed in /usr/local/bin
-    # Minikube, Coker compose, etc.
+    # minikube, docker-compose, etc.
     # Follows same pattern as Debian packages
     # Name to be saved is second field
     binaries:
@@ -87,7 +87,7 @@ config:
       # Security Related Stuff
       security:
         - gufw
-      # Productiviy & Office Tools & Writing Tools
+      # Productivity & Office Tools.
       productivity:
         - empathy
         - evolution
@@ -110,7 +110,7 @@ config:
         - texlive-font-utils
         - texlive-publishers
         - gummi
-      # Multimedia Tools. Photo Editots Converting tools, plex etc.
+      # Multimedia Tools. Photo Editors Converting tools, plex etc.
       multimedia:
         - audacity
         - vlc

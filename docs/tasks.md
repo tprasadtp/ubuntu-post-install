@@ -18,7 +18,7 @@ This can add the following repositories.
     Please note that the above repositories are sometimes not updated for latest Ubuntu release and most certainly will not be available for upcoming release of Ubuntu(Alpha/Beta). It might take some time till the repositories are available for the latest release. Use -f or --fix command line option or --pre-release in case you are using a Development version of ubuntu to revert using latest available version of repositories (usually previous Ubuntu release or in case of Beta/Alpha latest stable release of ubuntu). [For more info see command line options.](/clioptions/#fix-for-latest-ubuntu-releases)
 
 ??? tip "Controlling which repository is added using config file"
-    You can set your YML file to decide which repository is added. Some repositories may no be suppoted on your architecture or distribution. Take a look at [config.yml](/api/yaml) for example. If you omit a value, it defaults to false **ALWAYS**. Do note that if you are using lists default values are different, they are mentioned in below.
+    You can set your YML file to decide which repository is added. Some repositories may no be supported on your architecture or distribution. Take a look at [config.yml](/api/yaml) for example. If you omit a value, it defaults to false **ALWAYS**. Do note that if you are using lists default values are different, they are mentioned in below.
 
 ??? note "Default Variables if using Lists"
 
@@ -75,7 +75,7 @@ This can add the following repositories.
 ## Add personal package archives (PPA)
 
 - PPAs can be added using the configuration file in data directory `./data/ppa.list` or in the YML file.
-- Only one ppa entry per line (No comments or anything else anywhere in the file) in the format ppa:<author>/ppa for example `ppa:mozillateam/firefox-next` The file will be read and the PPAs will be added from the list.
+- Only one ppa entry per line (No comments or anything else anywhere in the file) in the format ppa:{author}/{ppa} for example `ppa:mozillateam/firefox-next` The file will be read and the PPAs will be added from the list.
 - Logs will  show entry in the format `[date and time] [  PPA-Logs  ] <log>`
 
 !!! warning
@@ -87,38 +87,37 @@ This can add the following repositories.
 
 - Packages can be installed by using configuration lists in the data directory. This works similar to ppas
 
-    ```console
-        --------------------------------------------------------------------------------
-                                      APT Lists
-        --------------------------------------------------------------------------------
-        There are Seven lists under key config.install.apt.[mentioned from 1-7]
-        1. administration : Contains Administrative packages
-        2. security       : contains Security related tools and packages
-        3. productivity   : Office tools, writing tools, LateX, document tools and other
-                            productivity tools, Email clients, browsers, IM clients etc.
-                          : Example : LateX, TeXStudio, Libre office, pandoc empathy, Thunderbird
-        4. Multimedia     : Multimedia tools like media players, audio converters and playes etc.
-        5. development    : IDEs [Spyder, Jetbeans etc], languages [go, python, ruby, rust, java etc],
-                          : Containers [docker lxc rkt etc], Python libraries, compilers [gcc, clang]
-                          : SDKs [AWS SDK, Coogle Cloud SDK, open-jdk, Tensor Flow], headers and libraries[ocl-icd-dev],
-                          : Anything related to development and *-dev or *-devl packages.
-        6. other          : Everything which doesnot fit in the above categories.
-                          : Themes, Tools, Utilities like htop etc.
-        7. External       : Any packages which are provided by ppas, or repositories not present in
-                          : base *buntu distribution. There's a possibility that the repository might not
-                          : be added or may be unavailable or offline. So Keeping the list seperate from
-                          : others packages minimizes errors if there are any.
-        This classification is only for ease of use and need not be strictly followed. You can put
-        vlc package in 'security', it will still install fine. This classification helps
-        while writing configs and editing them. Its advised to follow it if your configs
-        tend to get to couple of hundreds of lines. Also YAML file should be a valid YAML.
-
-        --------------------------------------------------------------------------------
-                                    Special list - Purge list
-        --------------------------------------------------------------------------------
-        There is a special package list under key, config.purge or purge.list, which contains list of apt packages to be
-        purges from the system if present.
-    ```
+   ```console
+   --------------------------------------------------------------------------------
+                                  APT Lists
+   --------------------------------------------------------------------------------
+   There are seven lists under key config.install.apt.[mentioned from 1-7]
+  1. administration : Contains Administrative packages
+  2. security       : contains Security related tools and packages
+  3. productivity   : Office tools, writing tools, LateX, document tools and other
+                      productivity tools, Email clients, browsers, IM clients etc.
+                    : Example : LateX, TeXStudio, Libre office, pandoc empathy, Thunderbird
+  4. multimedia     : Multimedia tools like media players, audio converters and playes etc.
+  5. development    : IDEs [Spyder, Jetbeans etc], languages [go, python, ruby, rust, java etc],
+                    : Containers [docker lxc rkt etc], Python libraries, compilers [gcc, clang]
+                    : SDKs [AWS SDK, Google Cloud SDK, open-jdk, Tensor Flow], headers and libraries[ocl-icd-dev],
+                    : Anything related to development and *-dev or *-devl packages.
+  6. other          : Everything which does not fit in the above categories.
+                    : Themes, Tools, Utilities like htop etc.
+  7. external       : Any packages which are provided by ppas, or repositories not present in
+                    : base [K/L/Ed/X]-Ubuntu distribution. There's a possibility that the repository might not
+                    : be added or may be unavailable or offline. So Keeping the list separate from
+                    : others packages minimizes errors if there are any.
+  This classification is only for ease of use and need not be strictly followed. You can put
+  'vlc' package in 'security', it will still install fine. This classification helps
+  while writing configs and editing them. Its advised to follow it if your configs
+  tend to get to couple of hundreds of lines. Also YAML file should be a valid YAML.
+  --------------------------------------------------------------------------------
+                     Special list - Purge list
+  --------------------------------------------------------------------------------
+  There is a special package list under key, config.purge or purge.list, which contains list of apt packages to be
+  purged from the system.
+  ```
 
 - Make sure that all the packages in the lists are available for your release. Using `-s` command line option helps. Also check for the logs for any errors or conflicts.
 
@@ -152,13 +151,13 @@ This will install binaries `bin.list` or YAML config under `config.install.binar
 - Configuration file is a `csv` file without headers. first column corresponds to URL ans the second field the file name under which the file is saved.
 - Each DEB file to be installed should have following entry.
 - URL to the deb file which can be accessed using wget`,`Name of the deb file without any spaces or special chars except hyphen.
-- For example to install kubernetes compose the entry should look like below.
+- For example, to install kubernetes compose, the entry should look like below.
 
 ```csv
 https://github.com/kubernetes/kompose/releases/download/v1.15.0/kompose-linux-amd64,kompose
 ```
 
-- First part is the URL to the deb file separated by ',' name of the file.
+- First part is the URL to the binary file separated by ',' name of the binary.
 
 !!! note "Note on file names in configuration"
     Please note that file will be saved with the name mentioned in the file & can be executed as such.

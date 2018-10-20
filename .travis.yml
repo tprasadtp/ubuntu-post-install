@@ -15,21 +15,29 @@ jobs:
   - stage: Shellcheck
     env: TEST_ENV="Shellcheck"
     script: "./tests/test-shell-scripts.sh"
+
   - stage: Docker
-    env: TEST_ENV="Xenial-Docker"
-    script: ./tests/test-distro.sh "ubuntu" "xenial"
-  - env: TEST_ENV="Bionic-Docker"
+    env: TEST_ENV="Bionic-Docker"
     script: ./tests/test-distro.sh "ubuntu" "bionic"
+
+  - env: TEST_ENV="Xenial-Docker"
+    script: ./tests/test-distro.sh "ubuntu" "xenial"
+
   - env: TEST_ENV="Trusty"
     script: ./tests/test-distro.sh "ubuntu" "trusty"
+
   - env: TEST_ENV="Debian9-Docker"
     script: ./tests/test-distro.sh "debian" "stretch"
+
   - env: TEST_ENV="Debian8-Docker"
     script: ./tests/test-distro.sh "debian" "jessie"
+
   - env: TEST_ENV="Cosmic-Docker"
     script: "./tests/test-prerelease.sh"
+
   - env: TEST_ENV="Debian10-Docker"
     script: ./tests/test-distro.sh "debian" "buster" "pre-rel.yml"
+
   - stage: Documentation & Deploy
     env: TEST_ENV="Docs-Build"
     script: "./tests/test-docs.sh"

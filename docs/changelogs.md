@@ -4,13 +4,13 @@
 
 - Move config files from /api to /config
 - Update spotify Keys [Fixes Spotify repos]
-- Fix a bug which prevented Insync Repo being added
-- Add priliminary support for Debian 10 Buster.
+- Fix a bug which prevented Insync repo being added
+- Add preliminary support for Debian 10 Buster.
 
 ## Version 5.2.0
 
 - New Feature: Static binaries installation (kompose,docker-compose etc)
-- All scrip tmp files are now at /tmp/ae/
+- All script tmp files are now created /tmp/ae/
 
 ## Version 5.1.2
 
@@ -19,21 +19,21 @@
 
 ## Version 5.1.0
 
-- Specify YAML config via URL. You can use config YAMLS saved as gists.
+- Specify YAML config via URL. You can use config YAMLs saved as gists.
 
 ## Version 5.0
 
 - Remove Pre and Post Hooks.
 - Configuration can be now done using YAML file. Its easer & gives more flexibility
-- Lot of improvements & bug fixes
+- Lot of improvements & bug fixes.
 - Now tagged versions are released to Github releases.
-- Consolidate test scripts
-- Artful is now EOL
-- Add support for Elementary OS 5 - Juno & Mint 19 Tara
-- Version checks also use YAML files
+- Consolidate test scripts.
+- Drop Artful support.
+- Add support for Elementary OS 5 - Juno & Mint 19 Tara.
+- Version checks also use YAML files.
 - ARM support for some repositories. (not all repos support ARM)
 - Move .redirects data to netlify toml
-- Groundwork to move to parser written in Go
+- Groundwork to move to parser written in Go.
 - YAML provides more configuration options. Individual repos & tasks can now be controlled via YAML file.
 
 ## Version 4.0
@@ -56,7 +56,7 @@
 ## Version 3.6
 
 - Add Option to install system wide python packages using pip
-- Promote Bionic to stable and update codenames
+- Promote Bionic to stable and update code-names
 - Update pre-release to cosmic, rename test script for pre release
 - Remove unused dockerfiles
 
@@ -73,13 +73,13 @@
 - Better way to handle EOL error messages
 - Fix: Visual Studio Code GPG key not deleted while removing repos.
 - Lint Readme Markdown
-- Nuke Submodules
+- Nuke Sub-modules
 
 ## Version 3.2
 
 - Allow Bionic test to fail on Travis.
 - Only print logs in Travis if there is an error or a flag is passed.
-- Switch to submodules for data directory
+- Switch to sub-modules for data directory
 - List files have their own repo now.
 - Zesty reaches EOL soon. Remove it.
 - Use daily images for bionic

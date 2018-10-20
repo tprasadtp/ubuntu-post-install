@@ -93,7 +93,7 @@ Script will warn you and exit if you are not running latest version of the scrip
      - Docker Community Edition
      - Wine HQ
 
-Usually it takes a while for additional Repositories (Docker, Google Cloud SDK etc) to add support for latest release of Ubuntu. However we can use the previous release for which packages are available. So, using packages built for previous release works fine most of the time. This is also good fix if you are running a alpha or beta release of Ubuntu. These options only work on Ubuntu or distros using ubuntu codenames. They **DO NOT** work on Debian or Linux Mint.
+Usually it takes a while for additional Repositories (Docker, Google Cloud SDK etc) to add support for latest release of Ubuntu. However we can use the previous release for which packages are available. So, using packages built for previous release works fine most of the time. This is also good fix if you are running a alpha or beta release of Ubuntu. These options only work on Ubuntu or distros using ubuntu codenames and Linux Mint. They **DO NOT** work on Debian.
 
 - By default this option is disabled.
 - Use `sudo ./after-effects -f` or `sudo ./after-effects --fix` to enable this.
@@ -249,7 +249,7 @@ Script always checks if its running the latest version available. If not it thro
     ./after-effects -V <filename>
     ```
 
-Example version files are in `api` directory. All the fields are mandatory.
+Example version file is in `config` directory. All the fields are mandatory.
 
 ## Remote YAML configuration file
 
@@ -303,8 +303,8 @@ Following things are reported. (Nothing more than that)
     - If you are freaking out, its a shell script !! You can literally look into it and check what's collected. Why if you ask? I mostly use it on a bunch of machines/VMs and would like to keep an eye on how it did.
     - Data will be stored in AWS DynamoDB and Google Firebase Real-time Database.
     Data will not be shared with any third party. Period. Only me or my team members will have access
-    to it. If you run a search query on google, it probably collects more data than me. API endpoints may log your IP addresses but script does not and WILL not collect IP addresses. (Github, Google and AWS).
-    - If you flood the reporting endpoints, you might get HTTP 429 errors as reporting endpoints have rate limits. Script will exit with code 59.
+    to it. If you run a search query on google, it probably collects more data than me. API endpoints/PaaS/IaaS provider may log your IP addresses, but script does not and WILL not collect IP addresses.
+    - If you flood the reporting endpoints, you might get HTTP 429 errors as reporting endpoints have rate limits.
 
 ## Version
 
@@ -320,4 +320,4 @@ Following things are reported. (Nothing more than that)
     ./after-effects --version
     ```
 
-This will display version info. You do not have to be root to run this. For all the other tasks you need to be root or use sudo.
+This will display version info. You do **not** have to be root to run this. For all the other tasks you need to be root or use sudo.

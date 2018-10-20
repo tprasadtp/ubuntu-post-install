@@ -52,6 +52,11 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/g"
+  to = "https://github.com/tprasadtp/ubuntu-post-install"
+  status = 301
+  force = true
 
 [[redirects]]
   from = "/github"

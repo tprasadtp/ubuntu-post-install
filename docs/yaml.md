@@ -4,10 +4,10 @@ The configuration file is pretty much self explanatory so, I am going to just po
 
 ```yml
 # Install Config
-version: 3
+version: 5
 name: Polaris
 author: Prasad T
-# Configuraion
+# Configurtaion
 config:
   # Enabled Tasks
   tasks:
@@ -25,7 +25,7 @@ config:
     debs: true
     pip2: true
     pip3: true
-
+    binaries: true
   # Repository Flags
   add_repo:
     winehq: true
@@ -71,6 +71,14 @@ config:
     debian_packages:
       - https://atom-installer.github.com/v1.28.0/atom-amd64.deb,Atom-Editor.deb
       - https://download.teamviewer.com/download/teamviewer_i386.deb,Teamviewer.deb
+    # Static Binaries which will be placed in /usr/local/bin
+    # minikube, docker-compose, etc.
+    # Follows same pattern as Debian packages
+    # Name to be saved is second field
+    binaries:
+      - https://github.com/docker/compose/releases/download/1.20.0/docker-compose-linux-x86_64,docker-compose
+      - https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64,minikube
+      - https://github.com/kubernetes/kompose/releases/download/v1.15.0/kompose-linux-amd64,kompose
     apt:
       # Admin related Stuff
       administration:
@@ -81,15 +89,13 @@ config:
         - gparted
         - synaptic
         - bleachbit
-        - nautilus-admin
       # Security Related Stuff
       security:
         - gufw
-      # Productiviy & Office Tools & Writing Tools
+      # Productivity & Office Tools.
       productivity:
         - empathy
         - evolution
-        - polari
         - realmd
         - pandoc-data
         - pandoc
@@ -109,7 +115,7 @@ config:
         - texlive-font-utils
         - texlive-publishers
         - gummi
-      # Multimedia Tools. Photo Editots Converting tools, plex etc.
+      # Multimedia Tools. Photo Editors Converting tools, plex etc.
       multimedia:
         - audacity
         - vlc
@@ -146,16 +152,7 @@ config:
       # Everything Else
       # Which is conditional
       other:
-        - mesa-opencl-icd
-        - opencl-clhpp-headers
-        - opencl-c-headers
-        - arc-theme
-        - icedtea-8-plugin
-        - openjdk-8-jre
-        - neofetch
         - gnome-online-miners
-        - telepathy-accounts-signon
-        - signon-ui-service
       # Packages supplied by external repositories & PPAs
       # Dont Mix packages provided by distribution and PPAs
       # Sometimes external repos and ppas fail, so better isolate it.

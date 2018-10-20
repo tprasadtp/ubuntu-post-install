@@ -5,3 +5,4 @@
 
 !!! tip "Sensitive"
     Log files might contain sensitive information or personally identifying information.
+    They are not uploaded anywhere.
