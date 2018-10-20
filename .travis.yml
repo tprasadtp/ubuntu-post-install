@@ -69,7 +69,7 @@ jobs:
       skip_cleanup: true
       prerelease: true
       name: ${TRAVIS_TAG} - ${TRAVIS_TAG_MESSAGE}
-      body: "Please check the Changelogs at https://ae.prasadt.com/changelogs/. Commit is - ${TRAVIS_COMMIT:0:7}. "
+      body: "Please check the Changelogs at https://ae.prasadt.com/changelogs/."
       overwrite: true
       on:
         branch: master
