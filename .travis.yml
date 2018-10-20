@@ -10,6 +10,8 @@ branches:
 before_install:
 - chmod +x ./after-effects
 - chmod +x ./tests/*.sh
+- chmod  +x ./build/export-travis-tag-message.sh
+before_deploy: source ./build/export-travis-tag-message.sh
 jobs:
   include:
   - stage: Shellcheck
@@ -66,8 +68,8 @@ jobs:
       - sha256.txt
       skip_cleanup: true
       prerelease: true
-      name: Release -${TRAVIS_TAG}
-      body: Please check the Changelogs at https://ae.prasadt.com/changelogs/.
+      name: ${TRAVIS_TAG} - ${TRAVIS_TAG_MESSAGE}
+      body: "Please check the Changelogs at https://ae.prasadt.com/changelogs/. Commit is - ${TRAVIS_COMMIT:0:7}. "
       overwrite: true
       on:
         branch: master

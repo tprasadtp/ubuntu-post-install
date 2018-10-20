@@ -1,11 +1,16 @@
 # Change logs
 
+## Version 5.3.1
+
+- Add preliminary support for Debian 10 Buster.
+- Fixed typos in documentation.
+- Removed old files, Display git tag message in releases.
+
 ## Version 5.3.0
 
 - Move config files from /api to /config
 - Update spotify Keys [Fixes Spotify repos]
 - Fix a bug which prevented Insync repo being added
-- Add preliminary support for Debian 10 Buster.
 
 ## Version 5.2.0
 

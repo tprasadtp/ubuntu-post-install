@@ -32,5 +32,5 @@ Its in the pipeline, but I cannot guarantee anything. Since I do not use anythin
 
 Well, this isn't very secure or meant to be.
 
-- You can verify them manually or via `./after-effects --verify`.
-- GPG signature of the script is also available at `https://ae.prasadt.com/gpg`.
+- Verify the checksums on Github/Releases or Sigma Server.
+- You can verify them manually or via `./after-effects --verify`. Public Keys should be already in your keyring.
