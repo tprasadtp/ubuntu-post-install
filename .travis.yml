@@ -66,7 +66,7 @@ jobs:
       - sha256.txt
       skip_cleanup: true
       prerelease: true
-      name: Relesae - ${TRAVIS_TAG}
+      name: Release -${TRAVIS_TAG}
       body: Please check the Changelogs at https://ae.prasadt.com/changelogs/.
       overwrite: true
       on:
