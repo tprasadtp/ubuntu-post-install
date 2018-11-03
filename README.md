@@ -8,7 +8,6 @@ before trying out.
 [![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=flat&url=https://ae.prasadt.com/config/json/version.json&query=version.changelog&prefix=What%20is%20New)](https://ae.prasadt.com/changelogs/)
 [![license](https://img.shields.io/github/license/tprasadtp/ubuntu-post-install.svg?style=flat)](https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE)
 ![GitHub repo size in bytes](https://img.shields.io/github/repo-size/tprasadtp/ubuntu-post-install.svg?style=flat)
-[![Code Climate](https://shields-staging.herokuapp.com/codeclimate/issues/tprasadtp/ubuntu-post-install.svg?style=flat&label=Shellcheck%20and%20Markdown%20Issues)](https://codeclimate.com/github/tprasadtp/ubuntu-post-install/issues)
 
 [![Bash](https://static.prasadt.com/logo64/bash.png)](https://github.com/tprasadtp/ubuntu-post-install)
 
