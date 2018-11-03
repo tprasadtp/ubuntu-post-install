@@ -39,9 +39,8 @@ A Complete  list of supported distributions is given below.
 | Ubuntu 18.04      | Bionic Beaver         | Yes            |
 | Ubuntu 16.04      | Xenial Xerus          | Yes            |
 | Ubuntu 14.04      | Trusty Thar           | Yes            |
-| Ubuntu 18.10      | Cosmic Cuttlefish     | --             | Only use it for testing       |
-| Ubuntu 17.10      | Artful Aardvark       | No             | Reached EOL on July 20th 2018 |
-| Ubuntu 17.10      | Zesty Zapus           | No             | Reached EOL on Jan 13th 2018  |
+| Ubuntu 18.10      | Cosmic Cuttlefish     | Yes            |
+| Ubuntu 19.04      | Disco Dingo           | ---            | Only use it for testing       |
 | Linux Mint 17     | Quina                 | Yes            |
 | Linux-Mint 17.1   | Rebecca               | Yes            |
 | Linux-Mint 17.2   | Rafaela               | Yes            |

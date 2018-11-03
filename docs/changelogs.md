@@ -1,5 +1,9 @@
 # Change logs
 
+## Version 5.3.2
+
+- Promote Cosmic to stable, add initial support for disco(19.04)
+
 ## Version 5.3.1
 
 - Add preliminary support for Debian 10 Buster.

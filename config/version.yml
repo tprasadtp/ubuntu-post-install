@@ -1,9 +1,10 @@
 # Version Config
-api: 1
+api: 2
 # Configuraion
 version:
-  number: 531
-  name: 5.3.1 (Buster Support in Testing)
+  number: 532
+  name: 5.3.2
+  changelog: Cosmic is now stable + Prep for Disco
 # Stats reporting
 stats:
   report: true

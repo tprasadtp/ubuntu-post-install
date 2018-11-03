@@ -259,9 +259,9 @@ function _init_script_variables()
 
 
   #-------------------------- Release codenames --------------------------------------
-  readonly code_name_latest_release="bionic"
-  readonly codename_previous_release="artful"
-  readonly codename_upcoming_release="cosmic"
+  readonly code_name_latest_release="cosmic"
+  readonly codename_previous_release="bionic"
+  readonly codename_upcoming_release="disco"
 
   #============================ Switches/ bools & Vars ================================
 
@@ -571,18 +571,18 @@ function _fix_ubuntu_derivatives()
                                             code_name="bionic"
                                             _log_and_show "${_elementary} Changed codename to $code_name"
                                             ;;
-      xenial | trusty | artful | bionic )   readonly bool_config_partner_repo="true"
+      xenial | trusty | cosmic | bionic )   readonly bool_config_partner_repo="true"
                                             _log_and_show "${_info} Keeping the codename as: $code_name."
                                             ;;
       zesty )                               _eol_message "$code_name" "January 13th, 2018"
                                             ;;
       artful )                              _eol_message "$code_name" "July, 2018"
                                             ;;
-      cosmic  )                             readonly bool_config_partner_repo="true"
+      disco )                               readonly bool_config_partner_repo="true"
                                             set_magenta;
-                                            _log_and_show "${_pre_release} This is Ubuntu 18.10 Cosmic"
+                                            _log_and_show "${_pre_release} This is Ubuntu 19.04 Disco Dingo"
                                             _log_and_show "${_pre_release} Please use --pre-release flag if you cannot add repos yet. There's no fix for PPAs."
-                                            _log_and_show "${_warn} This is a pre-release of Ubuntu Which is in early stages of development. Use with caution"
+                                            _log_and_show "${_warn} This is a pre-release of Ubuntu, which is in early stages of development. Use with caution!"
                                             _log_and_show "${_warn} Packages and PPAs might not work with this release!"
                                             ;;
       stretch | jessie | buster )           bool_is_debian="true";

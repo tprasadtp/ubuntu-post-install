@@ -19,6 +19,10 @@ jobs:
     script: "./tests/test-shell-scripts.sh"
 
   - stage: Docker
+    env: TEST_ENV="Cosmic-Docker"
+    script: ./tests/test-distro.sh "ubuntu" "cosmic"
+
+  - stage: Docker
     env: TEST_ENV="Bionic-Docker"
     script: ./tests/test-distro.sh "ubuntu" "bionic"
 
@@ -34,7 +38,8 @@ jobs:
   - env: TEST_ENV="Debian8-Docker"
     script: ./tests/test-distro.sh "debian" "jessie"
 
-  - env: TEST_ENV="Cosmic-Docker"
+  - stage: Pre-Release-Builds
+    env: TEST_ENV="Disco-Docker"
     script: "./tests/test-prerelease.sh"
 
   - env: TEST_ENV="Debian10-Docker"
@@ -53,7 +58,7 @@ jobs:
       target-branch: gh-pages
       email:
         secure: dq/+hKw1qcf0OzeqPmcXZJMrOTn/sEEa0SuqagtzVchbvrkBc3gNWcRnG960nlZS7sL4Jdtmp3rm1dfPJl9a3R9Ra6rWzK8j1MEA8/N8BCi0y1NbQP/gHCHooEDJq3Jz2PJzZA/f5+qlR7b7Vs0xmZRfHwcsQy9FKd8mwTcQ8n4V7P3F/1FfrOgNyr5J/r5zlzHNhwVbshrJyDivX7rl6rpIKsDmXNEM7DEws9AeNlsLgeQRtl77+U04h4CHQD8Y9N5hj+Rh4OJL5V1NVhN8/zOMsfp1lZuj9OWWapRDmpV7Y9CDY8bGAmxuG5QP6CIe2f+PoSXWZw4Y20pLN2ke4GSHhWzX0nElKh9iv3v/wb6Hitsbk4xvSAJ71+BNzQFJOIBwCdBTNMQY3JExG9CrxPylMlGFnyEfQytYnEZAzwSy26smJREvcDi+d1eM5I8RLhp3OhOaQw6/xxTEcMCf5qCuYbDVGnx3mO8UQ52c6Fjd+CQ5BVaKAK1uSSRfIyxQS2CgVVrIKVT1s+ooChuM1BHjn3CW1EcMWiQ/KJO1hjTJ+GV7CB5xA99m04GsI5QASfFvPO1xzlx7elI6vPkIvjVH38ixMEo/evVZN35HlUgpEgQ7YNgRnP4iyAmPcYGmjpzXKl7CZtjpIamWiLQX8xrF15+enxueAznJLCvJ5vk=
-      name: valarie-ci-bot
+      name: Valarie-CI-bot
       github-token:
         secure: oRr7HXuHUseOhfI7+gIP9pKleVed+6X8iS/aCSPnZxWPISemFAxki5Kx5sLr+6O6u3Sm1pZ4aVE5KDQ8akNmuoAeeC0UVgjYnt1vlbHaMYCzTkRW4ObrB6QjGQHOJuFUaTZPEX06LfdRJPiz2qfkZQGubVlrUWojAWF2Ps+LE6V/7mU9nYnylIherxtw4FeEP0x3DYd453o/qwon1qDWAkS34YDkg+eqFUuTkov6JHyWcne47CqB/HmI5luav6V0FzLkaDuhxlAnUh2cdEMPFWa3m5XKkU69Tbiuy22FELTExwSFpNzkndB+QHoEqfdh9W70mUS/B3cAJdv/L8YLHW/WB7bPaV0kx7sUsosBWYidEaW9MHNddS2YDFoxlqFMYzQ8qRmSWw21xszzw+0KDUe5AC5eo0vOjtIeZ/IPrz0f9oHZ0INQtoT8b9mDv4GrHnvPDkKsWz9YlUDeah5iMeVNjRf21mZL4/VfphklERJKw+8QT7eLc2RfBQHH4+LPRYMQp67W3B2zjxX1OWZJa5zIYXotU5TziLEb+zgypkzO372WJzzLXfT91i/4w3X4kcb7NHm8XWFQ1EW6+KMzXEIP4dwLIRAYvFk9KUn0+kXzw9CL7ZGj30hCgagIGm+W9002fq1q8jXSytZMd6i0fvJXKcSZIu9Mps4oXbO12a8=
       on:
@@ -69,7 +74,7 @@ jobs:
       skip_cleanup: true
       prerelease: true
       name: ${TRAVIS_TAG} - ${TRAVIS_TAG_MESSAGE}
-      body: "Please check the Changelogs at https://ae.prasadt.com/changelogs/."
+      body: "Please check the changelogs at https://ae.prasadt.com/changelogs/."
       overwrite: true
       on:
         branch: master
@@ -78,7 +83,7 @@ matrix:
   fast_finish: true
   allow_failures:
   - env: TEST_ENV="Pre-Release"
-  - env: TEST_ENV="Cosmic-Docker"
+  - env: TEST_ENV="Disco-Docker"
   - env: TEST_ENV="Debian10-Docker"
 notifications:
   email: false
