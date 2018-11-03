@@ -6,7 +6,7 @@
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 set -o pipefail
-export PRE_REL_CODENAME="cosmic"
+export PRE_REL_CODENAME="disco"
 branch=master
 case "${TRAVIS_EVENT_TYPE}" in
   pull_request )           branch="deploy-preview-${TRAVIS_PULL_REQUEST}";;

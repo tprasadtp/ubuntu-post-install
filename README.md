@@ -5,9 +5,9 @@ before trying out.
 
 [![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.svg?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
 [![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=flat&url=https://ae.prasadt.com/config/json/version.json&query=version.name&prefix=V-)](https://github.com/tprasadtp/ubuntu-post-install/)
+[![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=flat&url=https://ae.prasadt.com/config/json/version.json&query=version.changelog&prefix=What%20is%20New)](https://ae.prasadt.com/changelogs/)
 [![license](https://img.shields.io/github/license/tprasadtp/ubuntu-post-install.svg?style=flat)](https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE)
 ![GitHub repo size in bytes](https://img.shields.io/github/repo-size/tprasadtp/ubuntu-post-install.svg?style=flat)
-[![Code Climate](https://shields-staging.herokuapp.com/codeclimate/issues/tprasadtp/ubuntu-post-install.svg?style=flat&label=Shellcheck%20and%20Markdown%20Issues)](https://codeclimate.com/github/tprasadtp/ubuntu-post-install/issues)
 
 [![Bash](https://static.prasadt.com/logo64/bash.png)](https://github.com/tprasadtp/ubuntu-post-install)
 
@@ -100,7 +100,7 @@ See /docs or visit [https://after-effects.prasadt.com](https://after-effects.pra
 [![Debian](https://static.prasadt.com/logo64/debian.png)](https://www.debian.org/)
 
 I have not tested the script on following distros. Because they use ubuntu as their base,
-It should work fine. But no promises.
+It should work fine. But no promises. Please note that Ubuntu 19.04 is **enabled**, that does not mean it works well. YMMV^-2
 
 [![Kde-Neon](https://static.prasadt.com/logo64/kde-neon.png)](https://neon.kde.org/)
 [![Pop-OS](https://static.prasadt.com/logo64/pop-os.png)](https://system76.com/pop)
@@ -116,9 +116,8 @@ A Complete  list of supported distributions is given below.
 | Ubuntu 18.04      | Bionic Beaver         | Yes            |
 | Ubuntu 16.04      | Xenial Xerus          | Yes            |
 | Ubuntu 14.04      | Trusty Thar           | Yes            |
-| Ubuntu 18.10      | Cosmic Cuttlefish     | --             | Only use it for testing       |
-| Ubuntu 17.10      | Artful Aardvark       | No             | Reached EOL on July 20th 2018 |
-| Ubuntu 17.10      | Zesty Zapus           | No             | Reached EOL on Jan 13th 2018  |
+| Ubuntu 18.10      | Cosmic Cuttlefish     | Yes            |
+| Ubuntu 19.04      | Disco Dingo           | ---            | Only use it for testing       |
 | Linux Mint 17     | Quina                 | Yes            |
 | Linux-Mint 17.1   | Rebecca               | Yes            |
 | Linux-Mint 17.2   | Rafaela               | Yes            |
