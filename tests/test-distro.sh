@@ -30,12 +30,7 @@ function main()
     push | cron | api )      branch="${TRAVIS_BRANCH}";;
     * )                      branch="$(git rev-parse --abbrev-ref HEAD)";;
   esac
-  #dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-  #shellcheck disable=SC2116
 
-  #dir=$(echo "${dir/tests/}")
-  #log_file="$dir"/logs/after-effects.log
-  # set eo on script.
   branch=$(echo $branch | tr -s . - | tr -s / -)
   sed -i 's/set -o pipefail/set -eo pipefail/g' ./after-effects
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
@@ -70,6 +65,7 @@ function main()
     "${distro}:${release}" \
     ./after-effects \
      --yaml \
+     --fix \
      --simulate \
      --yes \
     --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/"${config_yml}"
@@ -85,6 +81,7 @@ function main()
       "${distro}:${release}" \
       ./after-effects -d \
       --lists \
+      --fix \
       --simulate \
       --yes
 
