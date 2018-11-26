@@ -50,6 +50,7 @@ A Complete  list of supported distributions is given below.
 | Linux-Mint 18.2   | Sonya                 | Yes            |
 | Linux-Mint 18.3   | Sylvia                | Yes            |
 | Linux Mint 19     | Tara                  | Yes            |
+| Linux Mint 19.1   | Tessa                 | Yes            |
 | Debian 8          | Jessie                | Yes            |
 | Debian 9          | Stretch               | Yes            |
 | Elementary-OS     | Freya                 | Yes            | Not tested                    |

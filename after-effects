@@ -30,8 +30,8 @@ readonly EXEC_START=$(date +%s)
 readonly DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.3.2 Beta"
-readonly REL_NUM=532
+readonly REL_NAME="5.3.3 Beta"
+readonly REL_NUM=533
 
 function _init_printf_variables()
 {
@@ -551,7 +551,7 @@ function _fix_ubuntu_derivatives()
                                             code_name="xenial";distro_name="ubuntu"
                                             _log_and_show "${_linuxmint} Changed codename to $code_name"
                                             ;;
-      tara )                                _log_and_show "${_linuxmint} Release is Linux mint 19.X."
+      tara | tessa)                         _log_and_show "${_linuxmint} Release is Linux mint 19.X."
                                             _log_and_show "${_notice} Setting additional repositoris to follow Ubuntu 18.04."
                                             code_name="bionic";distro_name="ubuntu"
                                             _log_and_show "${_linuxmint} Changed codename to $code_name"
@@ -645,9 +645,11 @@ function _set_custom_api_nodes ()
   fi
 
   # Set custom YAML urls
-  if [[ "$bool_remote_yaml" == "true" ]]; then
+  if [[ "$bool_remote_yaml" == "true" ]] && [[ "$custom_config_file" != "true" ]]; then
    readonly api_config_url="$url_remote_yaml?name=${remote_config_name}"
-  else
+  elif [[ "$bool_remote_yaml" == "false" ]] && [[ "$custom_config_file" == "true" ]]; then
+   _log_and_show "${_info} custom YAML file will be used."
+ else
    _log_and_show "${_info} Using default YAML"
     readonly api_config_url="${metadata_endpoint}/default.yml"
   fi
@@ -990,19 +992,23 @@ function _set_yaml_config()
       _line_fill;
       printf "${_table} %-20s | %-10s |\n" "Task" "Config"
       _line_fill;
-      set_magenta
-      printf "${_rtasks} %-20s | %-10s |\n" "Update" "$ae_task_update"
-      printf "${_rtasks} %-20s | %-10s |\n" "Upgrade" "$ae_task_upgrade"
-      printf "${_rtasks} %-20s | %-10s |\n" "Add Repos" "$ae_task_repo"
-      printf "${_rtasks} %-20s | %-10s |\n" "Add PPA" "$ae_task_ppa"
-      printf "${_rtasks} %-20s | %-10s |\n" "APT packages" "$ae_task_apt"
-      printf "${_rtasks} %-20s | %-10s |\n" "DEB packages" "$ae_task_debs"
-      printf "${_rtasks} %-20s | %-10s |\n" "Purge packages" "$ae_task_purge"
-      printf "${_rtasks} %-20s | %-10s |\n" "Python 2 Modules" "$ae_task_pip2"
-      printf "${_rtasks} %-20s | %-10s |\n" "Python 3 Modules" "$ae_task_pip3"
-      printf "${_rtasks} %-20s | %-10s |\n" "Static Binaries" "$ae_task_bin"
-      set_default;
-      _line_fill;
+      
+      # Only display tasks column when autopilot = true is set.
+      if [ "$AUTOPILOT" == "true" ]; then
+        set_magenta
+        printf "${_rtasks} %-20s | %-10s |\n" "Update" "$ae_task_update"
+        printf "${_rtasks} %-20s | %-10s |\n" "Upgrade" "$ae_task_upgrade"
+        printf "${_rtasks} %-20s | %-10s |\n" "Add Repos" "$ae_task_repo"
+        printf "${_rtasks} %-20s | %-10s |\n" "Add PPA" "$ae_task_ppa"
+        printf "${_rtasks} %-20s | %-10s |\n" "APT packages" "$ae_task_apt"
+        printf "${_rtasks} %-20s | %-10s |\n" "DEB packages" "$ae_task_debs"
+        printf "${_rtasks} %-20s | %-10s |\n" "Purge packages" "$ae_task_purge"
+        printf "${_rtasks} %-20s | %-10s |\n" "Python 2 Modules" "$ae_task_pip2"
+        printf "${_rtasks} %-20s | %-10s |\n" "Python 3 Modules" "$ae_task_pip3"
+        printf "${_rtasks} %-20s | %-10s |\n" "Static Binaries" "$ae_task_bin"
+        set_default;
+        _line_fill;
+      fi
     else
       _log_and_show "${_cfg} Remote configuration is hidden."
       _log_and_show "${_cfg} Please check the logfile or dont use --hide-config to display configuration."
@@ -1359,8 +1365,7 @@ function _fix_repo_not_available()
       _debug_log "Sometimes repositories are not available for latest ubuntu release.\
       \nUsing last known stable release: $code_name_latest_release."
       printf "${YELLOW}${_new_release} Using repositories from an older release: $codename_previous_release is being used.\n"
-      printf "${YELLOW}${_new_release} You need to modify this in Software and updates \
-      when it becomes available for ${code_name_latest_release}.\n${NC}"
+      printf "${YELLOW}${_new_release} You need to modify this in Software and updates when it becomes available for ${code_name_latest_release}.\n${NC}"
       code_name="$codename_previous_release"
     else
       _debug_log "This Release/Distro does not support this flag. --fix will be ignored."
@@ -1722,7 +1727,7 @@ function upgrade_apps()
   set_default;
   _debug_log "Upgrading packages..."
   # only do upgrades if simulate is set to false
-  if [ "$simulate_apt_install" == "false" ]; then
+  if [ "$simulate_apt_install" != "true" ]; then
 
     DEBIAN_FRONTEND=noninteractive apt-get -q -y upgrade | _add_timestamp_to_logs "${_apt_logs}"
     DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::='--force-confold' --force-yes -fuy dist-upgrade\
@@ -2622,6 +2627,10 @@ function main()
 
  # Set API Endpoints
   _set_custom_api_nodes;
+
+  if [ "$bool_custom_config_file" == "true" ] && [ "$bool_remote_yaml" == "true" ]; then
+    _log_and_exit "${_error} Cannot use local config (-C) with remote YAML (-R) Use one of them." "25"
+  fi
 
   if [ "$bool_custom_config_file" == "true" ] && [ ! -f "$custom_config_file" ]; then
     _log_and_exit "${_error} Custom config file you have specified is not found or not accessible" "36"

@@ -2,10 +2,10 @@
 api: 2
 # Configuraion
 version:
-  number: 532
-  name: 5.3.2
-  changelog: Cosmic is now stable + Prep for Disco
+  number: 533
+  name: 5.3.3
+  changelog: Cosmic + Tessa Support + Bug Fixes
 # Stats reporting
 stats:
-  report: true
+  report: false
   node: https://stats.ae.prasadt.com/report
