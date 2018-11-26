@@ -32,4 +32,5 @@
 | 41 | Failed to truncate clist file |
 | 51 | GPG signature checks failed |
 | 52 | SHA checksums did not match |
+| 61 | apt-get update failed with some warnings or errors |
 | 255 | Test Exit code |

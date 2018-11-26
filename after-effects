@@ -137,6 +137,11 @@ function set_yellow()
   tput setaf 3
 }
 
+function set_green()
+{
+  tput setaf 10
+}
+
 
 function set_magenta()
 {
@@ -173,7 +178,7 @@ function _log_and_exit()
     printf "\nFinished %s on $(date).\nLast exit code was: %d\n" "$SCRIPT" "$?"
   } >> "$log_file"
   report_stats
-  set_yellow
+  set_red
   _line_fill | tee -a "$log_file"
   set_default
   exit "$2";
@@ -238,7 +243,7 @@ function _init_script_variables()
     arm64)           _debug_log "This is an ARM 64. Please be advised that not all reposirories support this arch.";
                     readonly ARCH="arm64";
                     ;;
-    * )             set_yellow;
+    * )             set_red;
                     _log_and_show "${_error} Sorry! This architecture is not supported by this script!"
                     set_default;
                     _log_and_exit "Unsupported Architecture. $(architecture)" "11"
@@ -283,9 +288,6 @@ function _init_script_variables()
 
   # Achtung!!
   # ========================================================================================= #
-
-  # Server side flags. Can be changed via server side config
-  # Only be prefered if --prefer-local or -L is argument is passed.
 
   # Purge not required packages
   # Default is false
@@ -343,7 +345,7 @@ function _init_script_variables()
   # ================================================================================== #
   # Achtung!
   # Do not change any of the variables below this if you dont know what they do.
-  # They are NOT Server Side flags & are essential for correct working of the script.
+  # They are essential for correct working of the script.
 
   # Check Debian Flags
   bool_is_debian="false"
@@ -417,7 +419,7 @@ function _check_dependencies()
   done
 
   if [ "$dependency_check_failed_count" -gt 0 ]; then
-    set_yellow
+    set_red
     _log_and_show "${_error} One or more dependencies not installed. Check logs or above message."
     _log_and_exit "${_error} Sorry! $SCRIPT cannot continue!" "1"
     set_default
@@ -425,55 +427,72 @@ function _check_dependencies()
 }
 
 
+function __disp_sig_check_passed()
+{
+  # Displays message after --verify proves that the GPG signatures match
+  set_green
+  printf "OK! Signature verified!\n"
+  set_default
+}
+
+
+function __disp_sig_check_failed()
+{
+  # Displays failed GPG signature message
+  set_red;
+  printf "Oh No! Signature checks failed.\n"
+  printf "File is either corrupt or has been modified.\n"
+  set_default;
+}
+
+
 function verify_gpg_signature()
 {
   # Verifies the file with its detached GPG signature.
-  # ARG - 1   : Signature File / clearsigned file
   # Assumes that you already have public key in your keyring.
-  # Assumes original file is present at same localtion,
-  # with same name but without .sig or .gpg or .asc extension.
-
-  if [[ $# -lt 1 ]]; then
-    printf "Not enough arguments."
-    printf "Usage: verify_gpg_signature <signature file>"
-    exit 19;
-  fi
-
+  # Assumes signature file is present at same localtion,
+  # with same name but with .sig or .gpg or .asc extension.
+  # Lets declare variables
+  local sig_file
   # Checks if file is present
-  if ! [ -f "${1}" ]; then
+  if [ -f "${SCRIPT}.sig" ]; then
+    sig_file="${SCRIPT}.sig"
+  elif [ -f "${SCRIPT}.asc" ]; then
+    sig_file="${SCRIPT}.asc"
+  elif [ -f "${SCRIPT}.gpg" ]; then
+    sig_file="${SCRIPT}.gpg"
+  else
     printf "${YELLOW}Error! Signature file not found.${NC}\n"
     exit 51;
   fi
 
-  # Lets declare variables
-  local fl signature
-  signature="${1}"
-  fl="$(basename -s .asc "${signature}")"
-
+  # Check for signature files
   printf "Verifying GPG signature of file..\n"
+  set_yellow
+  printf "Signature File : ${sig_file}\n"
+  printf "Data File      : $(basename $SCRIPT)\n"
+  set_default
   # Checks for commands
   if command -v gpg > /dev/null; then
-    readonly local gpg_verify_cmd=(gpg --verify "${1}" "${fl}")
+    if gpg --verify "${sig_file}" "${SCRIPT}" ; then
+      __disp_sig_check_passed
+    else
+      __disp_sig_check_failed
+      exit 50;
+    fi
   elif command -v gpgv > /dev/null; then
-    readonly local gpg_verify_cmd=(gpgv --keyring "$HOME/.gnupg/pubring.kbx" "${signature}" "${fl}")
+    if gpgv --keyring "$HOME/.gnupg/pubring.kbx" "${sig_file}" "${SCRIPT}"; then
+      __disp_sig_check_passed
+    else
+      __disp_sig_check_failed
+      exit 50;
+    fi
   else
     printf "Cannot perform verification. gpgv or gpg is not installed."
     printf "This action requires gnugpg/gnupg2 or gpgv package.\n"
     exit 1;
   fi
 
-  printf "Signature File: $(basename "${signature}")\n"
-  printf "Data File: ${fl}\n"
-  #shellcheck disable=SC2091
-  if $("${gpg_verify_cmd[@]}") ; then
-    printf "OK! Signature verified!\n"
-  else
-    set_yellow;
-    printf "Oh No! Signature checks failed.\n"
-    printf "File is either corrupt or has been modified.\n"
-    set_default;
-    exit 50;
-  fi
 
 }
 
@@ -488,21 +507,21 @@ function report_stats()
   # timezone and system language. Nothing else is collected. Period.
   # If you are feaking out, its a shellscript for heaven sake!! You can literally look into it
   # and check what's collected. Why if you ask? Just for fun and improvement of course!.
-  # Data will be stored in AWS DynamoDB and Google Firebase Realtime Database.
+  # Data will be stored in AWS DynamoDB and/or Google Firebase.
   # Data will not be shared with any third party. Period. Only me or my team members will have access
   # to it. If you run a search query on google, it probably collects more data than me.
-  # API endpoints may log public IP addresses (Github, Google and AWS). But are not saved in the database.
-  # Internal IP addresses may be logged. [RFC1918 space]. Since these are non routable over internet,
-  # Its not a privacy risk.
-  # But I really really don't want to report stats because I USe it in Top Secret place under the rock.
+  # API endpoints may log public IP addresses (Github, Google and AWS). But they are not saved in the
+  # database.
+  # But I really really don't want to report stats because I Use it in "Top Secret" place under the rock.
   # Well, 1. You should not use this script! There are better tools like Chef and
   #          Ansible for huge deployments.
   #       2. Okay! Okay! just pass --no-stats or -S as an argument and be done ith it &
   #          the script WILL NOT "phone home".
   true
+  if [[ "$ae_internal" == "true" ]]; then
+    _debug_log "Martian Field is TRUE"
+  fi
 }
-
-
 
 
 function _eol_message()
@@ -511,7 +530,7 @@ function _eol_message()
   # Arguments: 2
   # ARG 1: Release Name
   # ARG 2: EOL Date
-  set_magenta;
+  set_red;
   _log_and_show "${_eol} This version of Ubuntu is no longer supported."
   _log_and_show "${_notice} $1 reached EOL on $2."
 
@@ -588,7 +607,8 @@ function _fix_ubuntu_derivatives()
       stretch | jessie | buster )           bool_is_debian="true";
                                             _log_and_show "${_notice} This is Debian. PPAs are disabled."
                                             ;;
-      *)                                    _log_and_show "${_error} Unknown Distribution/Release."
+      *)                                    set_red;
+                                            _log_and_show "${_error} Unknown Distribution/Release."
                                             _log_and_show "${_notice} This Script is not designed to run on this ($code_name) distro/release."
                                             _script_exit_log;
                                             exit 16;
@@ -607,7 +627,7 @@ function _test_internet_connection ()
     _log_and_show "${_checking} Connectivity"
     rm -f /tmp/ae/testinternet
   else
-    set_yellow;
+    set_red;
     _log_and_show "${_oh_no} Booooooo! You are not connected to the Internet!. Please check your Internet connection and try again."
     rm -f /tmp/ae/testinternet || _debug_log "Failed to remove temp network connectivity resp file"
     set_default;
@@ -625,6 +645,7 @@ function _test_conflicting_apps ()
   do
     # shellcheck disable=SC2009
     if ps -U root -u root u | grep $lock | grep -v grep > /dev/null; then
+      set_red
       _log_and_show "${_error} Installation won't work. Please close $lock first then try again."
       exit 15;
     else
@@ -720,7 +741,7 @@ function _get_remote_file()
     if [[ $exit_status -eq 0 ]]; then
       _debug_log "Successfully retrieved Config file."
     else
-      set_yellow;
+      set_red;
       _log_and_show "${_error} Something went wrong while retrieving ${file_name}."
       _log_and_exit "${_error} Error Getiing file." "28"
     fi
@@ -794,7 +815,9 @@ function _version_checks ()
 
   # If version checks have been disabled
   else
+    set_yellow
     _log_and_show "${_info} Version checks have been disabled."
+    set_default
   fi
   #sleep 5
 
@@ -937,8 +960,6 @@ function _set_yaml_config()
     # Tasks Flags
     ##################################################################################
 
-
-
     #ae_task_update="${config__tasks__update[0]}"
     _check_bool "ae_task_update" "${config__tasks__update[0]}"
 
@@ -992,7 +1013,7 @@ function _set_yaml_config()
       _line_fill;
       printf "${_table} %-20s | %-10s |\n" "Task" "Config"
       _line_fill;
-      
+
       # Only display tasks column when autopilot = true is set.
       if [ "$AUTOPILOT" == "true" ]; then
         set_magenta
@@ -1244,7 +1265,9 @@ function _set_list_config()
         esac
         # Unset local array
       else
+        set_yellow
         _log_and_show "${_warn} $list not found under data directory."
+        set_default
       fi
       unset tmp_arr || _log_and_exit "Unable to unset array" "40"
     done
@@ -1330,8 +1353,8 @@ function _install_dependencies()
     if [ $exit_status -eq 0 ]; then
        _log_and_show "${_installed} dependency packages."
     else
+      set_red
       _log_and_show "${_oh_no} Something went wrong while installing dependencies."
-      set_blue;
       _log_and_exit "${_notice} Please see the log file for more details." "21"
     fi
   _clean_apt_cache
@@ -1406,7 +1429,9 @@ function _fix_repo_not_available_upcoming_release()
         _debug_log "Feature fix_repo_not_available_upcoming_release is disabled."
     fi
   else
+    set_yellow
     _debug_log "This Release/Distro does not support this option. Flag --pre-release will be ignored."
+    set_default
 fi
 }
 
@@ -1431,14 +1456,15 @@ function add_ppas()
               continue
             fi
             if add-apt-repository -y "$index" 2>&1 | _add_timestamp_to_logs "${_ppa_logs}" ; then
+              set_green
               _log_and_show "${_ppa} Success!"
+              set_default
             else
+              set_yellow
               _log_and_show "${_ppa} Some Error occured while adding $index. Ignoring and moving on.\n"
+              set_default
             fi
         done
-        set_yellow;
-        _log_and_show "${_ppa} Added selected PPAs."
-        set_default;
   else
     set_yellow;
     _log_and_show "${_ppa} This is Debian. PPAs are not available."
@@ -1701,12 +1727,13 @@ function update_repos()
   if [[ $exit_status -eq 0 ]]; then
     _log_and_show "${_update} Success!"
   else
-    set_yellow;
-    _log_and_show "${_oh_no} Something went wrong in upgrading packages. Please see the log file for more details."
-    _log_and_show "${_notice} Most of the times its either missing repository keys or wrongly configured repositories."
+    set_red;
+    _log_and_show "${_oh_no} Something went wrong in updating repo data. Please see the log file for more details."
+    _log_and_show "${_error} Your system might end up completely broken and apt-get isn't reliable with this state."
+    _log_and_show "${_error} The script cannot proceed with this."
+    _log_and_exit "${_notice} Most of the times its either missing repository keys or wrongly configured repositories." "61"
     set_default;
   fi
-  _line_fill >> "$log_file"
 }
 
 
@@ -1782,9 +1809,13 @@ function purge_ppa()
             fi
             if ppa-purge -y "$index"  2>&1 | _add_timestamp_to_logs "${_apt_logs}"  ; then
               sleep 5 #wait sometimes apt lock isnt released soon.
+              set_green
               _log_and_show "${_purge} $line successfully."
+              set_default
             else
+              set_yellow
               _log_and_show "${_oh_no} Some Error occured while purging $line."
+              set_default
             fi
         done
         set_yellow;
@@ -1918,6 +1949,7 @@ function purge_not_required()
       exit_status=$?
       set_yellow
       if [[ $exit_status -eq 0 ]]; then
+        set_green
         _log_and_show "${_purge} Success!"
       else
         set_yellow;
@@ -1925,9 +1957,10 @@ function purge_not_required()
         set_blue;
         _log_and_show "${_notice} Please see the log file for more details."
       fi
+      set_default
     fi
   else
-    set_yellow
+    set_red
     _log_and_exit "${_error} Purge switch is set to false. Did you pass -d along wth the command?" "20"
   fi
   set_default;
@@ -1993,14 +2026,15 @@ function install_apps()
       exit_status=$?
       unset packages;
       if [[ $exit_status -eq 0 ]]; then
-      _log_and_show "${_apt} Success!"
+        set_green
+        _log_and_show "${_apt} Success!"
       else
       set_yellow;
       _log_and_show "${_oh_no} Something went wrong while installing packages in $index."
       set_blue;
       _log_and_show "${_notice} Please see the log file for more details."
-      set_default;
       fi
+      set_default;
 
     fi
     unset packages
@@ -2082,10 +2116,9 @@ function _install_pip_python()
       if [[ $exit_status -eq 0 ]]; then
         _log_and_show "${_installed} Dependency packages."
       else
-        set_yellow;
+        set_red;
         _log_and_show "${_oh_no} Something went wrong while installing dependencies."
         _log_and_show "${_error} Python packages cannot be installed without dependencies."
-        set_default;
         _log_and_exit "${_notice} Please see the log file for more details." "21"
       fi
 
@@ -2122,6 +2155,7 @@ function _install_pip_python()
     fi
     exit_status=$?
     if [[ $exit_status -eq 0 ]]; then
+      set_green
       _log_and_show "${_installed} python - ${1} modules"
     else
       set_yellow;
@@ -2129,6 +2163,7 @@ function _install_pip_python()
       set_blue;
       _log_and_show "${_notice} Please see the log file for more details."
     fi
+    set_default
   fi
 
   set_default;
@@ -2189,11 +2224,14 @@ function install_debs ()
 
     # shellcheck disable=SC2181
      if [ "$exit_status" = "0" ]; then
+       set_green
       _log_and_show "${_deb} Installed $deb_name successfully."
      else
+       set_yellow
       _log_and_show "${_oh_no} Some error occured during downloading and installing $index."
       $?="0"
     fi
+    set_default
     # Delete DEBs
     if [ "$bool_preserve_debs" == "false" ];then
       _log_and_show "${_deb} Deleting ownloaded DEB Packages"
@@ -2253,8 +2291,10 @@ function install_binaries ()
         chmod +x /usr/local/bin/"$bin_name" >> "${log_file}"
       fi
     else
+      set_yellow
       _log_and_show "${_error} Failed to download $bin_name."
     fi
+    set_default
   done
   _line_fill >> "$log_file"
 }
@@ -2421,10 +2461,6 @@ function _ci_cloud_and_container_checks()
     AUTOPILOT="true"
     bool_say_yes_to_all="true"
     _log_and_show "${_ci} Running in Appveyor CI :|"
-  elif [ ! "${JENKINS_URL}" == "" ]; then
-    AUTOPILOT="true"
-    bool_say_yes_to_all="true"
-    _log_and_show "${_ci} Probably running on Jenkins CI :|"
   elif [ "$CI" == "true" ]; then
     AUTOPILOT="true"
     bool_say_yes_to_all="true"
@@ -2480,9 +2516,13 @@ function display_version()
 {
 
   #_line_fill
+  set_green
   printf "%-15s : %s\n" "Version Number" "${REL_NUM}"
+  set_yellow
   printf "%-15s : %s\n" "Version Name" "${REL_NAME}"
+  set_red
   printf "%-15s : %s\n" "Executable" "${SCRIPT}"
+  set_default
   #_line_fill
 
 }
@@ -2494,7 +2534,7 @@ function _process_non_root_options()
   while [ "${1}" != "" ]; do
     case ${1} in
       -v | --version)         display_version;exit 0;;
-      --verify )              verify_gpg_signature "${dir}/${SCRIPT}.asc"; exit 0;;
+      --verify)         verify_gpg_signature;exit 0;;
     esac
     shift
   done
@@ -2511,7 +2551,7 @@ function main()
   _line_fill;
   printf "${_checking} Permissions...\n"
   if [[ $EUID -ne 0 ]]; then
-    set_yellow;
+    set_red;
     printf "${_whoops} Insufficinet privilages!!\n"
     set_default;
     printf "${_whoops} This script must be run as root.\n"
@@ -2598,6 +2638,7 @@ function main()
       --hide-config)          readonly bool_hide_config="true";
                               _log_and_show "${_info} YAML config will not be displayed."
                               ;;
+      --internal)             ae_internal="true";;
       -v | --version )        _log_and_show "-v or --version should be the only argument." "23";;
       --verify)               _log_and_exit "--verify should be the only argument." "23";;
        * )                    _log_and_exit "${_error} Invalid option: $1" "22";;
