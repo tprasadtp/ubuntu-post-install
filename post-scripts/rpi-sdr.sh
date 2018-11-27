@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Must be ROOT
-# set threads to 3 as leaving one keeps tty and rdp session responsive.
+# set threads to 3 as it keeps tty and rdp session responsive.
 set -eo pipefail
 if [[ $EUID -ne 0 ]]; then
   echo "Please use SUDO to run this script"
-  echo "Insufficinet privilages"
+  echo "Insufficient privilages"
   exit 1
 fi
 echo "Disabling GUI Boot"
@@ -14,6 +14,11 @@ echo "========================================"
 echo ""
 echo ""
 apt-get install -y libsoapysdr-dev libi2c-dev libusb-1.0-0-dev git g++ cmake libsqlite3-dev libwxgtk3.0-dev freeglut3-dev libboost-all-dev swig gnuradio xrdp
+
+echo "Cloning LimeSDR Sources"
+echo "========================================"
+echo ""
+echo ""
 mkdir -p limesdr
 git clone --branch=stable https://github.com/myriadrf/LimeSuite.git ./limesdr/limesuite-stable
 git clone https://github.com/myriadrf/gr-limesdr ./limesdr/gr-limesdr
