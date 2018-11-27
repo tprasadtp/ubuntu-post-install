@@ -59,7 +59,7 @@ echo "========================================"
 echo ""
 echo ""
 
-chown -R -c $USER ./limesdr
+chown -R -c "$USER" ./limesdr
 
 echo "========================================"
 echo ""
