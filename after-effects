@@ -1011,11 +1011,11 @@ function _set_yaml_config()
       printf "${_cfg} %-20s | %-10s |\n" "Keep DEBs/APT cache" "$bool_preserve_debs"
       printf "${_cfg} %-20s | %-10s |\n" "Dont confirm" "$bool_say_yes_to_all"
       _line_fill;
-      printf "${_table} %-20s | %-10s |\n" "Task" "Config"
-      _line_fill;
 
       # Only display tasks column when autopilot = true is set.
       if [ "$AUTOPILOT" == "true" ]; then
+        printf "${_table} %-20s | %-10s |\n" "Task" "Config"
+        _line_fill;
         set_magenta
         printf "${_rtasks} %-20s | %-10s |\n" "Update" "$ae_task_update"
         printf "${_rtasks} %-20s | %-10s |\n" "Upgrade" "$ae_task_upgrade"
@@ -1031,7 +1031,7 @@ function _set_yaml_config()
         _line_fill;
       fi
     else
-      _log_and_show "${_cfg} Remote configuration is hidden."
+      _log_and_show "${_cfg} Configuration data is hidden."
       _log_and_show "${_cfg} Please check the logfile or dont use --hide-config to display configuration."
       {
         printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
