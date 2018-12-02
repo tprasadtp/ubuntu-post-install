@@ -665,15 +665,19 @@ function _set_custom_api_nodes ()
    readonly remote_config_name="default"
   fi
 
-  # Set custom YAML urls
-  if [[ "$bool_remote_yaml" == "true" ]] && [[ "$custom_config_file" != "true" ]]; then
+  # Set custom YAML
+  if [ "$bool_remote_yaml" == "true" ] && [ "$bool_custom_config_file" != "true" ]; then
    readonly api_config_url="$url_remote_yaml?name=${remote_config_name}"
-  elif [[ "$bool_remote_yaml" == "false" ]] && [[ "$custom_config_file" == "true" ]]; then
+  elif [ "$bool_remote_yaml" == "false" ] && [ "$bool_custom_config_file" == "true" ]; then
    _log_and_show "${_info} custom YAML file will be used."
- else
+  elif [ "$bool_use_default_yaml" == "true" ]; then
    _log_and_show "${_info} Using default YAML"
     readonly api_config_url="${metadata_endpoint}/default.yml"
+  else
+    _log_and_show "${_error} No yaml file specified. To use default yaml use --use-default-yaml option."
+    _log_and_exit "${_error} Script cannot continue. Exiting" "25"
   fi
+
 
   # Version, Config ang GPG signature URLS
   readonly api_version_url="${metadata_endpoint}/version.yml"
@@ -695,6 +699,7 @@ function parse_yaml() {
   fs="$(echo @|tr @ '\034')"
 
   (
+    #shellcheck disable=SC1087
       sed -ne '/^--/s|--||g; s|\"|\\\"|g; s/\s*$//g;' \
           -e "/#.*[\"\']/!s| #.*||g; /^#/s|#.*||g;" \
           -e  "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
@@ -1030,6 +1035,7 @@ function _set_yaml_config()
         set_default;
         _line_fill;
       fi
+      set_default
     else
       _log_and_show "${_cfg} Configuration data is hidden."
       _log_and_show "${_cfg} Please check the logfile or dont use --hide-config to display configuration."
@@ -2626,6 +2632,8 @@ function main()
                               set_yellow;
                               _log_and_show "${_info} Using YAML config..."
                               set_default;
+                              ;;
+      --use-default-yaml)     readonly bool_use_default_yaml="true";
                               ;;
       -L | --lists)           readonly bool_use_lists="true";
                               set_yellow;

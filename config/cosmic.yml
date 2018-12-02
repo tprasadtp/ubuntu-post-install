@@ -23,10 +23,10 @@ config:
     binaries: true
   # Repository Flags
   add_repo:
-    winehq: true
+    winehq: false
     docker: true
     mendeley: false
-    googlecloud: true
+    googlecloud: false
     spotify: true
     vscode: true
     skype: true
@@ -39,7 +39,7 @@ config:
   # Simulate flag will never be overridden by remote config.
     purge_enabled: true
     preserve_debs: false
-    auto_yes: true
+    auto_yes: false
 
   # Packages to purge
   purge:
@@ -51,7 +51,6 @@ config:
   ppa:
     - ppa:yubico/stable
     - ppa:teejee2008/ppa
-    - ppa:myriadrf/drivers
   # Install components
   # APT Packages, Python Modules, Debian packages
   install:
@@ -75,6 +74,8 @@ config:
         - gparted
         - synaptic
         - bleachbit
+        - tree
+        - stow
       # Security Related Stuff
       security:
         - gufw
@@ -127,9 +128,6 @@ config:
         - vdpauinfo
         - s3cmd
         - python3-pip
-        - cmake
-        - libboost-all-dev
-        - swig
       # Everything Else
       other:
         - gnome-online-miners
@@ -137,6 +135,7 @@ config:
         - gnuradio
         - gqrx-sdr
         - gr-radar
+        - gr-radar-doc
         - gnome-boxes
         - gnome-tweaks
         - opensc
@@ -144,9 +143,37 @@ config:
         - scdaemon
         - zsh
         - seahorse-nautilus
+        - cmake
+        - libboost-all-dev
+        - swig
+        - g++
+        - ccache
+        - gcc-opt
+        - libi2c-dev
+        - libusb-1.0-0-dev
+        - libsqlite3-dev
+        - libwxgtk3.0-dev
+        - python-tk
+        - python3-tk
+        - python-soapysdr
+        - python3-soapysdr
+        - soapysdr-module-osmosdr
+        - soapysdr-module-rtlsdr
+        - soapysdr-tools
+        - soapysdr-module-lms7
+        - python-soapysdr
+        - soapysdr-tools
+        - soapysdr-module-rtlsdr
+        - python-soapysdr
+        - libsoapysdr-dev
+        - libsoapysdr-doc
       # Packages supplied by external repositories & PPAs
       # Dont Mix packages provided by distribution and PPAs
-      # Sometimes external repos and ppas fail, so better isolate it.
+      # Sometimes external repos and ppas fail, As the entire section would
+      # fail to install so better isolate it.
+      # Even though some are supplied by ubuntu repos, They were added only
+      # in 18.10. So they are kept here for now. Feel free to move them to
+      # Others.
       external:
         - google-chrome-stable
         - spotify-client
@@ -163,9 +190,7 @@ config:
         - ubuntu-restricted-extras
         - ubuntu-restricted-addons
         - unrar
+        - timeshift
         - limesuite
         - liblimesuite-dev
         - limesuite-udev
-        - soapysdr-tools
-        - soapysdr-module-lms7
-        - timeshift
