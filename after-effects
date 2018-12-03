@@ -658,24 +658,28 @@ function _test_conflicting_apps ()
 
 function _set_custom_api_nodes ()
 {
-  # Custom Remote Config name as Query parameter name
-  if [ "$bool_custom_remote_config_name" == "true" ]; then
-   readonly remote_config_name="$custom_remote_config_name"
-  else
-   readonly remote_config_name="default"
-  fi
 
   # Set custom YAML
-  if [ "$bool_remote_yaml" == "true" ] && [ "$bool_custom_config_file" != "true" ]; then
-   readonly api_config_url="$url_remote_yaml?name=${remote_config_name}"
-  elif [ "$bool_remote_yaml" == "false" ] && [ "$bool_custom_config_file" == "true" ]; then
-   _log_and_show "${_info} custom YAML file will be used."
-  elif [ "$bool_use_default_yaml" == "true" ]; then
-   _log_and_show "${_info} Using default YAML"
-    readonly api_config_url="${metadata_endpoint}/default.yml"
-  else
-    _log_and_show "${_error} No yaml file specified. To use default yaml use --use-default-yaml option."
-    _log_and_exit "${_error} Script cannot continue. Exiting" "25"
+  if [ "$bool_use_yaml" == "true" ]; then
+
+    # Custom Remote Config name as Query parameter name
+    if [ "$bool_custom_remote_config_name" == "true" ]; then
+     readonly remote_config_name="$custom_remote_config_name"
+    else
+     readonly remote_config_name="default"
+    fi
+    if [ "$bool_remote_yaml" == "true" ] && [ "$bool_custom_config_file" != "true" ]; then
+     readonly api_config_url="$url_remote_yaml?name=${remote_config_name}"
+    elif [ "$bool_remote_yaml" == "false" ] && [ "$bool_custom_config_file" == "true" ]; then
+     _log_and_show "${_info} custom YAML file will be used."
+    elif [ "$bool_use_default_yaml" == "true" ]; then
+     _log_and_show "${_info} Using default YAML"
+      readonly api_config_url="${metadata_endpoint}/default.yml"
+    else
+      _log_and_show "${_error} No yaml file specified. To use default yaml use --use-default-yaml option."
+      _log_and_exit "${_error} Script cannot continue. Exiting" "25"
+    fi
+
   fi
 
 
