@@ -668,9 +668,10 @@ function _set_custom_api_nodes ()
     else
      readonly remote_config_name="default"
     fi
-    if [ "$bool_remote_yaml" == "true" ] && [ "$bool_custom_config_file" != "true" ]; then
+
+    if [ "$bool_remote_yaml" == "true" ]; then
      readonly api_config_url="$url_remote_yaml?name=${remote_config_name}"
-    elif [ "$bool_remote_yaml" == "false" ] && [ "$bool_custom_config_file" == "true" ]; then
+    elif [ "$bool_custom_config_file" == "true" ]; then
      _log_and_show "${_info} custom YAML file will be used."
     elif [ "$bool_use_default_yaml" == "true" ]; then
      _log_and_show "${_info} Using default YAML"

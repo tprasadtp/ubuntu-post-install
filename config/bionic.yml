@@ -26,7 +26,7 @@ config:
     winehq: false
     docker: true
     mendeley: false
-    googlecloud: false
+    googlecloud: true
     spotify: true
     vscode: true
     skype: true
@@ -39,7 +39,7 @@ config:
   # Simulate flag will never be overridden by remote config.
     purge_enabled: true
     preserve_debs: false
-    auto_yes: false
+    auto_yes: true
 
   # Packages to purge
   purge:
@@ -51,6 +51,7 @@ config:
   ppa:
     - ppa:yubico/stable
     - ppa:teejee2008/ppa
+    - ppa:myriadrf/drivers
   # Install components
   # APT Packages, Python Modules, Debian packages
   install:
@@ -76,12 +77,15 @@ config:
         - bleachbit
         - tree
         - stow
+        - gnome-logs
+        - gnome-system-monitor
+        - gnome-calculator
+        - gnome-usage
       # Security Related Stuff
       security:
         - gufw
       # Productivity & Office Tools.
       productivity:
-        - empathy
         - evolution
         - realmd
         - pandoc-data
@@ -156,7 +160,6 @@ config:
         - python-tk
         - python3-tk
         - python-soapysdr
-        - python3-soapysdr
         - soapysdr-module-osmosdr
         - soapysdr-module-rtlsdr
         - soapysdr-tools
@@ -178,6 +181,7 @@ config:
         - google-chrome-stable
         - spotify-client
         - code
+        - neofetch
         - google-cloud-sdk
         - gcsfuse
         - docker-ce
