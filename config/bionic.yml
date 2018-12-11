@@ -170,6 +170,9 @@ config:
         - python-soapysdr
         - libsoapysdr-dev
         - libsoapysdr-doc
+        - virt-manager
+        - virt-viewer
+        - libvirt-daemon-system
       # Packages supplied by external repositories & PPAs
       # Dont Mix packages provided by distribution and PPAs
       # Sometimes external repos and ppas fail, As the entire section would
