@@ -2,9 +2,9 @@
 api: 2
 # Configuraion
 version:
-  number: 533
-  name: 5.3.3
-  changelog: Cosmic + Tessa Support + Bug Fixes
+  number: 534
+  name: 5.3.4
+  changelog: Cosmic + Tessa Support + Updated WineHQ keys
 # Stats reporting
 stats:
   report: false

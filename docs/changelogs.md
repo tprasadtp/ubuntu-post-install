@@ -1,8 +1,16 @@
 # Change logs
 
+## Version 5.3.4
+
+- Update WineHQ keys.
+
+## Version 5.3.3
+
+- Add support for Linux Mint 19.1 Tessa
+
 ## Version 5.3.2
 
-- Promote Cosmic to stable, add initial support for disco(19.04)
+- Promote Cosmic to stable, add initial support for disco (19.04)
 
 ## Version 5.3.1
 
@@ -12,8 +20,8 @@
 
 ## Version 5.3.0
 
-- Move config files from /api to /config
-- Update spotify Keys [Fixes Spotify repos]
+- Move configuration files from /api to /config
+- Update Spotify Keys [Fixes Spotify repos]
 - Fix a bug which prevented Insync repo being added
 
 ## Version 5.2.0
@@ -24,7 +32,7 @@
 ## Version 5.1.2
 
 - Fix get script URLS.
-- Fix kubernetes repo url & repos for mint
+- Fix Kubernetes repo url & repos for Linux Mint
 
 ## Version 5.1.0
 
@@ -33,9 +41,9 @@
 ## Version 5.0
 
 - Remove Pre and Post Hooks.
-- Configuration can be now done using YAML file. Its easer & gives more flexibility
+- Configuration can be now done using YAML file. Its easier & gives more flexibility
 - Lot of improvements & bug fixes.
-- Now tagged versions are released to Github releases.
+- Now tagged versions are released to GitHub releases.
 - Consolidate test scripts.
 - Drop Artful support.
 - Add support for Elementary OS 5 - Juno & Mint 19 Tara.

@@ -30,8 +30,8 @@ readonly EXEC_START=$(date +%s)
 readonly DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.3.3 Beta"
-readonly REL_NUM=533
+readonly REL_NAME="5.3.4 Beta"
+readonly REL_NUM=534
 
 function _init_printf_variables()
 {
@@ -255,7 +255,6 @@ function _init_script_variables()
   # Generate a UUID
   readonly CLIENT_ID=$(cat /proc/sys/kernel/random/uuid)
 
-
   # etc sources list dir
   readonly SOURCES_FILE_DIR=/etc/apt/sources.list.d
 
@@ -352,6 +351,9 @@ function _init_script_variables()
 
   # Check Signature
   #readonly bool_verify_gpg_signatures="true"
+
+  # latest WineHQ keys
+  readonly use_latest_winehq_key="true"
 }
 
 
@@ -1047,7 +1049,6 @@ function _set_yaml_config()
       {
         printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
         printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
-        printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
         printf "${_cfg} %-20s | %-10s |\n" "Google Cloud SDK" "$add_googlecloud_repo"
         printf "${_cfg} %-20s | %-10s |\n" "Spotify" "$add_spotify_repo"
         printf "${_cfg} %-20s | %-10s |\n" "Skype" "$add_skype_repo"
@@ -1595,7 +1596,13 @@ function add_repositories()
 
     _log_and_show "${_repo} WineHQ repository"
     _debug_log "Getting WineHQ repository Key"
-    wget -q https://dl.winehq.org/wine-builds/Release.key -O /tmp/ae/wine-hq-sigining-key.key >> "$log_file"  2>&1
+    # This is old key. the new key was added on 19th Dec 2018
+    if [[ "$use_latest_winehq_key" == "true" ]]; then
+      _log_and_show "WineHQ keys were changed recently, using them."
+      wget -q https://dl.winehq.org/wine-builds/winehq.key -O /tmp/ae/wine-hq-sigining-key.key >> "$log_file"  2>&1
+    else
+      wget -q https://dl.winehq.org/wine-builds/Release.key -O /tmp/ae/wine-hq-sigining-key.key >> "$log_file"  2>&1
+    fi
     _debug_log "Adding WineHQ key"
     apt-key add /tmp/ae/wine-hq-sigining-key.key 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
     || _log_and_show "${_error} Adding WineHQ keys failed"
