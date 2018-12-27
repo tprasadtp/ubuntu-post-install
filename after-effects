@@ -1596,11 +1596,11 @@ function add_repositories()
 
     _log_and_show "${_repo} WineHQ repository"
     _debug_log "Getting WineHQ repository Key"
-    # This is old key. the new key was added on 19th Dec 2018
     if [[ "$use_latest_winehq_key" == "true" ]]; then
-      _log_and_show "WineHQ keys were changed recently, using them."
+      _log_and_show "${_repo} WineHQ keys were changed recently, using them."
       wget -q https://dl.winehq.org/wine-builds/winehq.key -O /tmp/ae/wine-hq-sigining-key.key >> "$log_file"  2>&1
     else
+      # This is old key. the new key was added on 19th Dec 2018
       wget -q https://dl.winehq.org/wine-builds/Release.key -O /tmp/ae/wine-hq-sigining-key.key >> "$log_file"  2>&1
     fi
     _debug_log "Adding WineHQ key"

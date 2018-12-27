@@ -12,8 +12,8 @@ Following Tests are done on Travis-CI.
 - Test on Ubuntu Trusty (Host) (Job #build.5)
 - Test on Debian 9 Stretch (Job #build.6)
 - Test on Debian 8 Jessie (Job #build.7)
-- Test on Ubuntu Disco 19.04 (Job #build.8)
-- Test on Debian 10 Buster (Job #build.9)
+- Test on Ubuntu Disco 19.04 (Job #build.8 can fail)
+- Test on Debian 10 Buster (Job #build.9 can fail)
 - Build, Test & deploy documentation (Job #build.10).
 
 !!! info

@@ -53,6 +53,7 @@ A Complete  list of supported distributions is given below.
 | Linux Mint 19.1   | Tessa                 | Yes            |
 | Debian 8          | Jessie                | Yes            |
 | Debian 9          | Stretch               | Yes            |
+| Debian 10         | Stretch               | ---            | Only use it for testing       |
 | Elementary-OS     | Freya                 | Yes            | Not tested                    |
 | Elementary-OS 0.4 | Loki                  | Yes            | Not tested                    |
 | Elementary-OS 5.0 | Juno                  | Yes            | Not tested                    |

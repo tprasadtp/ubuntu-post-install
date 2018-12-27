@@ -5,7 +5,7 @@ before trying out.
 
 [![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.svg?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
 [![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=flat&url=https://ae.prasadt.com/config/json/version.json&query=version.name&prefix=V-)](https://github.com/tprasadtp/ubuntu-post-install/)
-[![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Whats%20New&style=flat&url=https://ae.prasadt.com/config/json/version.json&query=version.changelog)](https://ae.prasadt.com/changelogs/)
+[![What's new?](https://img.shields.io/badge/dynamic/json.svg?label=Whats%20New&style=flat&url=https://ae.prasadt.com/config/json/version.json&query=version.changelog)](https://ae.prasadt.com/changelogs/)
 [![license](https://img.shields.io/github/license/tprasadtp/ubuntu-post-install.svg?style=flat)](https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE)
 ![GitHub repo size in bytes](https://img.shields.io/github/repo-size/tprasadtp/ubuntu-post-install.svg?style=flat)
 
@@ -130,6 +130,7 @@ A Complete  list of supported distributions is given below.
 | Linux Mint 19.1   | Tessa                 | Yes            |
 | Debian 8          | Jessie                | Yes            |
 | Debian 9          | Stretch               | Yes            |
+| Debian 10         | Stretch               | ---            | Only use it for testing       |
 | Elementary-OS     | Freya                 | Yes            | Not tested                    |
 | Elementary-OS 0.4 | Loki                  | Yes            | Not tested                    |
 | Elementary-OS 5.0 | Juno                  | Yes            | Not tested                    |
