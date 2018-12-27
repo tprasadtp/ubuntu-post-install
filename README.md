@@ -11,13 +11,6 @@ before trying out.
 
 [![Bash](https://static.prasadt.com/logo64/bash.png)](https://github.com/tprasadtp/ubuntu-post-install)
 
-## URLs
-
-```bash
-Github URL: https://github.com/tprasadtp/ubuntu-post-install
-Github URL: https://github.com/tprasadtp/after-effects-ubuntu
-```
-
 ## How to use this
 
 Install your choice of Ubuntu/Debian or its derivative as you would( If you wish to automate that too, you can use `preseed.cfg file`)
@@ -31,22 +24,22 @@ Run this in Terminal
 ```console
 wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash
 
-If you prefer a shorter url,
+If you prefer a shorter URL,
 
 wget -Nnv https://ae.prasadt.com/get -O - | bash
 ```
 
-> Shorter URL redirects to same file on GitHub, but is cached & proxies to GitHub at CDN.
+> Shorter URL redirects to same file on GitHub, but is cached & proxies to GitHub at CDN level.
 
 #### With Git
 
-If you already have git on your system already you can use,
+If you already have git on your system, you can use,
 
 ```console
 git clone --depth 1 https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install
 ```
 
-If you already have cloned the repo, you can use git to get the latest changes.
+If you already have cloned the repo, you can use `git pull` to get the latest changes.
 
 ### Step 2: Update the lists or your YAML configuration file
 
@@ -58,7 +51,7 @@ Please see [Configuration](https://ae.prasadt.com/config/#package-lists) & [Task
 
 ### Step 3: Run the script
 
-Run the script as **root**. You will get an error if you do not run the script as root.
+Run the script as **root**.
 
 - To use default YAML configuration, which can be found here `https://ae.prasadt.com/config/default.yml`
 
@@ -73,11 +66,6 @@ Run the script as **root**. You will get an error if you do not run the script a
   ```
 
 > If you are running this in a docker container, you probably are root and its possible that you might be missing `sudo`. So In that case just run it as `./after-effects`. Be warned! You might be missing several dependencies of the script!!
-
-### Step 4: Contribute
-
-Contribute tweaks, improvements ideas back upstream.
-Please note that `gh-pages` branch is derivative master. This project uses `mkdocs` for documentation. You can use docker-compose to test documentation site.
 
 ## FAQ & Documentation
 
@@ -99,8 +87,8 @@ See /docs or visit [https://after-effects.prasadt.com](https://after-effects.pra
 [![Linux-Mint](https://static.prasadt.com/logo64/linux-mint.png)](https://www.linuxmint.com/)
 [![Debian](https://static.prasadt.com/logo64/debian.png)](https://www.debian.org/)
 
-I have not tested the script on following distros. Because they use ubuntu as their base,
-It should work fine. But no promises. Please note that Ubuntu 19.04 is **enabled**, that does not mean it works well. YMMV^-2
+I have not tested the script on the distros listed below. Because they use Ubuntu as their base,
+It should work fine. But no promises. Please note that Ubuntu 19.04 is **enabled**, that does not mean it works well. YMMV
 
 [![Kde-Neon](https://static.prasadt.com/logo64/kde-neon.png)](https://neon.kde.org/)
 [![Pop-OS](https://static.prasadt.com/logo64/pop-os.png)](https://system76.com/pop)
@@ -157,7 +145,7 @@ A Complete  list of supported distributions is given below.
 ## Issues & Help
 
 - Please check [FAQ](https://ae.prasadt.com/faq/dependencies/) & [Known Errors](https://ae.prasadt.com/faq/errors/).
-- Please include the log file and terminal output in your report.
+- Please include the log file and terminal output while opening an issue.
 - **Never** set environment variable `CI=true` & `TRAVIS=true` unless you are running CI tests or are sure of its effects.
 
 ## Contributing & Forks
