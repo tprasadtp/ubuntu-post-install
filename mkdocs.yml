@@ -47,13 +47,11 @@ theme:
 extra:
   social:
     - type: globe
-      link: https://prasadt.com
+      link: https://ae.prasadt.com
     - type: github-alt
       link: https://github.com/tprasadtp
     - type: twitter
       link: https://twitter.com/tprasadtp
-    - type: linkedin
-      link: https://linkedin.com/in/prasadtengse
 
 # Extensions
 markdown_extensions:
