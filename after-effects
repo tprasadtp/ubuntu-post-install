@@ -199,8 +199,8 @@ function _script_exit_log()
     printf "\nFinished %s in %d seconds, on %s.\nLast exit code was: %d\n" "$SCRIPT" "$EXEC_TIME" "$(date)" "$?" | tee -a "$log_file"
     _line_fill >> "$log_file"
     return 0
-
 }
+
 
 function _debug_log()
 {
@@ -213,6 +213,16 @@ function _log_and_show()
 {
   local msg="$1"
   printf "$msg\n"
+  printf "[$(date)] $msg\n" >> "$log_file"
+}
+
+
+function _log_and_warn()
+{
+  local msg="$1"
+  set_red
+  printf "$msg\n"
+  set_default
   printf "[$(date)] $msg\n" >> "$log_file"
 }
 
@@ -532,12 +542,11 @@ function _eol_message()
   # Arguments: 2
   # ARG 1: Release Name
   # ARG 2: EOL Date
-  set_red;
-  _log_and_show "${_eol} This version of Ubuntu is no longer supported."
-  _log_and_show "${_notice} $1 reached EOL on $2."
+  _log_and_warn "${_eol} This version of Ubuntu is no longer supported."
+  _log_and_warn "${_notice} $1 reached EOL on $2."
 
    set_yellow;
-  _log_and_show "${_notice} Please use a supported version of Ubuntu."
+  _log_and_warn "${_notice} Please use a supported version of Ubuntu."
   _log_and_show "${_info} Please visit the link below for information on how to upgrade."
 
   set_blue;
@@ -629,11 +638,9 @@ function _test_internet_connection ()
     _log_and_show "${_checking} Connectivity"
     rm -f /tmp/ae/testinternet
   else
-    set_red;
-    _log_and_show "${_oh_no} Booooooo! You are not connected to the Internet!. Please check your Internet connection and try again."
+    _log_and_warn "${_oh_no} Booooooo! You are not connected to the Internet!. Please check your Internet connection and try again."
     rm -f /tmp/ae/testinternet || _debug_log "Failed to remove temp network connectivity resp file"
-    set_default;
-    exit 14;
+    _log_and_exit "${_error} No internet connection!" "14"
   fi
 }
 
@@ -647,9 +654,7 @@ function _test_conflicting_apps ()
   do
     # shellcheck disable=SC2009
     if ps -U root -u root u | grep $lock | grep -v grep > /dev/null; then
-      set_red
-      _log_and_show "${_error} Installation won't work. Please close $lock first then try again."
-      exit 15;
+      _log_and_exit "${_error} Installation won't work. Please close $lock first then try again." "15"
     else
       _debug_log "$lock not is running."
      fi
@@ -679,7 +684,7 @@ function _set_custom_api_nodes ()
      _log_and_show "${_info} Using default YAML"
       readonly api_config_url="${metadata_endpoint}/default.yml"
     else
-      _log_and_show "${_error} No yaml file specified. To use default yaml use --use-default-yaml option."
+      _log_and_warn "${_error} No yaml file specified. To use default yaml use --use-default-yaml option."
       _log_and_exit "${_error} Script cannot continue. Exiting" "25"
     fi
 
@@ -753,8 +758,7 @@ function _get_remote_file()
     if [[ $exit_status -eq 0 ]]; then
       _debug_log "Successfully retrieved Config file."
     else
-      set_red;
-      _log_and_show "${_error} Something went wrong while retrieving ${file_name}."
+      _log_and_warn "${_error} Something went wrong while retrieving ${file_name}."
       _log_and_exit "${_error} Error Getiing file." "28"
     fi
   else
@@ -1213,7 +1217,6 @@ function _set_list_config()
     #Kubernetes
     add_kubernetes_repo=false
 
-
     ae_task_update="true"
     ae_task_upgrade="true"
     ae_task_repo="true"
@@ -1365,8 +1368,7 @@ function _install_dependencies()
     if [ $exit_status -eq 0 ]; then
        _log_and_show "${_installed} dependency packages."
     else
-      set_red
-      _log_and_show "${_oh_no} Something went wrong while installing dependencies."
+      _log_and_warn "${_oh_no} Something went wrong while installing dependencies."
       _log_and_exit "${_notice} Please see the log file for more details." "21"
     fi
   _clean_apt_cache
@@ -1438,11 +1440,11 @@ function _fix_repo_not_available_upcoming_release()
           code_name="$code_name_latest_release"
         fi
     else
-        _debug_log "Feature fix_repo_not_available_upcoming_release is disabled."
+        _debug_log "This Release/Distro does not support this option. Flag --pre-release will be ignored."
     fi
   else
     set_yellow
-    _debug_log "This Release/Distro does not support this option. Flag --pre-release will be ignored."
+    _debug_log "Feature fix_repo_not_available_upcoming_release is disabled."
     set_default
 fi
 }
@@ -1508,23 +1510,23 @@ function add_repositories()
   if [ "$add_google_repo" == "true" ]; then
     _log_and_show "${_repo} Google repositories"
     if [ "$ARCH" == "amd64" ]; then
-        _debug_log "Adding Google package siging Key"
+        _debug_log "Adding Google package signing Key"
       wget -q  https://dl.google.com/linux/linux_signing_key.pub -O /tmp/ae/linux_signing_key.pub >> $"$log_file"
       _debug_log "Adding Google key to trusted keys list"
       apt-key add /tmp/ae/linux_signing_key.pub 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_show "${_error} Adding trusted keys for Google failed."
+      || _log_and_warn "${_error} Adding trusted keys for Google failed."
 
       _log_and_show "${_repo} Google Chrome repository"
       echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main #Google-Chrome" > ${SOURCES_FILE_DIR}/google-chrome.list \
-      || _log_and_show "${_error} Adding Google Chrome Repository failed"
+      || _log_and_warn "${_error} Adding Google Chrome Repository failed"
 
       _log_and_show "${_repo} Google Earth repository"
 
       echo "deb [arch=amd64] http://dl.google.com/linux/earth/deb/ stable main #Google-Earth" > ${SOURCES_FILE_DIR}/google-earth.list \
-      || _log_and_show "${_error} Adding Google Chrome repository failed"
+      || _log_and_warn "${_error} Adding Google Chrome repository failed"
 
     else
-      _log_and_show "Architecture: $ARCH is not supported for Chrome. Please use Chromium"
+      _log_and_warn "Architecture: $ARCH is not supported for Chrome. Please use Chromium"
     fi
   else
     _log_and_show "${_repo} Chrome repository is set to false. Skipping."
@@ -1537,10 +1539,10 @@ function add_repositories()
     _debug_log "Adding Spotify keys"
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 931FF8E79F0876134EDDBDCCA87FF9DF48BF1C90  2>&1 \
     |_add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_show "${_error} Adding Spotify repository failed"
+    || _log_and_warn "${_error} Adding Spotify repository failed"
 
     echo "deb http://repository.spotify.com stable non-free #Spotify" > ${SOURCES_FILE_DIR}/spotify.list \
-    || _log_and_show "${_error} Adding Spotify Repository Failed"
+    || _log_and_warn "${_error} Adding Spotify Repository Failed"
   else
     _log_and_show "${_repo} Spotify repository is set to false. Skipping."
   fi
@@ -1551,15 +1553,15 @@ function add_repositories()
     _debug_log "Adding Insync keys"
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ACCAF35C  2>&1 \
     | _add_timestamp_to_logs "${_apt_key_logs}" \
-    || _log_and_show "${_error} Adding Insync Repository failed"
+    || _log_and_warn "${_error} Adding Insync Repository failed"
 
     echo "deb http://apt.insynchq.com/${distro_name} $code_name non-free contrib #Insync-Client" > ${SOURCES_FILE_DIR}/insync.list \
-    || _log_and_show "${_error} Adding Insync Repository failed"
+    || _log_and_warn "${_error} Adding Insync Repository failed"
 
   elif [ "$add_insync_repo" == "true" ] && [ "$bool_is_debian" == "true" ]; then
     set_yellow;
-    _log_and_show "${_whoops} Unfortunately InSync repositoris are not supported on Debian."
-    _log_and_show "${_info} Please use debfile instead of repositoris."
+    _log_and_warn "${_whoops} Unfortunately InSync repositoris are not supported on Debian."
+    _log_and_warn "${_info} Please use debfile instead of repositoris."
     set_blue;
     _log_and_show "${_info} Visit https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files"
     set_default;
@@ -1577,11 +1579,11 @@ function add_repositories()
     apt-key add /tmp/ae/googlecloud.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"
     _log_and_show "${_repo} Google-Cloud-SDK repository"
     echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  \
-    || _log_and_show "${_error} Adding GCSFUSE Repository failed"
+    || _log_and_warn "${_error} Adding GCSFUSE Repository failed"
 
     _log_and_show "${_repo} GCSFUSE repository"
     echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list  \
-    || _log_and_show "${_error} Adding Google Cloud SDK Repository failed"
+    || _log_and_warn "${_error} Adding Google Cloud SDK Repository failed"
 
   else
     _log_and_show "${_repo} Google Cloud SDK repository is set to false. Skipping."
@@ -1592,8 +1594,6 @@ function add_repositories()
 
   #Wine HQ
   if [ "$add_winehq_repo" == "true" ]; then
-    _debug_log "Adding WINWHQ is set to true"
-
     _log_and_show "${_repo} WineHQ repository"
     _debug_log "Getting WineHQ repository Key"
     if [[ "$use_latest_winehq_key" == "true" ]]; then
@@ -1605,10 +1605,10 @@ function add_repositories()
     fi
     _debug_log "Adding WineHQ key"
     apt-key add /tmp/ae/wine-hq-sigining-key.key 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-    || _log_and_show "${_error} Adding WineHQ keys failed"
+    || _log_and_warn "${_error} Adding WineHQ keys failed"
     _debug_log "Adding WineHQ repository"
     echo "deb https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list \
-    || _log_and_show "${_error} Adding WineHQ repository failed"
+    || _log_and_warn "${_error} Adding WineHQ repository failed"
   else
     _log_and_show "${_repo} WineHQ repository is set to false. Skipping."
   fi
@@ -1616,18 +1616,17 @@ function add_repositories()
   # Docker CE
   if [ "$add_docker_repo" == "true" ]; then
     if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "armhf" ]; then
-      _debug_log "Adding Docker repository is set to true"
       _log_and_show "${_repo} Docker-CE repository"
       _debug_log "Getting Docker-CE repository Key"
       wget -q https://download.docker.com/linux/"${distro_name}"/gpg -O /tmp/ae/docker-key.gpg >> "$log_file"  2>&1
       _debug_log "Adding Docker repository key"
       apt-key add /tmp/ae/docker-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_show "${_error} Adding Docker-CE keys failed"
+      || _log_and_warn "${_error} Adding Docker-CE keys failed"
       _debug_log "${_repo} Docker-CE"
       echo "deb [arch=$ARCH] https://download.docker.com/linux/${distro_name}  ${code_name} stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list \
-      || _log_and_show "${_error} Adding Docker-CE repository failed"
+      || _log_and_warn "${_error} Adding Docker-CE repository failed"
     else
-      _log_and_show "${_error} Architecture not supported!. Please use docker.io package from your distro."
+      _log_and_warn "${_error} Architecture not supported!. Please use docker.io package from your distro."
     fi
   else
     _debug_log "Adding Docekr-CE repository is set to false. Skipping."
@@ -1641,11 +1640,11 @@ function add_repositories()
       wget -q https://repo.skype.com/data/SKYPE-GPG-KEY -O /tmp/ae/skype-linux-key.gpg >> "$log_file"
       _debug_log "Adding Skype keys to trusted list"
       apt-key add /tmp/ae/skype-linux-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_show "${_error} Adding Skype for linux key failed"
+      || _log_and_warn "${_error} Adding Skype for linux key failed"
       echo "deb [arch=$ARCH] https://repo.skype.com/deb stable main #Skype" > $SOURCES_FILE_DIR/skype-stable.list \
-      || _log_and_show "${_error} Adding Skype for linux repository failed"
+      || _log_and_warn "${_error} Adding Skype for linux repository failed"
     else
-      _log_and_show "${_error} Skype doesnot support this architecture"
+      _log_and_warn "${_error} Skype doesnot support this architecture"
     fi
   else
     _log_and_show "${_repo} Skype repository is set to false. Skipping."
@@ -1658,10 +1657,10 @@ function add_repositories()
       _debug_log "Getting GPG keys for repository"
       wget -q https://packages.microsoft.com/keys/microsoft.asc -O /tmp/ae/microsoft.asc
       _debug_log "Adding Key to trusted GPG keys directory"
-      apt-key add /tmp/ae/microsoft.asc 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_show "${_error} Adding Visual Studio Code key failed"
+      apt-key add /tmp/ae/microsoft.asc 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_warn "${_error} Adding Visual Studio Code key failed"
       echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list
     else
-      _log_and_show "Architecture: $ARCH is not supported by Visual studio Code."
+      _log_and_warn "Architecture: $ARCH is not supported by Visual studio Code."
     fi
   else
     _log_and_show "${_repo} Visual Studio repository is set to false. Skipping."
@@ -1673,25 +1672,24 @@ function add_repositories()
       _log_and_show "${_repo} Signal repository"
       wget -q https://updates.signal.org/desktop/apt/keys.asc -O /tmp/ae/signal.asc >> "$log_file"
       apt-key add /tmp/ae/signal.asc  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_show "${_error} Adding Signal Key Failed"
+      || _log_and_warn "${_error} Adding Signal Key Failed"
       echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/signal-xenial.list
     else
-        _log_and_show "Architecture: $ARCH is not supported by Signal"
+        _log_and_warn "Architecture: $ARCH is not supported by Signal"
     fi
   else
     _log_and_show "${_repo} Signal repository is set to false. Skipping."
   fi
-
 
   # Kubernetes
   if [ "$add_kubernetes_repo" == "true" ]; then
     if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "armhf" ] || [ "$ARCH" == "arm64" ] ; then
       wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg -O /tmp/ae/kubernetes.gpg >> "$log_file"
       apt-key add /tmp/ae/kubernetes.gpg  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_show "${_error} Adding Kubernetes Key Failed"
+      || _log_and_warn "${_error} Adding Kubernetes Key Failed"
       echo "deb http://apt.kubernetes.io/ kubernetes-${code_name} main #Kubernetes" > ${SOURCES_FILE_DIR}/kubernetes.list
     else
-        _log_and_show "Architecture: $ARCH is not supported. You might manually compile from source."
+        _log_and_warn "Architecture: $ARCH is not supported. You might manually compile from source."
     fi
   else
     _log_and_show "${_repo} Kubernetes repository is set to false. Skipping."
@@ -1702,10 +1700,10 @@ function add_repositories()
     if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "i386" ] ; then
       _log_and_show "${_repo} Mendeley repository"
       apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_show "${_error} Adding Mendeley Desktop Key Failed"
+      || _log_and_warn "${_error} Adding Mendeley Desktop Key Failed"
       echo "deb https://desktop-download.mendeley.com/download/apt stable main #Mendeley-Desktop"  > ${SOURCES_FILE_DIR}/mendeleydesktop.list
     else
-      _log_and_show "Architecture: $ARCH is not supported. You might manually compile from source."
+      _log_and_warn "Architecture: $ARCH is not supported. You might manually compile from source."
     fi
   else
       _log_and_show "${_repo} Mendeley Desktop is set to false."
@@ -1789,8 +1787,8 @@ function upgrade_apps()
   if [[ $exit_status -eq 0 ]]; then
     _log_and_show "${_upgrade} Completed successfully!"
   else
-    _log_and_show "${_oh_no} Something went wrong while upgrading packages."
-    _log_and_show "${_notice} Please see the log file for more details. \
+    _log_and_warn "${_oh_no} Something went wrong while upgrading packages."
+    _log_and_warn "${_notice} Please see the log file for more details. \
     Most of the times its either missing repositories or wrongly configured repositories."
   fi
   set_default;
@@ -1808,6 +1806,7 @@ function  upgrade_system()
   upgrade_apps;
 }
 
+
 function purge_ppa()
 {
   # PPAs added or repositoris added by actions other than this script are not removed.
@@ -1822,7 +1821,7 @@ function purge_ppa()
             _log_and_show "${_purge} $index..."
             _debug_log "Purging: $index"
             if [ "$index" == "" ] || [ "$index" == " " ]; then
-              _log_and_show "${_purge} Found an empty entry, Ignoring"
+              _log_and_warn "${_purge} Found an empty entry, Ignoring"
               continue;
             fi
             if ppa-purge -y "$index"  2>&1 | _add_timestamp_to_logs "${_apt_logs}"  ; then
@@ -1831,9 +1830,7 @@ function purge_ppa()
               _log_and_show "${_purge} $line successfully."
               set_default
             else
-              set_yellow
-              _log_and_show "${_oh_no} Some Error occured while purging $line."
-              set_default
+              _log_and_warn "${_oh_no} Some Error occured while purging $line."
             fi
         done
         set_yellow;
@@ -1858,49 +1855,72 @@ function disable_external_repos()
 
     # Remove keys and list files.
     _log_and_show "${_deleting} Keys and external repositoris"
+    _log_and_show "${_info} You can igore failed messages if those were not added in first place."
     set_default
     _log_and_show "${_deleting} Google signing key   7FAC5991"
     apt-key del 7FAC5991  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_show "${_deleting}  Google signing key -1 failed."
+    || _log_and_warn "${_deleting}  Google signing key -1 failed."
+
     _log_and_show "${_deleting} Google signing key   D38B4796"
     apt-key del D38B4796  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_show "${_deleting}  Google signing key -2 failed."
+    || _log_and_warn "${_deleting}  Google signing key -2 failed."
+
     _log_and_show "${_deleting} GCP signing key -2   BA07F4FB"
     apt-key del BA07F4FB  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_show "${_deleting}  Google cloud key -1 failed."
+    || _log_and_warn "${_deleting}  Google cloud key -1 failed."
+
     _log_and_show "${_deleting} GCP signing key -2   A7317B0F"
     apt-key del A7317B0F  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_show "${_deleting}  GCP signing key -2  failed."
+    || _log_and_warn "${_deleting}  GCP signing key -2  failed."
+
     _log_and_show "${_deleting} Webupd8 signing key  4C9D234C"
     apt-key del 4C9D234C  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_show "${_deleting}  Webupd8 failed."
+    || _log_and_warn "${_deleting}  Webupd8 failed."
+
     _log_and_show "${_deleting} Spotify signing key  4C9D234C"
     apt-key del D2C19886  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_show "${_deleting}  Spotify signing key -2 failed."
+    || _log_and_warn "${_deleting}  Spotify signing key -3 failed."
+
+    _log_and_show "${_deleting} Spotify signing key  48BF1C90"
+    apt-key del 48BF1C90  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+    || _log_and_warn "${_deleting}  Spotify signing key -3 failed."
+
     _log_and_show "${_deleting} Spotify signing key  341D9410"
     apt-key del 341D9410  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_show "${_deleting}  Spotify signing key -2 failed."
+    || _log_and_warn "${_deleting}  Spotify signing key -2 failed."
+
     _log_and_show "${_deleting} Skype signing key    DF7587C3"
     apt-key del DF7587C3  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_show "${_deleting}  Skype for Linux keys failed."
-    _log_and_show "${_deleting} WineHQ signing key   5FCBF54A"
+    || _log_and_warn "${_deleting}  Skype for Linux keys failed."
+
+    _log_and_show "${_deleting} WineHQ key [old]     5FCBF54A"
     apt-key del 5FCBF54A  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_show "${_deleting}  WineHQ keys failed."
+    || _log_and_warn "${_deleting}  WineHQ keys [old] failed."
+
+    _log_and_show "${_deleting} WineHQ key [latest]  F987672F"
+    apt-key del F987672F  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+    || _log_and_warn "${_deleting}  WineHQ keys [latest] failed."
+
     _log_and_show "${_deleting} InSync signing key   ACCAF35C"
     apt-key del ACCAF35C  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_show "${_deleting}  InSync keys failed."
+    || _log_and_warn "${_deleting}  InSync keys failed."
+
     _log_and_show "${_deleting} Docker signing key   0EBFCD88"
     apt-key del 0EBFCD88  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_show "${_deleting}  Docker-CE keys failed."
+    || _log_and_warn "${_deleting}  Docker-CE keys failed."
+
     _log_and_show "${_deleting} VS-Code signing key  BE1229CF"
     apt-key del BE1229CF  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_show "${_deleting}  Visual Studio Code keys failed."
+    || _log_and_warn "${_deleting}  Visual Studio Code keys failed."
+
     _log_and_show "${_deleting} Signal signing key   57F6FB06"
     apt-key del 57F6FB06  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_show "${_deleting}  Signal keys failed."
+    || _log_and_warn "${_deleting}  Signal keys failed."
+
     _log_and_show "${_deleting} Mendeley signing key 6F036044"
     apt-key del 57F6FB06  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_show "${_deleting}  Mendeley Desktop keys failed."
+    || _log_and_warn "${_deleting}  Mendeley Desktop keys failed."
+
     _log_and_show "${_repo} Removing external repositoris"
     _debug_log "${_deleting} *.list and *.save files from ${SOURCES_FILE_DIR}"
     (
@@ -1925,9 +1945,8 @@ function disable_external_repos()
       _log_and_show "${_removed} Additional APT keys and repositories."
       _log_and_show "${_notice} Canonical partner repository was left unchanged."
     else
-      _log_and_show "${_oh_no} Failed to remove all or some of the list files or keys in Sources directory."
-      set_blue
-      _log_and_show "${_notice} Please see the log file for more details."
+      _log_and_warn "${_oh_no} Failed to remove all or some of the list files or keys in Sources directory."
+      _log_and_warn "${_notice} Please see the log file for more details."
     fi
     set_default;
     _log_and_show "${_removed} Repositories. Please check the logs for errors."
@@ -1951,9 +1970,7 @@ function purge_not_required()
   if [ "$bool_purge_not_required_pkgs" == "true" ]; then
     _log_and_show "${_purge} Packages..."
     if [[ ${#parsed_purge_packages[@]} -eq 0 ]]; then
-      set_yellow;
-      _log_and_show "${_error} Package array is empty!";
-      set_default;
+      _log_and_warn "${_error} Package array is empty!";
       return;
     else
       if [ "$simulate_apt_install" == "true" ]; then
@@ -1970,22 +1987,18 @@ function purge_not_required()
         set_green
         _log_and_show "${_purge} Success!"
       else
-        set_yellow;
-        _log_and_show "${_oh_no} Something went wrong while purging packages."
-        set_blue;
-        _log_and_show "${_notice} Please see the log file for more details."
+        _log_and_warn "${_oh_no} Something went wrong while purging packages."
+        _log_and_warn "${_notice} Please see the log file for more details."
       fi
       set_default
     fi
   else
-    set_red
     _log_and_exit "${_error} Purge switch is set to false. Did you pass -d along wth the command?" "20"
   fi
   set_default;
   _line_fill >> "$log_file"
 
 }
-
 
 
 function install_apps()
@@ -2047,10 +2060,8 @@ function install_apps()
         set_green
         _log_and_show "${_apt} Success!"
       else
-      set_yellow;
-      _log_and_show "${_oh_no} Something went wrong while installing packages in $index."
-      set_blue;
-      _log_and_show "${_notice} Please see the log file for more details."
+      _log_and_warn "${_oh_no} Something went wrong while installing packages in $index."
+      _log_and_warn "${_notice} Please see the log file for more details."
       fi
       set_default;
 
@@ -2112,8 +2123,7 @@ function _install_pip_python()
   _log_and_show "${_checking} Dependencies for Python: ${pip_ver}"
   # Check if `python-pip` is installed, if not install it
   if ! pip_loc="$(type -p "$pip_command")" || [[ -z $pip_loc ]]; then
-      set_yellow;
-      _log_and_show "${_info} $pip_command is not installed!${NC}"
+      _log_and_warn "${_info} $pip_command is not installed!${NC}"
       set_default;
       update_repos;
       _log_and_show "${_installing} PIP Dependencies"
@@ -2134,9 +2144,8 @@ function _install_pip_python()
       if [[ $exit_status -eq 0 ]]; then
         _log_and_show "${_installed} Dependency packages."
       else
-        set_red;
-        _log_and_show "${_oh_no} Something went wrong while installing dependencies."
-        _log_and_show "${_error} Python packages cannot be installed without dependencies."
+        _log_and_warn "${_oh_no} Something went wrong while installing dependencies."
+        _log_and_warn "${_error} Python packages cannot be installed without dependencies."
         _log_and_exit "${_notice} Please see the log file for more details." "21"
       fi
 
@@ -2157,9 +2166,7 @@ function _install_pip_python()
    printf "%s\n" "${python_packages[@]}" > "${requirements_file}"
   # Check if pip package list is empty
   if [[ ${#python_packages[@]} -eq 0 ]]; then
-    set_yellow;
-    _log_and_show "${_error} Package array is empty!";
-    set_default;
+    _log_and_warn "${_error} Package array is empty!";
     return
   else
     # I package list isn't empty proceed to install pip packages
@@ -2176,10 +2183,8 @@ function _install_pip_python()
       set_green
       _log_and_show "${_installed} python - ${1} modules"
     else
-      set_yellow;
-      _log_and_show "${_error} Something went wrong while installing packages in $pip_list."
-      set_blue;
-      _log_and_show "${_notice} Please see the log file for more details."
+      _log_and_warn "${_error} Something went wrong while installing packages in $pip_list."
+      _log_and_warn "${_notice} Please see the log file for more details."
     fi
     set_default
   fi
@@ -2245,8 +2250,7 @@ function install_debs ()
        set_green
       _log_and_show "${_deb} Installed $deb_name successfully."
      else
-       set_yellow
-      _log_and_show "${_oh_no} Some error occured during downloading and installing $index."
+      _log_and_warn "${_oh_no} Some error occured during downloading and installing $index."
       $?="0"
     fi
     set_default
@@ -2309,13 +2313,13 @@ function install_binaries ()
         chmod +x /usr/local/bin/"$bin_name" >> "${log_file}"
       fi
     else
-      set_yellow
-      _log_and_show "${_error} Failed to download $bin_name."
+      _log_and_warn "${_error} Failed to download $bin_name."
     fi
     set_default
   done
   _line_fill >> "$log_file"
 }
+
 
 function _autopilot_check_task_flag_and_run()
 {
@@ -2355,7 +2359,6 @@ function all_in_one()
   _line_fill;
   set_default;
 }
-
 
 
 function _process_menu
@@ -2530,9 +2533,7 @@ function _ci_cloud_and_container_checks()
 }
 
 function display_version()
-
 {
-
   #_line_fill
   set_green
   printf "%-15s : %s\n" "Version Number" "${REL_NUM}"
@@ -2542,7 +2543,6 @@ function display_version()
   printf "%-15s : %s\n" "Executable" "${SCRIPT}"
   set_default
   #_line_fill
-
 }
 
 
@@ -2551,7 +2551,7 @@ function _process_non_root_options()
   # Process command line arguments which does not require root.
   while [ "${1}" != "" ]; do
     case ${1} in
-      -v | --version)         display_version;exit 0;;
+      -v | --version)   display_version;exit 0;;
       --verify)         verify_gpg_signature;exit 0;;
     esac
     shift
@@ -2624,7 +2624,8 @@ function main()
                               readonly bool_remote_yaml="true";
                               shift; readonly url_remote_yaml="${1}";
                               ;;
-      --no-version-checks )   bool_check_version="false";;
+      --no-version-checks )   bool_check_version="false"
+                              ;;
       -S |  --no-stats )      set_yellow;
                               readonly bool_report_stats="false";
                               _log_and_show "${_info} Statistis will not be reported."
@@ -2658,7 +2659,8 @@ function main()
       --hide-config)          readonly bool_hide_config="true";
                               _log_and_show "${_info} YAML config will not be displayed."
                               ;;
-      --internal)             ae_internal="true";;
+      --internal)             ae_internal="true"
+                              ;;
       -v | --version )        _log_and_show "-v or --version should be the only argument." "23";;
       --verify)               _log_and_exit "--verify should be the only argument." "23";;
        * )                    _log_and_exit "${_error} Invalid option: $1" "22";;
@@ -2713,7 +2715,7 @@ function main()
   elif  [ "$bool_use_lists" == "true" ] && [ "$bool_use_yaml" == "true" ]; then
     _log_and_exit "${_error} -Y --yaml and -L --lists cannot be used together." "25"
   else
-    _log_and_show "${_error} You need to specify config type to use."
+    _log_and_warn "${_error} You need to specify config type to use."
     _log_and_exit "${_info} -Y or --yaml for YAML or -L or --lists for Lists" "25"
   fi
 

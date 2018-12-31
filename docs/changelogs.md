@@ -3,6 +3,10 @@
 ## Version 5.3.4
 
 - Update WineHQ keys.
+- Add new wine HQ keys to repo cleanup
+- Add new Spotify key to repo cleanup
+- Add new warning msg function
+- Remove repeated debug msgs
 
 ## Version 5.3.3
 
