@@ -69,7 +69,7 @@ This can add the following repositories.
 !!! warning "ROS Releases & Ubuntu/Debian versions"
     - ROS releases only support certain Ubuntu/Debian distributions. Please use appropriate packages to install depending on
     your distro/version. You can find more info at [ROS-Wiki](http://wiki.ros.org/ROS/Installation)
-    - Though Ubuntu derivatives might work, they are not supported. 
+    - Though Ubuntu derivatives might work, they are not supported.
 
 ### Canonical partner repositories
 
@@ -96,39 +96,34 @@ This can add the following repositories.
 
 - Packages can be installed by using configuration lists in the data directory. This works similar to ppas
 
-   ```console
-   --------------------------------------------------------------------------------
-                                  APT Lists
-   --------------------------------------------------------------------------------
-   There are seven lists under key config.install.apt.[mentioned from 1-7]
-  1. administration : Contains Administrative packages
-  2. security       : contains Security related tools and packages
-  3. productivity   : Office tools, writing tools, LateX, document tools and other
-                      productivity tools, Email clients, browsers, IM clients etc.
-                    : Example : LateX, TeXStudio, Libre office, pandoc empathy, Thunderbird
-  4. multimedia     : Multimedia tools like media players, audio converters and playes etc.
-  5. development    : IDEs [Spyder, Jetbeans etc], languages [go, python, ruby, rust, java etc],
-                    : Containers [docker lxc rkt etc], Python libraries, compilers [gcc, clang]
-                    : SDKs [AWS SDK, Google Cloud SDK, open-jdk, Tensor Flow], headers and libraries[ocl-icd-dev],
-                    : Anything related to development and *-dev or *-devl packages.
-  6. other          : Everything which does not fit in the above categories.
-                    : Themes, Tools, Utilities like htop etc.
-  7. external       : Any packages which are provided by ppas, or repositories not present in
-                    : base [K/L/Ed/X]-Ubuntu distribution. There's a possibility that the repository might not
-                    : be added or may be unavailable or offline. So Keeping the list separate from
-                    : others packages minimizes errors if there are any.
-  This classification is only for ease of use and need not be strictly followed. You can put
-  'vlc' package in 'security', it will still install fine. This classification helps
-  while writing configs and editing them. Its advised to follow it if your configs
-  tend to get to couple of hundreds of lines. Also YAML file should be a valid YAML.
-  --------------------------------------------------------------------------------
-                     Special list - Purge list
-  --------------------------------------------------------------------------------
-  There is a special package list under key, config.purge or purge.list, which contains list of apt packages to be
-  purged from the system.
-  ```
+### There are seven lists under key config.install.apt.[mentioned from 1-7]
 
-- Make sure that all the packages in the lists are available for your release. Using `-s` command line option helps. Also check for the logs for any errors or conflicts.
+1. administration - Contains Administrative packages
+2. security - Contains Security related tools and packages
+3. productivity - Office tools, writing tools, LateX, document tools and other
+productivity tools, Email clients, browsers, IM clients etc.
+Example : LateX, TeXStudio, Libre office, pandoc empathy, Thunderbird
+4. multimedia - Multimedia tools like media players, audio converters and playes etc.
+5. development - IDEs [Spyder, Jetbeans etc], languages [go, python, ruby, rust, java etc],
+Containers [docker lxc rkt etc], Python libraries, compilers [gcc, clang]
+SDKs [AWS SDK, Google Cloud SDK, open-jdk, Tensor Flow], headers and libraries[ocl-icd-dev],
+Anything related to development and -dev or -devl packages.
+6. other - Everything which does not fit in the above categories.
+Themes, Tools, Utilities like htop etc.
+7. external - Any packages which are provided by ppas, or repositories not present in
+base [K/L/Ed/X]-Ubuntu distribution. There's a possibility that the repository might not
+be added or may be unavailable or offline. So Keeping the list separate from
+others packages minimizes errors if there are any.
+
+This classification is only for ease of use and need not be strictly followed. You can put
+'vlc' package in 'security', it will still install fine. This classification helps
+while writing configs and editing them. Its advised to follow it if your configs
+tend to get to couple of hundreds of lines. Also YAML file should be a valid YAML & indented by 2 spaces.
+
+### Special list - Purge list
+
+There is a special package list under key, config.purge or purge.list, which contains list of apt packages to be
+purged from the system. Make sure that all the packages in the lists are available for your release. Using `-s` command line option helps. Also check for the logs for any errors or conflicts.
 
 ## Install Debian package archives (.deb files)
 

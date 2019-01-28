@@ -866,9 +866,9 @@ function _check_bool()
                                                 _debug_log "Variable : <$g_var> is set to false"
                                                 ;;
     *)                                          declare -g ${g_var}="false"
-                                                _log_and_show "${_cfg} Invalid value for param : $g_var."
-                                                _log_and_show "${_cfg} It can either be t[T]rue or f[F]alse."
-                                                _log_and_show "${_cfg} Setting $g_var to default. (false)"
+                                                _log_and_show "${_warn} Invalid/empty value for param : $g_var."
+                                                _log_and_show "${_warn} It can either be t[T]rue or f[F]alse."
+                                                _log_and_show "${_warn} Setting $g_var to false"
                                                 ;;
   esac
 }
@@ -1023,14 +1023,13 @@ function _set_yaml_config()
     if [ "${bool_hide_config}" != "true" ]; then
       printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
-      printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Google Cloud SDK" "$add_googlecloud_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Spotify" "$add_spotify_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Skype" "$add_skype_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Visual Studio Code" "$add_vscode_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Insync" "$add_insync_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Signal for Desktop" "$add_signal_repo"
-      printf "${_cfg} %-20s | %-10s |\n" "Google Chrome & Earh" "$add_google_repo"
+      printf "${_cfg} %-20s | %-10s |\n" "Google Chrome & Earth" "$add_google_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Kubernetes" "$add_kubernetes_repo"
       printf "${_cfg} %-20s | %-10s |\n" "ROS" "$add_ros_repo"
       set_default;
@@ -1075,7 +1074,7 @@ function _set_yaml_config()
         printf "${_cfg} %-20s | %-10s |\n" "Visual Studio Code" "$add_vscode_repo"
         printf "${_cfg} %-20s | %-10s |\n" "Insync" "$add_insync_repo"
         printf "${_cfg} %-20s | %-10s |\n" "Signal for Desktop" "$add_signal_repo"
-        printf "${_cfg} %-20s | %-10s |\n" "Google Chrome & Earh" "$add_google_repo"
+        printf "${_cfg} %-20s | %-10s |\n" "Google Chrome & Earth" "$add_google_repo"
         printf "${_cfg} %-20s | %-10s |\n" "Kubernetes" "$add_kubernetes_repo"
         printf "${_cfg} %-20s | %-10s |\n" "ROS" "$add_ros_repo"
         printf "${_table} %-20s | %-10s |\n" "Other Flags" "Config"
@@ -1724,7 +1723,7 @@ function add_repositories()
     if [[ $ros_arch_supported == "true" ]]; then
       _log_and_show "${_repo} ROS is Supported on this distro/ARCH : ${code_name}/${ARCH}"
       _debug_log "Adding ROS repo key..."
-      apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
        || _log_and_warn "${_error} Adding ROS repository key failed!"
 
        if [[ $bool_use_uni_freiburg_mirror == "true" ]] && [[ $distro_name == "ubuntu" ]]; then
@@ -1827,6 +1826,9 @@ function add_repositories()
         /tmp/ae/*.key.* /tmp/ae/*.gpg.* >> "$log_file"
   )
   _line_fill >> "$log_file"
+
+  update_repos
+
 }
 
 
