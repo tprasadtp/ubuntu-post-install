@@ -11,7 +11,7 @@ start fresh. Beauty of Linux is almost everything is scriptable. Re-installing i
 
 What if your script could be "configured"? Just add the package you want to install to your config file. No need to search through code to do it. Separating your preferences and package lists from the script frees you from writing the script every time a new release comes around. This project helps you do just that. Its poor man's Chef. Most of your preferences and configurations are separate from script.
 
-## Really? A shell-script
+## Really? A shell-script?
 
 [![Bash](https://static.prasadt.com/logo64/bash.png)](https://ae.prasadt.com)
 

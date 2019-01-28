@@ -6,21 +6,28 @@ Install (if you haven't already) your choice of Ubuntu/Derivative as you would( 
 
 ## Step 1: Get the script
 
-### Without Git
+#### Without Git
 
 Run this in Terminal
 
 ```console
-wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash
+wget -Nnv https://ae.prasadt.com/get -O - | bash
 ```
 
-### With Git
+> URL redirects to file with last known good commit on GitHub. It is cached & proxies to GitHub at CDN level. If you are paranoid, use git.
+If you wish to use master branch pass `--master` or `-m` as an argument. Eg: `wget -Nnv https://ae.prasadt.com/get -O - | bash -s --master`
 
-If you already have git on your system already you can use,
+#### With Git
+
+If you already have git on your system, you can use,
 
 ```console
-git clone --depth 1 https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install
+git clone https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install
 ```
+
+If you already have cloned the repo, you can use `git pull` to get the latest changes.
+
+> This will use master branch which may not be as stable as versioned releases.
 
 ## Step 2: Update the lists or config.yml to suit your needs (Optional)
 
