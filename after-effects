@@ -1041,7 +1041,7 @@ function _set_yaml_config()
       printf "${_cfg} %-20s | %-10s |\n" "Purge Enabled" "$bool_purge_not_required_pkgs"
       printf "${_cfg} %-20s | %-10s |\n" "Keep DEBs/APT cache" "$bool_preserve_debs"
       printf "${_cfg} %-20s | %-10s |\n" "Dont confirm" "$bool_say_yes_to_all"
-      printf "${_cfg} %-20s | %-10s |\n" "Use Uni-Freiburg Mirror" "$bool_use_uni_freiburg_mirror"
+      printf "${_cfg} %-20s | %-10s |\n" "Uni-Freiburg Mirror" "$bool_use_uni_freiburg_mirror"
       _line_fill;
 
       # Only display tasks column when autopilot = true is set.
@@ -1699,11 +1699,13 @@ function add_repositories()
         if [[ $code_name == "bionic" ]]; then
           if [[ $ARCH == "amd64" ]] || [[ $ARCH == "arm64" ]] || [[ $ARCH == "armhf" ]]; then
             ros_arch_supported="true"
+            _log_and_show "${_repo} ROS is available on Bionic/$ARCH"
           fi
 
-        elif [[ $codename == "xenial" ]]; then
+        elif [[ $code_name == "xenial" ]]; then
           if [[ $ARCH == "amd64" ]] || [[ $ARCH == "arm64" ]] || [[ $ARCH == "armhf" ]] || [[ $ARCH == "i386" ]]; then
             ros_arch_supported="true"
+            _log_and_show "${_repo} ROS is available on Xenial/$ARCH"
           fi
         fi
     fi #ubuntu
@@ -1711,21 +1713,18 @@ function add_repositories()
     if [ "$distro_name" == "debian" ]; then
         # Check architectures
         # stretch | jessie
-        if [[ $code_name == "stretch" ]] || [[ $codename == "jessie" ]]; then
+        if [[ $code_name == "stretch" ]] || [[ $code_name == "jessie" ]]; then
           if [[ $ARCH == "amd64" ]] || [[ $ARCH == "arm64" ]] ; then
             ros_arch_supported="true"
+            _log_and_show "${_repo} ROS is available on Debian ${code_name}/$ARCH"
           fi
         fi
     fi #debian
 
-    _debug_log "ROS Arch supported ? : ${ros_arch_supported}"
-
     if [[ $ros_arch_supported == "true" ]]; then
       _log_and_show "${_repo} ROS is Supported on this distro/ARCH : ${code_name}/${ARCH}"
       _debug_log "Adding ROS repo key..."
-      apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 \
-       --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116 2>&1 \
-       | _add_timestamp_to_logs "${_apt_key_logs}"  \
+      apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
        || _log_and_warn "${_error} Adding ROS repository key failed!"
 
        if [[ $bool_use_uni_freiburg_mirror == "true" ]] && [[ $distro_name == "ubuntu" ]]; then
