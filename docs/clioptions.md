@@ -306,6 +306,20 @@ Following things are reported. (Nothing more than that)
     to it. If you run a search query on google, it probably collects more data than me. API endpoints/PaaS/IaaS provider may log your IP addresses, but script does not and WILL not collect IP addresses.
     - If you flood the reporting endpoints, you might get HTTP 429 errors as reporting endpoints have rate limits.
 
+
+## Uni-Freiburg Mirror
+
+!!! warning
+    Enabling this option will use mirrors from Uni-Freiburg if they are available. You may have to be within Uni-Freiburg network
+    to access it. The mirror may not work or be up-to date with upstream. Use this option only if you are inside Uni-Freiburg network
+    and know what versions/libs are hosted on the mirror.
+
+Uses mirrors from `University of Freiburg`. Only available for limited number of repositories. Do **not** use this if you are not a faculty or student of Uni-Freiburg, as it may have un-intended side effects. Arguments `-u` or `--use-uf-mirror`. Because I do not wish to waste bandwidth
+this option is not tested on CI builds.
+
+!!! note
+    **This script/github-repo/or this website is not affiliated with University of Freiburg.**
+
 ## Version
 
 !!! snippet "Usage"

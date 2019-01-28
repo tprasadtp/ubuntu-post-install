@@ -2,9 +2,9 @@
 api: 2
 # Configuraion
 version:
-  number: 534
-  name: 5.3.4
-  changelog: Cosmic + Tessa Support + Updated WineHQ keys
+  number: 536
+  name: 5.3.6
+  changelog: Support for ROS repo, Cosmic+Tessa
 # Stats reporting
 stats:
   report: false

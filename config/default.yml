@@ -34,6 +34,7 @@ config:
     insync: true
     google: true
     kubernetes: false
+    ros: true
   # Flags
   flags:
   # Simulate flag will never be overridden by remote config.

@@ -30,8 +30,8 @@ readonly EXEC_START=$(date +%s)
 readonly DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.3.4 Beta"
-readonly REL_NUM=534
+readonly REL_NAME="5.3.6 Beta"
+readonly REL_NUM=536
 
 function _init_printf_variables()
 {
@@ -350,17 +350,25 @@ function _init_script_variables()
   #Kubernetes
   add_kubernetes_repo=false
 
+  #ROS
+  add_ros_repo=false
+
   #
   # ================================================================================== #
   # Achtung!
   # Do not change any of the variables below this if you dont know what they do.
-  # They are essential for correct working of the script.
+  # They are essential for correct working of the script or use unstable builds/repos.
 
   # Check Debian Flags
   bool_is_debian="false"
 
   # Check Signature
   #readonly bool_verify_gpg_signatures="true"
+
+
+  #ROS RC repo
+  # change this to true if you wish to use Release candidate repo for ROS
+  ros_rc_repo="false"
 
   # latest WineHQ keys
   readonly use_latest_winehq_key="true"
@@ -958,6 +966,9 @@ function _set_yaml_config()
     _check_bool "add_kubernetes_repo" "${config__add_repo__kubernetes[0]}"
     #add_kubernetes_repo="${config__add_repo__kubernetes[0]}"
 
+    # ROS
+    _check_bool "add_ros_repo" "${config__add_repo__ros[0]}"
+
     # Other Script Flags
 
     #################################################################################
@@ -972,6 +983,9 @@ function _set_yaml_config()
     # Yes
     _check_bool "bool_say_yes_to_all" "${config__flags__auto_yes[0]}"
     #bool_say_yes_to_all="${config__flags__auto_yes[0]}"
+
+    # Uni-Mirror
+    _check_bool "bool_use_uni_freiburg_mirror" "${config__flags__uni_freiburg_mirror[0]}"
 
     # Tasks Flags
     ##################################################################################
@@ -1018,6 +1032,7 @@ function _set_yaml_config()
       printf "${_cfg} %-20s | %-10s |\n" "Signal for Desktop" "$add_signal_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Google Chrome & Earh" "$add_google_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Kubernetes" "$add_kubernetes_repo"
+      printf "${_cfg} %-20s | %-10s |\n" "ROS" "$add_ros_repo"
       set_default;
       _line_fill;
       printf "${_table} %-20s | %-10s |\n" "Other Flags" "Config"
@@ -1026,6 +1041,7 @@ function _set_yaml_config()
       printf "${_cfg} %-20s | %-10s |\n" "Purge Enabled" "$bool_purge_not_required_pkgs"
       printf "${_cfg} %-20s | %-10s |\n" "Keep DEBs/APT cache" "$bool_preserve_debs"
       printf "${_cfg} %-20s | %-10s |\n" "Dont confirm" "$bool_say_yes_to_all"
+      printf "${_cfg} %-20s | %-10s |\n" "Use Uni-Freiburg Mirror" "$bool_use_uni_freiburg_mirror"
       _line_fill;
 
       # Only display tasks column when autopilot = true is set.
@@ -1061,11 +1077,13 @@ function _set_yaml_config()
         printf "${_cfg} %-20s | %-10s |\n" "Signal for Desktop" "$add_signal_repo"
         printf "${_cfg} %-20s | %-10s |\n" "Google Chrome & Earh" "$add_google_repo"
         printf "${_cfg} %-20s | %-10s |\n" "Kubernetes" "$add_kubernetes_repo"
+        printf "${_cfg} %-20s | %-10s |\n" "ROS" "$add_ros_repo"
         printf "${_table} %-20s | %-10s |\n" "Other Flags" "Config"
         _line_fill;
         printf "${_cfg} %-20s | %-10s |\n" "Purge Enabled" "$bool_purge_not_required_pkgs"
         printf "${_cfg} %-20s | %-10s |\n" "Keep DEBs/APT cache" "$bool_preserve_debs"
         printf "${_cfg} %-20s | %-10s |\n" "Dont confirm" "$bool_say_yes_to_all"
+        printf "${_cfg} %-20s | %-10s |\n" "Use Uni-Freiburg Mirror" "$bool_use_uni_freiburg_mirror"
         _line_fill;
         printf "${_table} %-20s | %-10s |\n" "Task" "Config"
         printf "${_rtasks} %-20s | %-10s |\n" "Update" "$ae_task_update"
@@ -1216,6 +1234,9 @@ function _set_list_config()
 
     #Kubernetes
     add_kubernetes_repo=false
+
+    #ROS
+    add_ros_repo=false
 
     ae_task_update="true"
     ae_task_upgrade="true"
@@ -1650,6 +1671,82 @@ function add_repositories()
     _log_and_show "${_repo} Skype repository is set to false. Skipping."
   fi
 
+  # ROS
+  # Arch support varies on distro so lot of ugly elifs.
+  # Packges share same name across RC and Stable. so its not possible to
+  # use both RC(ros-shadow-fixed and ros) repos at the same time.
+  # rusty will reach EOL soon, ITs not supoorted and its complicated due to
+  # http://wiki.ros.org/indigo/Installation/Ubuntu
+  # Dependency issues which might pop up.
+  ros_arch_supported="false"
+
+
+  if [ "$add_ros_repo" == "true" ]; then
+
+    # Unstable/RC repos
+    if [[ $ros_rc_repo == "true" ]]; then
+      _log_and_warn "Using ROS Release candidate [ROS Shadow Fixed] repositories"
+      ros_repo_path="ros-shadow-fixed"
+    else
+      _log_and_show "Using stable version of ROS"
+      ros_repo_path="ros"
+    fi
+
+    # Distro/Version/Arch checks
+    if [[ $distro_name == "ubuntu" ]] || [[ $distro_name == "linuxmint" ]] ; then
+        # Check architectures
+        # Bionic
+        if [[ $code_name == "bionic" ]]; then
+          if [[ $ARCH == "amd64" ]] || [[ $ARCH == "arm64" ]] || [[ $ARCH == "armhf" ]]; then
+            ros_arch_supported="true"
+          fi
+
+        elif [[ $codename == "xenial" ]]; then
+          if [[ $ARCH == "amd64" ]] || [[ $ARCH == "arm64" ]] || [[ $ARCH == "armhf" ]] || [[ $ARCH == "i386" ]]; then
+            ros_arch_supported="true"
+          fi
+        fi
+    fi #ubuntu
+
+    if [ "$distro_name" == "debian" ]; then
+        # Check architectures
+        # stretch | jessie
+        if [[ $code_name == "stretch" ]] || [[ $codename == "jessie" ]]; then
+          if [[ $ARCH == "amd64" ]] || [[ $ARCH == "arm64" ]] ; then
+            ros_arch_supported="true"
+          fi
+        fi
+    fi #debian
+
+    _debug_log "ROS Arch supported ? : ${ros_arch_supported}"
+
+    if [[ $ros_arch_supported == "true" ]]; then
+      _log_and_show "ROS is Supported on this distro/ARCH : ${code_name}/${ARCH}"
+      _debug_log "Adding ROS repo key..."
+      apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 \
+       --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116 2>&1 \
+       | _add_timestamp_to_logs "${_apt_key_logs}"  \
+       || _log_and_warn "${_error} Adding ROS repository key failed!"
+
+       if [[ $bool_use_uni_freiburg_mirror == "true" ]] && [[ $distro_name == "ubuntu" ]]; then
+         _log_and_warn "Using Uni-Freiburg Mirror! This mirror might not be upto date with primary ROS repository!."
+         _log_and_warn "You may need authentication or have to be inside Uni-Freiburg network!"
+         echo "deb http://packages.ros.org.ros.informatik.uni-freiburg.de/${ros_repo_path}/ubuntu ${code_name} main #ROS-Repo-Uni-Freiburg" > $SOURCES_FILE_DIR/ros-latest.list \
+         || _log_and_warn "${_error} Adding ROS [Uni-Freiburg] repository failed!"
+      else
+        echo "deb http://packages.ros.org/${ros_repo_path}/${distro_name} ${code_name} main #ROS-Repo" > $SOURCES_FILE_DIR/ros-latest.list \
+        || _log_and_warn "${_error} Adding ROS repository failed!"
+       fi
+
+    else
+      _log_and_warn "ROS is not supported on this distro/architecture!"
+    fi # ros_arch_supported
+
+  else
+    _log_and_show "Adding ROS repository is set to false, skipping..."
+  fi # add_ros_repo
+
+
   # Visual Studio Code
   if [ "$add_vscode_repo" == "true" ]; then
     if [ "$ARCH" == "amd64" ]; then
@@ -1703,7 +1800,7 @@ function add_repositories()
       || _log_and_warn "${_error} Adding Mendeley Desktop Key Failed"
       echo "deb https://desktop-download.mendeley.com/download/apt stable main #Mendeley-Desktop"  > ${SOURCES_FILE_DIR}/mendeleydesktop.list
     else
-      _log_and_warn "Architecture: $ARCH is not supported. You might manually compile from source."
+      _log_and_warn "Architecture: ${ARCH} is not supported. You might manually compile from source."
     fi
   else
       _log_and_show "${_repo} Mendeley Desktop is set to false."
@@ -1921,6 +2018,10 @@ function disable_external_repos()
     apt-key del 57F6FB06  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_and_warn "${_deleting}  Mendeley Desktop keys failed."
 
+    _log_and_show "${_deleting} ROS signing key B01FA116"
+    apt-key del 421C365BD9FF1F717815A3895523BAEEB01FA116  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+    || _log_and_warn "${_deleting}  ROS keys failed."
+
     _log_and_show "${_repo} Removing external repositoris"
     _debug_log "${_deleting} *.list and *.save files from ${SOURCES_FILE_DIR}"
     (
@@ -1937,7 +2038,8 @@ function disable_external_repos()
         vscode.* \
         signal-xenial.* \
         mendeleydesktop.* \
-        kubernetes.*
+        kubernetes.* \
+        ros-latest.*
     )
     exit_status=$?
     set_yellow;
@@ -2660,6 +2762,9 @@ function main()
                               _log_and_show "${_info} YAML config will not be displayed."
                               ;;
       --internal)             ae_internal="true"
+                              ;;
+      --use-uf-mirror | -u)   _log_and_show "Will use Uni-Freiburg mirror(s) if available";
+                              readonly bool_use_uni_freiburg_mirror="true";
                               ;;
       -v | --version )        _log_and_show "-v or --version should be the only argument." "23";;
       --verify)               _log_and_exit "--verify should be the only argument." "23";;
