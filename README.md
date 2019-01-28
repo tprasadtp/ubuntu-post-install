@@ -22,14 +22,11 @@ Install your choice of Ubuntu/Debian or its derivative as you would( If you wish
 Run this in Terminal
 
 ```console
-wget -Nnv https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh -O - | bash
-
-If you prefer a shorter URL,
-
 wget -Nnv https://ae.prasadt.com/get -O - | bash
 ```
 
-> Shorter URL redirects to same file on GitHub, but is cached & proxies to GitHub at CDN level.
+> URL redirects to file with last known good commit on GitHub. It cached & proxies to GitHub at CDN level. If you are paranoid, use git.
+If you wihs to use master branch pass `--master` or `-m` as an argument. Eg: `wget -Nnv https://ae.prasadt.com/get -O - | bash -s --master`
 
 #### With Git
 

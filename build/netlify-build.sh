@@ -125,6 +125,11 @@ function install_dependencies()
 }
 
 
+function replace_placeholder()
+{
+  sed -i s/PLACEHOLDER_REDIRECT/${COMMIT_REF}/g netlify.toml
+}
+
 function main()
 {
       #check if no args
@@ -134,6 +139,9 @@ function main()
       		    exit 1;
       fi;
 
+      # Replace PLACEHOLDER_REDIRECT
+      echo "Replacing Placeholder with ${COMMIT_REF} in Netlify TOML file"
+      replace_placeholder
 
       # Process command line arguments.
       while [ "$1" != "" ]; do

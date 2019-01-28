@@ -26,7 +26,7 @@ readonly BLUE=$(tput setaf 6)
 readonly YELLOW=$(tput setaf 3)
 readonly NC=$(tput sgr 0)
 ignore_git_folder="false"
-readonly GET_BASE_URL="https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master"
+GET_BASE_URL="https://ae.prasadt.com/dl"
 
 function check_dependencies()
 {
@@ -73,6 +73,21 @@ function get-after-effects()
 
 function main()
 {
+  if [ "$#" -gt 1 ]; then
+    echo "This script can accept only one argument, --master or -m, which uses master branch instead of stable version."
+    exit 1
+  fi
+
+  while [ "${1}" != "" ]; do
+    case ${1} in
+      --master | -m )  GET_BASE_URL="https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master";;
+      *)               echo "Invalid argument : ${1} !"; exit 1;;
+    esac
+    shift
+  done
+
+  echo "Base URL is : ${GET_BASE_URL}"
+
   check_dependencies
   get-after-effects
 }

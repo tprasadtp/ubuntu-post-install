@@ -118,25 +118,25 @@
 # Scripts
 [[redirects]]
   from = "/get"
-  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/get-after-effects.sh"
+  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/PLACEHOLDER_REDIRECT/get-after-effects.sh"
   status = 200
   force = true
 
 [[redirects]]
   from = "/dl/*"
-  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/:splat"
+  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/PLACEHOLDER_REDIRECT/:splat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/dl"
-  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/after-effects"
+  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/PLACEHOLDER_REDIRECT/after-effects"
   status = 200
   force = true
 
 [[redirects]]
   from = "/gpg"
-  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/after-effects.asc"
+  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/PLACEHOLDER_REDIRECT/after-effects.asc"
   status = 200
   force = true
 
