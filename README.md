@@ -25,18 +25,20 @@ Run this in Terminal
 wget -Nnv https://ae.prasadt.com/get -O - | bash
 ```
 
-> URL redirects to file with last known good commit on GitHub. It cached & proxies to GitHub at CDN level. If you are paranoid, use git.
-If you wihs to use master branch pass `--master` or `-m` as an argument. Eg: `wget -Nnv https://ae.prasadt.com/get -O - | bash -s --master`
+> URL redirects to file with last known good commit on GitHub. It is cached & proxies to GitHub at CDN level. If you are paranoid, use git.
+If you wish to use master branch pass `--master` or `-m` as an argument. Eg: `wget -Nnv https://ae.prasadt.com/get -O - | bash -s --master`
 
 #### With Git
 
 If you already have git on your system, you can use,
 
 ```console
-git clone --depth 1 https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install
+git clone https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install
 ```
 
 If you already have cloned the repo, you can use `git pull` to get the latest changes.
+
+> This will use master branch which may not be as stable as versioned releases.
 
 ### Step 2: Update the lists or your YAML configuration file
 
@@ -115,7 +117,7 @@ A Complete  list of supported distributions is given below.
 | Linux Mint 19.1   | Tessa                 | Yes            |
 | Debian 8          | Jessie                | Yes            |
 | Debian 9          | Stretch               | Yes            |
-| Debian 10         | Stretch               | ---            | Only use it for testing       |
+| Debian 10         | Buster                | ---            | Only use it for testing       |
 | Elementary-OS     | Freya                 | Yes            | Not tested                    |
 | Elementary-OS 0.4 | Loki                  | Yes            | Not tested                    |
 | Elementary-OS 5.0 | Juno                  | Yes            | Not tested                    |

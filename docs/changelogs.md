@@ -1,5 +1,13 @@
 # Change logs
 
+
+
+## Version 5.3.6
+
+- Add ROS repository
+- Redirect URLs to version which passed all tests.
+- Update docs
+
 ## Version 5.3.4
 
 - Update WineHQ keys.
