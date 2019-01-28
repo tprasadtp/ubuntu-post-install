@@ -58,7 +58,7 @@ printf "${spacing_string}: ${TRAVIS_BRANCH}\n" "Built from" \
 # Commit only
 # TODO: Replace Metadata gen with Go/Python
 printf "Writing Commit Hash to file for redirects to netlify...\n"
-printf "${TRAVIS_COMMIT}" > tee -a ./_site/COMMIT_SHA.txt
+printf "${TRAVIS_COMMIT}" > ./_site/COMMIT_SHA.txt
 # Install htmlproofer
 #echo "Installing bundler dependencies"
 #bundle install
