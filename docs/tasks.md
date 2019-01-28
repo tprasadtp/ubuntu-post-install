@@ -66,6 +66,11 @@ This can add the following repositories.
       data_dir="data"
     ```
 
+!!! warning "ROS Releases & Ubuntu/Debian versions"
+    - ROS releases only support certain Ubuntu/Debian distributions. Please use appropriate packages to install depending on
+    your distro/version. You can find more info at [ROS-Wiki](http://wiki.ros.org/ROS/Installation)
+    - Though Ubuntu derivatives might work, they are not supported. 
+
 ### Canonical partner repositories
 
   Canonical partner repositories are not configured or enabled for derivatives of Ubuntu because thee might be some conflicts.

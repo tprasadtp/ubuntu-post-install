@@ -1685,10 +1685,10 @@ function add_repositories()
 
     # Unstable/RC repos
     if [[ $ros_rc_repo == "true" ]]; then
-      _log_and_warn "Using ROS Release candidate [ROS Shadow Fixed] repositories"
+      _log_and_warn "${_repo} Using ROS Release candidate [ROS Shadow Fixed] repositories"
       ros_repo_path="ros-shadow-fixed"
     else
-      _log_and_show "Using stable version of ROS"
+      _log_and_show "${_repo} Using stable version of ROS"
       ros_repo_path="ros"
     fi
 
@@ -1721,7 +1721,7 @@ function add_repositories()
     _debug_log "ROS Arch supported ? : ${ros_arch_supported}"
 
     if [[ $ros_arch_supported == "true" ]]; then
-      _log_and_show "ROS is Supported on this distro/ARCH : ${code_name}/${ARCH}"
+      _log_and_show "${_repo} ROS is Supported on this distro/ARCH : ${code_name}/${ARCH}"
       _debug_log "Adding ROS repo key..."
       apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 \
        --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116 2>&1 \
@@ -1734,16 +1734,16 @@ function add_repositories()
          echo "deb http://packages.ros.org.ros.informatik.uni-freiburg.de/${ros_repo_path}/ubuntu ${code_name} main #ROS-Repo-Uni-Freiburg" > $SOURCES_FILE_DIR/ros-latest.list \
          || _log_and_warn "${_error} Adding ROS [Uni-Freiburg] repository failed!"
       else
-        echo "deb http://packages.ros.org/${ros_repo_path}/${distro_name} ${code_name} main #ROS-Repo" > $SOURCES_FILE_DIR/ros-latest.list \
+        echo "deb http://packages.ros.org/${ros_repo_path}/ubuntu ${code_name} main #ROS-Repo" > $SOURCES_FILE_DIR/ros-latest.list \
         || _log_and_warn "${_error} Adding ROS repository failed!"
        fi
 
     else
-      _log_and_warn "ROS is not supported on this distro/architecture!"
+      _log_and_warn "${_repo} ROS is not supported on this distro/architecture!"
     fi # ros_arch_supported
 
   else
-    _log_and_show "Adding ROS repository is set to false, skipping..."
+    _log_and_show "${_repo} Adding ROS repository is set to false, skipping..."
   fi # add_ros_repo
 
 

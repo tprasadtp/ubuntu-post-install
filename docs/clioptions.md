@@ -314,11 +314,11 @@ Following things are reported. (Nothing more than that)
     to access it. The mirror may not work or be up-to date with upstream. Use this option only if you are inside Uni-Freiburg network
     and know what versions/libs are hosted on the mirror.
 
-Uses mirrors from `University of Freiburg`. Only available for limited number of repositories. Do **not** use this if you are not a faculty or student of Uni-Freiburg, as it may have un-intended side effects. Arguments `-u` or `--use-uf-mirror`. Because I do not wish to waste bandwidth
-this option is not tested on CI builds.
+- Uses mirrors from `University of Freiburg`. Only available for limited number of repositories. **DO NOT** use this option if you are not a faculty or student of Uni-Freiburg, as it may have un-intended side effects.
+- Arguments: `-u` or `--use-uf-mirror`. Because I do not wish to waste bandwidth this option is not tested on Travis builds.
 
-!!! note
-    **This script/github-repo/or this website is not affiliated with University of Freiburg.**
+!!! warning
+    **This script/github-repository/or this website is not affiliated in with University of Freiburg.**
 
 ## Version
 
