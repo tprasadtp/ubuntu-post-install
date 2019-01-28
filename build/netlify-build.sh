@@ -77,11 +77,21 @@ function jekyll_production()
   ./ ./_site && echo "---> Copied gh-pages"
   gen_metadata;
 
+  COMMIT_SHA_MASTER="$(cat COMMIT_SHA.txt)"
+
+  echo "Replace placceholder with master SHA1 commit"
+  sed -i s/PLACEHOLDER_REDIRECT/${COMMIT_SHA_MASTER}/g netlify.toml
+
 }
 
 function jekyll_branch()
 {
   install_dependencies;
+
+  # Replace PLACEHOLDER_REDIRECT
+  echo "Replacing Placeholder with ${COMMIT_REF} in Netlify TOML file"
+  sed -i s/PLACEHOLDER_REDIRECT/${COMMIT_REF}/g netlify.toml
+
   echo "---> Building Website with Branch"
   mkdocs build;
   echo "---> Convering to JSON"
@@ -125,11 +135,6 @@ function install_dependencies()
 }
 
 
-function replace_placeholder()
-{
-  sed -i s/PLACEHOLDER_REDIRECT/${COMMIT_REF}/g netlify.toml
-}
-
 function main()
 {
       #check if no args
@@ -139,9 +144,6 @@ function main()
       		    exit 1;
       fi;
 
-      # Replace PLACEHOLDER_REDIRECT
-      echo "Replacing Placeholder with ${COMMIT_REF} in Netlify TOML file"
-      replace_placeholder
 
       # Process command line arguments.
       while [ "$1" != "" ]; do
