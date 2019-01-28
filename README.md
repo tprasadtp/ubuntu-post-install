@@ -52,10 +52,10 @@ Please see [Configuration](https://ae.prasadt.com/config/#package-lists) & [Task
 
 Run the script as **root**.
 
-- To use default YAML configuration, which can be found here `https://ae.prasadt.com/config/default.yml`
+- To use default YAML configuration, which can be found here `https://ae.prasadt.com/dl/config/default.yml`.
 
   ```console
-    sudo ./after-effects -Y
+    sudo ./after-effects --yaml --config-file ./config/default.yml
   ```
 
 - To use local list files in `data`
@@ -141,9 +141,26 @@ A Complete  list of supported distributions is given below.
 [![Install-Debs](https://img.shields.io/badge/Install_.DEB_Packages-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files)
 [![Install-Static-Binaries](https://img.shields.io/badge/Install_Static_Binaries-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-static-binaries)
 
+## Supported External repositories
+
+| Name                 | Key |
+|:---------------------|:--- |
+|Docker | docker
+|Google Chrome & Google Earth | google
+|Google Cloud SDK & GCS-FUSE| googlecloud
+|Insync | insync
+|Kubernetes | kubernetes
+|Mendeley desktop | mendeley
+|ROS | ros
+|Signal for desktop | signal
+|Skype | skype
+|Spotify Desktop | spotify
+|Visual Studio code | vscode
+| Wine HQ | winehq
+
 ## Issues & Help
 
-- Please check [FAQ](https://ae.prasadt.com/faq/dependencies/) & [Known Errors](https://ae.prasadt.com/faq/errors/).
+- Please check [FAQ](https://ae.prasadt.com/faq/dependencies/) & [Known Issues](https://ae.prasadt.com/faq/errors/).
 - Please include the log file and terminal output while opening an issue.
 - **Never** set environment variable `CI=true` & `TRAVIS=true` unless you are running CI tests or are sure of its effects.
 
