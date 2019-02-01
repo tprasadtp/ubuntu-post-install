@@ -30,8 +30,8 @@ readonly EXEC_START=$(date +%s)
 readonly DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.3.6 Beta"
-readonly REL_NUM=536
+readonly REL_NAME="5.3.7 Beta"
+readonly REL_NUM=537
 
 function _init_printf_variables()
 {
@@ -352,6 +352,9 @@ function _init_script_variables()
 
   #ROS
   add_ros_repo=false
+
+  # Duo security
+  add_duo_repo=false
 
   #
   # ================================================================================== #
@@ -969,6 +972,9 @@ function _set_yaml_config()
     # ROS
     _check_bool "add_ros_repo" "${config__add_repo__ros[0]}"
 
+    # DUO
+    _check_bool "add_duo_repo" "${config__add_repo__duo[0]}"
+
     # Other Script Flags
 
     #################################################################################
@@ -1236,6 +1242,9 @@ function _set_list_config()
 
     #ROS
     add_ros_repo=false
+
+    #DUO
+    add_duo_repo=false
 
     ae_task_update="true"
     ae_task_upgrade="true"
@@ -1798,12 +1807,50 @@ function add_repositories()
       || _log_and_warn "${_error} Adding Mendeley Desktop Key Failed"
       echo "deb https://desktop-download.mendeley.com/download/apt stable main #Mendeley-Desktop"  > ${SOURCES_FILE_DIR}/mendeleydesktop.list
     else
-      _log_and_warn "Architecture: ${ARCH} is not supported. You might manually compile from source."
+      _log_and_warn "${_warn} Architecture: ${ARCH} is not supported. You might manually compile from source."
     fi
   else
       _log_and_show "${_repo} Mendeley Desktop is set to false."
   fi
 
+
+  # Duo Unix
+  if [ "$add_duo_repo" == "true" ]; then
+    if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "i386" ] ; then
+      case "$code_name" in
+        bionic)     duo_repo_url="deb http://pkg.duosecurity.com/Ubuntu bionic main";
+                    duo_supported="true"
+                    ;;
+        xenial)     duo_repo_url="deb http://pkg.duosecurity.com/Ubuntu xenial main"
+                    duo_supported="true"
+                    ;;
+        trusty)     duo_repo_url="deb http://pkg.duosecurity.com/Ubuntu trusty main";
+                    duo_supported="true"
+                    ;;
+        stretch)    duo_repo_url="deb http://pkg.duosecurity.com/Debian stretch main";
+                    duo_supported="true"
+                    ;;
+        jessie)     duo_repo_url="deb http://pkg.duosecurity.com/Debian stretch main";
+                    duo_supported="true"
+                    ;;
+        *)          _log_and_warn "Only LTS/Stable versions of Ubuntu/Debian are suported. You are running Unsupported version : ${code_name}"
+      esac
+      if [[ $duo_supported == "true" ]]; then
+        # Repo keys for duosecurity
+        _debug_log "Downloading GPG key..."
+        wget -q https://duo.com/APT-GPG-KEY-DUO  -O /tmp/ae/duosecurity.gpg >> "$log_file"
+        apt-key add /tmp/ae/duosecurity.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
+        || _log_and_warn "${_error} Adding Kubernetes Key Failed"
+
+        # Add repo
+        echo "${duo_repo_url} #Duo Unix"  > ${SOURCES_FILE_DIR}/duounix.list
+      fi
+    else
+        _log_and_warn "${_warn} Architecture: ${ARCH} is not supported. You might manually compile from source."
+    fi
+  else
+        _log_and_show "${_repo} Duo Unix is set to false."
+  fi
 
   # Enable Canonical Partner repos
   # Some Releases like linux mint have their own way of enabling partner Repositoris,

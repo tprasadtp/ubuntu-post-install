@@ -1,6 +1,8 @@
 # Change logs
 
+## Version 5.3.7
 
+- Add support for Duo Security for Unix repos
 
 ## Version 5.3.6
 

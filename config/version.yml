@@ -2,9 +2,9 @@
 api: 2
 # Configuraion
 version:
-  number: 536
-  name: 5.3.6
-  changelog: Support for ROS repo, Cosmic+Tessa
+  number: 537
+  name: 5.3.7
+  changelog: Support for ROS & Duo-Unix repo, Cosmic+Tessa
 # Stats reporting
 stats:
   report: false

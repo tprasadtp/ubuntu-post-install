@@ -2,18 +2,25 @@
 
 ## Add Repositories
 
-This can add the following repositories.
+This task can add the following repositories.
 
-- Google Earth
-- Google Chrome
-- Spotify
-- Visual Studio Code
-- Signal Desktop
-- Mendeley Desktop
-- Google cloud SDK (google-cloud-sdk & gcsfuse)
-- Kubernetes
-- Insync
-- ROS (Robot-Operating-System)
+
+| Name                 | Key |
+|:---------------------|:--- |
+|Docker | docker
+|Duo Security Unix | duo
+|Google Chrome & Google Earth | google
+|Google Cloud SDK & GCS-FUSE| googlecloud
+|Insync | insync
+|Kubernetes | kubernetes
+|Mendeley desktop | mendeley
+|ROS | ros
+|Signal for desktop | signal
+|Skype | skype
+|Spotify Desktop | spotify
+|Visual Studio code | vscode
+| Wine HQ | winehq
+
 
 ??? tip "Using `--fix` falg"
     Please note that the above repositories are sometimes not updated for latest Ubuntu release and most certainly will not be available for upcoming release of Ubuntu(Alpha/Beta). It might take some time till the repositories are available for the latest release. Use -f or --fix command line option or --pre-release in case you are using a Development version of ubuntu to revert using latest available version of repositories (usually previous Ubuntu release or in case of Beta/Alpha latest stable release of ubuntu). [For more info see command line options.](/clioptions/#fix-for-latest-ubuntu-releases)

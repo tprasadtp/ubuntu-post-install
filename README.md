@@ -146,6 +146,7 @@ A Complete  list of supported distributions is given below.
 | Name                 | Key |
 |:---------------------|:--- |
 |Docker | docker
+|Duo Security Unix | duo
 |Google Chrome & Google Earth | google
 |Google Cloud SDK & GCS-FUSE| googlecloud
 |Insync | insync

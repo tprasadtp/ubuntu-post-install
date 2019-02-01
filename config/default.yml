@@ -35,6 +35,7 @@ config:
     google: true
     kubernetes: false
     ros: true
+    duo: true
   # Flags
   flags:
   # Simulate flag will never be overridden by remote config.
