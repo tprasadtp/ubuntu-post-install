@@ -2432,6 +2432,7 @@ function _install_conda_packages()
   _log_and_show "${_installing} Installing conda packages"
   _debug_log "Requirements file: ${requirements_file}"
   rm -f ${requirements_file} || _log_and_exit "Failed to remove ${requirements_file}" "38"
+  _log_and_show "${conda_packages[@]}"
   printf "%s\n" "${conda_packages[@]}" > "${requirements_file}"
 
   # Check if package list is empty
