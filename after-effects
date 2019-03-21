@@ -2432,7 +2432,6 @@ function _install_conda_packages()
   _log_and_show "${_installing} Installing conda packages"
   _debug_log "Requirements file: ${requirements_file}"
   rm -f ${requirements_file} || _log_and_exit "Failed to remove ${requirements_file}" "38"
-  _log_and_show "${conda_packages[@]}"
   printf "%s\n" "${conda_packages[@]}" > "${requirements_file}"
 
   # Check if package list is empty
@@ -2447,7 +2446,10 @@ function _install_conda_packages()
       _log_and_show "${_whoops} Conda does not support simulated installs. Not performing install."
       set_default;
     else
-      $conda_command install -c conda-forge -y "${requirements_file}" 2>&1 | _add_timestamp_to_logs "${_pip_logs}"
+      while read requirement
+      do
+          ~/anaconda/bin/conda install -c conda-forge -y $requirement;
+      done < ${requirements_file}
     fi
     exit_status=$?
     if [[ $exit_status -eq 0 ]]; then
