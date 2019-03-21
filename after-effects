@@ -2400,7 +2400,7 @@ function _install_conda_packages()
   _debug_log "Anaconda Version : ${conda_ver}"
 
   # Check if "conda" is installed, if not install it
-  if ! conda_loc="$(type -p "$conda_command")" || [[ -z $conda_loc ]]; then
+  if conda_loc="$(type -p "$conda_command")" || ! [[ -z $conda_loc ]]; then
       _log_and_warn "${_info} $conda_command is not installed!${NC}"
       set_default;
 
@@ -2418,7 +2418,7 @@ function _install_conda_packages()
         bash $exec -b -p ~/anaconda
         rm $exec
         echo 'export PATH="~/anaconda/bin:$PATH"' >> ~/.bashrc
-        source .bashrc
+        source ~/.bashrc
         conda update conda
       fi
   else
