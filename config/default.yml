@@ -12,34 +12,35 @@ config:
     # individual repos flags are mentioned under config.add_repo key
     repo: true
     # Add PPAs
-    ppa: true
+    ppa: false
     # APT Packages
-    apt: true
+    apt: false
     # Whether to purge packages mentioned in config.purge key
-    purge: true
-    debs: true
-    pip2: true
-    pip3: true
-    binaries: true
+    purge: false
+    debs: false
+    pip2: false
+    pip3: false
+    conda: true
+    binaries: false
   # Repository Flags
   add_repo:
-    winehq: true
-    docker: true
+    winehq: false
+    docker: false
     mendeley: false
-    googlecloud: true
-    spotify: true
-    vscode: true
-    skype: true
+    googlecloud: false
+    spotify: false
+    vscode: false
+    skype: false
     signal: false
-    insync: true
-    google: true
+    insync: false
+    google: false
     kubernetes: false
-    ros: true
-    duo: true
+    ros: false
+    duo: false
   # Flags
   flags:
   # Simulate flag will never be overridden by remote config.
-    purge_enabled: true
+    purge_enabled: false
     preserve_debs: false
     auto_yes: true
 
@@ -144,3 +145,12 @@ config:
         - google-cloud-sdk
         - gcsfuse
         - docker-ce
+    conda:
+      - pandas
+      - numpy
+      - scipy
+      - scikit-learn
+      - pytorch
+      - tensorflow
+      - keras
+      - nltk

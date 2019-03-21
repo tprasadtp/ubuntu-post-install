@@ -46,11 +46,13 @@ type AEConfigStruct struct {
 			DebianPackages []string `json:"debian_packages,omitempty"`
 			Python2        []string `json:"python2,omitempty"`
 			Python3        []string `json:"python3,omitempty"`
+			Conda					 []string `json:"conda,omitempty`
 		} `json:"install,omitempty"`
 		Ppa   []string `json:"ppa,omitempty"`
 		Purge []string `json:"purge,omitempty"`
 		Tasks struct {
 			Apt     bool `json:"apt,omitempty"`
+			Conda   bool `json:"conda,omitempty"`
 			Debs    bool `json:"debs,omitempty"`
 			Pip2    bool `json:"pip2,omitempty"`
 			Pip3    bool `json:"pip3,omitempty"`
