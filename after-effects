@@ -2448,18 +2448,27 @@ function _install_conda_packages()
     else
       while read requirement
       do
-          ~/anaconda/bin/conda install -c conda-forge -y $requirement;
+          ~/anaconda/bin/conda install -c conda-forge -y $requirement 2>&1 | _add_timestamp_to_logs "${_conda_logs}"
+	  exit_status=$?
+	  if [[ $exit_status -eq 0 ]]; then
+             set_green
+             _log_and_show "${_installed} $requirement"
+          else
+             _log_and_warn "${_error} Something went wrong while installing packages in $pip_list."
+             _log_and_warn "${_notice} Please see the log file for more details."
+          fi
+	  set_default
       done < ${requirements_file}
     fi
-    exit_status=$?
-    if [[ $exit_status -eq 0 ]]; then
-      set_green
-      _log_and_show "${_installed} python - ${1} modules"
-    else
-      _log_and_warn "${_error} Something went wrong while installing packages in $pip_list."
-      _log_and_warn "${_notice} Please see the log file for more details."
-    fi
-    set_default
+    #exit_status=$?
+    #if [[ $exit_status -eq 0 ]]; then
+    #  set_green
+    #  _log_and_show "${_installed} python - ${1} modules"
+    #else
+    #  _log_and_warn "${_error} Something went wrong while installing packages in $pip_list."
+    #  _log_and_warn "${_notice} Please see the log file for more details."
+    #fi
+    #set_default
   fi
 
   set_default;
