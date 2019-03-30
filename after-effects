@@ -1192,7 +1192,7 @@ function _set_yaml_config()
 
     declare -gar parsed_pip2_packages=("${config__install__python2_[@]}")
     declare -gar parsed_pip3_packages=("${config__install__python3_[@]}")
-    declare -gar parsed_conda_packages=("${config__install__conda_[@]}")
+    declare -gar parsed_conda_packages=("${config__install__conda__packages_[@]}")
     declare -gar parsed_bin_packages=("${config__install__binaries_[@]}")
  fi
 
@@ -2366,63 +2366,55 @@ function install_pip_packages_3()
   _install_pip_python "3"
 }
 
-function install_conda_packages_3()
+function install_conda_packages()
 {
-  # Install conda 3 packages
-  _install_conda_packages "3"
-}
-
-function _install_conda_packages()
-{
-  # Function to install conda packages
-  # This function reads from File ${dir}/data/conda.list contains list python packages to be install system wide.
-  # Arguments: Two
-  # ARG1 : conda package list
-  # ARG2 : 2 for Anaconda Python 2 version and
-  #      : 3 for Anaconda Python 3 version.
-
-  # Check args
-  if [ $# -lt 1 ] ||  [ $# -gt 1 ] ; then
-    set_yellow;
-    _log_and_show "${_error} Incorrect number of arguments.\
-     \n${_info} Usage: _install_conda_packages <version>\n" && \
-    _log_and_exit "Internal Function Error. Invalid number of Arguments: $#." "19";
-  fi;
-
   set_default;
   #Install starts here
   local conda_command="conda"
+  local install_path="/opt/anaconda"
   local requirements_file="/tmp/ae/conda_requirements.txt"
   local conda_packages=("${parsed_conda_packages[@]}")
+  local conda_install_url="${config__install__conda__url[0]}"
+  local exec="${conda_install_url##*/}"
   local exit_status conda_loc
-  local conda_ver="${1}"
-  _debug_log "Option: Install Python packages via Conda, Function name: _install_conda_packages"
-  _debug_log "Anaconda Version : ${conda_ver}"
+
+  _debug_log "Option: Install Python packages via Conda, Function name: install_conda_packages"
 
   # Check if "conda" is installed, if not install it
-  if conda_loc="$(type -p "$conda_command")" || ! [[ -z $conda_loc ]]; then
+  if ! conda_loc="$(type -p "$conda_command")" || [[ -z $conda_loc ]]; then
       _log_and_warn "${_info} $conda_command is not installed!${NC}"
       set_default;
 
-      # proceed to install Anaconda
-      _log_and_show "${_installing} Anaconda"
+      # proceed to install conda
+      _log_and_show "${_installing} conda. Running ${exec}"
 
       if [ "$simulate_apt_install" == "true" ] && [ "$CI" != "true" ]; then
         set_yellow;
         _log_and_show "${_simulate} No Dependencies will be installed!!"
         set_default;
       else
-        cd ~
-        exec=Anaconda3-2018.12-Linux-x86_64.sh
-        wget https://repo.continuum.io/archive/$exec
-        bash $exec -b -p ~/anaconda
-        rm $exec
-        echo 'export PATH="~/anaconda/bin:$PATH"' >> ~/.bashrc
-        source ~/.bashrc
-        conda update conda
+        # Remove the script if exists
+        rm -f $exec
+
+        # download and execute installation
+        wget $conda_install_url 2>&1 | _add_timestamp_to_logs "${_conda_logs}"
+        if [ $? -ne 0 ]; then
+          _log_and_warn "${_error} Something went wrong while downloading $conda_install_url."
+        fi
+
+        bash $exec -b -p $install_path 2>&1 | _add_timestamp_to_logs "${_conda_logs}"
+        rm -f $exec
+
+        # Remove the write permission from group and others
+        chmod -R go-w $install_path
+
+        # Give read and execution permission to group and others
+        chmod -R go+rX $install_path
+
+        conda_command=${install_path}/bin/conda
       fi
   else
-    _log_and_show "${_info} Anaconda installation detected."
+    _log_and_show "${_info} conda installation detected."
   fi
 
   # reset exit status & color
@@ -2448,27 +2440,19 @@ function _install_conda_packages()
     else
       while read requirement
       do
-          ~/anaconda/bin/conda install -c conda-forge -y $requirement 2>&1 | _add_timestamp_to_logs "${_conda_logs}"
-	  exit_status=$?
-	  if [[ $exit_status -eq 0 ]]; then
-             set_green
-             _log_and_show "${_installed} $requirement"
-          else
-             _log_and_warn "${_error} Something went wrong while installing packages in $pip_list."
-             _log_and_warn "${_notice} Please see the log file for more details."
-          fi
-	  set_default
+        ${conda_command} install -c conda-forge -y ${requirement} 2>&1 | _add_timestamp_to_logs "${_conda_logs}"
+
+	      exit_status=$?
+	      if [[ $exit_status -eq 0 ]]; then
+            set_green
+            _log_and_show "${_installed} $requirement"
+        else
+            _log_and_warn "${_error} Something went wrong while installing packages in $pip_list."
+            _log_and_warn "${_notice} Please see the log file for more details."
+        fi
+	      set_default
       done < ${requirements_file}
     fi
-    #exit_status=$?
-    #if [[ $exit_status -eq 0 ]]; then
-    #  set_green
-    #  _log_and_show "${_installed} python - ${1} modules"
-    #else
-    #  _log_and_warn "${_error} Something went wrong while installing packages in $pip_list."
-    #  _log_and_warn "${_notice} Please see the log file for more details."
-    #fi
-    #set_default
   fi
 
   set_default;
@@ -2621,7 +2605,7 @@ function all_in_one()
   install_debs;
   install_pip_packages_2;
   install_pip_packages_3;
-  install_conda_packages_3;
+  install_conda_packages;
   purge_not_required;
   install_binaries;
   _line_fill;
@@ -2722,8 +2706,8 @@ function _process_menu
                   ;;
       conda)       _show_confirmation_dialog_for_tasks \
                   "Install conda packages" \
-                  "Anaconda packages for listed in conda.list will be installed via conda. If necessary Anaconda package will be installed from apt.\n\nProceed?" \
-                  "install_conda_packages_3"
+                  "Conda packages for listed in conda.list will be installed via conda. If necessary conda package will be installed from apt.\n\nProceed?" \
+                  "install_conda_packages"
                   ;;
       bin)        _show_confirmation_dialog_for_tasks \
                   "Install Static Binaries" \
@@ -3012,7 +2996,7 @@ function main()
     _autopilot_check_task_flag_and_run "$ae_task_debs" "install_debs"
     _autopilot_check_task_flag_and_run "$ae_task_pip2" "install_pip_packages_2"
     _autopilot_check_task_flag_and_run "$ae_task_pip3" "install_pip_packages_3"
-    _autopilot_check_task_flag_and_run "$ae_task_conda" "install_conda_packages_3"
+    _autopilot_check_task_flag_and_run "$ae_task_conda" "install_conda_packages"
     _autopilot_check_task_flag_and_run "$ae_task_purge" "purge_not_required"
     _autopilot_check_task_flag_and_run "$ae_task_bin" "install_binaries"
   else

@@ -146,10 +146,7 @@ config:
         - gcsfuse
         - docker-ce
     conda:
-      - pandas
-      - numpy
-      - scipy
-      - scikit-learn
-      - keras
-      - nltk
-      - juypter
+      url: https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+      packages:
+        - pandas
+        - numpy
