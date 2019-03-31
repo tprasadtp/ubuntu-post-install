@@ -12,7 +12,7 @@ function main()
 {
   if [[ $# -lt 2 ]]; then
     echo "You need to specify distro name & release name"
-    exit -1
+    exit 1
   fi
   distro="$1"
   release="$2"

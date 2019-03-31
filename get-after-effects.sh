@@ -39,7 +39,7 @@ function check_dependencies()
    dep_res=$?
    if [ "$dep_res" -eq 1 ]; then
      printf "${YELLOW}[ ERROR ] $dep is not installed!${NC}\n"
-     exit -1;
+     exit 1;
    fi
   done
 }
