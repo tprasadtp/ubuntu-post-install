@@ -30,8 +30,8 @@ readonly EXEC_START=$(date +%s)
 readonly DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.3.7 Beta"
-readonly REL_NUM=537
+readonly REL_NAME="5.4.0 Beta"
+readonly REL_NUM=540
 
 function _init_printf_variables()
 {
@@ -83,6 +83,7 @@ function _init_printf_variables()
     readonly          _array="[   PKG Array   ]"
     readonly            _apt="[  APT-Packges  ]"
     readonly           _list="[  Cleaned List ]"
+    readonly           _snap="[    Snap PKG   ]"
     #readonly           _falg="[     Flag      ]"
 
     #colors for display
@@ -217,10 +218,19 @@ function _log_and_show()
 }
 
 
+function _log_and_show_success()
+{
+  local msg="$1"
+  set_green
+  printf "$msg\n"
+  set_default
+  printf "[$(date)] $msg\n" >> "$log_file"
+}
+
 function _log_and_warn()
 {
   local msg="$1"
-  set_red
+  set_yellow
   printf "$msg\n"
   set_default
   printf "[$(date)] $msg\n" >> "$log_file"
@@ -582,11 +592,6 @@ function _fix_ubuntu_derivatives()
   set_yellow;
   _debug_log "Variable code_name is : $code_name"
   case ${code_name} in
-      qiana | rebecca | rafaela | rosa )    _log_and_show "${_linuxmint} Release is Linux mint 17.X."
-                                            _log_and_show "${_notice} Setting additional repositoris to follow Ubuntu 14.04."
-                                            code_name="trusty"
-                                            _log_and_show "${_linuxmint} Changed codename to $code_name"
-                                            ;;
       sarah | serena | sonya | sylvia )     _log_and_show "${_linuxmint} Release is Linux mint 18.X."
                                             _log_and_show "${_notice} Setting additional repositoris to follow Ubuntu 16.04."
                                             code_name="xenial";distro_name="ubuntu"
@@ -596,11 +601,6 @@ function _fix_ubuntu_derivatives()
                                             _log_and_show "${_notice} Setting additional repositoris to follow Ubuntu 18.04."
                                             code_name="bionic";distro_name="ubuntu"
                                             _log_and_show "${_linuxmint} Changed codename to $code_name"
-                                            ;;
-      freya )                               _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 14.04 Trusty."
-                                            _log_and_show "${_notice} External repositories will use Ubuntu 14.04."
-                                            code_name="trusty"
-                                            _log_and_show "${_elementary} Changed codename to $code_name"
                                             ;;
       loki )                                _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 16.04 Xenial."
                                             _log_and_show "${_notice} External repositories will use Ubuntu 16.04."
@@ -612,12 +612,8 @@ function _fix_ubuntu_derivatives()
                                             code_name="bionic"
                                             _log_and_show "${_elementary} Changed codename to $code_name"
                                             ;;
-      xenial | trusty | cosmic | bionic )   readonly bool_config_partner_repo="true"
+      xenial | cosmic | bionic )            readonly bool_config_partner_repo="true"
                                             _log_and_show "${_info} Keeping the codename as: $code_name."
-                                            ;;
-      zesty )                               _eol_message "$code_name" "January 13th, 2018"
-                                            ;;
-      artful )                              _eol_message "$code_name" "July, 2018"
                                             ;;
       disco )                               readonly bool_config_partner_repo="true"
                                             set_magenta;
@@ -628,6 +624,18 @@ function _fix_ubuntu_derivatives()
                                             ;;
       stretch | jessie | buster )           bool_is_debian="true";
                                             _log_and_show "${_notice} This is Debian. PPAs are disabled."
+                                            ;;
+      trusty)                               _eol_message "$code_name" "April 30th, 2019"
+                                            ;;
+      qiana | rebecca | rafaela | rosa )    _log_and_warn "${_linuxmint} Release is Linux mint 17.X."
+                                            _eol_message "$code_name" "April 30th, 2019"
+                                            ;;
+      freya )                               _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 14.04 Trusty."
+                                            _eol_message "$code_name" "April 30th, 2019"
+                                            ;;
+      zesty )                               _eol_message "$code_name" "January 13th, 2018"
+                                            ;;
+      artful )                              _eol_message "$code_name" "July, 2018"
                                             ;;
       *)                                    set_red;
                                             _log_and_show "${_error} Unknown Distribution/Release."
@@ -869,9 +877,9 @@ function _check_bool()
                                                 _debug_log "Variable : <$g_var> is set to false"
                                                 ;;
     *)                                          declare -g ${g_var}="false"
-                                                _log_and_show "${_warn} Invalid/empty value for param : $g_var."
-                                                _log_and_show "${_warn} It can either be t[T]rue or f[F]alse."
-                                                _log_and_show "${_warn} Setting $g_var to false"
+                                                _log_and_warn "${_warn} Invalid/empty value for param : $g_var."
+                                                _log_and_warn "${_warn} It can either be t[T]rue or f[F]alse."
+                                                _log_and_warn "${_warn} Setting $g_var to false"
                                                 ;;
   esac
 }
@@ -932,7 +940,6 @@ function _set_yaml_config()
     _line_fill;
     printf "${_table} %-20s | %-10s |\n" "Repository" "Enabled"
     _line_fill;
-    set_blue;
     # Repo flags
     #################################################################################
     _check_bool "add_docker_repo" "${config__add_repo__docker[0]}"
@@ -1026,6 +1033,10 @@ function _set_yaml_config()
     # Binaries Install
     _check_bool "ae_task_bin" "${config__tasks__binaries[0]}"
 
+    # snap Packages
+    _check_bool "ae_task_snaps" "${config__tasks__snaps[0]}"
+
+
     if [ "${bool_hide_config}" != "true" ]; then
       printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
@@ -1035,14 +1046,12 @@ function _set_yaml_config()
       printf "${_cfg} %-20s | %-10s |\n" "Visual Studio Code" "$add_vscode_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Insync" "$add_insync_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Signal for Desktop" "$add_signal_repo"
-      printf "${_cfg} %-20s | %-10s |\n" "Google Chrome & Earth" "$add_google_repo"
+      printf "${_cfg} %-20s | %-10s |\n" "Google Chrome, Earth" "$add_google_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Kubernetes" "$add_kubernetes_repo"
       printf "${_cfg} %-20s | %-10s |\n" "ROS" "$add_ros_repo"
-      set_default;
       _line_fill;
       printf "${_table} %-20s | %-10s |\n" "Other Flags" "Config"
       _line_fill;
-      set_blue
       printf "${_cfg} %-20s | %-10s |\n" "Purge Enabled" "$bool_purge_not_required_pkgs"
       printf "${_cfg} %-20s | %-10s |\n" "Keep DEBs/APT cache" "$bool_preserve_debs"
       printf "${_cfg} %-20s | %-10s |\n" "Dont confirm" "$bool_say_yes_to_all"
@@ -1053,7 +1062,6 @@ function _set_yaml_config()
       if [ "$AUTOPILOT" == "true" ]; then
         printf "${_table} %-20s | %-10s |\n" "Task" "Config"
         _line_fill;
-        set_magenta
         printf "${_rtasks} %-20s | %-10s |\n" "Update" "$ae_task_update"
         printf "${_rtasks} %-20s | %-10s |\n" "Upgrade" "$ae_task_upgrade"
         printf "${_rtasks} %-20s | %-10s |\n" "Add Repos" "$ae_task_repo"
@@ -1064,10 +1072,9 @@ function _set_yaml_config()
         printf "${_rtasks} %-20s | %-10s |\n" "Python 2 Modules" "$ae_task_pip2"
         printf "${_rtasks} %-20s | %-10s |\n" "Python 3 Modules" "$ae_task_pip3"
         printf "${_rtasks} %-20s | %-10s |\n" "Static Binaries" "$ae_task_bin"
-        set_default;
+        printf "${_rtasks} %-20s | %-10s |\n" "Snap Packages" "$ae_task_snaps"
         _line_fill;
       fi
-      set_default
     else
       _log_and_show "${_cfg} Configuration data is hidden."
       _log_and_show "${_cfg} Please check the logfile or dont use --hide-config to display configuration."
@@ -1101,6 +1108,7 @@ function _set_yaml_config()
         printf "${_rtasks} %-20s | %-10s |\n" "Python 2 Modules" "$ae_task_pip2"
         printf "${_rtasks} %-20s | %-10s |\n" "Python 3 Modules" "$ae_task_pip3"
         printf "${_rtasks} %-20s | %-10s |\n" "Static Binaries" "$ae_task_bin"
+        printf "${_rtasks} %-20s | %-10s |\n" "Snap Packages" "$ae_task_snaps"
         _line_fill;
         _line_fill;
       } >> "${log_file}"
@@ -1187,6 +1195,13 @@ function _set_yaml_config()
     declare -gar parsed_pip2_packages=("${config__install__python2_[@]}")
     declare -gar parsed_pip3_packages=("${config__install__python3_[@]}")
     declare -gar parsed_bin_packages=("${config__install__binaries_[@]}")
+
+    #--------------------------------------------------------------------------------
+    #                             Snap Packages
+    #--------------------------------------------------------------------------------
+    declare -gar parsed_snap_normal_packages=("${config__install__snaps__normal_[@]}")
+    declare -gar parsed_snap_classic_packages=("${config__install__snaps__classic_[@]}")
+    declare -gar parsed_snap_edge_packages=("${config__install__snaps__edge_[@]}")
  fi
 
   {
@@ -1309,9 +1324,7 @@ function _set_list_config()
         esac
         # Unset local array
       else
-        set_yellow
         _log_and_show "${_warn} $list not found under data directory."
-        set_default
       fi
       unset tmp_arr || _log_and_exit "Unable to unset array" "40"
     done
@@ -1499,9 +1512,7 @@ function add_ppas()
               continue
             fi
             if add-apt-repository -y "$index" 2>&1 | _add_timestamp_to_logs "${_ppa_logs}" ; then
-              set_green
-              _log_and_show "${_ppa} Success!"
-              set_default
+              _log_and_show_success "${_ppa} Success!"
             else
               set_yellow
               _log_and_show "${_ppa} Some Error occured while adding $index. Ignoring and moving on.\n"
@@ -1862,7 +1873,7 @@ function add_repositories()
     _log_and_show "${_repo} Canonical partner repositoris"
     add-apt-repository "deb http://archive.canonical.com/ubuntu $code_name partner" >> "$log_file"
   else
-    _log_and_show "${_warn} Canonical Partner repositoris may not be supported on this platform. They remain unchanged/unavailable."
+    _log_and_warn "${_warn} Canonical Partner repositoris may not be supported on this platform. They remain unchanged/unavailable."
   fi
 
   # Remove artifacts and keys
@@ -1971,9 +1982,7 @@ function purge_ppa()
             fi
             if ppa-purge -y "$index"  2>&1 | _add_timestamp_to_logs "${_apt_logs}"  ; then
               sleep 5 #wait sometimes apt lock isnt released soon.
-              set_green
-              _log_and_show "${_purge} $line successfully."
-              set_default
+              _log_and_show_success "${_purge} $line successfully."
             else
               _log_and_warn "${_oh_no} Some Error occured while purging $line."
             fi
@@ -2124,9 +2133,7 @@ function purge_not_required()
       return;
     else
       if [ "$simulate_apt_install" == "true" ]; then
-        set_yellow;
-        _log_and_show "${_simulate} No packages will be purged!!"
-        set_default;
+        _log_and_warn "${_simulate} No packages will be purged!!"
       apt-get -q -y remove --purge --dry-run "${parsed_purge_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
       else
         apt-get -q -y purge "${parsed_purge_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
@@ -2134,13 +2141,11 @@ function purge_not_required()
       exit_status=$?
       set_yellow
       if [[ $exit_status -eq 0 ]]; then
-        set_green
-        _log_and_show "${_purge} Success!"
+        _log_and_show_success "${_purge} Success!"
       else
         _log_and_warn "${_oh_no} Something went wrong while purging packages."
         _log_and_warn "${_notice} Please see the log file for more details."
       fi
-      set_default
     fi
   else
     _log_and_exit "${_error} Purge switch is set to false. Did you pass -d along wth the command?" "20"
@@ -2188,18 +2193,14 @@ function install_apps()
 
     # Chek if array is empty
     if [[ ${#packages[@]} -eq 0 ]]; then
-      set_yellow;
-      _log_and_show "${_notice} Package array is empty!";
-      set_default;
+      _log_and_warn "${_notice} Package array is empty!";
       continue
     else
       _debug_log "Following packages will be installed."
       printf "[$(date)] ${_array} %s\n" "${packages[@]}" >> "${log_file}"
       # Check if simulate is true
       if [ "$simulate_apt_install" == "true" ]; then
-        set_yellow;
-        _log_and_show "${_simulate} package installation."
-        set_default;
+        _log_and_warn "${_simulate} package installation."
         apt-get -q -y install -s "${packages[@]}" | _add_timestamp_to_logs "${_apt_logs}"
       else
         apt-get -q -y install "${packages[@]}" | _add_timestamp_to_logs "${_apt_logs}"
@@ -2207,8 +2208,7 @@ function install_apps()
       exit_status=$?
       unset packages;
       if [[ $exit_status -eq 0 ]]; then
-        set_green
-        _log_and_show "${_apt} Success!"
+        _log_and_show_success "${_apt} Success!"
       else
       _log_and_warn "${_oh_no} Something went wrong while installing packages in $index."
       _log_and_warn "${_notice} Please see the log file for more details."
@@ -2322,24 +2322,18 @@ function _install_pip_python()
     # I package list isn't empty proceed to install pip packages
     # Check if simulate is true & is not running on TRAVIS/CI.
     if [ "$simulate_apt_install" == "true" ] && [ "$CI" != "true" ]; then
-      set_yellow;
-      _log_and_show "${_whoops} PIP does not support simulated installs. Not performing install."
-      set_default;
+      _log_and_warn "${_whoops} PIP does not support simulated installs. Not performing install."
     else
       $pip_command install -r "${requirements_file}" 2>&1 | _add_timestamp_to_logs "${_pip_logs}"
     fi
     exit_status=$?
     if [[ $exit_status -eq 0 ]]; then
-      set_green
-      _log_and_show "${_installed} python - ${1} modules"
+      _log_and_show_success "${_installed} python - ${1} modules"
     else
       _log_and_warn "${_error} Something went wrong while installing packages in $pip_list."
       _log_and_warn "${_notice} Please see the log file for more details."
     fi
-    set_default
   fi
-
-  set_default;
 
   _line_fill >> "$log_file"
 }
@@ -2397,13 +2391,11 @@ function install_debs ()
 
     # shellcheck disable=SC2181
      if [ "$exit_status" = "0" ]; then
-       set_green
-      _log_and_show "${_deb} Installed $deb_name successfully."
+      _log_and_show_success "${_deb} Installed $deb_name successfully."
      else
       _log_and_warn "${_oh_no} Some error occured during downloading and installing $index."
       $?="0"
     fi
-    set_default
     # Delete DEBs
     if [ "$bool_preserve_debs" == "false" ];then
       _log_and_show "${_deb} Deleting ownloaded DEB Packages"
@@ -2471,6 +2463,73 @@ function install_binaries ()
 }
 
 
+function __install_snaps()
+{
+  #Install Snap packages
+  local exit_status index snapd_options
+  local snap_type
+  snap_type="$1"
+
+  case ${snap_type} in
+    classic)    readonly snapd_options=("--classic")
+                parsed_snaps_list=("${parsed_snap_classic_packages[@]}")
+                ;;
+    edge)       readonly snapd_options=("--edge")
+                parsed_snaps_list=("${parsed_snap_edge_packages[@]}")
+                ;;
+    normal)     readonly snapd_options=("--color")
+                parsed_snaps_list=("${parsed_snap_normal_packages[@]}")
+                ;;
+    * )         _log_and_exit "Internal Function Error. Arguments for snap type." "19";;
+  esac
+
+  if [[ $bool_use_lists == "true" ]]; then
+    _log_and_warn "${_warn} Lists mode does not support installing snap packages"
+  else
+    if [[ ${#parsed_snaps_list[@]} -eq 0 ]]; then
+      _log_and_warn "${_warn} Snaps array is empty!" "19"
+    else
+      for index in "${parsed_snaps_list[@]}"; do
+            _log_and_show "${_snap} $index..."
+            if [ "$index" == "" ] || [ "$index" == " " ]; then
+              _log_and_warn "${_snap} Found an empty entry, Ignoring"
+              continue;
+            fi
+            if [ "$simulate_apt_install" == "true" ]; then
+              _log_and_warn "${_info} Snaps do not support --dry-run, skipping install"
+            else
+              if snap install "${snapd_options[@]}" "$index"  2>&1 | _add_timestamp_to_logs "${_snap}"  ; then
+                _log_and_show_success "${_snap} $line installed successfully."
+              else
+                _log_and_warn "${_oh_no} Some Error occured while installing $line."
+              fi
+            fi
+        done
+    fi
+  fi
+}
+
+
+function install_snaps()
+{
+  local dependency_packages
+  dependency_packages=(snapd)
+
+  if [ "$simulate_apt_install" == "true" ]; then
+    _log_and_warn "${_warn} Will not install dependencies required for installing snap packages"
+  else
+    _install_dependencies "${dependency_packages[@]}"
+  fi
+
+  _log_and_show "${_info} Installig Snaps [Normal Packages]"
+  __install_snaps "normal"
+    _log_and_show "${_info} Installig Snaps [Classic Packages]"
+  __install_snaps "classic"
+    _log_and_show "${_info} Installig Snaps [Edge Packages]"
+  __install_snaps "edge"
+
+}
+
 function _autopilot_check_task_flag_and_run()
 {
   # checks flags set for each task/function and runs it
@@ -2506,6 +2565,7 @@ function all_in_one()
   install_pip_packages_3;
   purge_not_required;
   install_binaries;
+  install_snaps;
   _line_fill;
   set_default;
 }
@@ -2539,6 +2599,7 @@ function _process_menu
       bin        'Download & Install Static Binaries' \
       repo_rst   'Reset Repositories for cleanup' \
       ppa_rst    'Purge PPAs' \
+      snaps      'Install snap packages' \
       logdel     'Delete Script logs' \
       3>&1 1>&2 2>&3)
 
@@ -2606,6 +2667,11 @@ function _process_menu
                   "Download & Install binaries listed in bin.list or config.install.binaries?" \
                   "install_binaries"
                   ;;
+      snaps)     _show_confirmation_dialog_for_tasks \
+                  "Install Snap Packages" \
+                  "Download & Install binaries listed inconfig.install.snaps?" \
+                  "install_snaps"
+                  ;;
       log)        _debug_log "Delete log selected"
                   delete_log_file;
                   ;;
@@ -2619,82 +2685,133 @@ function _process_menu
 
 function _ci_cloud_and_container_checks()
 {
-  _log_and_show "${_running} Some checks..."
-  # Check if running in CI & Containers
-  # VMs, GCP, AWS, Docker. If running in CI Assign AUTOPILOT=true
 
-  #================================ CI =============================================
-  if [ "$TRAVIS" == "true" ]; then
-    AUTOPILOT="true"
-    bool_say_yes_to_all="true"
-    _log_and_show "${_ci} Running in Travis CI :|"
-  elif [ "$APPVEYOR" == "true" ]; then
-    AUTOPILOT="true"
-    bool_say_yes_to_all="true"
-    _log_and_show "${_ci} Running in Appveyor CI :|"
-  elif [ "$CI" == "true" ]; then
-    AUTOPILOT="true"
-    bool_say_yes_to_all="true"
-    _log_and_show "${_ci} I'm running in  CI :|"
+  if [ "$bool_skip_env_checks" == "true" ]; then
+    _debug_log "Skipping Run environment checks"
   else
-    _debug_log "Probably not running in a CI"
-  fi
+    _log_and_show "${_running} Env checks..."
+    # Check if running in CI & Containers
+    # VMs, GCP, AWS, Docker. If running in CI Assign AUTOPILOT=true
 
-  if [ "$(uname -r | cut -f3 -d '-')" == "Microsoft" ]; then
-    set_yellow
-    _log_and_show "${_warn} Running on Windows Subsystem for Linux."
-    set_default
-  fi
-  #============================ Docker =============================================
-  if grep docker /proc/1/cgroup -qa; then
-    _log_and_show "${_info} Running in Docker."
-  else
-    _debug_log "Probably not running in docker"
-  fi
-  #------------------------------- EC2, GCP, DO ------------------------------------
-  # This first, simple check will work for many older instance types.
-  if [ -f /sys/hypervisor/uuid ] && [ "$(head -c 3 /sys/hypervisor/uuid)" == "ec2" ]; then
-    _log_and_show "${_info} Running on EC2"
+    #================================ CI =============================================
+    if [ "$TRAVIS" == "true" ]; then
+      AUTOPILOT="true"
+      bool_say_yes_to_all="true"
+      _log_and_show "${_ci} Running in Travis CI :|"
+    elif [ "$APPVEYOR" == "true" ]; then
+      AUTOPILOT="true"
+      bool_say_yes_to_all="true"
+      _log_and_show "${_ci} Running in Appveyor CI :|"
+    elif [ "$CI" == "true" ]; then
+      AUTOPILOT="true"
+      bool_say_yes_to_all="true"
+      _log_and_show "${_ci} I'm running in  CI :|"
+    else
+      _debug_log "Probably not running in a CI"
+    fi
 
-  # This check will work on newer m5/c5 instances, but only if you have root!
-  # If the file exists AND is readable by us, we can rely on it.
-  elif [ -r /sys/devices/virtual/dmi/id/product_uuid ] && [ "$(head -c 3 /sys/devices/virtual/dmi/id/product_uuid)" == "EC2" ]; then
-    _log_and_show "${_info} Running on EC2"
+    if [ "$(uname -r | cut -f3 -d '-')" == "Microsoft" ]; then
+      _log_and_warn "${_warn} Running on Windows Subsystem for Linux."
+    fi
+    #============================ Docker =============================================
+    if grep docker /proc/1/cgroup -qa; then
+      _log_and_show "${_info} Running in Docker."
+    else
+      _debug_log "Probably not running in docker"
+    fi
+    #------------------------------- EC2, GCP, DO ------------------------------------
+    # This first, simple check will work for many older instance types.
+    if [ -f /sys/hypervisor/uuid ] && [ "$(head -c 3 /sys/hypervisor/uuid)" == "ec2" ]; then
+      _log_and_show "${_info} Running on EC2"
 
-  # Fallback check of http://169.254.169.254/. If we wanted to be REALLY
-  # authoritative, we could follow Amazon's suggestions for cryptographically
-  # verifying their signature, see here:
-  #    https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-identity-documents.html
-  # but this is almost certainly overkill for this purpose (and the above
-  # checks of "EC2" prefixes have a higher false positive potential, anyway).
-  elif wget -O- -q --timeout=5 --tries=3 http://169.254.169.254/latest/dynamic/instance-identity/document | grep -q availabilityZone; then
-    _log_and_show "${_info} Running on EC2"
+    # This check will work on newer m5/c5 instances, but only if you have root!
+    # If the file exists AND is readable by us, we can rely on it.
+    elif [ -r /sys/devices/virtual/dmi/id/product_uuid ] && [ "$(head -c 3 /sys/devices/virtual/dmi/id/product_uuid)" == "EC2" ]; then
+      _log_and_show "${_info} Running on EC2"
 
-  #------------------------------- GCP ---------------------------------------------
-  elif wget -q -O- --timeout=5 --tries=3 -nc --header="Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/virtual-clock/drift-token > /dev/null; then
-    _log_and_show "${_info} Running on Google Compute"
+    # Fallback check of http://169.254.169.254/. If we wanted to be REALLY
+    # authoritative, we could follow Amazon's suggestions for cryptographically
+    # verifying their signature, see here:
+    #    https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-identity-documents.html
+    # but this is almost certainly overkill for this purpose (and the above
+    # checks of "EC2" prefixes have a higher false positive potential, anyway).
+    elif wget -O- -q --timeout=5 --tries=3 http://169.254.169.254/latest/dynamic/instance-identity/document | grep -q availabilityZone; then
+      _log_and_show "${_info} Running on EC2"
 
-  elif wget -q -O- --timeout=5 --tries=3 -nc  http://169.254.169.254/metadata/v1/id; then
-    _log_and_show "${_info} Running on Digital Ocean Droplet"
-  else
-    _debug_log "Probably not running on AWS, GCP or Digital Ocean."
+    #------------------------------- GCP ---------------------------------------------
+    elif wget -q -O- --timeout=5 --tries=3 -nc --header="Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/virtual-clock/drift-token > /dev/null; then
+      _log_and_show "${_info} Running on Google Compute"
+
+    elif wget -q -O- --timeout=5 --tries=3 -nc  http://169.254.169.254/metadata/v1/id; then
+      _log_and_show "${_info} Running on Digital Ocean Droplet"
+    else
+      _debug_log "Probably not running on AWS, GCP or Digital Ocean."
+    fi
   fi
 
 }
 
 function display_version()
 {
-  #_line_fill
-  set_green
   printf "%-15s : %s\n" "Version Number" "${REL_NUM}"
-  set_yellow
   printf "%-15s : %s\n" "Version Name" "${REL_NAME}"
-  set_red
   printf "%-15s : %s\n" "Executable" "${SCRIPT}"
-  set_default
-  #_line_fill
 }
 
+
+function display_usage()
+{
+#Prints out help menu
+cat <<EOF
+$SCRIPT : A Post Installation Script for Ubuntu / Debian
+Version : $REL_NAME
+
+Usage: ${SCRIPT}   [options]
+
+Non-Action options (can be run as non-root user)
+[-v --version]     Display version info
+[--verify]         Verify
+[-h --help]        Display this help message
+
+
+Configuration Options
+[-C | --config-file]   Local yaml config file
+[-L | --lists]         Read Configuration from .lists files
+                       under data folder.
+[-n | --name]          Name of the configuration file to use
+                       as a query parameter when -R / --remote-yaml is used
+[-R | --remote-yaml]   Use config yaml hosted somewhere else
+[--use-default-yaml]   Use default yaml file
+[-V | --version-file]  Specify a local file from which version info will be read
+[-Y | --yaml]          Deprecated, Use -C or -R. This option does nothing
+                       and has been left for compatibility
+
+The following options are "action" options and
+these will make changes to your system depending on
+tasks chosen.
+[-d | --purge]         Enable Purging packages
+[-f | --fix]           Fix codenames for new releases
+[--hide-config]        Hide configuration table
+[-k | --keep-debs]     Do not invoke apt-clean & do not delete
+                       downloaded deb packages
+[-l | --delete-log]    Delete logfile (./log/after-effects.log)
+[--no-version-checks]  Skip checking for latest version
+[-p | --pre-release]   Same as --fix but for beta/alpha releases
+[-s | --simulate]      Try not make changes to system ans use --dry-run
+                       whenever possible. Plese read the documentation
+                       at http://ae.prasadt.com/clioptions to know its limits
+                       Not everything can be simulated.
+[-S | --no-stats]      Do not report usage statistics
+[--use-uf-mirror | -u] Use University of Freiburg mirrors
+
+GitHub & Documentation:
+ https://github.com/tprasadtp/ubuntu-post-install
+ https://ae.prasadt.com
+
+Contributions & Issues:
+* Feel free to create a PullRequest/Issue on Github.
+EOF
+}
 
 function _process_non_root_options()
 {
@@ -2703,6 +2820,7 @@ function _process_non_root_options()
     case ${1} in
       -v | --version)   display_version;exit 0;;
       --verify)         verify_gpg_signature;exit 0;;
+      -h | --help)      display_usage;exit 0;;
     esac
     shift
   done
@@ -2738,14 +2856,10 @@ function main()
   while [ "${1}" != "" ]; do
     case ${1} in
       -s | --simulate )       readonly simulate_apt_install="true";
-                              set_yellow;
-                              _log_and_show "${_simulate} is set to true";
-                              set_default;
+                              _log_and_warn "${_simulate} is set to true";
                               ;;
       -f | --fix )            bool_fix_repo_not_available_for_latest="true";
-                              set_yellow;
-                              _log_and_show "${_fix_repo} is set to true. Using codename: $codename_previous_release.";
-                              set_default;
+                              _log_and_warn "${_fix_repo} is set to true. Using codename: $codename_previous_release.";
                               ;;
       -p | --pre-release )    bool_fix_repo_not_available_for_upcoming_release="true";
                               set_magenta;
@@ -2753,16 +2867,13 @@ function main()
                               set_default;
                               ;;
       -d | --purge )          bool_purge_not_required_pkgs="true";
-                              set_yellow;
                               _log_and_show "${_purge} Purge packages is set to true."
-                              _log_and_show "${_warn} No checks are being made on the Packages in the list."
-                              _log_and_show "${_warn} Use carefully!. Purging something like sudo is stupid idea!"
+                              _log_and_warn "${_warn} No checks are being made on the Packages in the list."
+                              _log_and_warn "${_warn} Use carefully!. Purging something like sudo is stupid idea!"
                               set_default;
                               ;;
       -y | --yes )            bool_say_yes_to_all="true";
-                              set_yellow;
-                              _log_and_show "${_warn} Will automatically assume yes, for all the confirmation dialogs.";
-                              set_default;
+                              _log_and_warn "${_warn} Will automatically assume yes, for all the confirmation dialogs.";
                               ;;
       -l | --delete-log )     delete_log_file;;
       -k | --keep-debs )      set_default;
@@ -2770,8 +2881,9 @@ function main()
                               _log_and_show "${_info} Will keep downloaded DEB packages."
                               ;;
       -R | --remote-yaml )    set_default;
-                              _log_and_show "${_info} Using Remote YAML"
+                              _log_and_show "${_info} Using Remote YAML";
                               readonly bool_remote_yaml="true";
+                              readonly bool_use_yaml="true";
                               shift; readonly url_remote_yaml="${1}";
                               ;;
       --no-version-checks )   bool_check_version="false"
@@ -2781,9 +2893,10 @@ function main()
                               _log_and_show "${_info} Statistis will not be reported."
                               set_default;
                               ;;
-      -C | --config-file )    shift;
+    -c | -C | --config-file ) shift;
                               readonly custom_config_file="${1}";
-                              readonly bool_custom_config_file="true"
+                              readonly bool_custom_config_file="true";
+                              readonly bool_use_yaml="true";
                               _log_and_show "${_info} Using custom config file"
                               ;;
       -V | --version-file )   shift;
@@ -2791,12 +2904,11 @@ function main()
                               readonly bool_custom_version_file="true"
                               _log_and_show "${_info} Using custom version yml file"
                               ;;
-      -Y | --yaml )           readonly bool_use_yaml="true";
-                              set_yellow;
-                              _log_and_show "${_info} Using YAML config..."
-                              set_default;
+      -Y | --yaml )           _log_and_warn "${_warn} This option is deprecated. You can use -C/--config-file or"
+                              _log_and_warn "${_warn} -R/--remote-yaml without specifying -Y or --yaml."
                               ;;
       --use-default-yaml)     readonly bool_use_default_yaml="true";
+                              readonly bool_use_yaml="true";
                               ;;
       -L | --lists)           readonly bool_use_lists="true";
                               set_yellow;
@@ -2814,8 +2926,10 @@ function main()
       --use-uf-mirror | -u)   _log_and_show "Will use Uni-Freiburg mirror(s) if available";
                               readonly bool_use_uni_freiburg_mirror="true";
                               ;;
+      -B | --skip-env-checks) readonly bool_skip_env_checks="true";;
       -v | --version )        _log_and_show "-v or --version should be the only argument." "23";;
       --verify)               _log_and_exit "--verify should be the only argument." "23";;
+       -h | --help)           _log_and_exit "-h or --help should be the only argument." "23";;
        * )                    _log_and_exit "${_error} Invalid option: $1" "22";;
     esac
     shift
@@ -2890,6 +3004,7 @@ function main()
     _autopilot_check_task_flag_and_run "$ae_task_pip3" "install_pip_packages_3"
     _autopilot_check_task_flag_and_run "$ae_task_purge" "purge_not_required"
     _autopilot_check_task_flag_and_run "$ae_task_bin" "install_binaries"
+    _autopilot_check_task_flag_and_run "$ae_task_snaps" "install_snaps"
   else
   _process_menu;
   #_log_and_show "DEBUG: Options Processed"

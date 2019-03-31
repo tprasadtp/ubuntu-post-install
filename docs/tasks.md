@@ -203,6 +203,15 @@ This will purge Unwanted packages from the system.
 !!! bug "Scope of this function"
     This will **NOT** remove PPAs or repositories you have added manually or those added while installing DEB files.
 
+## Installing Snap packages
+
+Script can install snap packages from snapstore. For example check the default config file.
+
+!!! warning
+    List mode does not support installing snap packages. Its responsibility of the user to separate classic
+    snaps, edge and normal snaps. You should specify the classic snaps under `install.snaps.calssic`,
+    edge snaps under `install.snaps.edge` and noral snaps under `install.snaps.normal` in the yaml file.
+
 ## All In one
 
 This will perform Following actions. (In the following order)

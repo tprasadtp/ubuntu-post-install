@@ -51,7 +51,6 @@ config:
   # PPA List
   ppa:
     - ppa:yubico/stable
-    - ppa:teejee2008/ppa
     - ppa:myriadrf/drivers
   # Install components
   # APT Packages, Python Modules, Debian packages
@@ -59,36 +58,32 @@ config:
     # Debian packages.deb files
     # CSV format similar to lists
     debian_packages:
-      - https://atom-installer.github.com/v1.32.2/atom-amd64.deb,Atom-Editor.deb
+      - https://atom-installer.github.com/v1.35.1/atom-amd64.deb,Atom-Editor.deb
     # Static Binaries which will be placed in /usr/local/bin
     # minikube, docker-compose, etc.
     # Follows same pattern as Debian packages
     # Name to be saved is second field
     binaries:
-      - https://github.com/docker/compose/releases/download/1.20.0/docker-compose-linux-x86_64,docker-compose
+      - https://github.com/docker/compose/releases/download/1.23.0/docker-compose-linux-x86_64,docker-compose
+    python3:
+      - troposphere
+      - coloredlogs
+      - awacs
+      - awscli
     apt:
       # Admin related Stuff
       administration:
-        - dconf-editor
         - htop
         - apt-xapian-index
-        - gdebi
         - gparted
         - synaptic
         - bleachbit
         - tree
-        - stow
-        - gnome-logs
-        - gnome-system-monitor
-        - gnome-calculator
-        - gnome-usage
       # Security Related Stuff
       security:
         - gufw
       # Productivity & Office Tools.
       productivity:
-        - evolution
-        - realmd
         - pandoc-data
         - pandoc
         - texstudio
@@ -126,28 +121,19 @@ config:
         - spyder3
         - git
         - shellcheck
-        - ocl-icd-dev
-        - opencl-headers
         - clinfo
         - vainfo
         - vdpauinfo
-        - s3cmd
         - python3-pip
       # Everything Else
       other:
-        - gnome-online-miners
-        - evolution
         - gnuradio
         - gqrx-sdr
         - gr-radar
         - gr-radar-doc
-        - gnome-boxes
-        - gnome-tweaks
         - opensc
-        - pcscd
         - scdaemon
         - zsh
-        - seahorse-nautilus
         - cmake
         - libboost-all-dev
         - swig
@@ -174,6 +160,14 @@ config:
         - virt-manager
         - virt-viewer
         - libvirt-daemon-system
+        - lm-sensors
+        - imwheel
+        - chrome-gnome-shell
+        - gnome-logs
+        - gnome-system-monitor
+        - gnome-calculator
+        - gnome-usage
+        - seahorse-nautilus
       # Packages supplied by external repositories & PPAs
       # Dont Mix packages provided by distribution and PPAs
       # Sometimes external repos and ppas fail, As the entire section would
@@ -198,7 +192,7 @@ config:
         - ubuntu-restricted-extras
         - ubuntu-restricted-addons
         - unrar
-        - timeshift
         - limesuite
         - liblimesuite-dev
         - limesuite-udev
+        - gnome-tweak-tool

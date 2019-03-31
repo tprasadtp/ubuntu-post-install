@@ -12,14 +12,7 @@ You have two options of configuring this script.
 
 - Using YAML files [they can be local or remote]
 
-  ```console
-    ./after-effects --yaml
-  ```
-
-You need to specify which type to use. Not specifying will throw an error. You cannot mix configurations in YAML and lists.
-
-!!! tip "Shorthand flags"
-    You can also use short hand version of the flags `-Y` for YAML and `-L` for lists. Please note that lowercase case options have different meaning than uppercase ones.
+You can specify local config file to use with -C / --config-file option. To use remote config file see -R/--remote-yaml
 
 ## Simulating package installation
 

@@ -1,6 +1,6 @@
 # Install Config
 version: 5
-name: Polaris
+name: Pheonix-Server
 author: Prasad T
 # Configuration
 config:
@@ -18,25 +18,23 @@ config:
     # Whether to purge packages mentioned in config.purge key
     purge: true
     debs: true
-    pip2: true
-    pip3: true
+    pip2: false
+    pip3: false
     binaries: true
-    snaps: yes
   # Repository Flags
   add_repo:
     winehq: true
     docker: true
-    mendeley: false
+    mendeley: true
     googlecloud: true
     spotify: true
     vscode: true
     skype: true
     signal: false
-    insync: true
+    insync: false
     google: true
-    kubernetes: false
+    kubernetes: true
     ros: true
-    duo: true
   # Flags
   flags:
   # Simulate flag will never be overridden by remote config.
@@ -54,6 +52,7 @@ config:
   ppa:
     - ppa:yubico/stable
     - ppa:teejee2008/ppa
+    - ppa:myriadrf/drivers
   # Install components
   # APT Packages, Python Modules, Debian packages
   install:
@@ -67,13 +66,6 @@ config:
     # Name to be saved is second field
     binaries:
       - https://github.com/docker/compose/releases/download/1.20.0/docker-compose-linux-x86_64,docker-compose
-      - https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64,minikube
-      - https://github.com/kubernetes/kompose/releases/download/v1.15.0/kompose-linux-amd64,kompose
-    snaps:
-      normal:
-        - htop
-      classic:
-        - vscode
     apt:
       # Admin related Stuff
       administration:
@@ -84,12 +76,17 @@ config:
         - gparted
         - synaptic
         - bleachbit
+        - tree
+        - stow
+        - gnome-logs
+        - gnome-system-monitor
+        - gnome-calculator
+        - gnome-usage
       # Security Related Stuff
       security:
         - gufw
       # Productivity & Office Tools.
       productivity:
-        - empathy
         - evolution
         - realmd
         - pandoc-data
@@ -137,16 +134,71 @@ config:
         - s3cmd
         - python3-pip
       # Everything Else
-      # Which is conditional
       other:
         - gnome-online-miners
+        - evolution
+        - gnuradio
+        - gqrx-sdr
+        - gr-radar
+        - gr-radar-doc
+        - gnome-boxes
+        - gnome-tweaks
+        - opensc
+        - pcscd
+        - scdaemon
+        - zsh
+        - seahorse-nautilus
+        - cmake
+        - libboost-all-dev
+        - swig
+        - g++
+        - ccache
+        - gcc-opt
+        - libi2c-dev
+        - libusb-1.0-0-dev
+        - libsqlite3-dev
+        - libwxgtk3.0-dev
+        - python-tk
+        - python3-tk
+        - python-soapysdr
+        - soapysdr-module-osmosdr
+        - soapysdr-module-rtlsdr
+        - soapysdr-tools
+        - soapysdr-module-lms7
+        - python-soapysdr
+        - soapysdr-tools
+        - soapysdr-module-rtlsdr
+        - python-soapysdr
+        - libsoapysdr-dev
+        - libsoapysdr-doc
+        - virt-manager
+        - virt-viewer
+        - libvirt-daemon-system
       # Packages supplied by external repositories & PPAs
       # Dont Mix packages provided by distribution and PPAs
-      # Sometimes external repos and ppas fail, so better isolate it.
+      # Sometimes external repos and ppas fail, As the entire section would
+      # fail to install so better isolate it.
+      # Even though some are supplied by ubuntu repos, They were added only
+      # in 18.10. So they are kept here for now. Feel free to move them to
+      # Others.
       external:
         - google-chrome-stable
         - spotify-client
         - code
+        - neofetch
         - google-cloud-sdk
         - gcsfuse
         - docker-ce
+        - chromium-browser
+        - yubioath-desktop
+        - yubikey-manager-qt
+        - libpam-u2f
+        - yubikey-personalization-gui
+        - yubikey-piv-manager
+        - ubuntu-restricted-extras
+        - ubuntu-restricted-addons
+        - unrar
+        - timeshift
+        - limesuite
+        - liblimesuite-dev
+        - limesuite-udev

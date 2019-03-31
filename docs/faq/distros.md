@@ -38,13 +38,8 @@ A Complete  list of supported distributions is given below.
 | :---------------- | :-------------------- | -------------- | :---------------------------- |
 | Ubuntu 18.04      | Bionic Beaver         | Yes            |
 | Ubuntu 16.04      | Xenial Xerus          | Yes            |
-| Ubuntu 14.04      | Trusty Thar           | Yes            |
 | Ubuntu 18.10      | Cosmic Cuttlefish     | Yes            |
 | Ubuntu 19.04      | Disco Dingo           | ---            | Only use it for testing       |
-| Linux Mint 17     | Quina                 | Yes            |
-| Linux-Mint 17.1   | Rebecca               | Yes            |
-| Linux-Mint 17.2   | Rafaela               | Yes            |
-| Linux-Mint 17.3   | Rosa                  | Yes            |
 | Linux Mint 18     | Sarah                 | Yes            |
 | Linux-Mint 18.1   | Serena                | Yes            |
 | Linux-Mint 18.2   | Sonya                 | Yes            |
@@ -54,7 +49,6 @@ A Complete  list of supported distributions is given below.
 | Debian 8          | Jessie                | Yes            |
 | Debian 9          | Stretch               | Yes            |
 | Debian 10         | Buster                | ---            | Only use it for testing       |
-| Elementary-OS     | Freya                 | Yes            | Not tested                    |
 | Elementary-OS 0.4 | Loki                  | Yes            | Not tested                    |
 | Elementary-OS 5.0 | Juno                  | Yes            | Not tested                    |
 | Budgie Remix      | 16.04                 | Yes            |

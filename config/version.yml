@@ -2,9 +2,9 @@
 api: 2
 # Configuraion
 version:
-  number: 537
-  name: 5.3.7
-  changelog: Support for ROS & Duo-Unix repo, Cosmic+Tessa
+  number: 540
+  name: 5.4.0
+  changelog: Support installing snap Packages, Removed support for 14.04 Trusty
 # Stats reporting
 stats:
   report: false
