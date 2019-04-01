@@ -54,7 +54,7 @@ jobs:
       deployment-file: false
       local-dir: _site
       skip-cleanup: true
-      keep-history: false
+      keep-history: true
       target-branch: gh-pages
       email:
         secure: dq/+hKw1qcf0OzeqPmcXZJMrOTn/sEEa0SuqagtzVchbvrkBc3gNWcRnG960nlZS7sL4Jdtmp3rm1dfPJl9a3R9Ra6rWzK8j1MEA8/N8BCi0y1NbQP/gHCHooEDJq3Jz2PJzZA/f5+qlR7b7Vs0xmZRfHwcsQy9FKd8mwTcQ8n4V7P3F/1FfrOgNyr5J/r5zlzHNhwVbshrJyDivX7rl6rpIKsDmXNEM7DEws9AeNlsLgeQRtl77+U04h4CHQD8Y9N5hj+Rh4OJL5V1NVhN8/zOMsfp1lZuj9OWWapRDmpV7Y9CDY8bGAmxuG5QP6CIe2f+PoSXWZw4Y20pLN2ke4GSHhWzX0nElKh9iv3v/wb6Hitsbk4xvSAJ71+BNzQFJOIBwCdBTNMQY3JExG9CrxPylMlGFnyEfQytYnEZAzwSy26smJREvcDi+d1eM5I8RLhp3OhOaQw6/xxTEcMCf5qCuYbDVGnx3mO8UQ52c6Fjd+CQ5BVaKAK1uSSRfIyxQS2CgVVrIKVT1s+ooChuM1BHjn3CW1EcMWiQ/KJO1hjTJ+GV7CB5xA99m04GsI5QASfFvPO1xzlx7elI6vPkIvjVH38ixMEo/evVZN35HlUgpEgQ7YNgRnP4iyAmPcYGmjpzXKl7CZtjpIamWiLQX8xrF15+enxueAznJLCvJ5vk=
