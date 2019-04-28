@@ -19,7 +19,11 @@ jobs:
     env: TEST_ENV="Shellcheck"
     script: "./tests/test-shell-scripts.sh"
 
-  - stage: Test in Docker on Xenial
+  - stage: Test in Docker on Disco
+    env: TEST_ENV="Disco-Docker"
+    script: ./tests/test-distro.sh "ubuntu" "disco"
+
+  - stage: Test in Docker on Cosmic
     env: TEST_ENV="Cosmic-Docker"
     script: ./tests/test-distro.sh "ubuntu" "cosmic"
 
@@ -83,7 +87,6 @@ matrix:
   fast_finish: true
   allow_failures:
   - env: TEST_ENV="Pre-Release"
-  - env: TEST_ENV="Disco-Docker"
   - env: TEST_ENV="Debian10-Docker"
 notifications:
   email: false

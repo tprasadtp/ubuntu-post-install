@@ -4,7 +4,7 @@ api: 2
 version:
   number: 540
   name: 5.4.0
-  changelog: Support installing snap Packages, Removed support for 14.04 Trusty
+  changelog: Support installing snap Packages, 19.04 Disco support
 # Stats reporting
 stats:
   report: false

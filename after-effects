@@ -30,8 +30,8 @@ readonly EXEC_START=$(date +%s)
 readonly DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.4.0 Beta"
-readonly REL_NUM=540
+readonly REL_NAME="5.4.1 Beta"
+readonly REL_NUM=541
 
 function _init_printf_variables()
 {
@@ -283,9 +283,9 @@ function _init_script_variables()
 
 
   #-------------------------- Release codenames --------------------------------------
-  readonly code_name_latest_release="cosmic"
-  readonly codename_previous_release="bionic"
-  readonly codename_upcoming_release="disco"
+  readonly code_name_latest_release="disco"
+  readonly codename_previous_release="cosmic"
+  readonly codename_upcoming_release="eoan"
 
   #============================ Switches/ bools & Vars ================================
 
@@ -615,9 +615,12 @@ function _fix_ubuntu_derivatives()
       xenial | cosmic | bionic )            readonly bool_config_partner_repo="true"
                                             _log_and_show "${_info} Keeping the codename as: $code_name."
                                             ;;
-      disco )                               readonly bool_config_partner_repo="true"
+      disco)                                _log_and_show "${-info} This is 19.04 disco. If your repos are not yet supported, use --fix option"
+                                            _log_and_show "${_info} Keeping the codename as: $code_name."
+                                            ;;
+      eoan )                                readonly bool_config_partner_repo="true"
                                             set_magenta;
-                                            _log_and_show "${_pre_release} This is Ubuntu 19.04 Disco Dingo"
+                                            _log_and_show "${_pre_release} This is Ubuntu 19.10 Eoan"
                                             _log_and_show "${_pre_release} Please use --pre-release flag if you cannot add repos yet. There's no fix for PPAs."
                                             _log_and_show "${_warn} This is a pre-release of Ubuntu, which is in early stages of development. Use with caution!"
                                             _log_and_show "${_warn} Packages and PPAs might not work with this release!"
