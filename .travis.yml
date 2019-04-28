@@ -23,7 +23,7 @@ jobs:
     env: TEST_ENV="Disco-Docker"
     script: ./tests/test-distro.sh "ubuntu" "disco"
 
-  - stage: Test in Docker on Cosmic
+  - stage: Test
     env: TEST_ENV="Cosmic-Docker"
     script: ./tests/test-distro.sh "ubuntu" "cosmic"
 

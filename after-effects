@@ -615,7 +615,7 @@ function _fix_ubuntu_derivatives()
       xenial | cosmic | bionic )            readonly bool_config_partner_repo="true"
                                             _log_and_show "${_info} Keeping the codename as: $code_name."
                                             ;;
-      disco)                                _log_and_show "${-info} This is 19.04 disco. If your repos are not yet supported, use --fix option"
+      disco)                                _log_and_show "${_info} This is 19.04 disco. If your repos are not yet supported, use --fix option"
                                             _log_and_show "${_info} Keeping the codename as: $code_name."
                                             ;;
       eoan )                                readonly bool_config_partner_repo="true"
