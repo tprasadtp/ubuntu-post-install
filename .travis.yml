@@ -19,12 +19,11 @@ jobs:
     env: TEST_ENV="Shellcheck"
     script: "./tests/test-shell-scripts.sh"
 
-  - stage: Test in Docker on Disco
+  - stage: Test
     env: TEST_ENV="Disco-Docker"
     script: ./tests/test-distro.sh "ubuntu" "disco" "disco.yml" "true"
 
-  - stage: Test
-    env: TEST_ENV="Cosmic-Docker"
+  - env: TEST_ENV="Cosmic-Docker"
     script: ./tests/test-distro.sh "ubuntu" "cosmic" "cosmic.yml" "true"
 
   - env: TEST_ENV="Bionic-Docker"
