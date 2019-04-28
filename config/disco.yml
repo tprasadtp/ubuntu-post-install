@@ -29,6 +29,7 @@ config:
     duo: false
     mendeley: false
     googlecloud: true
+    gcsfuse: false
     spotify: true
     vscode: true
     skype: true

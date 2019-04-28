@@ -10,7 +10,8 @@ This task can add the following repositories.
 |Docker | docker
 |Duo Security Unix | duo
 |Google Chrome & Google Earth | google
-|Google Cloud SDK & GCS-FUSE| googlecloud
+|Google Cloud SDK | googlecloud
+|GCSFUSE | gcsfuse
 |Insync | insync
 |Kubernetes | kubernetes
 |Mendeley desktop | mendeley
@@ -50,6 +51,7 @@ This task can add the following repositories.
 
       #Google Cloud SDK
       add_googlecloud_repo=true
+      add_gcsfuse_Repo=false
 
       #Signal
       add_signal_repo=false

@@ -344,6 +344,7 @@ function _init_script_variables()
 
   #Google Cloud SDK
   add_googlecloud_repo=false
+  add_gcsfuse_repo=false
 
   #Signal
   add_signal_repo=false
@@ -958,6 +959,7 @@ function _set_yaml_config()
 
     _check_bool "add_googlecloud_repo" "${config__add_repo__googlecloud[0]}"
     #add_googlecloud_repo="${config__add_repo__googlecloud[0]}"
+    _check_bool "add_googlecloud_repo" "${config__add_repo__gcsfuse[0]}"
 
     _check_bool "add_spotify_repo" "${config__add_repo__spotify[0]}"
     #add_spotify_repo="${config__add_repo__spotify[0]}"
@@ -1045,6 +1047,7 @@ function _set_yaml_config()
       printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Google Cloud SDK" "$add_googlecloud_repo"
+      printf "${_cfg} %-20s | %-10s |\n" "Google Cloud SDK" "$add_gcsfuse_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Spotify" "$add_spotify_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Skype" "$add_skype_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Visual Studio Code" "$add_vscode_repo"
@@ -1086,6 +1089,7 @@ function _set_yaml_config()
         printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
         printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
         printf "${_cfg} %-20s | %-10s |\n" "Google Cloud SDK" "$add_googlecloud_repo"
+        printf "${_cfg} %-20s | %-10s |\n" "Google Cloud SDK" "$add_gcsfuse_repo"
         printf "${_cfg} %-20s | %-10s |\n" "Spotify" "$add_spotify_repo"
         printf "${_cfg} %-20s | %-10s |\n" "Skype" "$add_skype_repo"
         printf "${_cfg} %-20s | %-10s |\n" "Visual Studio Code" "$add_vscode_repo"
@@ -1243,6 +1247,7 @@ function _set_list_config()
 
     #Google Cloud SDK
     add_googlecloud_repo=true
+    add_gcsfuse_repo=false
 
     #Signal
     add_signal_repo=true
@@ -1613,24 +1618,32 @@ function add_repositories()
     _log_and_show "${_repo} Insync repository is set to false. Skipping."
   fi
 
+
   # Google Cloud SDK and GCS-FUSE
-  if [ "$add_googlecloud_repo" == "true" ]; then
-    CLOUD_SDK_REPO="cloud-sdk-${code_name}"
-    GCSFUSE_REPO="gcsfuse-${code_name}"
-    _log_and_show "${_repo} Adding GCP Repositories"
+  if [ "$add_googlecloud_repo" == "true" ] || [ "$add_gcsfuse_repo" == "true" ]; then
     _debug_log "Adding Google-Cloud repository sigining key"
     wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg -O /tmp/ae/googlecloud.gpg >> "$log_file"
     apt-key add /tmp/ae/googlecloud.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"
+  else
+    _debug_log "Neither GCSFUSE nor Google cloud SSK install enabled. Not adding Google cloud APT keys"
+  fi
+
+  if [ "$add_googlecloud_repo" == "true" ]; then
+    CLOUD_SDK_REPO="cloud-sdk-${code_name}"
     _log_and_show "${_repo} Google-Cloud-SDK repository"
     echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  \
-    || _log_and_warn "${_error} Adding GCSFUSE Repository failed"
-
-    _log_and_show "${_repo} GCSFUSE repository"
-    echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list  \
-    || _log_and_warn "${_error} Adding Google Cloud SDK Repository failed"
-
+    || _log_and_warn "${_error} Adding Google Clouf SDK Repository failed"
   else
     _log_and_show "${_repo} Google Cloud SDK repository is set to false. Skipping."
+  fi
+
+  if [ "$add_gcsfuse_repo" == "true" ]; then
+    GCSFUSE_REPO="gcsfuse-${code_name}"
+    _log_and_show "${_repo} GCSFUSE repository"
+    echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list  \
+    || _log_and_warn "${_error} Adding GCSFUSE Repository failed"
+  else
+    _log_and_show "${_repo} GCSFUSE repository is set to false. Skipping."
   fi
 
   #AWS
@@ -2627,7 +2640,7 @@ function _process_menu
                   "add_ppas"
                   ;;
       repo)       _show_confirmation_dialog_for_tasks "Add Additional Repositories" \
-                  "Adding additional repositories is set as follows.\n Google Chrome & Google Earth : $add_google_repo,\n Google Cloud SDK : $add_googlecloud_repo\n Visual Studio Code : $add_vscode_repo\n Docker : $add_docker_repo\n Insync : $add_insync_repo\n Spotify : $add_spotify_repo\n Wine-HQ : $add_winehq_repo\n Skype : $add_skype_repo\n Kubernetes : $add_kubernetes_repo\n Signal Desktop : $add_signal_repo.\n Shall I do it?" \
+                  "Adding additional repositories is set as follows.\n Google Chrome & Google Earth : $add_google_repo,\n Google Cloud SDK : $add_googlecloud_repo\n GCSFUSE : $add_gscfuse_repo \nVisual Studio Code : $add_vscode_repo\n Docker : $add_docker_repo\n Insync : $add_insync_repo\n Spotify : $add_spotify_repo\n Wine-HQ : $add_winehq_repo\n Skype : $add_skype_repo\n Kubernetes : $add_kubernetes_repo\n Signal Desktop : $add_signal_repo.\n Shall I do it?" \
                   "add_repositories"
                   ;;
       apps)       _show_confirmation_dialog_for_tasks \

@@ -146,7 +146,8 @@ A Complete  list of supported distributions is given below.
 |Docker | docker
 |Duo Security Unix | duo
 |Google Chrome & Google Earth | google
-|Google Cloud SDK & GCS-FUSE| googlecloud
+|Google Cloud SDK | googlecloud
+|GCSFUSE | gcsfuse
 |Insync | insync
 |Kubernetes | kubernetes
 |Mendeley desktop | mendeley
@@ -156,6 +157,9 @@ A Complete  list of supported distributions is given below.
 |Spotify Desktop | spotify
 |Visual Studio code | vscode
 | Wine HQ | winehq
+
+> Note for 18.10+ users: GCSFuse is not yet available for `cosmic`/`disco`. Please see this
+[Github issue](https://github.com/GoogleCloudPlatform/gcsfuse/issues/319) for a fix.
 
 ## Issues & Help
 
