@@ -21,11 +21,11 @@ jobs:
 
   - stage: Test in Docker on Disco
     env: TEST_ENV="Disco-Docker"
-    script: ./tests/test-distro.sh "ubuntu" "disco" "skip_duo" "true"
+    script: ./tests/test-distro.sh "ubuntu" "disco" "disco" "true"
 
   - stage: Test
     env: TEST_ENV="Cosmic-Docker"
-    script: ./tests/test-distro.sh "ubuntu" "cosmic" "skip_duo"
+    script: ./tests/test-distro.sh "ubuntu" "cosmic" "cosmic" "true"
 
   - env: TEST_ENV="Bionic-Docker"
     script: ./tests/test-distro.sh "ubuntu" "bionic"
