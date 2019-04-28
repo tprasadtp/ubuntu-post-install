@@ -28,6 +28,7 @@ config:
     docker: true
     mendeley: false
     googlecloud: true
+    gcsfuse: true
     spotify: true
     vscode: true
     skype: true
