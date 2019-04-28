@@ -42,7 +42,7 @@ jobs:
     script: ./tests/test-distro.sh "debian" "jessie"
 
   - stage: Pre-Release-Builds
-    env: TEST_ENV="Disco-Docker"
+    env: TEST_ENV="Uuntu-Pre-Release-Docker"
     script: "./tests/test-prerelease.sh"
 
   - env: TEST_ENV="Debian10-Docker"
