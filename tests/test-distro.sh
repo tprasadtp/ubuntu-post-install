@@ -14,6 +14,12 @@ function main()
     echo "You need to specify distro name & release name"
     exit 1
   fi
+
+  if [[ $# -eq 4 ]]; then
+    enable_fix="$4"
+  else
+    enable_fix="false"
+  fi
   distro="$1"
   release="$2"
 
@@ -59,37 +65,64 @@ function main()
     docker build -t "${distro}:${release}" ./dockerfiles/"${release}"
     echo "Running in ${TEST_ENV}"
     echo "Testing with YAML"
-    docker run -it -e TRAVIS="$TRAVIS" \
-    --hostname="${TEST_ENV}" \
-    -v "$(pwd)":/shared \
-    "${distro}:${release}" \
-    ./after-effects \
-     --yaml \
-     --fix \
-     --simulate \
-     --yes \
-    --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/"${config_yml}"
-    exit_code="$?"
+    if [[ ${enable_fix} == "true" ]]; then
+      docker run -it -e TRAVIS="$TRAVIS" \
+      --hostname="${TEST_ENV}" \
+      -v "$(pwd)":/shared \
+      "${distro}:${release}" \
+      ./after-effects \
+      --yaml \
+      --fix \
+      --simulate \
+      --yes \
+      --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/"${config_yml}"
+      exit_code="$?"
+    else
+      docker run -it -e TRAVIS="$TRAVIS" \
+      --hostname="${TEST_ENV}" \
+      -v "$(pwd)":/shared \
+      "${distro}:${release}" \
+      ./after-effects \
+      --yaml \
+      --simulate \
+      --yes \
+      --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/"${config_yml}"
+      exit_code="$?"
+    fi
+
     echo "Exit code for YAML is $exit_code"
     if [[ $exit_code -ne 0 ]]; then
       return "$exit_code"
     fi
     echo "Testing With Lists"
-    docker run -it -e TRAVIS="$TRAVIS" \
-      --hostname="${TEST_ENV}" \
-      -v "$(pwd)":/shared \
-      "${distro}:${release}" \
-      ./after-effects -d \
-      --lists \
-      --fix \
-      --simulate \
-      --yes
+    if [[ ${enable_fix} == "true" ]]; then
+      docker run -it -e TRAVIS="$TRAVIS" \
+        --hostname="${TEST_ENV}" \
+        -v "$(pwd)":/shared \
+        "${distro}:${release}" \
+        ./after-effects -d \
+        --lists \
+        --fix \
+        --simulate \
+        --yes
+
+        exit_code="$?"
+    else
+      docker run -it -e TRAVIS="$TRAVIS" \
+        --hostname="${TEST_ENV}" \
+        -v "$(pwd)":/shared \
+        "${distro}:${release}" \
+        ./after-effects -d \
+        --lists \
+        --simulate \
+        --yes
 
       exit_code="$?"
-      echo "Exit code for LIST is $exit_code"
-      if [[ $exit_code -ne 0 ]]; then
-        return "$exit_code"
-      fi
+    fi
+    echo "Exit code for LIST is $exit_code"
+    if [[ $exit_code -ne 0 ]]; then
+      return "$exit_code"
+    fi
 
   fi
 }
