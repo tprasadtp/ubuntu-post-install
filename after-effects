@@ -959,7 +959,7 @@ function _set_yaml_config()
 
     _check_bool "add_googlecloud_repo" "${config__add_repo__googlecloud[0]}"
     #add_googlecloud_repo="${config__add_repo__googlecloud[0]}"
-    _check_bool "add_googlecloud_repo" "${config__add_repo__gcsfuse[0]}"
+    _check_bool "add_gcsfuse_repo" "${config__add_repo__gcsfuse[0]}"
 
     _check_bool "add_spotify_repo" "${config__add_repo__spotify[0]}"
     #add_spotify_repo="${config__add_repo__spotify[0]}"
