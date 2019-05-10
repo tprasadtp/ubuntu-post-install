@@ -42,7 +42,7 @@ jobs:
     script: ./tests/test-distro.sh "debian" "jessie"
 
   - stage: Pre-Release-Builds
-    env: TEST_ENV="Uuntu-Pre-Release-Docker"
+    env: TEST_ENV="Ubuntu-Pre-Release-Docker"
     script: "./tests/test-prerelease.sh"
 
   - env: TEST_ENV="Debian10-Docker"
@@ -85,7 +85,7 @@ jobs:
 matrix:
   fast_finish: true
   allow_failures:
-  - env: TEST_ENV="Pre-Release"
+  - env: TEST_ENV="Ubuntu-Pre-Release-Docker"
   - env: TEST_ENV="Debian10-Docker"
 notifications:
   email: false

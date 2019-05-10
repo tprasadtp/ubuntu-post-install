@@ -5,16 +5,7 @@
 
 Following Tests are done on Travis-CI.
 
-- `shellcheck` every executable bash script (Job #build.1)
-- Test on Ubuntu Cosmic (Job #build.2)
-- Test on Ubuntu Bionic Beaver (Job #build.3)
-- Test on Ubuntu Xenial (Job #build.4)
-- Test on Ubuntu Trusty (Host) (Job #build.5)
-- Test on Debian 9 Stretch (Job #build.6)
-- Test on Debian 8 Jessie (Job #build.7)
-- Test on Ubuntu Disco 19.04 (Job #build.8 can fail)
-- Test on Debian 10 Buster (Job #build.9 can fail)
-- Build, Test & deploy documentation (Job #build.10).
+- `shellcheck` every executable bash script, Test on all supported Ubuntu and Debian distros
 
 !!! info
 
