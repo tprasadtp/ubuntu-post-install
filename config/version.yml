@@ -2,9 +2,9 @@
 api: 2
 # Configuraion
 version:
-  number: 540
-  name: 5.4.0
-  changelog: Support installing snap Packages, Removed support for 14.04 Trusty
+  number: 541
+  name: 5.4.1
+  changelog: Support for Ubuntu 19.04
 # Stats reporting
 stats:
   report: false

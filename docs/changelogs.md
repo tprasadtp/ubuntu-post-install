@@ -1,5 +1,15 @@
 # Change logs
 
+## Version 5.4.1
+
+- Add disoc support, start testing on eoan
+
+
+## Version 5.4.0
+
+- Add support for installing snap packages {edge, stable and classic}
+
+
 ## Version 5.3.7
 
 - Add support for Duo Security for Unix repos

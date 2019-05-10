@@ -26,9 +26,10 @@ config:
   add_repo:
     winehq: true
     docker: true
+    duo: false
     mendeley: false
     googlecloud: true
-    gcsfuse: true
+    gcsfuse: false
     spotify: true
     vscode: true
     skype: true
@@ -36,8 +37,7 @@ config:
     insync: true
     google: true
     kubernetes: false
-    ros: true
-    duo: true
+    ros: false
   # Flags
   flags:
   # Simulate flag will never be overridden by remote config.
@@ -149,5 +149,4 @@ config:
         - spotify-client
         - code
         - google-cloud-sdk
-        - gcsfuse
         - docker-ce

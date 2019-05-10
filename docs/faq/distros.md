@@ -39,7 +39,7 @@ A Complete  list of supported distributions is given below.
 | Ubuntu 18.04      | Bionic Beaver         | Yes            |
 | Ubuntu 16.04      | Xenial Xerus          | Yes            |
 | Ubuntu 18.10      | Cosmic Cuttlefish     | Yes            |
-| Ubuntu 19.04      | Disco Dingo           | ---            | Only use it for testing       |
+| Ubuntu 19.04      | Disco Dingo           | ---            |
 | Linux Mint 18     | Sarah                 | Yes            |
 | Linux-Mint 18.1   | Serena                | Yes            |
 | Linux-Mint 18.2   | Sonya                 | Yes            |
@@ -54,7 +54,6 @@ A Complete  list of supported distributions is given below.
 | Budgie Remix      | 16.04                 | Yes            |
 | PoP! OS           | 17.10 & 18.04         | Yes            | Not tested                    |
 | Linux-Lite        | 3.X                   | Yes            | (Based on Ubuntu 16.04)       |
-| Zorin-OS          | 12.X                  | Yes            | (Based on Ubuntu 16.04)       |
 | Bodhi Linux       | 4                     | Yes            | (Based on Ubuntu 16.04)       |
 | KDE Neon          | Based on Ubuntu LTS   | Might be buggy | Not Tested                    |
 | Peppermint 9      | Based on Ubuntu 18.04 | Yes            | Not Tested                    |

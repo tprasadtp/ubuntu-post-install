@@ -1,5 +1,10 @@
 # Errors
 
+## GCSFUSE on 18.10+
+
+Google 's GCSFuse is not yet available for cosmic/disco. Please see this
+[Github issue](https://github.com/GoogleCloudPlatform/gcsfuse/issues/319) for a fix.
+
 ## What if I get an error saying Unknown Distribution/Release?
 
 That usually means you are running a Distribution which is not supported or too old or a derivative which is not recognized by the script. However it also might be possible that `lsb-release` package is missing from your system. Since the script depends on it for determining what is the code-name of the release it will fail.
