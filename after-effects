@@ -1047,7 +1047,7 @@ function _set_yaml_config()
       printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Google Cloud SDK" "$add_googlecloud_repo"
-      printf "${_cfg} %-20s | %-10s |\n" "Google Cloud SDK" "$add_gcsfuse_repo"
+      printf "${_cfg} %-20s | %-10s |\n" "GCSFUSE" "$add_gcsfuse_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Spotify" "$add_spotify_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Skype" "$add_skype_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Visual Studio Code" "$add_vscode_repo"

@@ -87,7 +87,7 @@ See /docs or visit [https://after-effects.prasadt.com](https://after-effects.pra
 [![Debian](https://static.prasadt.com/logo64/debian.png)](https://www.debian.org/)
 
 I have not tested the script on the distros listed below. Because they use Ubuntu as their base,
-It should work fine. But no promises. Please note that Ubuntu 19.04 is **enabled**, that does not mean it works well. YMMV
+It should work fine. But no promises. Please note that Ubuntu 19.10 is **enabled**, that does not mean it works well. YMMV
 
 [![Kde-Neon](https://static.prasadt.com/logo64/kde-neon.png)](https://neon.kde.org/)
 [![Pop-OS](https://static.prasadt.com/logo64/pop-os.png)](https://system76.com/pop)
@@ -158,6 +158,8 @@ A Complete  list of supported distributions is given below.
 
 > Note for 18.10+ users: GCSFuse is not yet available for `cosmic`/`disco`. Please see this
 [Github issue](https://github.com/GoogleCloudPlatform/gcsfuse/issues/319) for a fix.
+
+> Duo Security for unix is only supported on LTS releases
 
 ## Issues & Help
 
