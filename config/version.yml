@@ -2,9 +2,9 @@
 api: 2
 # Configuraion
 version:
-  number: 541
-  name: 5.4.1
-  changelog: Support for Ubuntu 19.04
+  number: 542
+  name: 5.4.2
+  changelog: fix ROS, Spotify keys
 # Stats reporting
 stats:
   report: false
