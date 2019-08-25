@@ -30,8 +30,8 @@ readonly EXEC_START=$(date +%s)
 readonly DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.4.1 Beta"
-readonly REL_NUM=541
+readonly REL_NAME="5.4.2 Beta"
+readonly REL_NUM=542
 
 function _init_printf_variables()
 {
@@ -1560,9 +1560,9 @@ function add_repositories()
     _log_and_show "${_repo} Google repositories"
     if [ "$ARCH" == "amd64" ]; then
         _debug_log "Adding Google package signing Key"
-      wget -q  https://dl.google.com/linux/linux_signing_key.pub -O /tmp/ae/linux_signing_key.pub >> $"$log_file"
+      wget -q  https://dl.google.com/linux/linux_signing_key.pub -O /tmp/ae/google_signing_key.pub >> $"$log_file"
       _debug_log "Adding Google key to trusted keys list"
-      apt-key add /tmp/ae/linux_signing_key.pub 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
+      apt-key add /tmp/ae/google_signing_key.pub 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_and_warn "${_error} Adding trusted keys for Google failed."
 
       _log_and_show "${_repo} Google Chrome repository"
@@ -1586,7 +1586,8 @@ function add_repositories()
   if [ "$add_spotify_repo" == "true" ]; then
     _log_and_show "${_repo} Spotify repository"
     _debug_log "Adding Spotify keys"
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 931FF8E79F0876134EDDBDCCA87FF9DF48BF1C90  2>&1 \
+    wget -q   https://download.spotify.com/debian/pubkey.gpg -O /tmp/ae/spotify_signing_key.pub >> $"$log_file"
+    apt-key add /tmp/ae/spotify_signing_key.pub  2>&1 \
     |_add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_and_warn "${_error} Adding Spotify repository failed"
 
@@ -1759,8 +1760,8 @@ function add_repositories()
 
     if [[ $ros_arch_supported == "true" ]]; then
       _log_and_show "${_repo} ROS is Supported on this distro/ARCH : ${code_name}/${ARCH}"
-      _debug_log "Adding ROS repo key..."
-      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+      _debug_log "Adding ROS repo key(latest)..."
+      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
        || _log_and_warn "${_error} Adding ROS repository key failed!"
 
        if [[ $bool_use_uni_freiburg_mirror == "true" ]] && [[ $distro_name == "ubuntu" ]]; then
