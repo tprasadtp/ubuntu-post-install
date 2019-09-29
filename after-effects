@@ -30,8 +30,8 @@ readonly EXEC_START=$(date +%s)
 readonly DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.4.2 Beta"
-readonly REL_NUM=542
+readonly REL_NAME="5.4.3 Beta"
+readonly REL_NUM=543
 
 function _init_printf_variables()
 {
@@ -2489,13 +2489,13 @@ function __install_snaps()
   snap_type="$1"
 
   case ${snap_type} in
-    classic)    readonly snapd_options=("--classic")
+    classic)    snapd_options=("--color=never" "--classic")
                 parsed_snaps_list=("${parsed_snap_classic_packages[@]}")
                 ;;
-    edge)       readonly snapd_options=("--edge")
+    edge)       snapd_options=("--color=never" "--edge")
                 parsed_snaps_list=("${parsed_snap_edge_packages[@]}")
                 ;;
-    normal)     readonly snapd_options=("--color")
+    normal)     snapd_options=("--color=never")
                 parsed_snaps_list=("${parsed_snap_normal_packages[@]}")
                 ;;
     * )         _log_and_exit "Internal Function Error. Arguments for snap type." "19";;
@@ -2516,6 +2516,7 @@ function __install_snaps()
             if [ "$simulate_apt_install" == "true" ]; then
               _log_and_warn "${_info} Snaps do not support --dry-run, skipping install"
             else
+              _debug_log "Options are ${snapd_options[@]}"
               if snap install "${snapd_options[@]}" "$index"  2>&1 | _add_timestamp_to_logs "${_snap}"  ; then
                 _log_and_show_success "${_snap} $line installed successfully."
               else
