@@ -2516,7 +2516,7 @@ function __install_snaps()
             if [ "$simulate_apt_install" == "true" ]; then
               _log_and_warn "${_info} Snaps do not support --dry-run, skipping install"
             else
-              _debug_log "Options are ${snapd_options[@]}"
+              _debug_log "Options are ${snapd_options[*]}"
               if snap install "${snapd_options[@]}" "$index"  2>&1 | _add_timestamp_to_logs "${_snap}"  ; then
                 _log_and_show_success "${_snap} $line installed successfully."
               else
