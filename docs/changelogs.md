@@ -1,14 +1,16 @@
 # Change logs
 
+## Version 5.4.{2-3}
+
+- Fix repo keys and fix classic snap installs
+
 ## Version 5.4.1
 
-- Add disoc support, start testing on eoan
-
+- Add disco support, start testing on eoan
 
 ## Version 5.4.0
 
 - Add support for installing snap packages {edge, stable and classic}
-
 
 ## Version 5.3.7
 
