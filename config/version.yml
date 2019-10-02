@@ -4,7 +4,7 @@ api: 2
 version:
   number: 543
   name: 5.4.3
-  changelog: fix classic snap install, fix ROS, Spotify keys
+  changelog: fix classic snap install, fix ROS, spotify keys
 # Stats reporting
 stats:
   report: false
