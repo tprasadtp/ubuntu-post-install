@@ -1,0 +1,20 @@
+# Dependabot Config
+---
+version: 1
+update_configs:
+  - package_manager: "python"
+    directory: "/docs/"
+    update_schedule: "live"
+    target_branch: "master"
+    default_labels:
+      - "Meta: Automation"
+      - "Actor: Dependabot"
+      - "Type: Dependencies"
+      - "Deps: Python"
+    automerged_updates:
+      - match:
+          update_type: "semver:patch"
+    commit_message:
+      prefix: "chore"
+      include_scope: true
+    version_requirement_updates: "auto"
