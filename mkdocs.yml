@@ -25,6 +25,9 @@ theme:
   static_templates:
     - 404.html
 
+  extra:
+    manifest: 'manifest.webmanifest'
+
   # Don't include MkDocs' JavaScript
   include_search_page: false
   search_index_only: true
@@ -41,7 +44,7 @@ theme:
     code: Roboto Mono
   favicon: assets/images/favicon.png
   logo:
-    icon: "\uE80C"
+    icon: "book"
 
 # tasksization
 extra:
@@ -50,8 +53,6 @@ extra:
       link: https://ae.prasadt.com
     - type: github-alt
       link: https://github.com/tprasadtp
-    - type: twitter
-      link: https://twitter.com/tprasadtp
 
 # Extensions
 markdown_extensions:
@@ -78,9 +79,13 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: tprasadtp
+      repo: ubuntu-post-install
 
 # Page tree
-pages:
+nav:
   - Introduction: index.md
   - Getting Started: getting-started.md
   - FAQ:
@@ -95,9 +100,11 @@ pages:
   - Example Config YAML: yaml.md
   - Logs: logs.md
   - Testing: testing.md
-  - Changelogs: changelogs.md
-  - License: license.md
-  - Privacy Policy: privacy.md
+  - News:
+    - Changelog: changelogs.md
+  - Other:
+    - License: license.md
+    - Privacy Policy: privacy.md
 
 # Google Analytics
 google_analytics:

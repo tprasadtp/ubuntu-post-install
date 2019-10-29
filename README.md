@@ -1,6 +1,6 @@
 # Ubuntu / Debian Post Installation Script
 
-Effortless way to setup your fresh Ubuntu, Linux Mint, Debian installs. Please read the [FAQ](https://ae.prasadt.com/faq/dependencies/) & the [Docs](https://ae.prasadt.com/getting-started/)
+Effortless way to setup your fresh Ubuntu, Linux Mint, Debian installs. Please read the [FAQ][FAQ] & the [Docs][DOCS]
 before trying out.
 
 [![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.svg?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
@@ -10,11 +10,11 @@ before trying out.
 [![license](https://img.shields.io/github/license/tprasadtp/ubuntu-post-install.svg?style=flat)](https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE)
 ![GitHub repo size in bytes](https://img.shields.io/github/repo-size/tprasadtp/ubuntu-post-install.svg?style=flat)
 
-[![Bash](https://static.prasadt.com/logo64/bash.png)](https://github.com/tprasadtp/ubuntu-post-install)
+![Bash](https://static.prasadt.com/logo64/bash.png)
 
 ## How to use this
 
-Install your choice of Ubuntu/Debian or its derivative as you would( If you wish to automate that too, you can use `preseed.cfg file`)
+Install your choice of Ubuntu/Debian/Mint or its derivative as you would( If you wish to automate that too, you can use `preseed.cfg file`)
 
 ### Step 1: Get the script
 
@@ -100,27 +100,28 @@ A Complete  list of supported distributions is given below.
 
 | Distribution      | Code name/Version     | Supported      | Notes                         |
 | :---------------- | :-------------------- | -------------- | :---------------------------- |
+| Ubuntu 19.10      | Eoan Ermine           | Yes            |
+| Ubuntu 19.04      | Disco Dingo           | Yes            |
 | Ubuntu 18.04      | Bionic Beaver         | Yes            |
 | Ubuntu 16.04      | Xenial Xerus          | Yes            |
-| Ubuntu 18.10      | Cosmic Cuttlefish     | Yes            |
-| Ubuntu 19.04      | Disco Dingo           | Yes            |
 | Linux Mint 18     | Sarah                 | Yes            |
 | Linux-Mint 18.1   | Serena                | Yes            |
 | Linux-Mint 18.2   | Sonya                 | Yes            |
 | Linux-Mint 18.3   | Sylvia                | Yes            |
 | Linux Mint 19     | Tara                  | Yes            |
 | Linux Mint 19.1   | Tessa                 | Yes            |
+| Linux Mint 19.2   | Tina                  | Yes            |
 | Debian 8          | Jessie                | Yes            |
 | Debian 9          | Stretch               | Yes            |
 | Debian 10         | Buster                | ---            | Only use it for testing       |
 | Elementary-OS 0.4 | Loki                  | Yes            | Not tested                    |
 | Elementary-OS 5.0 | Juno                  | Yes            | Not tested                    |
 | Budgie Remix      | 16.04                 | Yes            |
-| PoP! OS           | 17.10 & 18.04         | Yes            | Not tested                    |
+| PoP! OS           | Supported Ubuntu      | Yes            | Not tested                    |
 | Linux-Lite        | 3.X                   | Yes            | (Based on Ubuntu 16.04)       |
 | Bodhi Linux       | 4                     | Yes            | (Based on Ubuntu 16.04)       |
 | KDE Neon          | Based on Ubuntu LTS   | Might be buggy | Not Tested                    |
-| Peppermint 9      | Based on Ubuntu 18.04 | Yes            | Not Tested                    |
+| Peppermint 9,10   | Based on Ubuntu 18.04 | Yes            | Not Tested                    |
 | Peppermint 8      | Based on Ubuntu 16.04 | Yes            | Not tested                    |
 
 ## Features
@@ -148,7 +149,6 @@ A Complete  list of supported distributions is given below.
 |Google Cloud SDK | googlecloud
 |GCSFUSE | gcsfuse
 |Insync | insync
-|Kubernetes | kubernetes
 |Mendeley desktop | mendeley
 |ROS | ros
 |Signal for desktop | signal
@@ -161,6 +161,7 @@ A Complete  list of supported distributions is given below.
 [Github issue](https://github.com/GoogleCloudPlatform/gcsfuse/issues/319) for a fix.
 
 > Duo Security for unix is only supported on LTS releases
+> ROS is only supported on select releases
 
 ## Issues & Help
 
@@ -172,4 +173,7 @@ A Complete  list of supported distributions is given below.
 
 See [Contributing and forks](/CONTRIBUTING)
 
-[![Analytics](https://ga-beacon.prasadt.com/UA-101760811-3/github/ubuntu-post-install?flat)](https://prasadt.com/google-analytics-beacon)
+![Analytics](https://ga-beacon.prasadt.com/UA-101760811-3/github/ubuntu-post-install?flat)
+
+[FAQ]: https://ae.prasadt.com/faq/dependencies/
+[DOCS]: https://ae.prasadt.com/getting-started/

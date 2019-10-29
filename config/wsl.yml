@@ -33,7 +33,6 @@ config:
     signal: false
     insync: false
     google: false
-    kubernetes: false
   # Flags
   flags:
   # Simulate flag will never be overridden by remote config.

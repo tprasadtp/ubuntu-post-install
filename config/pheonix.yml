@@ -33,7 +33,6 @@ config:
     signal: false
     insync: false
     google: true
-    kubernetes: true
     ros: true
   # Flags
   flags:

@@ -42,7 +42,6 @@ It should work fine. But no promises.
 [![Bodhi-Linux](https://static.prasadt.com/logo64/bodhi-linux.png)](https://www.bodhilinux.com/)
 [![Peppermint-OS](https://static.prasadt.com/logo64/peppermint-os.png)](https://peppermintos.com/)
 [![Elementary-OS](https://static.prasadt.com/logo64/elementary-os.png)](https://elementary.io/)
-[![Zorin-OS](https://static.prasadt.com/logo64/zorin-os.png)](https://zorinos.com/)
 
 !!! tip "Tip"
     Please check [Supported-Distros](/faq/distros/) for complete list of supported distros.

@@ -38,7 +38,6 @@ config:
     signal: false
     insync: true
     google: true
-    kubernetes: false
   # Flags
   flags:
   # Simulate flag will never be overridden by remote config.
@@ -78,7 +77,7 @@ config:
     binaries:
       - https://github.com/docker/compose/releases/download/1.20.0/docker-compose-linux-x86_64,docker-compose
       - https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64,minikube
-      - https://github.com/kubernetes/kompose/releases/download/v1.15.0/kompose-linux-amd64,kompose
+      - https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-amd64,kompose
     apt:
       # Admin related Stuff
       administration:

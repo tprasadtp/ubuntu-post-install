@@ -8,7 +8,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 )
 
 // AEConfigStruct ... Define Config Structure
@@ -20,7 +20,6 @@ type AEConfigStruct struct {
 			Google      bool `json:"google,omitempty"`
 			Googlecloud bool `json:"googlecloud,omitempty"`
 			Insync      bool `json:"insync,omitempty"`
-			Kubernetes  bool `json:"kubernetes,omitempty"`
 			Mendeley    bool `json:"mendeley,omitempty"`
 			Signal      bool `json:"signal,omitempty"`
 			Skype       bool `json:"skype,omitempty"`

@@ -3,7 +3,7 @@ services:
   site:
     command: serve --dev-addr=0.0.0.0:8000
     build:
-      context: ../dockerfiles/mkdocs
+      context: .
       dockerfile: Dockerfile
     image: mkdocs-material:latest
 #    image: squidfunk/mkdocs-material

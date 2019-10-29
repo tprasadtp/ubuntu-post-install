@@ -1,6 +1,13 @@
-# Change logs
+# Changelogs
 
-## Version 5.4.{2-3}
+## Version 5.5.0
+
+- Eoan Support
+- Remove Kubernetes repo. (kubespray/kubeadm works better)
+Minikube is still supported via binary method.
+- Option to fallback to non LTS releases
+
+## Version 5.4.3
 
 - Fix repo keys and fix classic snap installs
 

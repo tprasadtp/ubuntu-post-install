@@ -13,7 +13,6 @@ This task can add the following repositories.
 |Google Cloud SDK | googlecloud
 |GCSFUSE | gcsfuse
 |Insync | insync
-|Kubernetes | kubernetes
 |Mendeley desktop | mendeley
 |ROS | ros
 |Signal for desktop | signal
@@ -64,9 +63,6 @@ This task can add the following repositories.
 
       #Google
       add_google_repo=true
-
-      #Kubernetes
-      add_kubernetes_repo=false
 
       #ROS
       add_ros_repo=false
@@ -167,7 +163,7 @@ This will install binaries `bin.list` or YAML config under `config.install.binar
 - For example, to install kubernetes compose, the entry should look like below.
 
 ```csv
-https://github.com/kubernetes/kompose/releases/download/v1.15.0/kompose-linux-amd64,kompose
+https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-amd64,kompose
 ```
 
 - First part is the URL to the binary file separated by ',' name of the binary.

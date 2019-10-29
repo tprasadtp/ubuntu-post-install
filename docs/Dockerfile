@@ -1,5 +1,5 @@
-FROM python:2.7-alpine
-MAINTAINER Prasad Tengse <code@prasadt.com>
+FROM python:3.7-alpine
+LABEL maintainer="Prasad Tengse <code@prasadt.com>"
 # Perform build and cleanup artifacts
 WORKDIR /srv
 ADD requirements.txt requirements.txt

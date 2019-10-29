@@ -9,7 +9,7 @@ set -e pipefail
 spacing_string="%-15s"
 
 ## Install Python packages
-pip install -r ./dockerfiles/mkdocs/requirements.txt
+pip install -r ./docs/requirements.txt
 # Build Static
 echo "Building Docs"
 mkdocs build -v -s
@@ -26,9 +26,10 @@ done
 
 # Some checksumming
 echo "Checksums"
-touch sha1.txt sha256.txt
-sha1sum after-effects get-after-effects.sh | tee -a sha1.txt
-sha256sum after-effects get-after-effects.sh | tee -a sha256.txt
+touch sha1sum.txt sha256sum.txt sha512sum.txt
+sha1sum after-effects get-after-effects.sh | tee -a sha1sum.txt
+sha256sum after-effects get-after-effects.sh | tee -a sha256sum.txt
+sha512sum after-effects get-after-effects.sh | tee -a sha512sum.txt
 echo "Copying Checksums"
 mkdir -p ./_site/ || echo "Failed to create dir _site"
 cp ./*.txt ./_site/ || echo "Failed to copy SHA Checksums"
@@ -45,7 +46,9 @@ echo "Copy Netlify Files"
 cp  ./netlify.toml ./_site/netlify.toml
 mkdir -p ./_site/build
 cp ./build/netlify-build.sh ./_site/build/netlify-build.sh
+
 echo "Commit Info"
+
 true > ./_site/commit.txt
 printf "${spacing_string}: ${TRAVIS_COMMIT:0:7}\n" "SRC Commit ID"  \
 | tee -a ./_site/commit.txt
@@ -53,6 +56,21 @@ printf "${spacing_string}: ${TRAVIS_COMMIT_MESSAGE}\n" "SRC Message" \
 | tee -a ./_site/commit.txt
 printf "${spacing_string}: ${TRAVIS_BRANCH}\n" "Built from" \
 | tee -a ./_site/commit.txt
+
+cat <<EOT > ./_site/commit.json
+{
+  "commit": {
+    "id": "${TRAVIS_COMMIT:0:7:-NA}",
+    "msg": "${TRAVIS_COMMIT_MESSAGE:-NA}",
+    "branch": "${TRAVIS_BRANCH:-NA}"
+  },
+  "build": {
+    "number": "${TRAVIS_BUILD_NUMBER:-NA}",
+    "tag": "${TRAVIS_TAG:-none}"
+  }
+  "ts": "$(date)"
+}
+EOT
 
 
 # Commit only

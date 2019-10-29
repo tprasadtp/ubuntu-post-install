@@ -30,8 +30,9 @@ readonly EXEC_START=$(date +%s)
 readonly DATE=$(date +%Y-%m-%d:%H:%M:%S)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.4.3 Beta"
-readonly REL_NUM=543
+readonly REL_NAME="5.5.0 Beta"
+readonly REL_NUM=550
+readonly AZURE_METADATA_URL="http://169.254.169.254/metadata/instance/compute/location?api-version=2017-08-01&format=text"
 
 function _init_printf_variables()
 {
@@ -87,10 +88,12 @@ function _init_printf_variables()
     #readonly           _falg="[     Flag      ]"
 
     #colors for display
-    readonly BLUE=$(tput setaf 6)
-    readonly YELLOW=$(tput setaf 3)
-    readonly NC=$(tput sgr 0)
-    readonly MAGENTA=$(tput setaf 5)
+    readonly YELLOW=$'\e[33m'
+    readonly GREEN=$'\e[32m'
+    readonly RED=$'\e[31m'
+    readonly BLUE=$'\e[34m'
+    readonly NC=$'\e[0m'
+    readonly MAGENTA=$'\e[35m'
 
 }
 
@@ -129,42 +132,42 @@ function _line_fill()
 
 function set_blue()
 {
-  tput setaf 6
+  printf "${BLUE}"
 }
 
 
 function set_yellow()
 {
-  tput setaf 3
+  printf "${YELLOW}"
 }
 
 function set_green()
 {
-  tput setaf 10
+  printf "${GREEN}"
 }
 
 
 function set_magenta()
 {
-  tput setaf 5
+  printf "${MAGENTA}"
 }
 
 
 function set_red()
 {
-  tput setaf 1
+  printf "${RED}"
 }
 
 
 function set_default()
 {
-  tput sgr 0
+  printf "${NC}"
 }
 
 
 function _goodbye_msg ()
 {
-  printf "\n$(tput setaf 3)It was a pleasure helping you,\nHave a great time with this Linux Machine.\nWith loads of love,\n$(tput setaf 6)${SCRIPT} running on $(uname -n)$(tput sgr 0)\n"
+  printf "\n${MAGENTA}It was a pleasure helping you,\nHave a great time with this Linux Machine.\nWith loads of love,\n${BLUE}${SCRIPT} running on $(uname -n)${NC}\n"
 }
 
 
@@ -221,8 +224,7 @@ function _log_and_show()
 function _log_and_show_success()
 {
   local msg="$1"
-  set_green
-  printf "$msg\n"
+  printf "${GREEN}$msg ${NC}\n"
   set_default
   printf "[$(date)] $msg\n" >> "$log_file"
 }
@@ -230,8 +232,7 @@ function _log_and_show_success()
 function _log_and_warn()
 {
   local msg="$1"
-  set_yellow
-  printf "$msg\n"
+  printf "${YELLOW}$msg${NC}\n"
   set_default
   printf "[$(date)] $msg\n" >> "$log_file"
 }
@@ -283,9 +284,10 @@ function _init_script_variables()
 
 
   #-------------------------- Release codenames --------------------------------------
-  readonly code_name_latest_release="disco"
-  readonly codename_previous_release="cosmic"
-  readonly codename_upcoming_release="eoan"
+  readonly code_name_latest_release="eoan"
+  readonly codename_previous_release="disco"
+  readonly codename_upcoming_release="focal"
+  readonly codename_lts_fallback="bionic"
 
   #============================ Switches/ bools & Vars ================================
 
@@ -357,9 +359,6 @@ function _init_script_variables()
 
   #Google
   add_google_repo=false
-
-  #Kubernetes
-  add_kubernetes_repo=false
 
   #ROS
   add_ros_repo=false
@@ -598,7 +597,7 @@ function _fix_ubuntu_derivatives()
                                             code_name="xenial";distro_name="ubuntu"
                                             _log_and_show "${_linuxmint} Changed codename to $code_name"
                                             ;;
-      tara | tessa)                         _log_and_show "${_linuxmint} Release is Linux mint 19.X."
+      tara | tessa | tina)                  _log_and_show "${_linuxmint} Release is Linux mint 19.X."
                                             _log_and_show "${_notice} Setting additional repositoris to follow Ubuntu 18.04."
                                             code_name="bionic";distro_name="ubuntu"
                                             _log_and_show "${_linuxmint} Changed codename to $code_name"
@@ -613,16 +612,23 @@ function _fix_ubuntu_derivatives()
                                             code_name="bionic"
                                             _log_and_show "${_elementary} Changed codename to $code_name"
                                             ;;
-      xenial | cosmic | bionic )            readonly bool_config_partner_repo="true"
-                                            _log_and_show "${_info} Keeping the codename as: $code_name."
+      xenial | bionic )                     readonly bool_config_partner_repo="true"
+                                            _log_and_show "${_info} This is an LTS releae of Ubuntu"
+                                            _log_and_show "${_derivatives} Keeping the codename as: $code_name."
                                             ;;
-      disco)                                readonly bool_config_partner_repo="true"
-                                            _log_and_show "${_info} This is 19.04 disco. If your repos are not yet supported, use --fix option"
-                                            _log_and_show "${_info} Keeping the codename as: $code_name."
+                                            # previous release
+      disco )                               readonly bool_config_partner_repo="true"
+                                            _log_and_show "${_info} This is Ubuntu 19.04"
+                                            _log_and_warn "${_warning} Ubuntu 19.10 was released recetly please consider using it!"
+                                            _log_and_show "${_derivatives} Keeping the codename as: $code_name."
                                             ;;
-      eoan )                                readonly bool_config_partner_repo="true"
+      eoan)                                 readonly bool_config_partner_repo="true"
+                                            _log_and_show "${_info} This is 19.10 eoan. If your repos are not yet supported, use --fix option"
+                                            _log_and_show "${_derivatives} Keeping the codename as: $code_name."
+                                            ;;
+      focal )                               readonly bool_config_partner_repo="true"
                                             set_magenta;
-                                            _log_and_show "${_pre_release} This is Ubuntu 19.10 Eoan"
+                                            _log_and_show "${_pre_release} This is Ubuntu 20.04 Focal"
                                             _log_and_show "${_pre_release} Please use --pre-release flag if you cannot add repos yet. There's no fix for PPAs."
                                             _log_and_show "${_warn} This is a pre-release of Ubuntu, which is in early stages of development. Use with caution!"
                                             _log_and_show "${_warn} Packages and PPAs might not work with this release!"
@@ -642,6 +648,8 @@ function _fix_ubuntu_derivatives()
                                             ;;
       artful )                              _eol_message "$code_name" "July, 2018"
                                             ;;
+      cosmic)                                _eol_message "$code_name" "July 18, 2019"
+                                            ;;
       *)                                    set_red;
                                             _log_and_show "${_error} Unknown Distribution/Release."
                                             _log_and_show "${_notice} This Script is not designed to run on this ($code_name) distro/release."
@@ -658,8 +666,7 @@ function _test_internet_connection ()
 {
   # Function to check internet connection
   _log_and_show "${_checking} Internet connection..."
-  if wget --tries=3 --timeout=15 "$PING_URL" -O /tmp/ae/testinternet &>/dev/null 2>&1; then
-    _log_and_show "${_checking} Connectivity"
+  if wget --tries=5 --timeout=2 "$PING_URL" -O /tmp/ae/testinternet &>/dev/null 2>&1; then
     rm -f /tmp/ae/testinternet
   else
     _log_and_warn "${_oh_no} Booooooo! You are not connected to the Internet!. Please check your Internet connection and try again."
@@ -979,9 +986,6 @@ function _set_yaml_config()
     _check_bool "add_google_repo" "${config__add_repo__google[0]}"
     #add_google_repo="${config__add_repo__google[0]}"
 
-    _check_bool "add_kubernetes_repo" "${config__add_repo__kubernetes[0]}"
-    #add_kubernetes_repo="${config__add_repo__kubernetes[0]}"
-
     # ROS
     _check_bool "add_ros_repo" "${config__add_repo__ros[0]}"
 
@@ -1054,7 +1058,6 @@ function _set_yaml_config()
       printf "${_cfg} %-20s | %-10s |\n" "Insync" "$add_insync_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Signal for Desktop" "$add_signal_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Google Chrome, Earth" "$add_google_repo"
-      printf "${_cfg} %-20s | %-10s |\n" "Kubernetes" "$add_kubernetes_repo"
       printf "${_cfg} %-20s | %-10s |\n" "ROS" "$add_ros_repo"
       _line_fill;
       printf "${_table} %-20s | %-10s |\n" "Other Flags" "Config"
@@ -1096,7 +1099,6 @@ function _set_yaml_config()
         printf "${_cfg} %-20s | %-10s |\n" "Insync" "$add_insync_repo"
         printf "${_cfg} %-20s | %-10s |\n" "Signal for Desktop" "$add_signal_repo"
         printf "${_cfg} %-20s | %-10s |\n" "Google Chrome & Earth" "$add_google_repo"
-        printf "${_cfg} %-20s | %-10s |\n" "Kubernetes" "$add_kubernetes_repo"
         printf "${_cfg} %-20s | %-10s |\n" "ROS" "$add_ros_repo"
         printf "${_table} %-20s | %-10s |\n" "Other Flags" "Config"
         _line_fill;
@@ -1260,9 +1262,6 @@ function _set_list_config()
 
     #Google
     add_google_repo=true
-
-    #Kubernetes
-    add_kubernetes_repo=false
 
     #ROS
     add_ros_repo=false
@@ -1450,17 +1449,20 @@ function _fix_repo_not_available()
   if [ "$bool_fix_repo_not_available_for_latest" == "true" ]; then
     # Only do this on latest releases
     if [ "$code_name" == "$code_name_latest_release" ]; then
-      _debug_log "Sometimes repositories are not available for latest ubuntu release.\
-      \nUsing last known stable release: $code_name_latest_release."
-      printf "${YELLOW}${_new_release} Using repositories from an older release: $codename_previous_release is being used.\n"
-      printf "${YELLOW}${_new_release} You need to modify this in Software and updates when it becomes available for ${code_name_latest_release}.\n${NC}"
-      code_name="$codename_previous_release"
+      # check LTS fallback flag is being used
+      if [ "$bool_fix_repo_lts" == "true" ]; then
+        _log_and_warn "${_notice} Using LTS release ::${codename_lts_fallback}:: as fallback for --fix"
+        code_name="$codename_lts_fallback"
+      else
+        _log_and_show "${_notice} Using previous release ${codename_previous_release} as fallback"
+        code_name="$codename_previous_release"
+      fi
     else
       _debug_log "This Release/Distro does not support this flag. --fix will be ignored."
     fi
   else
-    _debug_log "Feature fix_repo_not_available is disabled."
-fi
+    _debug_log "Feature --fix/--fix-mode-lts is disabled."
+  fi
 }
 
 
@@ -1814,20 +1816,6 @@ function add_repositories()
     _log_and_show "${_repo} Signal repository is set to false. Skipping."
   fi
 
-  # Kubernetes
-  if [ "$add_kubernetes_repo" == "true" ]; then
-    if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "armhf" ] || [ "$ARCH" == "arm64" ] ; then
-      wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg -O /tmp/ae/kubernetes.gpg >> "$log_file"
-      apt-key add /tmp/ae/kubernetes.gpg  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_warn "${_error} Adding Kubernetes Key Failed"
-      echo "deb http://apt.kubernetes.io/ kubernetes-${code_name} main #Kubernetes" > ${SOURCES_FILE_DIR}/kubernetes.list
-    else
-        _log_and_warn "Architecture: $ARCH is not supported. You might manually compile from source."
-    fi
-  else
-    _log_and_show "${_repo} Kubernetes repository is set to false. Skipping."
-  fi
-
   # Mendeley Desktop App
   if [ "$add_mendeley_repo" == "true" ]; then
     if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "i386" ] ; then
@@ -1869,7 +1857,7 @@ function add_repositories()
         _debug_log "Downloading GPG key..."
         wget -q https://duo.com/APT-GPG-KEY-DUO  -O /tmp/ae/duosecurity.gpg >> "$log_file"
         apt-key add /tmp/ae/duosecurity.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-        || _log_and_warn "${_error} Adding Kubernetes Key Failed"
+        || _log_and_warn "${_error} Adding Duo Key Failed"
 
         # Add repo
         echo "${duo_repo_url} #Duo Unix"  > ${SOURCES_FILE_DIR}/duounix.list
@@ -2113,7 +2101,6 @@ function disable_external_repos()
         vscode.* \
         signal-xenial.* \
         mendeleydesktop.* \
-        kubernetes.* \
         ros-latest.*
     )
     exit_status=$?
@@ -2642,7 +2629,7 @@ function _process_menu
                   "add_ppas"
                   ;;
       repo)       _show_confirmation_dialog_for_tasks "Add Additional Repositories" \
-                  "Adding additional repositories is set as follows.\n Google Chrome & Google Earth : $add_google_repo,\n Google Cloud SDK : $add_googlecloud_repo\n GCSFUSE : $add_gscfuse_repo \nVisual Studio Code : $add_vscode_repo\n Docker : $add_docker_repo\n Insync : $add_insync_repo\n Spotify : $add_spotify_repo\n Wine-HQ : $add_winehq_repo\n Skype : $add_skype_repo\n Kubernetes : $add_kubernetes_repo\n Signal Desktop : $add_signal_repo.\n Shall I do it?" \
+                  "Adding additional repositories is set as follows.\n Google Chrome & Google Earth : $add_google_repo,\n Google Cloud SDK : $add_googlecloud_repo\n GCSFUSE : $add_gscfuse_repo \nVisual Studio Code : $add_vscode_repo\n Docker : $add_docker_repo\n Insync : $add_insync_repo\n Spotify : $add_spotify_repo\n Wine-HQ : $add_winehq_repo\n Skype : $add_skype_repo\n Signal Desktop : $add_signal_repo.\n Shall I do it?" \
                   "add_repositories"
                   ;;
       apps)       _show_confirmation_dialog_for_tasks \
@@ -2754,18 +2741,23 @@ function _ci_cloud_and_container_checks()
     #    https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-identity-documents.html
     # but this is almost certainly overkill for this purpose (and the above
     # checks of "EC2" prefixes have a higher false positive potential, anyway).
-    elif wget -O- -q --timeout=5 --tries=3 http://169.254.169.254/latest/dynamic/instance-identity/document | grep -q availabilityZone; then
+    elif wget -O- -q --timeout=1 --tries=1 http://169.254.169.254/latest/dynamic/instance-identity/document | grep -q availabilityZone; then
       _log_and_show "${_info} Running on EC2"
 
     #------------------------------- GCP ---------------------------------------------
-    elif wget -q -O- --timeout=5 --tries=3 -nc --header="Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/virtual-clock/drift-token > /dev/null; then
+    elif wget -q -O- --timeout=1 --tries=1 -nc --header="Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/virtual-clock/drift-token > /dev/null; then
       _log_and_show "${_info} Running on Google Compute"
 
-    elif wget -q -O- --timeout=5 --tries=3 -nc  http://169.254.169.254/metadata/v1/id; then
+    elif wget -q -O- --timeout=1 --tries=1 -nc  http://169.254.169.254/metadata/v1/id; then
       _log_and_show "${_info} Running on Digital Ocean Droplet"
+
+    elif AZURE_REGION="$(wget -q -O- --timeout=1 --tries=1 --header "Metadata:true" "${AZURE_METADATA_URL}")"; then
+      _log_and_show "${_info} Running on AZURE ${AZURE_REGION}"
+
     else
       _debug_log "Probably not running on AWS, GCP or Digital Ocean."
     fi
+
   fi
 
 }
@@ -2782,7 +2774,7 @@ function display_usage()
 {
 #Prints out help menu
 cat <<EOF
-$SCRIPT : A Post Installation Script for Ubuntu / Debian
+$SCRIPT : A Post Installation Script for Ubuntu/Debian/Linux Mint
 Version : $REL_NAME
 
 Usage: ${SCRIPT}   [options]
@@ -2791,7 +2783,6 @@ Non-Action options (can be run as non-root user)
 [-v --version]     Display version info
 [--verify]         Verify
 [-h --help]        Display this help message
-
 
 Configuration Options
 [-C | --config-file]   Local yaml config file
@@ -2802,32 +2793,35 @@ Configuration Options
 [-R | --remote-yaml]   Use config yaml hosted somewhere else
 [--use-default-yaml]   Use default yaml file
 [-V | --version-file]  Specify a local file from which version info will be read
-[-Y | --yaml]          Deprecated, Use -C or -R. This option does nothing
-                       and has been left for compatibility
+[-Y | --yaml]          Deprecated, Use -C or -R.
 
 The following options are "action" options and
 these will make changes to your system depending on
 tasks chosen.
 [-d | --purge]         Enable Purging packages
 [-f | --fix]           Fix codenames for new releases
-[--hide-config]        Hide configuration table
+[-p | --pre-release]   Same as --fix but for beta/alpha releases
+[--fix-mode-lts]       Similar to --fix but fallback to last LTS
+
 [-k | --keep-debs]     Do not invoke apt-clean & do not delete
                        downloaded deb packages
 [-l | --delete-log]    Delete logfile (./log/after-effects.log)
-[--no-version-checks]  Skip checking for latest version
-[-p | --pre-release]   Same as --fix but for beta/alpha releases
 [-s | --simulate]      Try not make changes to system ans use --dry-run
                        whenever possible. Plese read the documentation
                        at http://ae.prasadt.com/clioptions to know its limits
                        Not everything can be simulated.
+
+Other Options
+[--no-version-checks]  Skip checking for latest version
+[--hide-config]        Hide configuration table
 [-S | --no-stats]      Do not report usage statistics
 [--use-uf-mirror | -u] Use University of Freiburg mirrors
 
-GitHub & Documentation:
+GitHub & Documentation:${BLUE}
  https://github.com/tprasadtp/ubuntu-post-install
- https://ae.prasadt.com
-
+ https://ae.prasadt.com${NC}
 Contributions & Issues:
+* You are welcome to contribute
 * Feel free to create a PullRequest/Issue on Github.
 EOF
 }
@@ -2878,7 +2872,10 @@ function main()
                               _log_and_warn "${_simulate} is set to true";
                               ;;
       -f | --fix )            bool_fix_repo_not_available_for_latest="true";
-                              _log_and_warn "${_fix_repo} is set to true. Using codename: $codename_previous_release.";
+                              _log_and_warn "${_fix_repo} is set to true.";
+                              ;;
+      --fix-mode-lts )        bool_fix_repo_lts="true";
+                              _log_and_warn "${_fix_repo} Fix mode is set to LTS: $codename_lts_fallback.";
                               ;;
       -p | --pre-release )    bool_fix_repo_not_available_for_upcoming_release="true";
                               set_magenta;

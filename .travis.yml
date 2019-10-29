@@ -19,12 +19,12 @@ jobs:
     env: TEST_ENV="Shellcheck"
     script: "./tests/test-shell-scripts.sh"
 
+  - env: TEST_ENV="Eoan-Docker"
+    script: ./tests/test-distro.sh "ubuntu" "eoan" "non-lts.yml" "true"
+
   - stage: Test
     env: TEST_ENV="Disco-Docker"
-    script: ./tests/test-distro.sh "ubuntu" "disco" "disco.yml" "true"
-
-  - env: TEST_ENV="Cosmic-Docker"
-    script: ./tests/test-distro.sh "ubuntu" "cosmic" "cosmic.yml" "true"
+    script: ./tests/test-distro.sh "ubuntu" "disco" "non-lts.yml" "true"
 
   - env: TEST_ENV="Bionic-Docker"
     script: ./tests/test-distro.sh "ubuntu" "bionic"
@@ -50,7 +50,9 @@ jobs:
 
   - stage: Documentation & Deploy
     env: TEST_ENV="Docs-Build"
-    script: "./tests/test-docs.sh"
+    script:
+      - "./tests/test-docs.sh"
+      - "cat ./_site/commit.json"
     deploy:
     - provider: pages
       skip_cleanup: true
@@ -72,8 +74,9 @@ jobs:
       file:
       - after-effects
       - after-effects.asc
-      - sha1.txt
-      - sha256.txt
+      - sha1sum.txt
+      - sha256sum.txt
+      - sha512sum.txt
       skip_cleanup: true
       prerelease: true
       name: ${TRAVIS_TAG} - ${TRAVIS_TAG_MESSAGE}
