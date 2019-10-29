@@ -19,11 +19,11 @@ jobs:
     env: TEST_ENV="Shellcheck"
     script: "./tests/test-shell-scripts.sh"
 
-  - env: TEST_ENV="Eoan-Docker"
+  - stage: Test
+    env: TEST_ENV="Eoan-Docker"
     script: ./tests/test-distro.sh "ubuntu" "eoan" "non-lts.yml" "true"
 
-  - stage: Test
-    env: TEST_ENV="Disco-Docker"
+  - env: TEST_ENV="Disco-Docker"
     script: ./tests/test-distro.sh "ubuntu" "disco" "non-lts.yml" "true"
 
   - env: TEST_ENV="Bionic-Docker"
