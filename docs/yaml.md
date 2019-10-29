@@ -160,7 +160,6 @@ config:
         - spotify-client
         - code
         - google-cloud-sdk
-        - gcsfuse
         - docker-ce
 
 ```

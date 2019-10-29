@@ -186,7 +186,6 @@ config:
         - code
         - neofetch
         - google-cloud-sdk
-        - gcsfuse
         - docker-ce
         - chromium-browser
         - yubioath-desktop
