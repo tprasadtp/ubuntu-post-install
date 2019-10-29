@@ -59,10 +59,10 @@ function gen_metadata()
     "builder": "netlify",
     "context": "${CONTEXT:-NA}",
     "delploy_url": "${DEPLOY_URL:-NA}",
-    "deploy_prime_url": "${DEPLOY_PRIME_URL}",
+    "deploy_prime_url": "${DEPLOY_PRIME_URL:-NA}",
     "number": "${TRAVIS_BUILD_NUMBER:-NA}",
-    "tag": "${$BRANCH:-none}"
-  }
+    "tag": "${BRANCH:-none}"
+  },
   "ts": "$(date)"
 }
 EOT
