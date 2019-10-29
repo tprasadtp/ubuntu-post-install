@@ -17,5 +17,5 @@ jobs:
         uses: tprasadtp/labels@master
         with:
           owner: "tprasadtp"
-          repo: "sysadmin"
+          repo: "ubuntu-post-install"
           token: ${{ secrets.GITHUB_TOKEN }}
