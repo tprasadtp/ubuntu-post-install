@@ -21,6 +21,7 @@
 | 23 | Invalid argument position. |
 | 24 | Not Running the latest version |
 | 25 | Incompatible arguments |
+| 26 | Option is obsolete |
 | 28 | Getting API response failed |
 | 29 | Stat reporting failed |
 | 35 | Not a valid config file type |

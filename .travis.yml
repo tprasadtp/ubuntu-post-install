@@ -1,8 +1,11 @@
 sudo: required
 language: python
 dist: xenial
+env:
+  global:
+    - DEBUG=1
 python:
-- '2.7'
+  - "3.6"
 services:
 - docker
 branches:

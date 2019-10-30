@@ -24,15 +24,15 @@
 #              - Debian 8 & 9
 #
 
-set -o pipefail
-#Constants
-readonly EXEC_START=$(date +%s)
-readonly DATE=$(date +%Y-%m-%d:%H:%M:%S)
+if [[ $DEBUG -eq "1" ]] || [[ $DEBUG == "true" ]]; then
+  set -eo pipefail
+else
+  set -eo pipefail
+fi
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 readonly REL_NAME="5.5.0 Beta"
 readonly REL_NUM=550
-readonly AZURE_METADATA_URL="http://169.254.169.254/metadata/instance/compute/location?api-version=2017-08-01&format=text"
 
 function _init_printf_variables()
 {
@@ -209,6 +209,9 @@ function _script_exit_log()
 function _debug_log()
 {
   local msg="$1"
+  if [[ $DEBUG -eq "1" ]] || [[ $DEBUG == "true" ]]; then
+    printf "${_debug} $msg\n"
+  fi
   printf "[$(date)] ${_debug} $msg\n" >> "$log_file"
 }
 
@@ -385,6 +388,10 @@ function _init_script_variables()
 
   # latest WineHQ keys
   readonly use_latest_winehq_key="true"
+
+  # Azure
+  readonly AZURE_METADATA_URL="http://169.254.169.254/metadata/instance/compute/location?api-version=2017-08-01&format=text"
+
 }
 
 
@@ -623,7 +630,8 @@ function _fix_ubuntu_derivatives()
                                             _log_and_show "${_derivatives} Keeping the codename as: $code_name."
                                             ;;
       eoan)                                 readonly bool_config_partner_repo="true"
-                                            _log_and_show "${_info} This is 19.10 eoan. If your repos are not yet supported, use --fix option"
+                                            _log_and_show "${_info} This is 19.10 eoan."
+                                            if [[ $bool_fix_repo_not_available_for_latest != "true" ]] && [[ $bool_fix_lts != "true"  ]] ; then _log_and_warn "If your repos are not yet supported, use --fix option"; fi
                                             _log_and_show "${_derivatives} Keeping the codename as: $code_name."
                                             ;;
       focal )                               readonly bool_config_partner_repo="true"
@@ -710,10 +718,7 @@ function _set_custom_api_nodes ()
     if [ "$bool_remote_yaml" == "true" ]; then
      readonly api_config_url="$url_remote_yaml?name=${remote_config_name}"
     elif [ "$bool_custom_config_file" == "true" ]; then
-     _log_and_show "${_info} custom YAML file will be used."
-    elif [ "$bool_use_default_yaml" == "true" ]; then
-     _log_and_show "${_info} Using default YAML"
-      readonly api_config_url="${metadata_endpoint}/default.yml"
+     _log_and_show "${_info} Config file specified will be used."
     else
       _log_and_warn "${_error} No yaml file specified. To use default yaml use --use-default-yaml option."
       _log_and_exit "${_error} Script cannot continue. Exiting" "25"
@@ -864,6 +869,7 @@ function _version_checks ()
   else
     set_yellow
     _log_and_show "${_info} Version checks have been disabled."
+    _log_and_show "${_info} This will also disable usage reporting"
     set_default
   fi
   #sleep 5
@@ -889,9 +895,9 @@ function _check_bool()
                                                 _debug_log "Variable : <$g_var> is set to false"
                                                 ;;
     *)                                          declare -g ${g_var}="false"
-                                                _log_and_warn "${_warn} Invalid/empty value for param : $g_var."
-                                                _log_and_warn "${_warn} It can either be t[T]rue or f[F]alse."
-                                                _log_and_warn "${_warn} Setting $g_var to false"
+                                                _debug_log "${_debug} Invalid/empty value for param : $g_var."
+                                                _debug_log "${_debug} It can either be t[T]rue or f[F]alse."
+                                                _log_and_warn "${_warn} $g_var will default to false"
                                                 ;;
   esac
 }
@@ -923,7 +929,7 @@ function _set_yaml_config()
     fi
   else
     # --no-stats option is used while running, which sets bool_report_stats to false
-    _log_and_show "${_info} Usage reporting is disabled by User."
+    _log_and_show "${_info} Usage reporting is disabled."
   fi
 
   # If yaml is set parse it.
@@ -949,9 +955,6 @@ function _set_yaml_config()
 
 
     set_default;
-    _line_fill;
-    printf "${_table} %-20s | %-10s |\n" "Repository" "Enabled"
-    _line_fill;
     # Repo flags
     #################################################################################
     _check_bool "add_docker_repo" "${config__add_repo__docker[0]}"
@@ -962,7 +965,6 @@ function _set_yaml_config()
 
     _check_bool "add_mendeley_repo" "${config__add_repo__mendeley[0]}"
     #add_mendeley_repo="${config__add_repo__mendeley[0]}"
-    printf "${_cfg} %-20s | %-10s |\n" "Mendeley" "$add_mendeley_repo"
 
     _check_bool "add_googlecloud_repo" "${config__add_repo__googlecloud[0]}"
     #add_googlecloud_repo="${config__add_repo__googlecloud[0]}"
@@ -1048,6 +1050,8 @@ function _set_yaml_config()
 
 
     if [ "${bool_hide_config}" != "true" ]; then
+      _line_fill
+      printf "${_table} %-20s | %-10s |\n" "Repository" "Enabled"
       printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
       printf "${_cfg} %-20s | %-10s |\n" "Google Cloud SDK" "$add_googlecloud_repo"
@@ -1087,7 +1091,7 @@ function _set_yaml_config()
       fi
     else
       _log_and_show "${_cfg} Configuration data is hidden."
-      _log_and_show "${_cfg} Please check the logfile or dont use --hide-config to display configuration."
+      _log_and_show "${_cfg} Please check the to display configuration."
       {
         printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
         printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
@@ -1436,7 +1440,7 @@ function _install_pre_requisites()
   # curl, software-properties-common
   local pre_requisite_packages=(apt-transport-https ca-certificates curl software-properties-common gpgv)
   _log_and_show "${_installing} Necessary dependencies..."
-  _debug_log "${_installing} apt-transport-https, ca-certificates, curl, software-properties-common gnugpg"
+  _debug_log "Dependencies are apt-transport-https, ca-certificates, curl, software-properties-common gnugpg"
   _install_dependencies "${pre_requisite_packages[@]}"
 
 }
@@ -1593,7 +1597,7 @@ function add_repositories()
     |_add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_and_warn "${_error} Adding Spotify repository failed"
 
-    echo "deb http://repository.spotify.com stable non-free #Spotify" > ${SOURCES_FILE_DIR}/spotify.list \
+    echo "deb [arch=$ARCH] http://repository.spotify.com stable non-free #Spotify" > ${SOURCES_FILE_DIR}/spotify.list \
     || _log_and_warn "${_error} Adding Spotify Repository Failed"
   else
     _log_and_show "${_repo} Spotify repository is set to false. Skipping."
@@ -1607,7 +1611,7 @@ function add_repositories()
     | _add_timestamp_to_logs "${_apt_key_logs}" \
     || _log_and_warn "${_error} Adding Insync Repository failed"
 
-    echo "deb http://apt.insynchq.com/${distro_name} $code_name non-free contrib #Insync-Client" > ${SOURCES_FILE_DIR}/insync.list \
+    echo "deb [arch=$ARCH] http://apt.insynchq.com/${distro_name} $code_name non-free contrib #Insync-Client" > ${SOURCES_FILE_DIR}/insync.list \
     || _log_and_warn "${_error} Adding Insync Repository failed"
 
   elif [ "$add_insync_repo" == "true" ] && [ "$bool_is_debian" == "true" ]; then
@@ -1634,7 +1638,7 @@ function add_repositories()
   if [ "$add_googlecloud_repo" == "true" ]; then
     CLOUD_SDK_REPO="cloud-sdk-${code_name}"
     _log_and_show "${_repo} Google-Cloud-SDK repository"
-    echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  \
+    echo "deb [arch=$ARCH] http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  \
     || _log_and_warn "${_error} Adding Google Clouf SDK Repository failed"
   else
     _log_and_show "${_repo} Google Cloud SDK repository is set to false. Skipping."
@@ -1682,7 +1686,7 @@ function add_repositories()
       _debug_log "Adding Docker repository key"
       apt-key add /tmp/ae/docker-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_and_warn "${_error} Adding Docker-CE keys failed"
-      _debug_log "${_repo} Docker-CE"
+      _debug_log "Adding Docker-CE sources .list"
       echo "deb [arch=$ARCH] https://download.docker.com/linux/${distro_name}  ${code_name} stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list \
       || _log_and_warn "${_error} Adding Docker-CE repository failed"
     else
@@ -1793,7 +1797,7 @@ function add_repositories()
       wget -q https://packages.microsoft.com/keys/microsoft.asc -O /tmp/ae/microsoft.asc
       _debug_log "Adding Key to trusted GPG keys directory"
       apt-key add /tmp/ae/microsoft.asc 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_warn "${_error} Adding Visual Studio Code key failed"
-      echo "deb [arch=$ARCH] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list
+      echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list
     else
       _log_and_warn "Architecture: $ARCH is not supported by Visual studio Code."
     fi
@@ -1822,7 +1826,7 @@ function add_repositories()
       _log_and_show "${_repo} Mendeley repository"
       apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_and_warn "${_error} Adding Mendeley Desktop Key Failed"
-      echo "deb https://desktop-download.mendeley.com/download/apt stable main #Mendeley-Desktop"  > ${SOURCES_FILE_DIR}/mendeleydesktop.list
+      echo "deb [arch=$ARCH] https://desktop-download.mendeley.com/download/apt stable main #Mendeley-Desktop"  > ${SOURCES_FILE_DIR}/mendeleydesktop.list
     else
       _log_and_warn "${_warn} Architecture: ${ARCH} is not supported. You might manually compile from source."
     fi
@@ -1835,19 +1839,19 @@ function add_repositories()
   if [ "$add_duo_repo" == "true" ]; then
     if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "i386" ] ; then
       case "$code_name" in
-        bionic)     duo_repo_url="deb http://pkg.duosecurity.com/Ubuntu bionic main";
+        bionic)     duo_repo_url="http://pkg.duosecurity.com/Ubuntu bionic main";
                     duo_supported="true"
                     ;;
-        xenial)     duo_repo_url="deb http://pkg.duosecurity.com/Ubuntu xenial main"
+        xenial)     duo_repo_url="http://pkg.duosecurity.com/Ubuntu xenial main"
                     duo_supported="true"
                     ;;
-        trusty)     duo_repo_url="deb http://pkg.duosecurity.com/Ubuntu trusty main";
+        trusty)     duo_repo_url="http://pkg.duosecurity.com/Ubuntu trusty main";
                     duo_supported="true"
                     ;;
-        stretch)    duo_repo_url="deb http://pkg.duosecurity.com/Debian stretch main";
+        stretch)    duo_repo_url="http://pkg.duosecurity.com/Debian stretch main";
                     duo_supported="true"
                     ;;
-        jessie)     duo_repo_url="deb http://pkg.duosecurity.com/Debian stretch main";
+        jessie)     duo_repo_url="http://pkg.duosecurity.com/Debian stretch main";
                     duo_supported="true"
                     ;;
         *)          _log_and_warn "Only LTS/Stable versions of Ubuntu/Debian are suported. You are running Unsupported version : ${code_name}"
@@ -1860,7 +1864,7 @@ function add_repositories()
         || _log_and_warn "${_error} Adding Duo Key Failed"
 
         # Add repo
-        echo "${duo_repo_url} #Duo Unix"  > ${SOURCES_FILE_DIR}/duounix.list
+        echo "deb [arch=$ARCH] ${duo_repo_url} #Duo Unix"  > ${SOURCES_FILE_DIR}/duounix.list
       fi
     else
         _log_and_warn "${_warn} Architecture: ${ARCH} is not supported. You might manually compile from source."
@@ -2328,8 +2332,13 @@ function _install_pip_python()
     # Check if simulate is true & is not running on TRAVIS/CI.
     if [ "$simulate_apt_install" == "true" ] && [ "$CI" != "true" ]; then
       _log_and_warn "${_whoops} PIP does not support simulated installs. Not performing install."
-    else
+    elif  [ "$simulate_apt_install" == "true" ] && [ "$CI" == "true" ]; then
+      _log_and_warn "This is TRAVIS disregarding simulate for pip action"
       $pip_command install -r "${requirements_file}" 2>&1 | _add_timestamp_to_logs "${_pip_logs}"
+    else
+      _debug_log "Installing requirements file ${requirements_file}"
+      $pip_command install -r "${requirements_file}" 2>&1 | _add_timestamp_to_logs "${_pip_logs}"
+
     fi
     exit_status=$?
     if [[ $exit_status -eq 0 ]]; then
@@ -2701,15 +2710,12 @@ function _ci_cloud_and_container_checks()
 
     #================================ CI =============================================
     if [ "$TRAVIS" == "true" ]; then
-      AUTOPILOT="true"
       bool_say_yes_to_all="true"
       _log_and_show "${_ci} Running in Travis CI :|"
     elif [ "$APPVEYOR" == "true" ]; then
-      AUTOPILOT="true"
       bool_say_yes_to_all="true"
       _log_and_show "${_ci} Running in Appveyor CI :|"
     elif [ "$CI" == "true" ]; then
-      AUTOPILOT="true"
       bool_say_yes_to_all="true"
       _log_and_show "${_ci} I'm running in  CI :|"
     else
@@ -2717,7 +2723,7 @@ function _ci_cloud_and_container_checks()
     fi
 
     if [ "$(uname -r | cut -f3 -d '-')" == "Microsoft" ]; then
-      _log_and_warn "${_warn} Running on Windows Subsystem for Linux."
+      _log_and_warn "${_warn} Running on Windows Subsystem for Linux.(1)"
     fi
     #============================ Docker =============================================
     if grep docker /proc/1/cgroup -qa; then
@@ -2793,7 +2799,6 @@ Configuration Options
 [-R | --remote-yaml]   Use config yaml hosted somewhere else
 [--use-default-yaml]   Use default yaml file
 [-V | --version-file]  Specify a local file from which version info will be read
-[-Y | --yaml]          Deprecated, Use -C or -R.
 
 The following options are "action" options and
 these will make changes to your system depending on
@@ -2812,10 +2817,11 @@ tasks chosen.
                        Not everything can be simulated.
 
 Other Options
-[--no-version-checks]  Skip checking for latest version
-[--hide-config]        Hide configuration table
+[-N --no-version-checks]  Skip checking for latest version
+[-H --hide-config]        Hide configuration table
 [-S | --no-stats]      Do not report usage statistics
 [--use-uf-mirror | -u] Use University of Freiburg mirrors
+[-A --autopilot]       Enables AUTOPILOT Mode(No Prompts)
 
 GitHub & Documentation:${BLUE}
  https://github.com/tprasadtp/ubuntu-post-install
@@ -2902,11 +2908,12 @@ function main()
                               readonly bool_use_yaml="true";
                               shift; readonly url_remote_yaml="${1}";
                               ;;
-      --no-version-checks )   bool_check_version="false"
+   -N | --no-version-checks ) bool_check_version="false";
+                              readonly bool_report_stats="false";
                               ;;
       -S |  --no-stats )      set_yellow;
-                              readonly bool_report_stats="false";
-                              _log_and_show "${_info} Statistis will not be reported."
+                              [[ $bool_check_version != "false" ]] && readonly bool_report_stats="false";
+                              _log_and_show "${_info} Statistics will not be reported."
                               set_default;
                               ;;
     -c | -C | --config-file ) shift;
@@ -2920,11 +2927,7 @@ function main()
                               readonly bool_custom_version_file="true"
                               _log_and_show "${_info} Using custom version yml file"
                               ;;
-      -Y | --yaml )           _log_and_warn "${_warn} This option is deprecated. You can use -C/--config-file or"
-                              _log_and_warn "${_warn} -R/--remote-yaml without specifying -Y or --yaml."
-                              ;;
-      --use-default-yaml)     readonly bool_use_default_yaml="true";
-                              readonly bool_use_yaml="true";
+      -Y | --yaml )           _log_and_exit "${_error} This option is obsolete. You can use -C/--config-file or -R/--remote-yaml" ""
                               ;;
       -L | --lists)           readonly bool_use_lists="true";
                               set_yellow;
@@ -2933,12 +2936,14 @@ function main()
                               ;;
       -n | --name)            shift;
                               readonly bool_custom_remote_config_name="true";
-                              readonly custom_remote_config_name="${1}";;
-      --hide-config)          readonly bool_hide_config="true";
+                              readonly custom_remote_config_name="${1}";
+                              ;;
+    -H | --hide-config)       readonly bool_hide_config="true";
                               _log_and_show "${_info} YAML config will not be displayed."
                               ;;
-      --internal)             ae_internal="true"
+      --internal)             ae_internal="true";
                               ;;
+      -A | --autopilot)       AUTOPILOT="true";;
       --use-uf-mirror | -u)   _log_and_show "Will use Uni-Freiburg mirror(s) if available";
                               readonly bool_use_uni_freiburg_mirror="true";
                               ;;
@@ -2979,7 +2984,7 @@ function main()
   fi
 
   if [ "$bool_custom_config_file" == "true" ] && [ ! -f "$custom_config_file" ]; then
-    _log_and_exit "${_error} Custom config file you have specified is not found or not accessible" "36"
+    _log_and_exit "${_error} Config file you have specified is not found or not accessible" "36"
   fi
   if [ "$bool_custom_version_file" == "true" ] && [ ! -f "$custom_version_file" ]; then
     _log_and_exit "${_error} Custom version info file you have specified is not found or not accessible" "36"
@@ -2992,15 +2997,14 @@ function main()
   _version_checks;
 
   if [ "$bool_use_yaml" == "true" ] && [ "$bool_use_lists" != "true" ]; then
-   _set_yaml_config;
-  elif [ "$bool_use_lists" == "true" ] && [ "$bool_use_yaml" != "true" ]; then
-    _set_list_config;
-  elif  [ "$bool_use_lists" == "true" ] && [ "$bool_use_yaml" == "true" ]; then
-    _log_and_exit "${_error} -Y --yaml and -L --lists cannot be used together." "25"
+    _set_yaml_config;
+  elif [ "$bool_use_yaml" != "true" ] && [ "$bool_use_lists" == "true" ]; then
+    _set_list_config
   else
-    _log_and_warn "${_error} You need to specify config type to use."
-    _log_and_exit "${_info} -Y or --yaml for YAML or -L or --lists for Lists" "25"
+    _log_and_exit "${_error} You need to specify single config type to use." "25"
   fi
+
+  sleep 3
 
   # Autopilot
   if [[ "$AUTOPILOT" == "true" ]]; then

@@ -31,10 +31,11 @@ function main()
   echo "Codename : $PRE_REL_CODENAME"
 
   docker run -it -e TRAVIS="$TRAVIS" \
-  --hostname=Docker-Pre-Release \
-  -v "$(pwd)":/shared \
+      -e DEBUG="${DEBUG}" \
+      --hostname=Docker-Pre-Release \
+      -v "$(pwd)":/shared \
   ubuntu:ae-pre-release \
-  ./after-effects --simulate -Y --yes --pre-release  --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/default.yml
+  ./after-effects --simulate --yes --autopilot --pre-release --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/default.yml
 
   exit_code_from_container="$?"
   echo "Exit code from docker run is: $exit_code_from_container"
@@ -47,7 +48,7 @@ function main()
     cat "$log_file"
   fi
 
-  return "$exit_code_from_container"
+  exit "$exit_code_from_container"
 
 }
 
