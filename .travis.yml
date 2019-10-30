@@ -44,12 +44,15 @@ jobs:
   - env: TEST_ENV="Debian8-Docker"
     script: ./tests/test-distro.sh "debian" "jessie"
 
+  - env: TEST_ENV="Debian10-Docker"
+    script: ./tests/test-distro.sh "debian" "buster"
+
   - stage: Pre-Release-Builds
     env: TEST_ENV="Ubuntu-Pre-Release-Docker"
     script: "./tests/test-prerelease.sh"
 
-  - env: TEST_ENV="Debian10-Docker"
-    script: ./tests/test-distro.sh "debian" "buster" "pre-rel.yml"
+  - env: TEST_ENV="Debian11-Docker"
+    script: ./tests/test-distro.sh "debian" "bullseye"
 
   - stage: Documentation & Deploy
     env: TEST_ENV="Docs-Build"

@@ -129,12 +129,6 @@ config:
         - spyder3
         - git
         - shellcheck
-        - ocl-icd-dev
-        - opencl-headers
-        - clinfo
-        - vainfo
-        - vdpauinfo
-        - s3cmd
         - python3-pip
       # Everything Else
       # Which is conditional

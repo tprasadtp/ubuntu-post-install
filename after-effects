@@ -644,6 +644,11 @@ function _fix_ubuntu_derivatives()
       stretch | jessie | buster )           bool_is_debian="true";
                                             _log_and_show "${_notice} This is Debian. PPAs are disabled."
                                             ;;
+      bullseye )                            bool_is_debian="true";
+                                            _log_and_warn "${_warn} You are running Debian Bullseye!"
+                                            _log_and_show "${_pre_release} This is a pre release version of Debian still under development. Use with caution!"
+                                            _log_and_show "${_notice} PPAs are disabled."
+                                            ;;
       trusty)                               _eol_message "$code_name" "April 30th, 2019"
                                             ;;
       qiana | rebecca | rafaela | rosa )    _log_and_warn "${_linuxmint} Release is Linux mint 17.X."

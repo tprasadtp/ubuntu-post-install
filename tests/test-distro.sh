@@ -75,6 +75,7 @@ function main()
       --fix \
       --simulate \
       --yes \
+      --autopilot \
       --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/"${config_yml}"
       exit_code="$?"
     else
