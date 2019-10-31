@@ -27,8 +27,9 @@
 if [[ $DEBUG -eq "1" ]] || [[ $DEBUG == "true" ]]; then
   set -eo pipefail
 else
-  set -eo pipefail
+  set -o pipefail
 fi
+readonly EXEC_START=$(date +%s)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 readonly REL_NAME="5.5.0 Beta"
@@ -176,15 +177,13 @@ function _log_and_exit()
   # ARG-1 log msg
   # ARG-2 exit code int
   local msg="$1"
-  printf "$msg\n";
+  printf "${RED}$msg${NC}\n";
   {
     printf "[$(date)] ${msg}\n" >> "$log_file";
     printf "\nFinished %s on $(date).\nLast exit code was: %d\n" "$SCRIPT" "$?"
   } >> "$log_file"
   report_stats
-  set_red
   _line_fill | tee -a "$log_file"
-  set_default
   exit "$2";
 }
 
@@ -193,7 +192,7 @@ function _script_exit_log()
 {
     # Script time
     readonly EXEC_END=$(date +%s)
-    readonly EXEC_TIME=$((EXEC_END-EXEC_START))
+    readonly EXEC_TIME=$(( EXEC_END - EXEC_START ))
 
     # Report Stats
     report_stats
@@ -224,22 +223,33 @@ function _log_and_show()
 }
 
 
-function _log_and_show_success()
+function _log_success()
 {
   local msg="$1"
   printf "${GREEN}$msg ${NC}\n"
-  set_default
   printf "[$(date)] $msg\n" >> "$log_file"
 }
 
-function _log_and_warn()
+function _log_warn()
 {
   local msg="$1"
-  printf "${YELLOW}$msg${NC}\n"
-  set_default
+  printf "${YELLOW}$msg ${NC}\n"
   printf "[$(date)] $msg\n" >> "$log_file"
 }
 
+function _log_notice()
+{
+  local msg="$1"
+  printf "${BLUE}$msg ${NC}\n"
+  printf "[$(date)] $msg\n" >> "$log_file"
+}
+
+function _log_error()
+{
+  local msg="$1"
+  printf "${RED}$msg ${NC}\n"
+  printf "[$(date)] $msg\n" >> "$log_file"
+}
 
 function _init_script_variables()
 {
@@ -267,9 +277,7 @@ function _init_script_variables()
     arm64)           _debug_log "This is an ARM 64. Please be advised that not all reposirories support this arch.";
                     readonly ARCH="arm64";
                     ;;
-    * )             set_red;
-                    _log_and_show "${_error} Sorry! This architecture is not supported by this script!"
-                    set_default;
+    * )             _log_error "${_error} Sorry! This architecture is not supported by this script!"
                     _log_and_exit "Unsupported Architecture. $(architecture)" "11"
                     ;;
   esac
@@ -291,6 +299,8 @@ function _init_script_variables()
   readonly codename_previous_release="disco"
   readonly codename_upcoming_release="focal"
   readonly codename_lts_fallback="bionic"
+  readonly code_name_latest_debian_release="buster"
+  readonly codename_upcoming_debian_release="bullseye"
 
   #============================ Switches/ bools & Vars ================================
 
@@ -386,9 +396,6 @@ function _init_script_variables()
   # change this to true if you wish to use Release candidate repo for ROS
   ros_rc_repo="false"
 
-  # latest WineHQ keys
-  readonly use_latest_winehq_key="true"
-
   # Azure
   readonly AZURE_METADATA_URL="http://169.254.169.254/metadata/instance/compute/location?api-version=2017-08-01&format=text"
 
@@ -451,18 +458,14 @@ function _check_dependencies()
    command -v "$dependency" > /dev/null
    dep_res=$?
    if [ "$dep_res" -eq 1 ]; then
-     set_red;
-     _log_and_show "${_error} $dependency is not installed!${NC}"
-     set_default;
+     _log_error "${_error} $dependency is not installed!${NC}"
      dependency_check_failed_count=$((dependency_check_failed_count+1))
    fi
   done
 
   if [ "$dependency_check_failed_count" -gt 0 ]; then
-    set_red
-    _log_and_show "${_error} One or more dependencies not installed. Check logs or above message."
+    _log_error "${_error} One or more dependencies not installed. Check logs or above message."
     _log_and_exit "${_error} Sorry! $SCRIPT cannot continue!" "1"
-    set_default
   fi
 }
 
@@ -508,20 +511,19 @@ function verify_gpg_signature()
 
   # Check for signature files
   printf "Verifying GPG signature of file..\n"
-  set_yellow
   printf "Signature File : ${sig_file}\n"
   printf "Data File      : $(basename $SCRIPT)\n"
   set_default
   # Checks for commands
   if command -v gpg > /dev/null; then
-    if gpg --verify "${sig_file}" "${SCRIPT}" ; then
+    if gpg --verify "${sig_file}" "${SCRIPT}" >/dev/null  2>&1; then
       __disp_sig_check_passed
     else
       __disp_sig_check_failed
       exit 50;
     fi
-  elif command -v gpgv > /dev/null; then
-    if gpgv --keyring "$HOME/.gnupg/pubring.kbx" "${sig_file}" "${SCRIPT}"; then
+  elif command -v gpgv >/dev/null; then
+    if gpgv --keyring "$HOME/.gnupg/pubring.kbx" "${sig_file}" "${SCRIPT}" > /dev/null  2>&1; then
       __disp_sig_check_passed
     else
       __disp_sig_check_failed
@@ -570,15 +572,14 @@ function _eol_message()
   # Arguments: 2
   # ARG 1: Release Name
   # ARG 2: EOL Date
-  _log_and_warn "${_eol} This version of Ubuntu is no longer supported."
-  _log_and_warn "${_notice} $1 reached EOL on $2."
 
-   set_yellow;
-  _log_and_warn "${_notice} Please use a supported version of Ubuntu."
-  _log_and_show "${_info} Please visit the link below for information on how to upgrade."
+  _log_warn "${_eol} This version of Ubuntu is no longer supported."
+  _log_warn "${_notice} $1 reached EOL on $2."
+  _log_warn "${_notice} Please use a supported version of Ubuntu."
 
-  set_blue;
-  _log_and_show "${_info} https://help.ubuntu.com/community/EOLUpgrades."
+  _log_notice "${_info} Please visit the link below for information on how to upgrade."
+  _log_notice "${_info} https://help.ubuntu.com/community/EOLUpgrades."
+
   _log_and_exit "EOL Release : $code_name" "12";
 }
 
@@ -596,7 +597,6 @@ function _fix_ubuntu_derivatives()
   # If the release is not known this function exits the script for safety.
 
   _log_and_show "${_derivatives} Checking..."
-  set_yellow;
   _debug_log "Variable code_name is : $code_name"
   case ${code_name} in
       sarah | serena | sonya | sylvia )     _log_and_show "${_linuxmint} Release is Linux mint 18.X."
@@ -626,12 +626,12 @@ function _fix_ubuntu_derivatives()
                                             # previous release
       disco )                               readonly bool_config_partner_repo="true"
                                             _log_and_show "${_info} This is Ubuntu 19.04"
-                                            _log_and_warn "${_warning} Ubuntu 19.10 was released recetly please consider using it!"
+                                            _log_warn "${_warning} Ubuntu 19.10 was released recetly please consider using it!"
                                             _log_and_show "${_derivatives} Keeping the codename as: $code_name."
                                             ;;
       eoan)                                 readonly bool_config_partner_repo="true"
                                             _log_and_show "${_info} This is 19.10 eoan."
-                                            if [[ $bool_fix_repo_not_available_for_latest != "true" ]] && [[ $bool_fix_lts != "true"  ]] ; then _log_and_warn "If your repos are not yet supported, use --fix option"; fi
+                                            if [[ $bool_fix_repo_not_available_for_latest != "true" ]] && [[ $bool_fix_lts != "true"  ]] ; then _log_warn "If your repos are not yet supported, use --fix option"; fi
                                             _log_and_show "${_derivatives} Keeping the codename as: $code_name."
                                             ;;
       focal )                               readonly bool_config_partner_repo="true"
@@ -645,13 +645,13 @@ function _fix_ubuntu_derivatives()
                                             _log_and_show "${_notice} This is Debian. PPAs are disabled."
                                             ;;
       bullseye )                            bool_is_debian="true";
-                                            _log_and_warn "${_warn} You are running Debian Bullseye!"
+                                            _log_warn "${_warn} You are running Debian Bullseye!"
                                             _log_and_show "${_pre_release} This is a pre release version of Debian still under development. Use with caution!"
                                             _log_and_show "${_notice} PPAs are disabled."
                                             ;;
       trusty)                               _eol_message "$code_name" "April 30th, 2019"
                                             ;;
-      qiana | rebecca | rafaela | rosa )    _log_and_warn "${_linuxmint} Release is Linux mint 17.X."
+      qiana | rebecca | rafaela | rosa )    _log_warn "${_linuxmint} Release is Linux mint 17.X."
                                             _eol_message "$code_name" "April 30th, 2019"
                                             ;;
       freya )                               _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 14.04 Trusty."
@@ -663,9 +663,8 @@ function _fix_ubuntu_derivatives()
                                             ;;
       cosmic)                                _eol_message "$code_name" "July 18, 2019"
                                             ;;
-      *)                                    set_red;
-                                            _log_and_show "${_error} Unknown Distribution/Release."
-                                            _log_and_show "${_notice} This Script is not designed to run on this ($code_name) distro/release."
+      *)                                    _log_error "${_error} Unknown Distribution/Release."
+                                            _log_notice "${_notice} This Script is not designed to run on this ($code_name) distro/release."
                                             _script_exit_log;
                                             exit 16;
                                             ;;
@@ -682,7 +681,7 @@ function _test_internet_connection ()
   if wget --tries=5 --timeout=2 "$PING_URL" -O /tmp/ae/testinternet &>/dev/null 2>&1; then
     rm -f /tmp/ae/testinternet
   else
-    _log_and_warn "${_oh_no} Booooooo! You are not connected to the Internet!. Please check your Internet connection and try again."
+    _log_warn "${_oh_no} Booooooo! You are not connected to the Internet!. Please check your Internet connection and try again."
     rm -f /tmp/ae/testinternet || _debug_log "Failed to remove temp network connectivity resp file"
     _log_and_exit "${_error} No internet connection!" "14"
   fi
@@ -725,7 +724,7 @@ function _set_custom_api_nodes ()
     elif [ "$bool_custom_config_file" == "true" ]; then
      _log_and_show "${_info} Config file specified will be used."
     else
-      _log_and_warn "${_error} No yaml file specified. To use default yaml use --use-default-yaml option."
+      _log_warn "${_error} No yaml file specified!"
       _log_and_exit "${_error} Script cannot continue. Exiting" "25"
     fi
 
@@ -751,12 +750,14 @@ function parse_yaml() {
   w='[a-zA-Z0-9_.-]*'
   fs="$(echo @|tr @ '\034')"
 
-  (
-    #shellcheck disable=SC1087
-      sed -ne '/^--/s|--||g; s|\"|\\\"|g; s/\s*$//g;' \
-          -e "/#.*[\"\']/!s| #.*||g; /^#/s|#.*||g;" \
-          -e  "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
-          -e "s|^\($s\)\($w\)$s[:-]$s\(.*\)$s\$|\1$fs\2$fs\3|p" |
+    (
+        #shellcheck disable=SC1003
+        sed -e '/- [^\“]'"[^\']"'.*: /s|\([ ]*\)- \([[:space:]]*\)|\1-\'$'\n''  \1\2|g' |
+
+        sed -ne '/^--/s|--||g; s|\"|\\\"|g; s/[[:space:]]*$//g;' \
+            -e "/#.*[\"\']/!s| #.*||g; /^#/s|#.*||g;" \
+            -e "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
+            -e "s|^\($s\)\($w\)${s}[:-]$s\(.*\)$s\$|\1$fs\2$fs\3|p" |
 
       awk -F"$fs" '{
           indent = length($1)/2;
@@ -769,10 +770,16 @@ function parse_yaml() {
               }
           }' |
 
-      sed -e 's/_=/+=/g' \
-          -e '/\..*=/s|\.|_|' \
-          -e '/\-.*=/s|\-|_|'
+        sed -e 's/_=/+=/g' |
 
+        awk 'BEGIN {
+                FS="=";
+                OFS="="
+            }
+            /(-|\.).*=/ {
+                gsub("-|\\.", "_", $1)
+            }
+            { print }'
 ) < "$yaml_file"
 }
 
@@ -799,7 +806,7 @@ function _get_remote_file()
     if [[ $exit_status -eq 0 ]]; then
       _debug_log "Successfully retrieved Config file."
     else
-      _log_and_warn "${_error} Something went wrong while retrieving ${file_name}."
+      _log_warn "${_error} Something went wrong while retrieving ${file_name}."
       _log_and_exit "${_error} Error Getiing file." "28"
     fi
   else
@@ -819,7 +826,7 @@ function _version_checks ()
       _debug_log "Version Checks are enabled."
       _log_and_show "${_version} Checking for Updates..."
       if [ "$bool_custom_version_file" != "true" ]; then
-        _debug_log "${_cfg} Using Remote Config file."
+        _debug_log "Using Remote Config file."
         _debug_log "Deleting old YAMLS"
         rm -f "/tmp/ae/api-version.yml" || _debug_log "Deleting old version YAML failed."
         readonly version_yaml_file="/tmp/ae/api-version.yml"
@@ -852,30 +859,28 @@ function _version_checks ()
 
       # If release number is higher than one in the script throw error & ask to update.
       if [[ $api_rel_num -gt $REL_NUM ]]; then
-        set_yellow;
-        _log_and_show "${_version} A newer release is available.\n${_version} Please download latest release and try again."
-        _log_and_show "${_version} You are running version ${REL_NAME} with version number ${REL_NUM}."
-        echo "${version__name[0]}"
-        echo "${api_rel_num}"
+        _log_warn "${_version} A newer release is available.\n${_version} Please download latest release and try again."
+        _log_warn "${_version} You are running version ${REL_NAME} with version number ${REL_NUM}."
         _log_and_show "${_version} Latest available version is ${version__name[0]}-${api_rel_num}."
         _log_and_exit "${_info} You can disable version checks by passing\n${_version} --no-version-checks" "24"
-        set_default;
       elif [[ $api_rel_num -eq $REL_NUM ]]; then
         _log_and_show "${_version} All Good! You are running the latest version of script."
       elif [[ $api_rel_num -lt $REL_NUM ]]; then
-        set_yellow;
-        _log_and_show "${_info} Hey Time traveler!\n${_version} You seem to be running a development version of script."
-        _log_and_show "${_info} You are running version ${REL_NAME} - ${REL_NUM}."
-        _log_and_show "${_info} Latest stable version is ${version__name[0]}-${api_rel_num}."
-        set_default;
+        _log_notice "${_info} Hey Time traveler!\n${_version} You seem to be running a development version of script."
+        _log_notice "${_info} You are running version ${REL_NAME} - ${REL_NUM}."
+        _log_notice "${_info} Latest stable version is ${version__name[0]}-${api_rel_num}."
       fi
 
   # If version checks have been disabled
   else
-    set_yellow
-    _log_and_show "${_info} Version checks have been disabled."
-    _log_and_show "${_info} This will also disable usage reporting"
-    set_default
+    _log_warn "${_info} Version checks have been disabled."
+
+    if [[ $bool_report_stats == "false" ]]; then
+      _debug_log "Report stats is already disabled"
+    else
+      readonly bool_report_stats="true"
+      _log_notice "Stats reporting will be disabled"
+    fi
   fi
   #sleep 5
 
@@ -894,15 +899,15 @@ function _check_bool()
   _debug_log "Globar var is : $g_var, Param from cfg is $param_bool"
   case "${param_bool}" in
     true | True | TRUE | Yes | yes | YES | 1 )  declare -g ${g_var}="true"
-                                                _debug_log "Variable : <$g_var> is set to true"
+                                                _debug_log "$g_var is set to true"
                                                 ;;
     false | False | FALSE | No | no | NO | 0 )  declare -g ${g_var}="false"
-                                                _debug_log "Variable : <$g_var> is set to false"
+                                                _debug_log "$g_var is set to false"
                                                 ;;
     *)                                          declare -g ${g_var}="false"
-                                                _debug_log "${_debug} Invalid/empty value for param : $g_var."
-                                                _debug_log "${_debug} It can either be t[T]rue or f[F]alse."
-                                                _log_and_warn "${_warn} $g_var will default to false"
+                                                _debug_log "Invalid/empty value for param : $g_var."
+                                                _debug_log "It can either be t[T]rue or f[F]alse."
+                                                _log_warn "${_warn} $g_var will default to false"
                                                 ;;
   esac
 }
@@ -1010,10 +1015,6 @@ function _set_yaml_config()
     _check_bool "bool_preserve_debs" "${config__flags__preserve_debs[0]}"
     #bool_preserve_debs="${config__flags__preserve_debs[0]}"
 
-    # Yes
-    _check_bool "bool_say_yes_to_all" "${config__flags__auto_yes[0]}"
-    #bool_say_yes_to_all="${config__flags__auto_yes[0]}"
-
     # Uni-Mirror
     _check_bool "bool_use_uni_freiburg_mirror" "${config__flags__uni_freiburg_mirror[0]}"
 
@@ -1073,7 +1074,6 @@ function _set_yaml_config()
       _line_fill;
       printf "${_cfg} %-20s | %-10s |\n" "Purge Enabled" "$bool_purge_not_required_pkgs"
       printf "${_cfg} %-20s | %-10s |\n" "Keep DEBs/APT cache" "$bool_preserve_debs"
-      printf "${_cfg} %-20s | %-10s |\n" "Dont confirm" "$bool_say_yes_to_all"
       printf "${_cfg} %-20s | %-10s |\n" "Uni-Freiburg Mirror" "$bool_use_uni_freiburg_mirror"
       _line_fill;
 
@@ -1113,7 +1113,6 @@ function _set_yaml_config()
         _line_fill;
         printf "${_cfg} %-20s | %-10s |\n" "Purge Enabled" "$bool_purge_not_required_pkgs"
         printf "${_cfg} %-20s | %-10s |\n" "Keep DEBs/APT cache" "$bool_preserve_debs"
-        printf "${_cfg} %-20s | %-10s |\n" "Dont confirm" "$bool_say_yes_to_all"
         printf "${_cfg} %-20s | %-10s |\n" "Use Uni-Freiburg Mirror" "$bool_use_uni_freiburg_mirror"
         _line_fill;
         printf "${_table} %-20s | %-10s |\n" "Task" "Config"
@@ -1417,8 +1416,7 @@ function _install_dependencies()
   } >> "${log_file}"
   # Check if array is empty
   if [[ ${#packages[@]} -eq 0 ]]; then
-    set_yellow;
-    _log_and_exit "${_error} Package array is empty!" "19"
+    _log_warn "${_error} Package array is empty!" "19"
   else
     apt-get -q -y install "${packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  \
     || _log_and_exit "${_error} Failed to install dependencies. Script cannot continue!!" "21"
@@ -1427,7 +1425,7 @@ function _install_dependencies()
     if [ $exit_status -eq 0 ]; then
        _log_and_show "${_installed} dependency packages."
     else
-      _log_and_warn "${_oh_no} Something went wrong while installing dependencies."
+      _log_warn "${_oh_no} Something went wrong while installing dependencies."
       _log_and_exit "${_notice} Please see the log file for more details." "21"
     fi
   _clean_apt_cache
@@ -1460,7 +1458,7 @@ function _fix_repo_not_available()
     if [ "$code_name" == "$code_name_latest_release" ]; then
       # check LTS fallback flag is being used
       if [ "$bool_fix_repo_lts" == "true" ]; then
-        _log_and_warn "${_notice} Using LTS release ::${codename_lts_fallback}:: as fallback for --fix"
+        _log_warn "${_notice} Using LTS release ::${codename_lts_fallback}:: as fallback for --fix"
         code_name="$codename_lts_fallback"
       else
         _log_and_show "${_notice} Using previous release ${codename_previous_release} as fallback"
@@ -1477,16 +1475,17 @@ function _fix_repo_not_available()
 
 function _fix_repo_not_available_upcoming_release()
 {
-  # If repository is not available for upcoming ubuntu release, this uses last stable release or one release before that
-  # Aka if the pre-release release is 18.04 it might use 17.04 (Only for first month or two) till repositories become available for the release 17.10)
-  # (may not be LTS) for adding repository.
+  # If repository is not available for upcoming  release, this uses last stable release
+  # Aka if the pre-release release is 18.04 it might use 17.10 if used wiht --fix, it will use 18.04 repos.
+  # With debian If release is 11, when used with this flag we will use Debian 10 repos.
+  # --fix is not valid in case of debian, only --pre-release applies.
 
   # check for fix-pre-release flag
   if [ "$bool_fix_repo_not_available_for_upcoming_release" == "true" ]; then
 
     # Only do this on upcoming-release
-    if [ "$code_name" == "$codename_upcoming_release" ]; then
-      _log_and_show "${_pre_release} Previously available repositories from an older release is being used."
+    if [ "$code_name" == "$codename_upcoming_release" ] && [ "$bool_is_debian" != "true" ]; then
+      _log_and_show "${_pre_release} Previously available repositories from previous Ubuntu is being used."
       printf "${_pre_release}You need to modify this in Software and Updates when it \
               becomes available for ${codename_upcoming_release}${NC}\n"
         # If the repositories are  not available for latest stable release as well, go back a release.
@@ -1501,14 +1500,15 @@ function _fix_repo_not_available_upcoming_release()
           _log_and_show "${_pre_release} Using repositories for current stable release: $code_name_latest_release"
           code_name="$code_name_latest_release"
         fi
+    elif [ "$code_name" == "$codename_upcoming_debian_release" ] && [ "$bool_is_debian" == "true" ]; then
+        _log_and_show "${_pre_release} Using repositories for current stable Debian release: $code_name_latest_debian_release"
+        code_name="$code_name_latest_release"
     else
         _debug_log "This Release/Distro does not support this option. Flag --pre-release will be ignored."
     fi
   else
-    set_yellow
     _debug_log "Feature fix_repo_not_available_upcoming_release is disabled."
-    set_default
-fi
+  fi
 }
 
 
@@ -1532,17 +1532,13 @@ function add_ppas()
               continue
             fi
             if add-apt-repository -y "$index" 2>&1 | _add_timestamp_to_logs "${_ppa_logs}" ; then
-              _log_and_show_success "${_ppa} Success!"
+              _log_success "${_ppa} Success!"
             else
-              set_yellow
-              _log_and_show "${_ppa} Some Error occured while adding $index. Ignoring and moving on.\n"
-              set_default
+              _log_error "${_ppa} Some Error occured while adding $index. Ignoring and moving on.\n"
             fi
         done
   else
-    set_yellow;
     _log_and_show "${_ppa} This is Debian. PPAs are not available."
-    set_default;
   fi
   _line_fill >> "$log_file"
 }
@@ -1574,19 +1570,19 @@ function add_repositories()
       wget -q  https://dl.google.com/linux/linux_signing_key.pub -O /tmp/ae/google_signing_key.pub >> $"$log_file"
       _debug_log "Adding Google key to trusted keys list"
       apt-key add /tmp/ae/google_signing_key.pub 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_warn "${_error} Adding trusted keys for Google failed."
+      || _log_warn "${_error} Adding trusted keys for Google failed."
 
       _log_and_show "${_repo} Google Chrome repository"
       echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main #Google-Chrome" > ${SOURCES_FILE_DIR}/google-chrome.list \
-      || _log_and_warn "${_error} Adding Google Chrome Repository failed"
+      || _log_warn "${_error} Adding Google Chrome Repository failed"
 
       _log_and_show "${_repo} Google Earth repository"
 
       echo "deb [arch=amd64] http://dl.google.com/linux/earth/deb/ stable main #Google-Earth" > ${SOURCES_FILE_DIR}/google-earth.list \
-      || _log_and_warn "${_error} Adding Google Chrome repository failed"
+      || _log_warn "${_error} Adding Google Chrome repository failed"
 
     else
-      _log_and_warn "Architecture: $ARCH is not supported for Chrome. Please use Chromium"
+      _log_warn "Architecture: $ARCH is not supported for Chrome. Please use Chromium"
     fi
   else
     _log_and_show "${_repo} Chrome repository is set to false. Skipping."
@@ -1600,10 +1596,10 @@ function add_repositories()
     wget -q   https://download.spotify.com/debian/pubkey.gpg -O /tmp/ae/spotify_signing_key.pub >> $"$log_file"
     apt-key add /tmp/ae/spotify_signing_key.pub  2>&1 \
     |_add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_error} Adding Spotify repository failed"
+    || _log_warn "${_error} Adding Spotify repository failed"
 
     echo "deb [arch=$ARCH] http://repository.spotify.com stable non-free #Spotify" > ${SOURCES_FILE_DIR}/spotify.list \
-    || _log_and_warn "${_error} Adding Spotify Repository Failed"
+    || _log_warn "${_error} Adding Spotify Repository Failed"
   else
     _log_and_show "${_repo} Spotify repository is set to false. Skipping."
   fi
@@ -1614,18 +1610,15 @@ function add_repositories()
     _debug_log "Adding Insync keys"
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ACCAF35C  2>&1 \
     | _add_timestamp_to_logs "${_apt_key_logs}" \
-    || _log_and_warn "${_error} Adding Insync Repository failed"
+    || _log_warn "${_error} Adding Insync Repository failed"
 
     echo "deb [arch=$ARCH] http://apt.insynchq.com/${distro_name} $code_name non-free contrib #Insync-Client" > ${SOURCES_FILE_DIR}/insync.list \
-    || _log_and_warn "${_error} Adding Insync Repository failed"
+    || _log_warn "${_error} Adding Insync Repository failed"
 
   elif [ "$add_insync_repo" == "true" ] && [ "$bool_is_debian" == "true" ]; then
-    set_yellow;
-    _log_and_warn "${_whoops} Unfortunately InSync repositoris are not supported on Debian."
-    _log_and_warn "${_info} Please use debfile instead of repositoris."
-    set_blue;
-    _log_and_show "${_info} Visit https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files"
-    set_default;
+    _log_warn "${_whoops} Unfortunately InSync repositoris are not supported on Debian."
+    _log_warn "${_info} Please use debfile instead of repositoris."
+    _log_notice "${_info} Visit https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files"
   else
     _log_and_show "${_repo} Insync repository is set to false. Skipping."
   fi
@@ -1644,7 +1637,7 @@ function add_repositories()
     CLOUD_SDK_REPO="cloud-sdk-${code_name}"
     _log_and_show "${_repo} Google-Cloud-SDK repository"
     echo "deb [arch=$ARCH] http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  \
-    || _log_and_warn "${_error} Adding Google Clouf SDK Repository failed"
+    || _log_warn "${_error} Adding Google Clouf SDK Repository failed"
   else
     _log_and_show "${_repo} Google Cloud SDK repository is set to false. Skipping."
   fi
@@ -1653,7 +1646,7 @@ function add_repositories()
     GCSFUSE_REPO="gcsfuse-${code_name}"
     _log_and_show "${_repo} GCSFUSE repository"
     echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list  \
-    || _log_and_warn "${_error} Adding GCSFUSE Repository failed"
+    || _log_warn "${_error} Adding GCSFUSE Repository failed"
   else
     _log_and_show "${_repo} GCSFUSE repository is set to false. Skipping."
   fi
@@ -1665,19 +1658,13 @@ function add_repositories()
   if [ "$add_winehq_repo" == "true" ]; then
     _log_and_show "${_repo} WineHQ repository"
     _debug_log "Getting WineHQ repository Key"
-    if [[ "$use_latest_winehq_key" == "true" ]]; then
-      _log_and_show "${_repo} WineHQ keys were changed recently, using them."
-      wget -q https://dl.winehq.org/wine-builds/winehq.key -O /tmp/ae/wine-hq-sigining-key.key >> "$log_file"  2>&1
-    else
-      # This is old key. the new key was added on 19th Dec 2018
-      wget -q https://dl.winehq.org/wine-builds/Release.key -O /tmp/ae/wine-hq-sigining-key.key >> "$log_file"  2>&1
-    fi
+    wget -q https://dl.winehq.org/wine-builds/winehq.key -O /tmp/ae/wine-hq-sigining-key.key >> "$log_file"  2>&1
     _debug_log "Adding WineHQ key"
     apt-key add /tmp/ae/wine-hq-sigining-key.key 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-    || _log_and_warn "${_error} Adding WineHQ keys failed"
+    || _log_warn "${_error} Adding WineHQ keys failed"
     _debug_log "Adding WineHQ repository"
     echo "deb https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list \
-    || _log_and_warn "${_error} Adding WineHQ repository failed"
+    || _log_warn "${_error} Adding WineHQ repository failed"
   else
     _log_and_show "${_repo} WineHQ repository is set to false. Skipping."
   fi
@@ -1690,12 +1677,12 @@ function add_repositories()
       wget -q https://download.docker.com/linux/"${distro_name}"/gpg -O /tmp/ae/docker-key.gpg >> "$log_file"  2>&1
       _debug_log "Adding Docker repository key"
       apt-key add /tmp/ae/docker-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_warn "${_error} Adding Docker-CE keys failed"
+      || _log_warn "${_error} Adding Docker-CE keys failed"
       _debug_log "Adding Docker-CE sources .list"
       echo "deb [arch=$ARCH] https://download.docker.com/linux/${distro_name}  ${code_name} stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list \
-      || _log_and_warn "${_error} Adding Docker-CE repository failed"
+      || _log_warn "${_error} Adding Docker-CE repository failed"
     else
-      _log_and_warn "${_error} Architecture not supported!. Please use docker.io package from your distro."
+      _log_warn "${_error} Architecture not supported!. Please use docker.io package from your distro."
     fi
   else
     _debug_log "Adding Docekr-CE repository is set to false. Skipping."
@@ -1709,11 +1696,11 @@ function add_repositories()
       wget -q https://repo.skype.com/data/SKYPE-GPG-KEY -O /tmp/ae/skype-linux-key.gpg >> "$log_file"
       _debug_log "Adding Skype keys to trusted list"
       apt-key add /tmp/ae/skype-linux-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_warn "${_error} Adding Skype for linux key failed"
+      || _log_warn "${_error} Adding Skype for linux key failed"
       echo "deb [arch=$ARCH] https://repo.skype.com/deb stable main #Skype" > $SOURCES_FILE_DIR/skype-stable.list \
-      || _log_and_warn "${_error} Adding Skype for linux repository failed"
+      || _log_warn "${_error} Adding Skype for linux repository failed"
     else
-      _log_and_warn "${_error} Skype doesnot support this architecture"
+      _log_warn "${_error} Skype doesnot support this architecture"
     fi
   else
     _log_and_show "${_repo} Skype repository is set to false. Skipping."
@@ -1733,7 +1720,7 @@ function add_repositories()
 
     # Unstable/RC repos
     if [[ $ros_rc_repo == "true" ]]; then
-      _log_and_warn "${_repo} Using ROS Release candidate [ROS Shadow Fixed] repositories"
+      _log_warn "${_repo} Using ROS Release candidate [ROS Shadow Fixed] repositories"
       ros_repo_path="ros-shadow-fixed"
     else
       _log_and_show "${_repo} Using stable version of ROS"
@@ -1773,20 +1760,20 @@ function add_repositories()
       _log_and_show "${_repo} ROS is Supported on this distro/ARCH : ${code_name}/${ARCH}"
       _debug_log "Adding ROS repo key(latest)..."
       apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-       || _log_and_warn "${_error} Adding ROS repository key failed!"
+       || _log_warn "${_error} Adding ROS repository key failed!"
 
        if [[ $bool_use_uni_freiburg_mirror == "true" ]] && [[ $distro_name == "ubuntu" ]]; then
-         _log_and_warn "Using Uni-Freiburg Mirror! This mirror might not be upto date with primary ROS repository!."
-         _log_and_warn "You may need authentication or have to be inside Uni-Freiburg network!"
+         _log_warn "Using Uni-Freiburg Mirror! This mirror might not be upto date with primary ROS repository!."
+         _log_warn "You may need authentication or have to be inside Uni-Freiburg network!"
          echo "deb http://packages.ros.org.ros.informatik.uni-freiburg.de/${ros_repo_path}/ubuntu ${code_name} main #ROS-Repo-Uni-Freiburg" > $SOURCES_FILE_DIR/ros-latest.list \
-         || _log_and_warn "${_error} Adding ROS [Uni-Freiburg] repository failed!"
+         || _log_warn "${_error} Adding ROS [Uni-Freiburg] repository failed!"
       else
         echo "deb http://packages.ros.org/${ros_repo_path}/ubuntu ${code_name} main #ROS-Repo" > $SOURCES_FILE_DIR/ros-latest.list \
-        || _log_and_warn "${_error} Adding ROS repository failed!"
+        || _log_warn "${_error} Adding ROS repository failed!"
        fi
 
     else
-      _log_and_warn "${_repo} ROS is not supported on this distro/architecture!"
+      _log_warn "${_repo} ROS is not supported on this distro/architecture!"
     fi # ros_arch_supported
 
   else
@@ -1801,10 +1788,10 @@ function add_repositories()
       _debug_log "Getting GPG keys for repository"
       wget -q https://packages.microsoft.com/keys/microsoft.asc -O /tmp/ae/microsoft.asc
       _debug_log "Adding Key to trusted GPG keys directory"
-      apt-key add /tmp/ae/microsoft.asc 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_and_warn "${_error} Adding Visual Studio Code key failed"
+      apt-key add /tmp/ae/microsoft.asc 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_warn "${_error} Adding Visual Studio Code key failed"
       echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list
     else
-      _log_and_warn "Architecture: $ARCH is not supported by Visual studio Code."
+      _log_warn "Architecture: $ARCH is not supported by Visual studio Code."
     fi
   else
     _log_and_show "${_repo} Visual Studio repository is set to false. Skipping."
@@ -1816,10 +1803,10 @@ function add_repositories()
       _log_and_show "${_repo} Signal repository"
       wget -q https://updates.signal.org/desktop/apt/keys.asc -O /tmp/ae/signal.asc >> "$log_file"
       apt-key add /tmp/ae/signal.asc  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_warn "${_error} Adding Signal Key Failed"
+      || _log_warn "${_error} Adding Signal Key Failed"
       echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/signal-xenial.list
     else
-        _log_and_warn "Architecture: $ARCH is not supported by Signal"
+        _log_warn "Architecture: $ARCH is not supported by Signal"
     fi
   else
     _log_and_show "${_repo} Signal repository is set to false. Skipping."
@@ -1830,10 +1817,10 @@ function add_repositories()
     if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "i386" ] ; then
       _log_and_show "${_repo} Mendeley repository"
       apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_and_warn "${_error} Adding Mendeley Desktop Key Failed"
+      || _log_warn "${_error} Adding Mendeley Desktop Key Failed"
       echo "deb [arch=$ARCH] https://desktop-download.mendeley.com/download/apt stable main #Mendeley-Desktop"  > ${SOURCES_FILE_DIR}/mendeleydesktop.list
     else
-      _log_and_warn "${_warn} Architecture: ${ARCH} is not supported. You might manually compile from source."
+      _log_warn "${_warn} Architecture: ${ARCH} is not supported. You might manually compile from source."
     fi
   else
       _log_and_show "${_repo} Mendeley Desktop is set to false."
@@ -1859,20 +1846,20 @@ function add_repositories()
         jessie)     duo_repo_url="http://pkg.duosecurity.com/Debian stretch main";
                     duo_supported="true"
                     ;;
-        *)          _log_and_warn "Only LTS/Stable versions of Ubuntu/Debian are suported. You are running Unsupported version : ${code_name}"
+        *)          _log_warn "Only LTS/Stable versions of Ubuntu/Debian are suported. You are running Unsupported version : ${code_name}"
       esac
       if [[ $duo_supported == "true" ]]; then
         # Repo keys for duosecurity
         _debug_log "Downloading GPG key..."
         wget -q https://duo.com/APT-GPG-KEY-DUO  -O /tmp/ae/duosecurity.gpg >> "$log_file"
         apt-key add /tmp/ae/duosecurity.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
-        || _log_and_warn "${_error} Adding Duo Key Failed"
+        || _log_warn "${_error} Adding Duo Key Failed"
 
         # Add repo
         echo "deb [arch=$ARCH] ${duo_repo_url} #Duo Unix"  > ${SOURCES_FILE_DIR}/duounix.list
       fi
     else
-        _log_and_warn "${_warn} Architecture: ${ARCH} is not supported. You might manually compile from source."
+        _log_warn "${_warn} Architecture: ${ARCH} is not supported. You might manually compile from source."
     fi
   else
         _log_and_show "${_repo} Duo Unix is set to false."
@@ -1888,7 +1875,7 @@ function add_repositories()
     _log_and_show "${_repo} Canonical partner repositoris"
     add-apt-repository "deb http://archive.canonical.com/ubuntu $code_name partner" >> "$log_file"
   else
-    _log_and_warn "${_warn} Canonical Partner repositoris may not be supported on this platform. They remain unchanged/unavailable."
+    _log_warn "${_warn} Canonical Partner repositoris may not be supported on this platform. They remain unchanged/unavailable."
   fi
 
   # Remove artifacts and keys
@@ -1912,14 +1899,12 @@ function update_repos()
   apt-get -q update 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
   exit_status=$?
   if [[ $exit_status -eq 0 ]]; then
-    _log_and_show "${_update} Success!"
+    _log_success "${_update} Success!"
   else
-    set_red;
-    _log_and_show "${_oh_no} Something went wrong in updating repo data. Please see the log file for more details."
-    _log_and_show "${_error} Your system might end up completely broken and apt-get isn't reliable with this state."
-    _log_and_show "${_error} The script cannot proceed with this."
-    _log_and_exit "${_notice} Most of the times its either missing repository keys or wrongly configured repositories." "61"
-    set_default;
+    _log_error "${_oh_no} Something went wrong in updating repo data. Please see the log file for more details."
+    _log_error "${_error} Your system might end up completely broken and apt-get isn't reliable with this state."
+    _log_error "${_error} The script cannot proceed with this."
+    _log_error "${_notice} Most of the times its either missing repository keys or wrongly configured repositories." "61"
   fi
 }
 
@@ -1936,10 +1921,7 @@ function upgrade_apps()
   apt list --upgradable 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  \
   || _log_and_show "Something went wrong while listing upgradable packages. Please see the log file for more details."
 
-  set_yellow;
-  _debug_log "The above list of packages will be upgraded!"
-  set_default;
-  _debug_log "Upgrading packages..."
+  _debug_log "The list of packages will be upgraded!"
   # only do upgrades if simulate is set to false
   if [ "$simulate_apt_install" != "true" ]; then
 
@@ -1950,16 +1932,14 @@ function upgrade_apps()
   else
     # If  simulate is true, set exit status as 0
     # Simulate flag skips the section above. No point in Checking for exit status
-    set_blue;
-    _log_and_show "${_simulate} is set to True. Not performing upgrade!"
-    set_default;
+    _log_notice "${_simulate} is set to True. Not performing upgrade!"
     exit_status=0
   fi
   if [[ $exit_status -eq 0 ]]; then
     _log_and_show "${_upgrade} Completed successfully!"
   else
-    _log_and_warn "${_oh_no} Something went wrong while upgrading packages."
-    _log_and_warn "${_notice} Please see the log file for more details. \
+    _log_warn "${_oh_no} Something went wrong while upgrading packages."
+    _log_warn "${_notice} Please see the log file for more details. \
     Most of the times its either missing repositories or wrongly configured repositories."
   fi
   set_default;
@@ -1992,18 +1972,17 @@ function purge_ppa()
             _log_and_show "${_purge} $index..."
             _debug_log "Purging: $index"
             if [ "$index" == "" ] || [ "$index" == " " ]; then
-              _log_and_warn "${_purge} Found an empty entry, Ignoring"
+              _log_warn "${_purge} Found an empty entry, Ignoring"
               continue;
             fi
             if ppa-purge -y "$index"  2>&1 | _add_timestamp_to_logs "${_apt_logs}"  ; then
               sleep 5 #wait sometimes apt lock isnt released soon.
-              _log_and_show_success "${_purge} $line successfully."
+              _log_success "${_purge} $line successfully."
             else
-              _log_and_warn "${_oh_no} Some Error occured while purging $line."
+              _log_warn "${_oh_no} Some Error occured while purging $line."
             fi
         done
-        set_yellow;
-      _log_and_show "${_purge} External PPAs."
+      _log_warn "${_purge} External PPAs."
 
       # Clean -k flag.
       _clean_apt_cache;
@@ -2028,71 +2007,51 @@ function disable_external_repos()
     set_default
     _log_and_show "${_deleting} Google signing key   7FAC5991"
     apt-key del 7FAC5991  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_deleting}  Google signing key -1 failed."
+    || _log_warn "${_deleting}  Google signing key -1 failed."
 
     _log_and_show "${_deleting} Google signing key   D38B4796"
     apt-key del D38B4796  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_deleting}  Google signing key -2 failed."
+    || _log_warn "${_deleting}  Google signing key -2 failed."
 
     _log_and_show "${_deleting} GCP signing key -2   BA07F4FB"
     apt-key del BA07F4FB  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_deleting}  Google cloud key -1 failed."
+    || _log_warn "${_deleting}  Google cloud key -1 failed."
 
     _log_and_show "${_deleting} GCP signing key -2   A7317B0F"
     apt-key del A7317B0F  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_deleting}  GCP signing key -2  failed."
+    || _log_warn "${_deleting}  GCP signing key -2  failed."
 
-    _log_and_show "${_deleting} Webupd8 signing key  4C9D234C"
-    apt-key del 4C9D234C  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_deleting}  Webupd8 failed."
-
-    _log_and_show "${_deleting} Spotify signing key  4C9D234C"
-    apt-key del D2C19886  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_deleting}  Spotify signing key -3 failed."
-
-    _log_and_show "${_deleting} Spotify signing key  48BF1C90"
-    apt-key del 48BF1C90  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_deleting}  Spotify signing key -3 failed."
-
-    _log_and_show "${_deleting} Spotify signing key  341D9410"
-    apt-key del 341D9410  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_deleting}  Spotify signing key -2 failed."
-
-    _log_and_show "${_deleting} Skype signing key    DF7587C3"
-    apt-key del DF7587C3  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_deleting}  Skype for Linux keys failed."
-
-    _log_and_show "${_deleting} WineHQ key [old]     5FCBF54A"
-    apt-key del 5FCBF54A  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_deleting}  WineHQ keys [old] failed."
+    _log_and_show "${_deleting} Spotify signing key  E130D1D45"
+    apt-key del E130D1D45  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+    || _log_warn "${_deleting}  Spotify signing key failed."
 
     _log_and_show "${_deleting} WineHQ key [latest]  F987672F"
     apt-key del F987672F  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_deleting}  WineHQ keys [latest] failed."
+    || _log_warn "${_deleting}  WineHQ keys [latest] failed."
 
     _log_and_show "${_deleting} InSync signing key   ACCAF35C"
     apt-key del ACCAF35C  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_deleting}  InSync keys failed."
+    || _log_warn "${_deleting}  InSync keys failed."
 
     _log_and_show "${_deleting} Docker signing key   0EBFCD88"
     apt-key del 0EBFCD88  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_deleting}  Docker-CE keys failed."
+    || _log_warn "${_deleting}  Docker-CE keys failed."
 
     _log_and_show "${_deleting} VS-Code signing key  BE1229CF"
     apt-key del BE1229CF  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_deleting}  Visual Studio Code keys failed."
+    || _log_warn "${_deleting}  Visual Studio Code keys failed."
 
     _log_and_show "${_deleting} Signal signing key   57F6FB06"
     apt-key del 57F6FB06  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_deleting}  Signal keys failed."
+    || _log_warn "${_deleting}  Signal keys failed."
 
     _log_and_show "${_deleting} Mendeley signing key 6F036044"
     apt-key del 57F6FB06  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_deleting}  Mendeley Desktop keys failed."
+    || _log_warn "${_deleting}  Mendeley Desktop keys failed."
 
     _log_and_show "${_deleting} ROS signing key B01FA116"
     apt-key del 421C365BD9FF1F717815A3895523BAEEB01FA116  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_and_warn "${_deleting}  ROS keys failed."
+    || _log_warn "${_deleting}  ROS keys failed."
 
     _log_and_show "${_repo} Removing external repositoris"
     _debug_log "${_deleting} *.list and *.save files from ${SOURCES_FILE_DIR}"
@@ -2113,16 +2072,15 @@ function disable_external_repos()
         ros-latest.*
     )
     exit_status=$?
-    set_yellow;
+
     if [[ $exit_status -eq 0 ]]; then
       _log_and_show "${_removed} Additional APT keys and repositories."
       _log_and_show "${_notice} Canonical partner repository was left unchanged."
     else
-      _log_and_warn "${_oh_no} Failed to remove all or some of the list files or keys in Sources directory."
-      _log_and_warn "${_notice} Please see the log file for more details."
+      _log_warn "${_oh_no} Failed to remove all or some of the list files or keys in Sources directory."
+      _log_warn "${_notice} Please see the log file for more details."
     fi
-    set_default;
-    _log_and_show "${_removed} Repositories. Please check the logs for errors."
+    _log_notice "${_removed} Repositories. Please check the logs for errors."
 
     _line_fill >> "$log_file"
 
@@ -2142,29 +2100,30 @@ function purge_not_required()
   local exit_status
   if [ "$bool_purge_not_required_pkgs" == "true" ]; then
     _log_and_show "${_purge} Packages..."
+
     if [[ ${#parsed_purge_packages[@]} -eq 0 ]]; then
-      _log_and_warn "${_error} Package array is empty!";
+      _log_warn "${_error} Package array is empty!";
       return;
     else
       if [ "$simulate_apt_install" == "true" ]; then
-        _log_and_warn "${_simulate} No packages will be purged!!"
+        _log_warn "${_simulate} No packages will be purged!!"
       apt-get -q -y remove --purge --dry-run "${parsed_purge_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
       else
         apt-get -q -y purge "${parsed_purge_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
       fi
       exit_status=$?
-      set_yellow
+
       if [[ $exit_status -eq 0 ]]; then
-        _log_and_show_success "${_purge} Success!"
+        _log_success "${_purge} Success!"
       else
-        _log_and_warn "${_oh_no} Something went wrong while purging packages."
-        _log_and_warn "${_notice} Please see the log file for more details."
+        _log_warn "${_oh_no} Something went wrong while purging packages."
+        _log_warn "${_notice} Please see the log file for more details."
       fi
     fi
+
   else
     _log_and_exit "${_error} Purge switch is set to false. Did you pass -d along wth the command?" "20"
   fi
-  set_default;
   _line_fill >> "$log_file"
 
 }
@@ -2207,14 +2166,14 @@ function install_apps()
 
     # Chek if array is empty
     if [[ ${#packages[@]} -eq 0 ]]; then
-      _log_and_warn "${_notice} Package array is empty!";
+      _log_warn "${_notice} Package array is empty!";
       continue
     else
       _debug_log "Following packages will be installed."
       printf "[$(date)] ${_array} %s\n" "${packages[@]}" >> "${log_file}"
       # Check if simulate is true
       if [ "$simulate_apt_install" == "true" ]; then
-        _log_and_warn "${_simulate} package installation."
+        _log_warn "${_simulate} package installation."
         apt-get -q -y install -s "${packages[@]}" | _add_timestamp_to_logs "${_apt_logs}"
       else
         apt-get -q -y install "${packages[@]}" | _add_timestamp_to_logs "${_apt_logs}"
@@ -2222,12 +2181,11 @@ function install_apps()
       exit_status=$?
       unset packages;
       if [[ $exit_status -eq 0 ]]; then
-        _log_and_show_success "${_apt} Success!"
+        _log_success "${_apt} Success!"
       else
-      _log_and_warn "${_oh_no} Something went wrong while installing packages in $index."
-      _log_and_warn "${_notice} Please see the log file for more details."
+      _log_warn "${_oh_no} Something went wrong while installing packages in $array."
+      _log_warn "${_notice} Please see the log file for more details."
       fi
-      set_default;
 
     fi
     unset packages
@@ -2256,13 +2214,13 @@ function _install_pip_python()
 
   #Check args
   if [ $# -lt 1 ] ||  [ $# -gt 1 ] ; then
-    set_yellow;
-    _log_and_show "${_error} Incorrect number of arguments.\
+
+    _log_warn "${_error} Incorrect number of arguments.\
      \n${_info} Usage: _check_and_install_pre_requisites <list.apt> <commands to check>\n" && \
     _log_and_exit "Internal Function Error. Invalid number of Arguments: $#." "19";
   fi;
 
-  set_default;
+
   #Install starts here
   local exit_status pip_command pip_loc python_packages requirements_file
   local pip_ver="${1}"
@@ -2285,18 +2243,16 @@ function _install_pip_python()
   esac
 
   _log_and_show "${_checking} Dependencies for Python: ${pip_ver}"
+
   # Check if `python-pip` is installed, if not install it
   if ! pip_loc="$(type -p "$pip_command")" || [[ -z $pip_loc ]]; then
-      _log_and_warn "${_info} $pip_command is not installed!${NC}"
-      set_default;
+      _log_warn "${_info} $pip_command is not installed!${NC}"
       update_repos;
       _log_and_show "${_installing} PIP Dependencies"
 
       # Check if simulate flag is set
       if [ "$simulate_apt_install" == "true" ] && [ "$CI" != "true" ]; then
-        set_yellow;
-        _log_and_show "${_simulate} No Dependencies will be installed!!"
-        set_default;
+        _log_warn "${_simulate} No Dependencies will be installed!!"
         # shellcheck disable=SC2086
         apt-get -q -y install -s "${dependency_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
       else
@@ -2308,8 +2264,8 @@ function _install_pip_python()
       if [[ $exit_status -eq 0 ]]; then
         _log_and_show "${_installed} Dependency packages."
       else
-        _log_and_warn "${_oh_no} Something went wrong while installing dependencies."
-        _log_and_warn "${_error} Python packages cannot be installed without dependencies."
+        _log_warn "${_oh_no} Something went wrong while installing dependencies."
+        _log_warn "${_error} Python packages cannot be installed without dependencies."
         _log_and_exit "${_notice} Please see the log file for more details." "21"
       fi
 
@@ -2330,15 +2286,15 @@ function _install_pip_python()
    printf "%s\n" "${python_packages[@]}" > "${requirements_file}"
   # Check if pip package list is empty
   if [[ ${#python_packages[@]} -eq 0 ]]; then
-    _log_and_warn "${_error} Package array is empty!";
+    _log_warn "${_error} Package array is empty!";
     return
   else
     # I package list isn't empty proceed to install pip packages
     # Check if simulate is true & is not running on TRAVIS/CI.
     if [ "$simulate_apt_install" == "true" ] && [ "$CI" != "true" ]; then
-      _log_and_warn "${_whoops} PIP does not support simulated installs. Not performing install."
+      _log_warn "${_whoops} PIP does not support simulated installs. Not performing install."
     elif  [ "$simulate_apt_install" == "true" ] && [ "$CI" == "true" ]; then
-      _log_and_warn "This is TRAVIS disregarding simulate for pip action"
+      _log_warn "This is TRAVIS disregarding simulate for pip action"
       $pip_command install -r "${requirements_file}" 2>&1 | _add_timestamp_to_logs "${_pip_logs}"
     else
       _debug_log "Installing requirements file ${requirements_file}"
@@ -2347,10 +2303,10 @@ function _install_pip_python()
     fi
     exit_status=$?
     if [[ $exit_status -eq 0 ]]; then
-      _log_and_show_success "${_installed} python - ${1} modules"
+      _log_success "${_installed} python - ${1} modules"
     else
-      _log_and_warn "${_error} Something went wrong while installing packages in $pip_list."
-      _log_and_warn "${_notice} Please see the log file for more details."
+      _log_warn "${_error} Something went wrong while installing packages in $pip_list."
+      _log_warn "${_notice} Please see the log file for more details."
     fi
   fi
 
@@ -2394,10 +2350,9 @@ function install_debs ()
    _log_and_show "${_deb} Installing - $deb_name..."
    # Check if simulate is true
    if [ "$simulate_apt_install" == "true" ]; then
-     set_yellow
-     _log_and_show "${_simulate} $deb_name Installation!!"
-     set_default
+     _log_warn "${_simulate} $deb_name Installation!!"
      dpkg -i --dry-run "$deb_name" 2>&1 | _add_timestamp_to_logs "${_dpkg_logs}"
+
      _debug_log "Installing missing packages..."
      apt-get -q -y install -f 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
      exit_status=$?
@@ -2410,9 +2365,9 @@ function install_debs ()
 
     # shellcheck disable=SC2181
      if [ "$exit_status" = "0" ]; then
-      _log_and_show_success "${_deb} Installed $deb_name successfully."
+      _log_success "${_deb} Installed $deb_name successfully."
      else
-      _log_and_warn "${_oh_no} Some error occured during downloading and installing $index."
+      _log_warn "${_oh_no} Some error occured during downloading and installing $index."
       $?="0"
     fi
     # Delete DEBs
@@ -2463,9 +2418,7 @@ function install_binaries ()
     if [ $exit_status -eq 0 ]; then
       _log_and_show "${_installing} $bin_name..."
        if [ "$simulate_apt_install" == "true" ]; then
-         set_yellow
-         _log_and_show "${_simulate} Skipping Installation!!"
-         set_default
+         _log_warn "${_simulate} Skipping Installation!!"
        else
         {
           cp -rf "/tmp/ae/${bin_name}" /usr/local/bin/"${bin_name}"
@@ -2474,7 +2427,7 @@ function install_binaries ()
         chmod +x /usr/local/bin/"$bin_name" >> "${log_file}"
       fi
     else
-      _log_and_warn "${_error} Failed to download $bin_name."
+      _log_warn "${_error} Failed to download $bin_name."
     fi
     set_default
   done
@@ -2503,25 +2456,25 @@ function __install_snaps()
   esac
 
   if [[ $bool_use_lists == "true" ]]; then
-    _log_and_warn "${_warn} Lists mode does not support installing snap packages"
+    _log_warn "${_warn} Lists mode does not support installing snap packages"
   else
     if [[ ${#parsed_snaps_list[@]} -eq 0 ]]; then
-      _log_and_warn "${_warn} Snaps array is empty!" "19"
+      _log_warn "${_warn} Snaps array is empty!" "19"
     else
       for index in "${parsed_snaps_list[@]}"; do
             _log_and_show "${_snap} $index..."
             if [ "$index" == "" ] || [ "$index" == " " ]; then
-              _log_and_warn "${_snap} Found an empty entry, Ignoring"
+              _log_warn "${_snap} Found an empty entry, Ignoring"
               continue;
             fi
             if [ "$simulate_apt_install" == "true" ]; then
-              _log_and_warn "${_info} Snaps do not support --dry-run, skipping install"
+              _log_warn "${_info} Snaps do not support --dry-run, skipping install"
             else
               _debug_log "Options are ${snapd_options[*]}"
               if snap install "${snapd_options[@]}" "$index"  2>&1 | _add_timestamp_to_logs "${_snap}"  ; then
-                _log_and_show_success "${_snap} $line installed successfully."
+                _log_success "${_snap} $line installed successfully."
               else
-                _log_and_warn "${_oh_no} Some Error occured while installing $line."
+                _log_warn "${_oh_no} Some Error occured while installing $line."
               fi
             fi
         done
@@ -2536,7 +2489,7 @@ function install_snaps()
   dependency_packages=(snapd)
 
   if [ "$simulate_apt_install" == "true" ]; then
-    _log_and_warn "${_warn} Will not install dependencies required for installing snap packages"
+    _log_warn "${_warn} Will not install dependencies required for installing snap packages"
   else
     _install_dependencies "${dependency_packages[@]}"
   fi
@@ -2728,7 +2681,7 @@ function _ci_cloud_and_container_checks()
     fi
 
     if [ "$(uname -r | cut -f3 -d '-')" == "Microsoft" ]; then
-      _log_and_warn "${_warn} Running on Windows Subsystem for Linux.(1)"
+      _log_warn "${_warn} Running on Windows Subsystem for Linux.(1)"
     fi
     #============================ Docker =============================================
     if grep docker /proc/1/cgroup -qa; then
@@ -2785,34 +2738,33 @@ function display_usage()
 {
 #Prints out help menu
 cat <<EOF
-$SCRIPT : A Post Installation Script for Ubuntu/Debian/Linux Mint
-Version : $REL_NAME
-
-Usage: ${SCRIPT}   [options]
-
+${GREEN}
+A Post Installation Script for Ubuntu/Debian/Linux Mint${NC}
+Usage: ${BLUE}${SCRIPT} ${YELLOW}  [options]${NC}
+${YELLOW}
 Non-Action options (can be run as non-root user)
+-------------------------------------------------${NC}
 [-v --version]     Display version info
-[--verify]         Verify
 [-h --help]        Display this help message
-
+${YELLOW}
 Configuration Options
+-------------------------------------------------${NC}
 [-C | --config-file]   Local yaml config file
 [-L | --lists]         Read Configuration from .lists files
                        under data folder.
 [-n | --name]          Name of the configuration file to use
                        as a query parameter when -R / --remote-yaml is used
 [-R | --remote-yaml]   Use config yaml hosted somewhere else
-[--use-default-yaml]   Use default yaml file
 [-V | --version-file]  Specify a local file from which version info will be read
-
+${BLUE}
 The following options are "action" options and
 these will make changes to your system depending on
 tasks chosen.
+-------------------------------------------------${NC}
 [-d | --purge]         Enable Purging packages
 [-f | --fix]           Fix codenames for new releases
 [-p | --pre-release]   Same as --fix but for beta/alpha releases
 [--fix-mode-lts]       Similar to --fix but fallback to last LTS
-
 [-k | --keep-debs]     Do not invoke apt-clean & do not delete
                        downloaded deb packages
 [-l | --delete-log]    Delete logfile (./log/after-effects.log)
@@ -2820,34 +2772,52 @@ tasks chosen.
                        whenever possible. Plese read the documentation
                        at http://ae.prasadt.com/clioptions to know its limits
                        Not everything can be simulated.
-
+${YELLOW}
 Other Options
+-------------------------------------------------${NC}
+[-E | --skip-env-checks]  Skip some env checks
 [-N --no-version-checks]  Skip checking for latest version
 [-H --hide-config]        Hide configuration table
-[-S | --no-stats]      Do not report usage statistics
-[--use-uf-mirror | -u] Use University of Freiburg mirrors
-[-A --autopilot]       Enables AUTOPILOT Mode(No Prompts)
-
+[-S | --no-stats]         Do not report usage statistics
+[--use-uf-mirror | -u]    Use University of Freiburg mirrors
+[-A --autopilot]          Enables AUTOPILOT Mode(No Prompts)
+${GREEN}
 GitHub & Documentation:${BLUE}
- https://github.com/tprasadtp/ubuntu-post-install
- https://ae.prasadt.com${NC}
+* https://github.com/tprasadtp/ubuntu-post-install
+* https://ae.prasadt.com${NC}
+${GREEN}
 Contributions & Issues:
+-------------------------------------------------${NC}
 * You are welcome to contribute
 * Feel free to create a PullRequest/Issue on Github.
+* If it helped go and Star the repo
+-------------------------------------------------
 EOF
 }
 
 function _process_non_root_options()
 {
   # Process command line arguments which does not require root.
-  while [ "${1}" != "" ]; do
-    case ${1} in
-      -v | --version)   display_version;exit 0;;
-      --verify)         verify_gpg_signature;exit 0;;
-      -h | --help)      display_usage;exit 0;;
-    esac
-    shift
-  done
+  if [[  $# -eq 1 ]]; then
+    while [ "${1}" != "" ]; do
+      case ${1} in
+        -v | --version)   display_version;
+                          exit 0;
+                          ;;
+        -G | --verify)    verify_gpg_signature;
+                          exit 0;
+                          ;;
+        -h | --help)      display_usage;
+                          exit 0;
+                          ;;
+        *)                printf "${_error} This does not appear to be a valid option\n";
+                          printf "${_error} Non action options take more than one argument!\n";
+                          exit 1;
+                          ;;
+      esac
+      shift
+    done
+  fi
 }
 
 
@@ -2880,13 +2850,13 @@ function main()
   while [ "${1}" != "" ]; do
     case ${1} in
       -s | --simulate )       readonly simulate_apt_install="true";
-                              _log_and_warn "${_simulate} is set to true";
+                              _log_warn "${_simulate} is set to true";
                               ;;
       -f | --fix )            bool_fix_repo_not_available_for_latest="true";
-                              _log_and_warn "${_fix_repo} is set to true.";
+                              _log_warn "${_fix_repo} is set to true.";
                               ;;
       --fix-mode-lts )        bool_fix_repo_lts="true";
-                              _log_and_warn "${_fix_repo} Fix mode is set to LTS: $codename_lts_fallback.";
+                              _log_warn "${_fix_repo} Fix mode is set to LTS: $codename_lts_fallback.";
                               ;;
       -p | --pre-release )    bool_fix_repo_not_available_for_upcoming_release="true";
                               set_magenta;
@@ -2895,28 +2865,27 @@ function main()
                               ;;
       -d | --purge )          bool_purge_not_required_pkgs="true";
                               _log_and_show "${_purge} Purge packages is set to true."
-                              _log_and_warn "${_warn} No checks are being made on the Packages in the list."
-                              _log_and_warn "${_warn} Use carefully!. Purging something like sudo is stupid idea!"
+                              _log_warn "${_warn} No checks are being made on the Packages in the list."
+                              _log_warn "${_warn} Use carefully!. Purging something like sudo is stupid idea!"
                               set_default;
                               ;;
       -y | --yes )            bool_say_yes_to_all="true";
-                              _log_and_warn "${_warn} Will automatically assume yes, for all the confirmation dialogs.";
+                              _log_warn "${_warn} This option is deprecated, Use Autopilot instead";
                               ;;
-      -l | --delete-log )     delete_log_file;;
-      -k | --keep-debs )      set_default;
-                              bool_preserve_debs="true";
+      -l | --delete-log )     delete_log_file;
+                              ;;
+      -k | --keep-debs )      bool_preserve_debs="true";
                               _log_and_show "${_info} Will keep downloaded DEB packages."
                               ;;
-      -R | --remote-yaml )    set_default;
-                              _log_and_show "${_info} Using Remote YAML";
+      -R | --remote-yaml )    _log_and_show "${_info} Using Remote YAML";
                               readonly bool_remote_yaml="true";
                               readonly bool_use_yaml="true";
-                              shift; readonly url_remote_yaml="${1}";
+                              shift;
+                              readonly url_remote_yaml="${1}";
                               ;;
    -N | --no-version-checks ) bool_check_version="false";
-                              readonly bool_report_stats="false";
                               ;;
-      -S |  --no-stats )      set_yellow;
+      -S |  --no-stats )      # As version check skip would set this to readonly, just if its enabled
                               [[ $bool_check_version != "false" ]] && readonly bool_report_stats="false";
                               _log_and_show "${_info} Statistics will not be reported."
                               set_default;
@@ -2932,12 +2901,11 @@ function main()
                               readonly bool_custom_version_file="true"
                               _log_and_show "${_info} Using custom version yml file"
                               ;;
-      -Y | --yaml )           _log_and_exit "${_error} This option is obsolete. You can use -C/--config-file or -R/--remote-yaml" ""
+      -Y | --yaml )           _log_and_exit "${_error} This option is obsolete. You can use -C/--config-file or -R/--remote-yaml" "26"
                               ;;
       -L | --lists)           readonly bool_use_lists="true";
-                              set_yellow;
-                              _log_and_show "${_info} Using local Lists..."
-                              set_default;
+                              _log_notice "${_info} Using local Lists...";
+                              _log_warn "${_warn} Prefer using YAML instead, No new features will be added to list mode";
                               ;;
       -n | --name)            shift;
                               readonly bool_custom_remote_config_name="true";
@@ -2949,12 +2917,12 @@ function main()
       --internal)             ae_internal="true";
                               ;;
       -A | --autopilot)       AUTOPILOT="true";;
-      --use-uf-mirror | -u)   _log_and_show "Will use Uni-Freiburg mirror(s) if available";
+      --use-uf-mirror )       _log_and_show "Will use Uni-Freiburg mirror(s) if available";
                               readonly bool_use_uni_freiburg_mirror="true";
                               ;;
-      -B | --skip-env-checks) readonly bool_skip_env_checks="true";;
+      -E | --skip-env-checks) readonly bool_skip_env_checks="true";;
       -v | --version )        _log_and_show "-v or --version should be the only argument." "23";;
-      --verify)               _log_and_exit "--verify should be the only argument." "23";;
+      -G | --verify)          _log_and_exit "--verify should be the only argument." "23";;
        -h | --help)           _log_and_exit "-h or --help should be the only argument." "23";;
        * )                    _log_and_exit "${_error} Invalid option: $1" "22";;
     esac
@@ -3013,11 +2981,9 @@ function main()
 
   # Autopilot
   if [[ "$AUTOPILOT" == "true" ]]; then
-    set_blue;
     bool_say_yes_to_all="true"
-    _log_and_show "${_autopilot} is Active"
-    sleep 5;
-    set_default
+    _log_notice "${_autopilot} is Active"
+    sleep 3;
     #_log_and_exit "Because I can" "255"
     _autopilot_check_task_flag_and_run "$ae_task_update" "update_repos"
     _autopilot_check_task_flag_and_run "$ae_task_upgrade" "upgrade_apps"

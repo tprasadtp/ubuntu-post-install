@@ -6,6 +6,8 @@
 - Remove Kubernetes repo. (kubespray/kubeadm works better)
 Minikube is still supported via binary method.
 - Option to fallback to non LTS releases
+- `--pre-release` flag now supports Debian Bullseye
+- Fix Gist URL not working(#17)
 
 ## Version 5.4.3
 

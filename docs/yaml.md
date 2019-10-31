@@ -43,7 +43,7 @@ config:
   # Simulate flag will never be overridden by remote config.
     purge_enabled: true
     preserve_debs: true
-    auto_yes: true
+
 
   # Packages to purge
   purge:

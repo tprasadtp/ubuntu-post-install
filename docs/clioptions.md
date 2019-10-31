@@ -61,6 +61,11 @@ Following details should explain the behavior of this flag. Please do have a loo
     ```console
     ./after-effects --no-version-check
     ```
+    OR
+
+    ```console
+    ./after-effects -N
+    ```
 
 Script will warn you and exit if you are not running latest version of the script. You can skip that by using the above option.
 
@@ -93,13 +98,7 @@ Usually it takes a while for additional Repositories (Docker, Google Cloud SDK e
 - Repositories like Spotify and Google Chrome do not use code names in their repository URLs. So the above workaround is not necessary.
 - Derivatives of Ubuntu will use the code name of Ubuntu on which they are based. For example Linux mint 18.2 Serena will use code name xenial since it is based on Ubuntu 16.04 Xenial Xerus
 - This option applies only for the latest release mentioned in the variable `code_name_latest_release`. and will be ignored if the release is not latest.
-- Variables in current version are (As of Dec 2017) change them if necessary.
 
-```bash
-readonly code_name_latest_release="bionic"
-readonly codename_previous_release="artful"
-readonly codename_upcoming_release="cosmic"
-```
 
 ??? danger "Note for Pre-Release/ development version of Ubuntu"
 
@@ -107,22 +106,6 @@ readonly codename_upcoming_release="cosmic"
     - This flag can be used independent of `--fix`. If both are used together then both flags will be applied if the release is upcoming-release.
     - If the release is stable, only `--fix` flag will be valid and `--pre-release` is ignored.
     - This is how it works:  If the repositories are  not available for latest stable release as well, go back a release. Ex. If the pre-release is 18.04 and the repositories is not available for 17.10 as well, we use 17.04 repositories. Usually happens in first few days of development cycle of 18.04.
-
-## Skip confirmation prompts
-
-!!! snippet "Usage"
-
-    ```console
-    ./after-effects -y
-    ```
-
-    OR
-
-    ```console
-    ./after-effects --yes
-    ```
-
-From v3.0 onward, you will be asked for confirmation before performing the task selected. If you would like to bypass this on a CI environments like TRAVIS or for any other reason, you can do so by running the script with `sudo ./after-effects -y` or `sudo ./after-effects --yes`
 
 ## Purge not required packages
 
@@ -192,6 +175,12 @@ Default behavior is to clean apt cache and delete downloaded DEB packages.
     ./after-effects --hide-config
     ```
 
+  OR
+
+    ```console
+    ./after-effects -H
+    ```
+
 Hides displaying YAML configuration data in the output.
 
 ## Prefer Local lists
@@ -208,7 +197,8 @@ Hides displaying YAML configuration data in the output.
     ./after-effects --lists
     ```
 
-Using this option, you can chose to use the lists file which you have locally and not worry about YAML and shit.
+Using this option, you can chose to use the lists file which you have locally and not worry about YAML.
+It is advised that you switch to YAML though. Not all options are supported with lists.
 
 ## Use Custom Configuration file
 
@@ -259,6 +249,10 @@ Example version file is in `config` directory. All the fields are mandatory.
     ```
 
 You can specify YAML file to use. Script will fetch it and parse it. Please note that local Config file specified takes priority over `-R`. If both -C & -R are used, only local config file is considered. The file should be available without any soft of interactive logins.
+
+!!! warning
+    If using gists, please provide raw gist URL.
+
 
 ## Do not report statistics
 

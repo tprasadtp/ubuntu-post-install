@@ -74,7 +74,6 @@ function main()
       ./after-effects \
       --fix \
       --simulate \
-      --yes \
       --autopilot \
       --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/"${config_yml}"
       exit_code="$?"
@@ -86,7 +85,6 @@ function main()
       ae:"${distro}-${release}" \
       ./after-effects \
       --simulate \
-      --yes \
       --autopilot \
       --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/"${config_yml}"
       exit_code="$?"
@@ -107,7 +105,6 @@ function main()
         --lists \
         --fix \
         --simulate \
-        --yes \
         --autopilot
 
         exit_code="$?"
@@ -120,7 +117,6 @@ function main()
         ./after-effects -d \
         --lists \
         --simulate \
-        --yes \
         --autopilot
 
       exit_code="$?"

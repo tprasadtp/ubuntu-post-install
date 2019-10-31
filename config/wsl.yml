@@ -38,7 +38,7 @@ config:
   # Simulate flag will never be overridden by remote config.
     purge_enabled: false
     preserve_debs: false
-    auto_yes: true
+
 
   # Install components
   # APT Packages, Python Modules, Debian packages
