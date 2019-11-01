@@ -115,15 +115,12 @@ function jekyll_branch()
 
   echo "---> Building Website with Branch"
   mkdocs build;
-  echo "---> Convering to JSON"
-  mkdir -p ./config/json
+
+  echo "---> Linting YAML Files"
   for file in ./config/*.yml;
   do
-    printf "Linting & Converting File  to JSON : ${file}\n"
-    file_name_json=$(basename ./config/"${file}" .yml)
-    file_name_json+=".json"
-    yamllint "${file}" && yml2json "${file}" | python -m json.tool > ./config/json/"${file_name_json}"
-    index=$((index + 1))
+    printf "Linting : ${file}\n"
+    yamllint "${file}"
   done
   echo "---> Copying Config Files"
   rsync -Ea --recursive ./config/ ./_site/config/ && echo "Done!"

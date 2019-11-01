@@ -104,7 +104,13 @@
 
 [[redirects]]
   from = "/build"
-  to = "/deploy-params.txt"
+  to = "/deploy.json"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/commit"
+  to = "/commit.json"
   status = 301
   force = true
 
@@ -137,11 +143,5 @@
 [[redirects]]
   from = "/gpg"
   to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/PLACEHOLDER_REDIRECT/after-effects.asc"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/mintyml"
-  to = "https://gist.githubusercontent.com/tprasadtp/b8de9e44a33839eda69911a67cce09c9/raw/8cfead84a0ff59fa00ef199c39b2ca65466872d6/mint.yml"
   status = 200
   force = true

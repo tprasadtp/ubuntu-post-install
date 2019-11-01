@@ -25,9 +25,11 @@
 #
 
 case "${DEBUG}" in
-  1 | "yes" | "true" | "TRUE")     DEBUG="1";set -o pipefail;;
-  42 | "TRAVIS" | "travis" | "CI")     DEBUG="1";set -eo pipefail;;
-  *)                               set -o pipefail;;
+  1 | "yes" | "true" | "TRUE")     AE_DEBUG=1;set -o pipefail;;
+  "internal")                      AE_DEBUG=2;set -o pipefail;;
+  "TRAVIS" | "ci" | "CI")          AE_DEBUG=2;set -eo pipefail;;
+  "trace")                         AE_DEBUG=3;set -o pipefail;;
+  *)                               AE_DEBUG=0;set -o pipefail;;
 esac
 
 readonly EXEC_START=$(date +%s)
@@ -74,12 +76,13 @@ function _init_printf_variables()
     readonly      _autopilot="[   Autopilot   ]"
     readonly            _api="[      API      ]"
     readonly          _debug="[     DEBUG     ]"
+    readonly       _internal="[    INTERNAL   ]"
     readonly       _ppa_logs="[    PPA-Logs   ]"
     readonly       _apt_logs="[    APT-Logs   ]"
     readonly      _dpkg_logs="[    PKG-Logs   ]"
     readonly   _apt_key_logs="[  APT-Key-Logs ]"
     readonly       _pip_logs="[    PIP-Logs   ]"
-    readonly            _cfg="[    R-Config   ]"
+    readonly            _cfg="[     Config    ]"
     readonly         _rtasks="[    R-Tasks    ]"
     readonly             _ci="[      C-I      ]"
     readonly          _table="[  ---Table---  ]"
@@ -98,7 +101,8 @@ function _init_printf_variables()
     readonly NC=$'\e[0m'
     readonly MAGENTA=$'\e[35m'
     readonly GRAY=$'\e[0;30m'
-
+    readonly LOG_GRAY=$'\e[38;5;240m'
+    readonly INTERNAL_GRAY=$'\e[38;5;244m'
 }
 
 
@@ -189,7 +193,7 @@ function _log_and_exit()
   printf "${RED}$msg${NC}\n";
   {
     printf "[$(date)] ${msg}\n" >> "$log_file";
-    printf "\nFinished %s on $(date).\nLast exit code was: %d\n" "$SCRIPT" "$?"
+    printf "\nFinished %s on $(date).\nExit code: %d\n" "$SCRIPT" "$2"
   } >> "$log_file"
   report_stats
   _line_fill | tee -a "$log_file"
@@ -217,7 +221,7 @@ function _script_exit_log()
 function _debug_log()
 {
   local msg="$1"
-  if [[ $DEBUG -eq "1" ]] || [[ $DEBUG == "true" ]]; then
+  if [[ $AE_DEBUG -gt 0 ]]; then
     printf "${GRAY}${_debug} $msg${NC}\n"
   fi
   printf "[$(date)] ${_debug} $msg\n" >> "$log_file"
@@ -226,7 +230,7 @@ function _debug_log()
 function _log_debug()
 {
   local msg="$1"
-  if [[ $DEBUG -eq "1" ]] || [[ $DEBUG == "true" ]]; then
+  if [[ $AE_DEBUG -gt 0 ]]; then
     printf "${GRAY}${_debug} $msg${NC}\n"
   fi
   printf "[$(date)] ${_debug} $msg\n" >> "$log_file"
@@ -251,6 +255,15 @@ function _log_warn()
 {
   local msg="$1"
   printf "${YELLOW}$msg ${NC}\n"
+  printf "[$(date)] $msg\n" >> "$log_file"
+}
+
+function _log_internal()
+{
+  local msg="$1"
+  if [[ $AE_DEBUG -gt 1 ]]; then
+    printf "${INTERNAL_GRAY}${_internal} $msg ${NC}\n"
+  fi
   printf "[$(date)] $msg\n" >> "$log_file"
 }
 
@@ -441,12 +454,15 @@ function _init_print_basic_info()
 function delete_log_file()
 {
   printf "${_deleting} log file...\n"
-  rm "${log_file}" &> /dev/null \
-  && printf "${_info} Deleting log file Successful.\n" "$log_file" \
-  || printf "${_error} Deleting log file failed.\n" "$log_file"
-  _line_fill;
-  set_default;
-  exit 0;
+  {
+    rm -f "${log_file}" &> /dev/null \
+    && printf "${GREEN}${_success} Deleted log file %s ${NC}\n" "$log_file"
+  } ||
+  {
+    printf "${RED}${_error} Deleting log file failed. %s ${NC}\n" "$log_file"
+    exit 1;
+  }
+  exit 0
 
 }
 
@@ -458,7 +474,13 @@ function  _add_timestamp_to_logs()
   # Arguments : 1
   # ARG -1: printf variable for formatting the log
   # Usage command | _add_timestamp_to_logs "$1"
-  while IFS= read -r line; do printf "[$(date)] ${1} %s\n" "$line" &>> "$log_file"; done
+  while IFS= read -r line;
+  do
+    printf "[$(date)] ${1} %s\n" "$line" &>> "$log_file"
+    if [[ $AE_DEBUG -gt 2 ]]; then
+      printf "${LOG_GRAY}${1} %s${NC}\n" "$line"
+    fi
+  done
 
 }
 
@@ -763,8 +785,9 @@ function parse_yaml() {
   fs="$(echo @|tr @ '\034')"
 
     (
+        #sed -e '/- [^\“]'"[^\']"'.*: /s|\([ ]*\)- \([[:space:]]*\)|\1-\'$'\n''  \1\2|g' |
         #shellcheck disable=SC1003
-        sed -e '/- [^\“]'"[^\']"'.*: /s|\([ ]*\)- \([[:space:]]*\)|\1-\'$'\n''  \1\2|g' |
+        sed -e '/- [^\"]'"[^\']"'.*: /s|\([ ]*\)- \([[:space:]]*\)|\1-\'$'\n''  \1\2|g' |
 
         sed -ne '/^--/s|--||g; s|\"|\\\"|g; s/[[:space:]]*$//g;' \
             -e "/#.*[\"\']/!s| #.*||g; /^#/s|#.*||g;" \
@@ -907,7 +930,7 @@ function _check_bool()
   # Accepts global var and bool to check as arguments
   local g_var param_bool default_val
   if [[ $# -eq 2 ]]; then
-  _debug_log "Two args provided for validation, default is false"
+  _log_internal "Two args provided for validation, default is false"
   default_val="false"
   elif [[ $# -eq 3 ]]; then
     _debug_log "Two args provided for validation, default is ${3}"
@@ -921,17 +944,17 @@ function _check_bool()
 
   g_var="${1}"
   param_bool="${2}"
-  _debug_log "Globar var is : $g_var, Param from cfg is $param_bool"
+  _log_internal "Globar var is : $g_var, Param from cfg is $param_bool"
   case "${param_bool}" in
     true | True | TRUE | Yes | yes | YES | 1 )  declare -g ${g_var}="true"
-                                                _debug_log "$g_var is set to true"
+                                                _log_internal "$g_var is set to true"
                                                 ;;
     false | False | FALSE | No | no | NO | 0 )  declare -g ${g_var}="false"
-                                                _debug_log "$g_var is set to false"
+                                                _log_internal "$g_var is set to false"
                                                 ;;
     *)                                          declare -g ${g_var}="${default_val}"
-                                                _debug_log "Invalid/empty value for param : $g_var."
-                                                _debug_log "It can either be t[T]rue or f[F]alse."
+                                                _log_internal "Invalid/empty value for param : $g_var."
+                                                _log_internal "It can either be t[T]rue or f[F]alse."
                                                 _log_warn "${_warn} $g_var will default to ${default_val}"
                                                 ;;
   esac
@@ -1080,7 +1103,7 @@ function _set_yaml_config()
     _check_bool "ae_task_snaps" "${config__tasks__snaps[0]}"
 
 
-    if [ "${bool_hide_config}" != "true" ] && [ "$DEBUG" != "1" ]; then
+    if [[ ${bool_hide_config} != "true" ]] && [[ $AE_DEBUG -lt 1 ]]; then
       _line_fill
       printf "${_table} %-20s | %-10s |\n" "Repository" "Enabled"
       printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
@@ -1121,7 +1144,6 @@ function _set_yaml_config()
       fi
     else
       _log_and_show "${_cfg} Configuration data is hidden if not in debug mode"
-      _log_debug " AUTOPILOT IS ${AUTOPILOT}"
       _log_debug "-------- REPO CONFIG ----------"
       _log_debug "Docker CE           : $add_docker_repo"
       _log_debug "Wine-HQ             : $add_winehq_repo"
@@ -1139,6 +1161,7 @@ function _set_yaml_config()
       _log_debug "Keep DEBs/APT cache : $bool_preserve_debs"
       _log_debug "Use Uni Mirror      : $bool_use_uni_freiburg_mirror"
       _log_debug "-------- TASK CONFIG ----------"
+      _log_debug " AUTOPILOT IS ${AUTOPILOT}"
       _log_debug "Update              : $ae_task_update"
       _log_debug "Upgrade             : $ae_task_upgrade"
       _log_debug "Add Repos           : $ae_task_repo"
@@ -1439,7 +1462,7 @@ function _install_dependencies()
   if [[ ${#packages[@]} -eq 0 ]]; then
     _log_warn "${_error} Package array is empty!" "19"
   else
-    apt-get -q -y install "${packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  \
+    apt-get -q -y --no-install-recommends install "${packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  \
     || _log_and_exit "${_error} Failed to install dependencies. Script cannot continue!!" "21"
 
     exit_status=$?
@@ -1462,9 +1485,9 @@ function _install_pre_requisites()
   # Following are the packages installed by this function:
   # linux-image-extra-<>, apt-transport-https, ca-certificates,
   # curl, software-properties-common
-  local pre_requisite_packages=(apt-transport-https ca-certificates curl software-properties-common gpgv)
+  local pre_requisite_packages=(apt-transport-https ca-certificates curl software-properties-common gnupg2)
   _log_and_show "${_installing} Necessary dependencies..."
-  _debug_log "Dependencies are apt-transport-https, ca-certificates, curl, software-properties-common gnugpg"
+  _debug_log "Dependencies are apt-transport-https, ca-certificates, curl, software-properties-common gnupg2"
   _install_dependencies "${pre_requisite_packages[@]}"
 
 }
@@ -1926,7 +1949,7 @@ function update_repos()
     _log_success "${_update} Success!"
   else
     _log_error "${_oh_no} Something went wrong in updating repo data. Please see the log file for more details."
-    _log_error "${_error} Your system might end up completely broken and apt-get isn't reliable with this state."
+    _log_error "${_error} Your system might end up completely broken and apt-get isn't reliable in this state."
     _log_error "${_error} The script cannot proceed with this."
     _log_and_exit "${_notice} Most of the times its either missing repository keys or wrongly configured repositories." "61"
   fi
@@ -2130,7 +2153,7 @@ function purge_not_required()
       return;
     else
       if [ "$simulate_apt_install" == "true" ]; then
-        _log_warn "${_simulate} No packages will be purged!!"
+        _log_warn "${_simulate} Purging will be simulated!!"
       apt-get -q -y remove --purge --dry-run "${parsed_purge_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
       else
         apt-get -q -y purge "${parsed_purge_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
@@ -2279,6 +2302,9 @@ function _install_pip_python()
         _log_warn "${_simulate} No Dependencies will be installed!!"
         # shellcheck disable=SC2086
         apt-get -q -y install -s "${dependency_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+      elif [ "$simulate_apt_install" == "true" ] && [ "$CI" == "true" ]; then
+        _log_warn "${_simulate} This is CI disregarding --simulate flag for installing pip dependencies"
+        apt-get -q -y install "${dependency_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
       else
         # shellcheck disable=SC2086
         apt-get -q -y install "${dependency_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
@@ -2692,15 +2718,12 @@ function _ci_cloud_and_container_checks()
 
     #================================ CI =============================================
     if [ "$TRAVIS" == "true" ]; then
-      bool_say_yes_to_all="true"
       _log_and_show "${_ci} Running in Travis CI"
     elif [ "$APPVEYOR" == "true" ]; then
-      bool_say_yes_to_all="true"
       _log_and_show "${_ci} Running in Appveyor CI"
     elif [ "$TF_BUILD" == "True" ]; then
       _log_and_show "Probably running on Azure Pipelines"
     elif [ "$CI" == "true" ]; then
-      bool_say_yes_to_all="true"
       _log_and_show "${_ci} I'm running in  CI"
     else
       _debug_log "Probably not running in a CI"
@@ -2712,6 +2735,7 @@ function _ci_cloud_and_container_checks()
     #============================ Docker =============================================
     if grep docker /proc/1/cgroup -qa; then
       _log_and_show "${_info} Running in Docker."
+      #AE_RUNNING_IN_DOCKER=1
     else
       _debug_log "Probably not running in docker"
     fi
@@ -2834,6 +2858,8 @@ function _process_non_root_options()
         -G | --verify)    verify_gpg_signature;
                           exit 0;
                           ;;
+      -l | --delete-log)  delete_log_file;
+                          ;;
         -h | --help)      display_usage;
                           exit 0;
                           ;;
@@ -2870,65 +2896,66 @@ function main()
     _init_logging
     _log_success "${_success} OK! running as root."
   fi
-  _init_script_variables;
 
+  # Init vars
+  _init_script_variables;
 
   # Process command line arguments.
   while [ "${1}" != "" ]; do
     case ${1} in
-      -s | --simulate )       readonly simulate_apt_install="true";
+      -s | --simulate)        readonly simulate_apt_install="true";
                               _log_warn "${_simulate} is set to true";
-                              ;;
-      -f | --fix )            bool_fix_repo_not_available_for_latest="true";
+                             ;;
+      -f | --fix)             bool_fix_repo_not_available_for_latest="true";
                               _log_warn "${_fix_repo} is set to true.";
                               ;;
-      --fix-mode-lts )        bool_fix_repo_lts="true";
+      --fix-mode-lts)         bool_fix_repo_lts="true";
                               _log_warn "${_fix_repo} Fix mode is set to LTS: $codename_lts_fallback.";
                               ;;
-      -p | --pre-release )    bool_fix_repo_not_available_for_upcoming_release="true";
+      -p | --pre-release)     bool_fix_repo_not_available_for_upcoming_release="true";
                               set_magenta;
                               _log_and_show "${_fix_repo} for upcoming release is set to true.";
                               set_default;
                               ;;
-      -d | --purge )          bool_purge_not_required_pkgs="true";
+      -d | --purge)           bool_purge_not_required_pkgs="true";
                               _log_and_show "${_purge} Purge packages is set to true."
                               _log_warn "${_warn} No checks are being made on the Packages in the list."
                               _log_warn "${_warn} Use carefully!. Purging something like sudo is stupid idea!"
                               set_default;
                               ;;
-      -y | --yes )            bool_say_yes_to_all="true";
+      -y | --yes)             bool_say_yes_to_all="true";
                               _log_warn "${_warn} This option is deprecated, Use Autopilot instead";
                               ;;
-      -l | --delete-log )     delete_log_file;
+      -l | --delete-log)      delete_log_file;
                               ;;
-      -k | --keep-debs )      bool_preserve_debs="true";
+      -k | --keep-debs)       bool_preserve_debs="true";
                               _log_and_show "${_info} Will keep downloaded DEB packages."
                               ;;
-      -R | --remote-yaml )    _log_and_show "${_info} Using Remote YAML";
+      -R | --remote-yaml)     _log_and_show "${_info} Using Remote YAML";
                               readonly bool_remote_yaml="true";
                               readonly bool_use_yaml="true";
                               shift;
                               readonly url_remote_yaml="${1}";
                               ;;
-   -N | --no-version-checks ) bool_check_version="false";
+   -N | --no-version-checks)  bool_check_version="false";
                               ;;
-      -S |  --no-stats )      # As version check skip would set this to readonly, just if its enabled
+      -S |  --no-stats)       # As version check skip would set this to readonly, just if its enabled
                               [[ $bool_check_version != "false" ]] && readonly bool_report_stats="false";
                               _log_and_show "${_info} Statistics will not be reported."
                               set_default;
                               ;;
-    -c | -C | --config-file ) shift;
+    -c | -C | --config-file)  shift;
                               readonly custom_config_file="${1}";
                               readonly bool_custom_config_file="true";
                               readonly bool_use_yaml="true";
                               _log_and_show "${_info} Using custom config file"
                               ;;
-      -V | --version-file )   shift;
+      -V | --version-file)    shift;
                               readonly custom_version_file="${1}";
                               readonly bool_custom_version_file="true"
                               _log_and_show "${_info} Using custom version yml file"
                               ;;
-      -Y | --yaml )           _log_and_exit "${_error} This option is obsolete. You can use -C/--config-file or -R/--remote-yaml" "26"
+      -Y | --yaml)            _log_and_exit "${_error} This option is obsolete. You can use -C/--config-file or -R/--remote-yaml" "26"
                               ;;
       -L | --lists)           readonly bool_use_lists="true";
                               _log_notice "${_info} Using local Lists...";
@@ -2944,14 +2971,14 @@ function main()
       --internal)             ae_internal="true";
                               ;;
       -A | --autopilot)       AUTOPILOT="true";;
-      --use-uf-mirror )       _log_and_show "Will use Uni-Freiburg mirror(s) if available";
+      --use-uf-mirror)        _log_and_show "Will use Uni-Freiburg mirror(s) if available";
                               readonly bool_use_uni_freiburg_mirror="true";
                               ;;
       -E | --skip-env-checks) readonly bool_skip_env_checks="true";;
-      -v | --version )        _log_and_show "-v or --version should be the only argument." "23";;
+      -v | --version)         _log_and_show "-v or --version should be the only argument." "23";;
       -G | --verify)          _log_and_exit "--verify should be the only argument." "23";;
        -h | --help)           _log_and_exit "-h or --help should be the only argument." "23";;
-       * )                    _log_and_exit "${_error} Invalid option: $1" "22";;
+       *)                    _log_and_exit "${_error} Invalid option: $1" "22";;
     esac
     shift
   done

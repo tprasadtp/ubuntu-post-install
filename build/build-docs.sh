@@ -13,15 +13,11 @@ pip install -r ./docs/requirements.txt
 # Build Static
 echo "Building Docs"
 mkdocs build -v -s
-echo "Generate JSON"
+
 for file in ./config/*.yml;
 do
-	printf "Linting Converting File  to JSON : ${file}\n"
-  file_name_json=$(basename ./config/"${file}" .yml)
-  file_name_json+=".json"
-  mkdir -p ./config/json/
-  yamllint "${file}" && yml2json "${file}" | python -m json.tool > ./config/json/"${file_name_json}"
-	index=$((index + 1))
+	printf "Linting File : ${file}\n"
+  yamllint "${file}"
 done
 
 # Some checksumming

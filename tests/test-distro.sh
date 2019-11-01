@@ -61,11 +61,14 @@ function main()
 
   else
     echo "Building $distro:$release Docker Image"
-    docker build -t ae:"${distro}-${release}" ./dockerfiles/"${release}"
-    echo "Running in ${TEST_ENV}"
+    docker build -t ae:"${distro}-${release}" \
+      --build-arg DISTRO="${distro}" \
+      --build-arg CODE_NAME="${release}"  \
+      ./dockerfiles/test
+    echo "Running in ${TEST_ENV:-LOCAL}"
     echo "Testing with YAML"
     if [[ ${enable_fix} == "true" ]]; then
-      docker run -it -e TRAVIS="$TRAVIS" \
+      docker run -it --rm -e TRAVIS="$TRAVIS" \
       -e DEBUG="${DEBUG}" \
       --hostname="${TEST_ENV}" \
       -v "$(pwd)":/shared \
@@ -77,7 +80,7 @@ function main()
       --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/"${config_yml}"
       exit_code="$?"
     else
-      docker run -it -e TRAVIS="$TRAVIS" \
+      docker run -it --rm -e TRAVIS="$TRAVIS" \
       -e DEBUG="${DEBUG}" \
       --hostname="${TEST_ENV}" \
       -v "$(pwd)":/shared \
@@ -95,7 +98,7 @@ function main()
     fi
     echo "Testing With Lists"
     if [[ ${enable_fix} == "true" ]]; then
-      docker run -it -e TRAVIS="$TRAVIS" \
+      docker run -it --rm -e TRAVIS="$TRAVIS" \
         --hostname="${TEST_ENV}" \
         -e DEBUG \
         -v "$(pwd)":/shared \
@@ -108,7 +111,7 @@ function main()
 
         exit_code="$?"
     else
-      docker run -it -e TRAVIS="$TRAVIS" \
+      docker run -it --rm -e TRAVIS="$TRAVIS" \
         --hostname="${TEST_ENV}" \
         -e DEBUG \
         -v "$(pwd)":/shared \

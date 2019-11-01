@@ -1,5 +1,5 @@
 FROM scratch
-LABEL maintainer "Prasad Tengse <code@prasadt.com>"
+LABEL maintainer "Prasad Tengse <tprasadtp@users.noreply.github.com>"
 ADD pre-release-base-amd64.tar.gz /
 # a few minor docker-specific tweaks
 # see https://github.com/docker/docker/blob/9a9fc01af8fb5d98b8eec0740716226fadb3735c/contrib/mkimage/debootstrap
@@ -43,14 +43,17 @@ RUN mkdir -p /run/systemd && echo 'docker' > /run/systemd/container
 ENV DEBIAN_FRONTEND noninteractive
 # Install essentials
 RUN dpkg --add-architecture i386
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
       wget \
       lsb-release \
       whiptail \
       iputils-ping \
       procps \
-      ca-certificates
+      ca-certificates \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /shared
 # overwrite this with 'CMD []' in a dependent Dockerfile
 CMD ["/bin/bash"]

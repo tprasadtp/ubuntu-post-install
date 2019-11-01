@@ -38,7 +38,7 @@ Some tasks might install packages automatically, which are required to perform c
     - apt-transport-https
     - ca-certificates
     - curl
-    - gpg
+    - gnupg2
     - software-properties-common
 
     ### For installing python packages
