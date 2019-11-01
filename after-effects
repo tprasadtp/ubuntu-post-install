@@ -2344,7 +2344,7 @@ function _install_pip_python()
     if [ "$simulate_apt_install" == "true" ] && [ "$CI" != "true" ]; then
       _log_warn "${_whoops} PIP does not support simulated installs. Not performing install."
     elif  [ "$simulate_apt_install" == "true" ] && [ "$CI" == "true" ]; then
-      _log_warn "This is CI disregarding simulate for pip action"
+      _log_warn "${_simulate} This is CI disregarding simulate for pip action"
       $pip_command install -r "${requirements_file}" 2>&1 | _add_timestamp_to_logs "${_pip_logs}"
     else
       _debug_log "Installing requirements file ${requirements_file}"
