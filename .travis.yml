@@ -72,8 +72,9 @@ jobs:
   - stage: Documentation & Deploy
     env: TEST_ENV="Docs-Build"
     script:
-      - "./build/build-docs.sh"
-      - "cat ./_site/commit.json"
+      - ./tests/lint-dockerfiles.sh "docs"
+      - ./build/build-docs.sh
+      - cat ./_site/commit.json
     deploy:
     - provider: pages
       deployment_file: false

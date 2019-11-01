@@ -10,8 +10,14 @@ echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo "Testing Dockerfiles"
 ERRORS=()
 
+if [[ $# -gt 0 ]]; then
+   dockerfiles_folder="$1"
+else
+  dockerfiles_folder="dockerfiles"
+fi
+
 # find all dockerfiles and lint
-for file in $(find dockerfiles -type f -name "Dockerfile" | sort -u); do
+for file in $(find ${dockerfiles_folder} -type f -name "Dockerfile" | sort -u); do
 	if file "${file}" ; then
 		{
 			docker run --rm -i \
