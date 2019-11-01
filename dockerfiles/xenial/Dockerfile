@@ -11,4 +11,5 @@ RUN apt-get install -y --no-install-recommends \
       lsb-release \
       whiptail \
       iputils-ping \
-      procps
+      procps \
+      ca-certificates

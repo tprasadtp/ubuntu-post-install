@@ -33,7 +33,7 @@ jobs:
     script: ./tests/test-distro.sh "ubuntu" "bionic"
 
   - env: TEST_ENV="Bionic-Host"
-    script: ./tests/test-distro.sh "ubuntu" "bionic"
+    script: ./tests/test-distro.sh "ubuntu" "host"
 
   - env: TEST_ENV="Xenial-Docker"
     script: ./tests/test-distro.sh "ubuntu" "xenial"

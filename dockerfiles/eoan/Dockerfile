@@ -7,8 +7,10 @@ WORKDIR /shared
 RUN dpkg --add-architecture i386
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends \
+RUN apt-get install -y --no-install-recommends \
       wget \
       lsb-release \
       whiptail \
       iputils-ping \
-      procps
+      procps \
+      ca-certificates

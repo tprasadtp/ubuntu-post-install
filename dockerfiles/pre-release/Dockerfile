@@ -49,7 +49,8 @@ RUN apt-get install -y --no-install-recommends \
       lsb-release \
       whiptail \
       iputils-ping \
-      procps
+      procps \
+      ca-certificates
 WORKDIR /shared
 # overwrite this with 'CMD []' in a dependent Dockerfile
 CMD ["/bin/bash"]
