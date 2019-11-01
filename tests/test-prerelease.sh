@@ -6,7 +6,7 @@
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 set -o pipefail
-export PRE_REL_CODENAME="eoan"
+export PRE_REL_CODENAME="${1}"
 branch=master
 case "${TRAVIS_EVENT_TYPE}" in
   pull_request )           branch="deploy-preview-${TRAVIS_PULL_REQUEST}";;
@@ -16,12 +16,6 @@ esac
 branch=$(echo $branch | tr -s . - | tr -s / -)
 function main()
 {
-  dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-  #shellcheck disable=SC2116
-  dir=$(echo "${dir/tests/}")
-  log_file="$dir"/logs/after-effects.log
-  # set eo on script.
-  sed -i 's/set -o pipefail/set -eo pipefail/g' "$dir"/after-effects
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo "Getting $PRE_REL_CODENAME Daily Image"
   wget -nv http://cdimage.ubuntu.com/ubuntu-base/daily/current/$PRE_REL_CODENAME-base-amd64.tar.gz -O ./dockerfiles/pre-release/pre-release-base-amd64.tar.gz
@@ -31,23 +25,15 @@ function main()
   echo "Codename : $PRE_REL_CODENAME"
 
   docker run -it -e TRAVIS="$TRAVIS" \
-  --hostname=Docker-Pre-Release \
-  -v "$(pwd)":/shared \
+      -e DEBUG="${DEBUG}" \
+      --hostname=Ubuntu-Pre-Release \
+      -v "$(pwd)":/shared \
   ubuntu:ae-pre-release \
-  ./after-effects --simulate -Y --yes --pre-release  --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/default.yml
+  ./after-effects --simulate --autopilot --pre-release --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/pre-release.yml
 
   exit_code_from_container="$?"
   echo "Exit code from docker run is: $exit_code_from_container"
-  echo "Print Logs is set to: $PRINT_LOGS"
-  echo "Print Pre Release Logs is set to: $PRINT_PRE_RELEASE_LOGS"
-  if [ "$PRINT_LOGS" == "true" ] || [ "$PRINT_PRE_RELEASE_LOGS" == "true" ]; then
-    echo " "
-    echo " "
-    echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-    cat "$log_file"
-  fi
-
-  return "$exit_code_from_container"
+  exit "$exit_code_from_container"
 
 }
 

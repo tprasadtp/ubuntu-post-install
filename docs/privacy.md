@@ -6,21 +6,20 @@ Privacy policy related to website is available [here](https://prasadt.com/privac
 
 !!! info
     Your passwords, usernames, environment variables or anything sensitive is not collected.
+    This feature is currently disabled
 
 The script `after-effects` collects anonymous usage statistics. The following might be collected.
 
 - Randomized UUID generated per run.
 - Last exit code.
 - System Architecture (x64/x86/ARM/ARM64).
-- Amount of RAM & CPU Model
-- Number of GPU & GPU Vendor
 - Total execution time.
+- Randomized hostname
 - Distribution name (Ubuntu, Linux Mint etc.)
 - Distribution code name (bionic, artful etc)
 - Feature/Task selected.
 - Flags used.
 - Timezone and system language.
-- Host-name.
 
 !!! tip
 

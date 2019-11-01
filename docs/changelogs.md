@@ -6,6 +6,10 @@
 - Remove Kubernetes repo. (kubespray/kubeadm works better)
 Minikube is still supported via binary method.
 - Option to fallback to non LTS releases
+- `--pre-release` flag now supports Debian Bullseye
+- Fix Gist URL not workin g(#17)
+- Introduce `--autopilot` flag
+- Introduce DEBUG modes(activated if DEBUG=1)
 
 ## Version 5.4.3
 

@@ -28,7 +28,6 @@ theme:
   extra:
     manifest: 'manifest.webmanifest'
 
-  # Don't include MkDocs' JavaScript
   include_search_page: false
   search_index_only: true
 
@@ -94,6 +93,8 @@ nav:
     - Errors & Issues: faq/errors.md
     - Linux Mint: faq/linuxmint.md
     - Others: faq/others.md
+    - Exit Codes: faq/exit-codes.md
+    - Debugging: faq/debug.md
   - Options: clioptions.md
   - What can it do?: tasks.md
   - Configuration: configuration.md

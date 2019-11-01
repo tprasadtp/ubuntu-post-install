@@ -13,15 +13,11 @@ pip install -r ./docs/requirements.txt
 # Build Static
 echo "Building Docs"
 mkdocs build -v -s
-echo "Generate JSON"
+
 for file in ./config/*.yml;
 do
-	printf "Linting Converting File  to JSON : ${file}\n"
-  file_name_json=$(basename ./config/"${file}" .yml)
-  file_name_json+=".json"
-  mkdir -p ./config/json/
-  yamllint "${file}" && yml2json "${file}" | python -m json.tool > ./config/json/"${file_name_json}"
-	index=$((index + 1))
+	printf "Linting File : ${file}\n"
+  yamllint "${file}"
 done
 
 # Some checksumming
@@ -57,10 +53,11 @@ printf "${spacing_string}: ${TRAVIS_COMMIT_MESSAGE}\n" "SRC Message" \
 printf "${spacing_string}: ${TRAVIS_BRANCH}\n" "Built from" \
 | tee -a ./_site/commit.txt
 
+COMMIT_SHORT="${TRAVIS_COMMIT:0:7}"
 cat <<EOT > ./_site/commit.json
 {
   "commit": {
-    "id": "${TRAVIS_COMMIT:0:7:-NA}",
+    "id": "${COMMIT_SHORT:-NA}",
     "msg": "${TRAVIS_COMMIT_MESSAGE:-NA}",
     "branch": "${TRAVIS_BRANCH:-NA}"
   },

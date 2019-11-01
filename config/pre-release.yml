@@ -1,8 +1,8 @@
 # Install Config
-version: 3
-name: Testing-config-for-Beta-Distros
+api: 2
+name: Polaris
 author: Prasad T
-# Configuraion
+# Configuration
 config:
   # Enabled Tasks
   tasks:
@@ -21,26 +21,27 @@ config:
     pip2: true
     pip3: true
     binaries: true
+    snaps: yes
   # Repository Flags
   add_repo:
-    winehq: true
+    winehq: false
     docker: true
     mendeley: false
     googlecloud: true
+    gcsfuse: false
     spotify: true
     vscode: true
     skype: true
-    signal: false
+    signal: true
     insync: true
     google: true
-    duo: false
-    ros: false
+    ros: true
+    duo: true
   # Flags
   flags:
   # Simulate flag will never be overridden by remote config.
     purge_enabled: true
-    preserve_debs: true
-    auto_yes: true
+    preserve_debs: false
 
   # Packages to purge
   purge:
@@ -50,36 +51,34 @@ config:
     - gnome-mahjongg
   # PPA List
   ppa:
-    - ppa:dawidd0811/neofetch
     - ppa:yubico/stable
     - ppa:teejee2008/ppa
   # Install components
   # APT Packages, Python Modules, Debian packages
   install:
-    # Python 2 Modules
-    python2:
-      - docker-compose
-    # Python 3 Modules
-    python3:
-      - awscli
-    # Debian packages:  .deb files
+    # Debian packages.deb files
     # CSV format similar to lists
     debian_packages:
-      - https://atom-installer.github.com/v1.28.0/atom-amd64.deb,Atom-Editor.deb
-      - https://download.teamviewer.com/download/teamviewer_i386.deb,Teamviewer.deb
+      - https://atom-installer.github.com/v1.35.1/atom-amd64.deb,Atom-Editor.deb
     # Static Binaries which will be placed in /usr/local/bin
-    # Minikube, Coker compose, etc.
+    # minikube, docker-compose, etc.
     # Follows same pattern as Debian packages
     # Name to be saved is second field
     binaries:
       - https://github.com/docker/compose/releases/download/1.20.0/docker-compose-linux-x86_64,docker-compose
       - https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64,minikube
       - https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-amd64,kompose
+    snaps:
+      normal:
+        # No Beta, No classic
+        - snap-store
+        - kdenlive
+      classic:
+        - pycharm-community
     apt:
       # Admin related Stuff
       administration:
         - dconf-editor
-        - htop
         - apt-xapian-index
         - gdebi
         - gparted
@@ -88,34 +87,20 @@ config:
       # Security Related Stuff
       security:
         - gufw
-      # Productiviy & Office Tools & Writing Tools
+        - opensc
+        - scdaemon
+        - gnupg2
+      # Productivity & Office Tools.
       productivity:
-        - empathy
         - evolution
-        - realmd
-        - pandoc-data
-        - pandoc
-        - texstudio
-        - texlive-fonts-extra
-        - texlive-formats-extra
-        - texlive-fonts-recommended
-        - texlive-science
-        - texlive-generic-extra
-        - texlive-xetex
-        - texlive-luatex
-        - texlive-pstricks
-        - texlive-science
-        - texlive-extra-utils
-        - texlive-lang-english
-        - texlive-lang-other
-        - texlive-font-utils
-        - texlive-publishers
-        - gummi
-      # Multimedia Tools. Photo Editots Converting tools, plex etc.
+        - firefox
+        - thunderbird
+      # Multimedia Tools. Photo Editors Converting tools, plex etc.
       multimedia:
         - audacity
         - vlc
         - gimp
+        - inkscape
         - handbrake
         - handbrake-cli
         - rawtherapee
@@ -126,29 +111,21 @@ config:
       # Tools related to development.
       development:
         - curl
-        - spyder
         - spyder3
         - git
+        - vim
+        - nano
+        - neovim
+        - zsh
+        - make
         - shellcheck
-        - ocl-icd-dev
-        - opencl-headers
-        - clinfo
-        - vainfo
-        - vdpauinfo
-        - ocl-icd-libopencl1
-        - ruby
-        - ruby-dev
-        - python-magic
-        - putty
-        - s3cmd
         - python3-pip
-        - python-dateutil
-        - python-pip-whl
-        - python-pip
+        - python3-venv
+        - python3-tk
       # Everything Else
       # Which is conditional
       other:
-        - gnome-online-miners
+        - htop
       # Packages supplied by external repositories & PPAs
       # Dont Mix packages provided by distribution and PPAs
       # Sometimes external repos and ppas fail, so better isolate it.
@@ -157,5 +134,4 @@ config:
         - spotify-client
         - code
         - google-cloud-sdk
-        - gcsfuse
         - docker-ce

@@ -43,7 +43,7 @@ config:
   # Simulate flag will never be overridden by remote config.
     purge_enabled: true
     preserve_debs: true
-    auto_yes: true
+
 
   # Packages to purge
   purge:
@@ -143,7 +143,6 @@ config:
         - ruby-dev
         - python-magic
         - putty
-        - s3cmd
         - python3-pip
         - python-dateutil
         - python-pip-whl
@@ -160,7 +159,6 @@ config:
         - spotify-client
         - code
         - google-cloud-sdk
-        - gcsfuse
         - docker-ce
 
 ```

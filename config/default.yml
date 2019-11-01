@@ -1,5 +1,5 @@
 # Install Config
-version: 5
+api: 2
 name: Polaris
 author: Prasad T
 # Configuration
@@ -42,7 +42,6 @@ config:
   # Simulate flag will never be overridden by remote config.
     purge_enabled: true
     preserve_debs: false
-    auto_yes: true
 
   # Packages to purge
   purge:
@@ -53,7 +52,6 @@ config:
   # PPA List
   ppa:
     - ppa:yubico/stable
-    - ppa:teejee2008/ppa
   # Install components
   # APT Packages, Python Modules, Debian packages
   install:
@@ -66,80 +64,40 @@ config:
     # Follows same pattern as Debian packages
     # Name to be saved is second field
     binaries:
-      - https://github.com/docker/compose/releases/download/1.20.0/docker-compose-linux-x86_64,docker-compose
-      - https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64,minikube
       - https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-amd64,kompose
     snaps:
       normal:
         - htop
       classic:
         - vscode
+    python2:
+      - future
+    python3:
+      - coloredlogs
     apt:
       # Admin related Stuff
       administration:
-        - dconf-editor
-        - htop
-        - apt-xapian-index
-        - gdebi
         - gparted
         - synaptic
-        - bleachbit
       # Security Related Stuff
       security:
         - gufw
+        - gnupg2
       # Productivity & Office Tools.
       productivity:
-        - empathy
-        - evolution
-        - realmd
-        - pandoc-data
-        - pandoc
-        - texstudio
-        - texlive-fonts-extra
-        - texlive-formats-extra
-        - texlive-fonts-recommended
-        - texlive-science
-        - texlive-generic-extra
-        - texlive-xetex
-        - texlive-luatex
-        - texlive-pstricks
-        - texlive-science
-        - texlive-extra-utils
-        - texlive-lang-english
-        - texlive-lang-other
-        - texlive-font-utils
-        - texlive-publishers
-        - gummi
+        - gedit
       # Multimedia Tools. Photo Editors Converting tools, plex etc.
       multimedia:
-        - audacity
         - vlc
-        - gimp
-        - handbrake
-        - handbrake-cli
-        - rawtherapee
-        - darktable
-        - mpv
-        - pavucontrol
         - cheese
       # Tools related to development.
       development:
         - curl
-        - spyder
-        - spyder3
-        - git
-        - shellcheck
-        - ocl-icd-dev
-        - opencl-headers
-        - clinfo
-        - vainfo
-        - vdpauinfo
-        - s3cmd
-        - python3-pip
+        - make
       # Everything Else
       # Which is conditional
       other:
-        - gnome-online-miners
+        - screenfetch
       # Packages supplied by external repositories & PPAs
       # Dont Mix packages provided by distribution and PPAs
       # Sometimes external repos and ppas fail, so better isolate it.
@@ -148,5 +106,4 @@ config:
         - spotify-client
         - code
         - google-cloud-sdk
-        - gcsfuse
         - docker-ce

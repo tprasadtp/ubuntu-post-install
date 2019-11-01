@@ -1,5 +1,5 @@
 # Install Config
-version: 5
+api: 2
 name: Polaris
 author: Prasad T
 # Configuration
@@ -39,7 +39,7 @@ config:
   # Simulate flag will never be overridden by remote config.
     purge_enabled: true
     preserve_debs: false
-    auto_yes: true
+
 
   # Packages to purge
   purge:
@@ -180,7 +180,6 @@ config:
         - code
         - neofetch
         - google-cloud-sdk
-        - gcsfuse
         - docker-ce
         - chromium-browser
         - yubioath-desktop

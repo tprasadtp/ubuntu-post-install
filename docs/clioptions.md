@@ -53,6 +53,7 @@ Following details should explain the behavior of this flag. Please do have a loo
       it simulate option is used.
      - APT package upgrades and apt repository metadata updates cannot be simulated. Only a list of packages upgrade-able will be listed in the log file in case of upgrades.
      - Simulate flag will not simulate installing dependencies for adding or deleting repositories and PPAs.
+     - Please do not set CI="true" and TRAVIS="true" in environment variables as they are reserved for testing and CI. They do not abide by the rules mentioned above.
 
 ## Skip Version Checks
 
@@ -61,8 +62,14 @@ Following details should explain the behavior of this flag. Please do have a loo
     ```console
     ./after-effects --no-version-check
     ```
+    OR
+
+    ```console
+    ./after-effects -N
+    ```
 
 Script will warn you and exit if you are not running latest version of the script. You can skip that by using the above option.
+This will also disable reporting usage stats.
 
 ## Fix for latest Ubuntu releases
 
@@ -86,43 +93,31 @@ Script will warn you and exit if you are not running latest version of the scrip
      - Docker Community Edition
      - Wine HQ
 
-Usually it takes a while for additional Repositories (Docker, Google Cloud SDK etc) to add support for latest release of Ubuntu. However we can use the previous release for which packages are available. So, using packages built for previous release works fine most of the time. This is also good fix if you are running a alpha or beta release of Ubuntu. These options only work on Ubuntu or distros using ubuntu codenames and Linux Mint. They **DO NOT** work on Debian.
+Usually it takes a while for additional Repositories (Docker, Google Cloud SDK etc) to add support for latest release of Ubuntu. However we can use the previous release for which packages are available. So, using packages built for previous release works fine most of the time. This is also good fix if you are running a alpha or beta release of Ubuntu. These options only work on Ubuntu or distros using ubuntu codenames and Linux Mint.
 
 - By default this option is disabled.
-- Use `sudo ./after-effects -f` or `sudo ./after-effects --fix` to enable this.
+- Use `-f` or `--fix` option to enable this.
 - Repositories like Spotify and Google Chrome do not use code names in their repository URLs. So the above workaround is not necessary.
-- Derivatives of Ubuntu will use the code name of Ubuntu on which they are based. For example Linux mint 18.2 Serena will use code name xenial since it is based on Ubuntu 16.04 Xenial Xerus
+- Derivatives of Ubuntu will use the code name of Ubuntu on which they are based. For example Linux mint 18.2 Serena will use code name xenial as it is based on Ubuntu 16.04 Xenial Xerus
 - This option applies only for the latest release mentioned in the variable `code_name_latest_release`. and will be ignored if the release is not latest.
-- Variables in current version are (As of Dec 2017) change them if necessary.
 
-```bash
-readonly code_name_latest_release="bionic"
-readonly codename_previous_release="artful"
-readonly codename_upcoming_release="cosmic"
-```
+## Fix fallback to LTS
 
-??? danger "Note for Pre-Release/ development version of Ubuntu"
+!!! snippet "Usage"
+
+    ```console
+    ./after-effects --fix-mode-lts
+    ```
+
+Use LTS as fallback. This flag should be used in conjunction with `--fix` Otherwise it will be ignored. Instead of using previous Ubuntu release this will use the Last LTS release. i.e if you are on disco and use this bionic repositories will be used. Please use this with caution as it may not work.
+
+
+??? danger "Note for Pre-Release/ development version of Ubuntu/Debian"
 
     - If you are using a pre-release version of Ubuntu, you can use `--pre-release` flag to apply the above mentioned fix to pre-release version of Ubuntu.
     - This flag can be used independent of `--fix`. If both are used together then both flags will be applied if the release is upcoming-release.
     - If the release is stable, only `--fix` flag will be valid and `--pre-release` is ignored.
     - This is how it works:  If the repositories are  not available for latest stable release as well, go back a release. Ex. If the pre-release is 18.04 and the repositories is not available for 17.10 as well, we use 17.04 repositories. Usually happens in first few days of development cycle of 18.04.
-
-## Skip confirmation prompts
-
-!!! snippet "Usage"
-
-    ```console
-    ./after-effects -y
-    ```
-
-    OR
-
-    ```console
-    ./after-effects --yes
-    ```
-
-From v3.0 onward, you will be asked for confirmation before performing the task selected. If you would like to bypass this on a CI environments like TRAVIS or for any other reason, you can do so by running the script with `sudo ./after-effects -y` or `sudo ./after-effects --yes`
 
 ## Purge not required packages
 
@@ -135,10 +130,10 @@ From v3.0 onward, you will be asked for confirmation before performing the task 
     OR
 
     ```console
-    ./after-effects --deboalt
+    ./after-effects --purge
     ```
 
-Usually Ubuntu comes with some pre-installed games, packages which you sometimes do not need. This option is a switch to used in purging these packages mentioned in the subsequent sections. Since it is possible that user might purge necessary packages like sudo or other core system components, these just acts like a barrier from accidentally doing so.
+Usually Ubuntu comes with some pre-installed games, packages which you might not need. This option is a switch to used in purging these packages mentioned in the subsequent sections. Since it is possible that user might purge necessary packages like sudo or other core system components, these just acts like a barrier from accidentally doing so.
 
 !!! warning
 
@@ -192,6 +187,12 @@ Default behavior is to clean apt cache and delete downloaded DEB packages.
     ./after-effects --hide-config
     ```
 
+  OR
+
+    ```console
+    ./after-effects -H
+    ```
+
 Hides displaying YAML configuration data in the output.
 
 ## Prefer Local lists
@@ -208,7 +209,8 @@ Hides displaying YAML configuration data in the output.
     ./after-effects --lists
     ```
 
-Using this option, you can chose to use the lists file which you have locally and not worry about YAML and shit.
+Using this option, you can chose to use the lists file which you have locally and not worry about YAML.
+It is advised that you switch to YAML though. Not all options are supported with lists.
 
 ## Use Custom Configuration file
 
@@ -260,6 +262,10 @@ Example version file is in `config` directory. All the fields are mandatory.
 
 You can specify YAML file to use. Script will fetch it and parse it. Please note that local Config file specified takes priority over `-R`. If both -C & -R are used, only local config file is considered. The file should be available without any soft of interactive logins.
 
+!!! warning
+    If using gists, please provide raw gist URL.
+
+
 ## Do not report statistics
 
 !!! snippet "Usage"
@@ -279,16 +285,14 @@ Disables reporting statistics back to server.
 Following things are reported. (Nothing more than that)
 
 - A UUID generated for each execution, (its random and is not persistent across runs),
-- Host-name,
-- Last exit code,
-- Amount of RAM & CPU Model
-- Number of GPU & GPU Vendor
-- System Architecture (x64/x86/ARM/ARM64),
-- Total execution time,
-- Distribution name (Ubuntu, Linux Mint etc.),
-- Distribution code name (bionic, artful etc),
-- Feature/Task(s) selected,
-- Flags used,
+- Last exit code.
+- System Architecture (x64/x86/ARM/ARM64).
+- Total execution time.
+- Randomized hostname
+- Distribution name (Ubuntu, Linux Mint etc.)
+- Distribution code name (bionic, artful etc)
+- Feature/Task selected.
+- Flags used.
 - Timezone and system language.
 
 ??? question "Privacy Concerns?"
@@ -296,7 +300,8 @@ Following things are reported. (Nothing more than that)
     - If you are freaking out, its a shell script !! You can literally look into it and check what's collected. Why if you ask? I mostly use it on a bunch of machines/VMs and would like to keep an eye on how it did.
     - Data will be stored in AWS DynamoDB and Google Firebase Real-time Database.
     Data will not be shared with any third party. Period. Only me or my team members will have access
-    to it. If you run a search query on google, it probably collects more data than me. API endpoints/PaaS/IaaS provider may log your IP addresses, but script does not and WILL not collect IP addresses.
+    to it. If you run a search query on google, it probably collects more data than me. API endpoints/PaaS/IaaS provider may log your IP addresses, but script does not and WILL not collect IP addresses(local or otehrwise).
+    - Script will not collect your full config file either. Just flags used (like simulate, fix etc)
     - If you flood the reporting endpoints, you might get HTTP 429 errors as reporting endpoints have rate limits.
 
 
@@ -328,3 +333,70 @@ Following things are reported. (Nothing more than that)
     ```
 
 This will display version info. You do **not** have to be root to run this. For all the other tasks you need to be root or use sudo.
+
+## Autopilot Mode
+
+Autopilot mode is designed to run the script in a non interactive mannaer. Please see Autopilot in tasks for more info.
+
+## Help
+
+Displays this help option.
+
+```console
+➜ ./after-effects --help
+
+A Post Installation Script for Ubuntu/Debian/Linux Mint
+Usage: after-effects   [options]
+
+Non-Action options (can be run as non-root user)
+-------------------------------------------------
+[-v --version]     Display version info
+[-h --help]        Display this help message
+
+Configuration Options
+-------------------------------------------------
+[-C | --config-file]   Local yaml config file
+[-L | --lists]         Read Configuration from .list files
+                       in data folder.
+[-n | --name]          Name of the configuration file to use
+                       as a query parameter when -R / --remote-yaml is used
+[-R | --remote-yaml]   Use config yaml hosted somewhere else
+[-V | --version-file]  Specify a local file from which version info will be read
+
+The following options are "action" options and
+these will make changes to your system depending on
+tasks chosen.
+-------------------------------------------------
+[-d | --purge]         Enable Purging packages
+[-f | --fix]           Fix codenames for new releases
+[-p | --pre-release]   Same as --fix but for beta/alpha releases
+[--fix-mode-lts]       Similar to --fix but fallback to last LTS
+                        Should be used with --fix
+[-k | --keep-debs]     Do not invoke apt-clean & do not delete
+                       downloaded deb packages
+[-l | --delete-log]    Delete logfile (./log/after-effects.log)
+[-s | --simulate]      Try not make changes to system and use --dry-run
+                       whenever possible. Plese read the documentation
+                       at http://ae.prasadt.com/clioptions to know its limits
+                       Not everything can be simulated.
+
+Other Options
+-------------------------------------------------
+[-E | --skip-env-checks]  Skip some env checks
+[-N --no-version-checks]  Skip checking for latest version
+[-H --hide-config]        Hide configuration table
+[-S | --no-stats]         Do not report usage statistics
+[--use-uf-mirror | -u]    Use University of Freiburg mirrors
+[-A --autopilot]          Enables AUTOPILOT mode(No Prompts)
+
+GitHub & Documentation:
+* https://github.com/tprasadtp/ubuntu-post-install
+* https://ae.prasadt.com
+
+Contributions & Issues:
+-------------------------------------------------
+* You are welcome to contribute
+* Feel free to create a PullRequest/Issue on Github.
+* If it helped go and star the repo
+-------------------------------------------------
+```

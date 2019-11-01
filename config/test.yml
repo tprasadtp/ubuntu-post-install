@@ -1,0 +1,36 @@
+apt_sources:
+  # Comment, This will show in software properties
+  - comment: Google Chrome
+    # GPG key Can be URL or a GPG key
+    # Keys will be retreived from ubuntu keyserver.
+    key_url:
+    key_id:
+    # URL for repo
+    # Following variables are supported
+    # CODE_NAME for release codename eg. bionic
+    # DISTRO_NAME for name of the distribution eg.ubuntu
+    # they should exactly match the above names to be replaced
+    # including case. --fix and --pre-release flags will be
+    # honoured.
+    source:
+    # Additional architecture support
+    armhf: false
+    i386: false
+    arm64: true
+    # Supports Debian
+    # Should be a bool
+    # Default is true
+    debian: true
+    # Supports Derivatives like mint?
+    # Can be yes, base or no
+    # base will use ubuntu as its base
+    # default is to use base
+    # Setting this to base will replace CODE_NAME to ubuntu based names
+    derivative: base
+    # Some repositories only support LTS
+    # Default is false
+    ltsonly: false
+    # Save .list file as
+    # Mandatory
+    # Do not inlude .list it will be added automatically
+    name: google-chrome

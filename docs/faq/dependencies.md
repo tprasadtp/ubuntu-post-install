@@ -11,7 +11,7 @@ The script depends on following utilities which are usually present on a typical
 !!! tip "Install Dependencies"
 
     ```console
-    sudo apt-get install -y --no-install-recommends lsb-release curl whiptail coreutils iputils-ping procps gpgv wget
+    sudo apt-get install -y --no-install-recommends lsb-release whiptail coreutils iputils-ping procps gpgv wget
     ```
 
 - `lsb-release`, for determining the release and distribution.
@@ -38,7 +38,7 @@ Some tasks might install packages automatically, which are required to perform c
     - apt-transport-https
     - ca-certificates
     - curl
-    - gpg
+    - gnupg2
     - software-properties-common
 
     ### For installing python packages

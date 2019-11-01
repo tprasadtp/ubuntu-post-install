@@ -3,11 +3,11 @@ services:
   site:
     command: serve --dev-addr=0.0.0.0:8000
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ./docs/
     image: mkdocs-material:latest
 #    image: squidfunk/mkdocs-material
     volumes:
-      - $PWD:/srv
+      - ./docs:/home/user/app/docs:ro
+      - ./mkdocs.yml:/home/user/app/mkdocs.yml:ro
     ports:
-      - 8000:8000
+      - 127.0.0.1:8000:8000

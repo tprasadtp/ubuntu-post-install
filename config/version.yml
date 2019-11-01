@@ -4,7 +4,7 @@ api: 2
 version:
   number: 550
   name: 5.5.0-Beta
-  changelog: 19.10 Support
+  changelog: 19.10 Support, Enhancemets
 # Stats reporting
 stats:
   report: false

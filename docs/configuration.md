@@ -46,9 +46,9 @@ The script can fetch remote YAML data from given url. Use `--remote-yaml` URL If
     - After you customize, might want to use simulate flag. `sudo ./after-effects -s -C config.yml -Y`
     - If both `-C` and `--remote-yaml` are used, local config file takes priority, and remote file is **completely** ignored.
 
-## Automate
+## Autopilot mode
 
-Setting `"AUTOPILOT=true"` will run all the tasks specified in the YAML file, or if `-L` list option is used, then all tasks are executed. the order in which tasks are run is as follows.
+Setting `"AUTOPILOT=true"` or `--autopilot` will run all the tasks specified in the YAML file, or if `-L` list option is used, then all tasks are executed. the order in which tasks are run is as follows.
 
 - Update
 - Upgrade
@@ -59,3 +59,10 @@ Setting `"AUTOPILOT=true"` will run all the tasks specified in the YAML file, or
 - Install Python2 Modules
 - Install Python 3 Modules
 - Purge unwanted Packages
+- Install Snap packages
+
+## Reserved Environmenat Variables
+
+Prefix `AE_` is reserved along with `TRAVIS_` as they are used for configuration and testing.
+Please do not set CI="true" in your environment variables. they will alter how script honors `--similate` flag and `--autopilot` flag
+as they are reserved for testing on CI systems.

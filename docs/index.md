@@ -2,6 +2,14 @@
 
 <small>An effortless post install script for Ubuntu </small>
 
+
+[![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.svg?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/110327c5-b5f2-42e3-b5ef-5d5661c94187/deploy-status)](https://app.netlify.com/sites/ubuntu-post-install/deploys)
+[![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=flat&url=https://ae.prasadt.com/config/json/version.json&query=version.name&prefix=V-)](https://github.com/tprasadtp/ubuntu-post-install/)
+[![What's new?](https://img.shields.io/badge/dynamic/json.svg?label=Whats%20New&style=flat&url=https://ae.prasadt.com/config/json/version.json&query=version.changelog)](https://ae.prasadt.com/changelogs/)
+[![license](https://img.shields.io/github/license/tprasadtp/ubuntu-post-install.svg?style=flat)](https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE)
+
+
 ## Why
 
 Upgrading a Linux machine comes with lot of headache. Somethings might break, somethings might not work or you might just want to
@@ -9,13 +17,11 @@ start fresh. Beauty of Linux is almost everything is scriptable. Re-installing i
 
 ## How
 
-What if your script could be "configured"? Just add the package you want to install to your config file. No need to search through code to do it. Separating your preferences and package lists from the script frees you from writing the script every time a new release comes around. This project helps you do just that. Its poor man's Chef/ansible.
+What if your script could be "configured"? Just add the package you want to install to your config file. No need to search through code to do it. Separating your preferences and package lists from the script frees you from writing the script every time a new release comes around. This project helps you do just that. Its a glorified script written in bash!.
 
-## Really? A shell-script?
 
 [![Bash](https://static.prasadt.com/logo64/bash.png)](https://ae.prasadt.com)
 
-Yes! No need to have Python or Ruby or other dependencies. Someone can edit it to fit their needs too.
 
 ## How to
 
@@ -60,7 +66,13 @@ It should work fine. But no promises.
 [![Install-NSnaps](https://img.shields.io/badge/Install_Snaps-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#installing-snap-packages)
 [![Install-EDebs](https://img.shields.io/badge/Install_Edge_snaps-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#installing-snap-packages)
 
+
 ## Screenshots
 
 [![Details](assets/images/details.png)](assets/images/details.png)
 [![Details](assets/images/whiptail.png)](assets/images/whiptail.png)
+
+## Uptime
+
+![Uptime Robot status](https://img.shields.io/uptimerobot/status/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
+![Uptime Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m780628218-79e4106657d18a5abccd3565.svg?style=flat)

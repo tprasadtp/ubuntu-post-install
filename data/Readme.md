@@ -17,7 +17,6 @@ Non package related lists (settings, deb files, delete packages list). The use a
 
 | File          | Contents                                                     | Used by function     |
 | :------------ | :----------------------------------------------------------- | :------------------- |
-| gsettings     | Various gsettings                                            | None Yet             |
 | purge         | List of packages to be purged                                | `purge_not_required` |
 | ppa           | List of ppas to be added                                     | `add_ppas`           |
 | deb-files     | List of DEB files to be installed                            | `install_debs`       |

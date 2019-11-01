@@ -34,7 +34,7 @@ This task can add the following repositories.
     #============================ Switches/ bools ================================
 
       # Latest wine builds
-      add_winehq_repo=true
+      add_winehq_repo=false
 
       #Docker community edition
       add_docker_repo=true
@@ -46,10 +46,10 @@ This task can add the following repositories.
       add_spotify_repo=true
 
       #InSync
-      add_insync_repo=true
+      add_insync_repo=false
 
       #Google Cloud SDK
-      add_googlecloud_repo=true
+      add_googlecloud_repo=false
       add_gcsfuse_Repo=false
 
       #Signal
@@ -155,8 +155,7 @@ https://atom-installer.github.com/v1.21.1/atom-amd64.deb,ATOM-Editor.deb
 
 This will install binaries `bin.list` or YAML config under `config.install.binaries`.
 
-- APT Logs will  show entry in the format `[<date and time>] [  APT  ] <log>` for actions performed by apt commands. (`apt-get install -f` for missing packages)
-- **Simulate** option will only download the package but not install it.
+- **Simulate** option **will** download the package but not install it.
 - Configuration file is a `csv` file without headers. first column corresponds to URL ans the second field the file name under which the file is saved.
 - Each DEB file to be installed should have following entry.
 - URL to the deb file which can be accessed using wget`,`Name of the deb file without any spaces or special chars except hyphen.
@@ -177,7 +176,7 @@ This will install system wide python packages using pip. There are two lists. `p
 This task requires `python-pip package` is installed, If not , will be installed anyway.
 
 - The list files follow similar configuration as package list files. One item per line. however you can specify version requirements as you would for requirements file.
-- Simulate flag will skip installing packages, unless `TRAVIS=true`.
+- Simulate flag will skip installing packages, unless `CI=true`.
 
 !!! warning
     Don't mix Python 3 packages with Python 2 packages.
@@ -208,7 +207,7 @@ Script can install snap packages from snapstore. For example check the default c
 !!! warning
     List mode does not support installing snap packages. Its responsibility of the user to separate classic
     snaps, edge and normal snaps. You should specify the classic snaps under `install.snaps.calssic`,
-    edge snaps under `install.snaps.edge` and noral snaps under `install.snaps.normal` in the yaml file.
+    edge snaps under `install.snaps.edge` and normal snaps under `install.snaps.normal` in the yaml file.
 
 ## All In one
 
@@ -224,11 +223,13 @@ This will perform Following actions. (In the following order)
 - Install Python 3 Modules
 - Install Static binaries
 
-This option will honor --yes and --simulate options as individual tasks would do.
+This option will honor --autopilot and --simulate options as individual tasks would do if used with YAML. Lists mode does not
+support for selecting individiual tasks.
 
-### AUTOPILOT Mode
+## AUTOPILOT Mode
 
-`AUTOPILOT=true` will execute this task.
+Setting `AUTOPILOT=true` or passing `--autopilot` will will skip all UI prompts and confirmations and run ALL In One.
+
 
 ## Delete logs
 

@@ -38,90 +38,98 @@ function main()
   esac
 
   branch=$(echo $branch | tr -s . - | tr -s / -)
-  sed -i 's/set -o pipefail/set -eo pipefail/g' ./after-effects
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
-  if [[ $release == "xenial-host" ]]; then
+  if [[ $release == "host" ]]; then
     echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     echo "Testing On HOST"
     echo "Testing with YAML"
-    sudo ./after-effects --yes --yaml --simulate --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/default.yml --name xenial-host
+    sudo ./after-effects --yes --autopilot --simulate --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/"${config_yml}" --name bionic
     exit_code="$?"
     echo "Exit code for YAML is $exit_code"
     if [[ $exit_code -ne 0 ]]; then
-      return "$exit_code"
+      exit "$exit_code"
     fi
 
     echo "Testing with Lists"
-    sudo ./after-effects --yes --lists -d --simulate --name xenial-host
-    exit_code="$?"
-    echo "Exit code for LIST is $exit_code"
-    if [[ $exit_code -ne 0 ]]; then
-      return "$exit_code"
+    if [[ $TRAVIS_ARCH == "arm64" ]]; then
+        echo "Not testing list in ARM64"
+    else
+      sudo ./after-effects --yes --autopilot --lists -d --simulate --name bionic
+      exit_code="$?"
+      echo "Exit code for LIST is $exit_code"
+      if [[ $exit_code -ne 0 ]]; then
+        exit "$exit_code"
+      fi
     fi
 
   else
     echo "Building $distro:$release Docker Image"
-    docker build -t "${distro}:${release}" ./dockerfiles/"${release}"
-    echo "Running in ${TEST_ENV}"
+    docker build -t ae:"${distro}-${release}" \
+      --build-arg DISTRO="${distro}" \
+      --build-arg CODE_NAME="${release}"  \
+      ./dockerfiles/tests
+    echo "Running in ${TEST_ENV:-LOCAL}"
     echo "Testing with YAML"
     if [[ ${enable_fix} == "true" ]]; then
-      docker run -it -e TRAVIS="$TRAVIS" \
+      docker run -it --rm -e TRAVIS="$TRAVIS" \
+      -e DEBUG="${DEBUG}" \
       --hostname="${TEST_ENV}" \
       -v "$(pwd)":/shared \
-      "${distro}:${release}" \
+      ae:"${distro}-${release}" \
       ./after-effects \
-      --yaml \
       --fix \
       --simulate \
-      --yes \
+      --autopilot \
       --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/"${config_yml}"
       exit_code="$?"
     else
-      docker run -it -e TRAVIS="$TRAVIS" \
+      docker run -it --rm -e TRAVIS="$TRAVIS" \
+      -e DEBUG="${DEBUG}" \
       --hostname="${TEST_ENV}" \
       -v "$(pwd)":/shared \
-      "${distro}:${release}" \
+      ae:"${distro}-${release}" \
       ./after-effects \
-      --yaml \
       --simulate \
-      --yes \
+      --autopilot \
       --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/"${config_yml}"
       exit_code="$?"
     fi
 
     echo "Exit code for YAML is $exit_code"
     if [[ $exit_code -ne 0 ]]; then
-      return "$exit_code"
+      exit "$exit_code"
     fi
     echo "Testing With Lists"
     if [[ ${enable_fix} == "true" ]]; then
-      docker run -it -e TRAVIS="$TRAVIS" \
+      docker run -it --rm -e TRAVIS="$TRAVIS" \
         --hostname="${TEST_ENV}" \
+        -e DEBUG \
         -v "$(pwd)":/shared \
-        "${distro}:${release}" \
+        ae:"${distro}-${release}" \
         ./after-effects -d \
         --lists \
         --fix \
         --simulate \
-        --yes
+        --autopilot
 
         exit_code="$?"
     else
-      docker run -it -e TRAVIS="$TRAVIS" \
+      docker run -it --rm -e TRAVIS="$TRAVIS" \
         --hostname="${TEST_ENV}" \
+        -e DEBUG \
         -v "$(pwd)":/shared \
-        "${distro}:${release}" \
+        ae:"${distro}-${release}" \
         ./after-effects -d \
         --lists \
         --simulate \
-        --yes
+        --autopilot
 
       exit_code="$?"
     fi
     echo "Exit code for LIST is $exit_code"
     if [[ $exit_code -ne 0 ]]; then
-      return "$exit_code"
+      exit "$exit_code"
     fi
 
   fi
