@@ -2978,6 +2978,9 @@ function main()
   # Take care of Mint and other distros
   _fix_ubuntu_derivatives;
 
+     # Set API Endpoints
+  _set_custom_api_nodes;
+
   if [ "$bool_custom_config_file" == "true" ] && [ "$bool_remote_yaml" == "true" ]; then
     _log_and_exit "${_error} Cannot use local config (-C) with remote YAML (-R) Use one of them." "25"
   fi
@@ -2994,8 +2997,6 @@ function main()
     _log_and_exit "${_error} Custom remote config cannot be empty" "39"
   fi
 
-   # Set API Endpoints
-  _set_custom_api_nodes;
 
   # Get Remote Config File/s, check version & configure
   _version_checks;
