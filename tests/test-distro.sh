@@ -44,19 +44,23 @@ function main()
     echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     echo "Testing On HOST"
     echo "Testing with YAML"
-    sudo ./after-effects --yes --autopilot --simulate --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/default.yml --name bionic
+    sudo ./after-effects --yes --autopilot --simulate --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/"${config_yml}" --name bionic
     exit_code="$?"
     echo "Exit code for YAML is $exit_code"
     if [[ $exit_code -ne 0 ]]; then
-      return "$exit_code"
+      exit "$exit_code"
     fi
 
     echo "Testing with Lists"
-    sudo ./after-effects --yes --autopilot --lists -d --simulate --name bionic
-    exit_code="$?"
-    echo "Exit code for LIST is $exit_code"
-    if [[ $exit_code -ne 0 ]]; then
-      return "$exit_code"
+    if [[ $TRAVIS_ARCH == "arm64" ]]; then
+        echo "Not testing list in ARM64"
+    else
+      sudo ./after-effects --yes --autopilot --lists -d --simulate --name bionic
+      exit_code="$?"
+      echo "Exit code for LIST is $exit_code"
+      if [[ $exit_code -ne 0 ]]; then
+        exit "$exit_code"
+      fi
     fi
 
   else

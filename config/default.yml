@@ -52,7 +52,6 @@ config:
   # PPA List
   ppa:
     - ppa:yubico/stable
-    - ppa:teejee2008/ppa
   # Install components
   # APT Packages, Python Modules, Debian packages
   install:
@@ -65,64 +64,40 @@ config:
     # Follows same pattern as Debian packages
     # Name to be saved is second field
     binaries:
-      - https://github.com/docker/compose/releases/download/1.20.0/docker-compose-linux-x86_64,docker-compose
-      - https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64,minikube
       - https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-amd64,kompose
     snaps:
       normal:
-        # No Beta, No classic
-        - snap-store
-        - kdenlive
+        - htop
       classic:
-        - pycharm-community
+        - vscode
+    python2:
+      - future
+    python3:
+      - coloredlogs
     apt:
       # Admin related Stuff
       administration:
-        - dconf-editor
-        - apt-xapian-index
-        - gdebi
         - gparted
         - synaptic
-        - bleachbit
       # Security Related Stuff
       security:
         - gufw
-        - opensc
-        - scdaemon
         - gnupg2
       # Productivity & Office Tools.
       productivity:
-        - evolution
+        - gedit
       # Multimedia Tools. Photo Editors Converting tools, plex etc.
       multimedia:
-        - audacity
         - vlc
-        - gimp
-        - inkscape
-        - handbrake
-        - handbrake-cli
-        - rawtherapee
-        - darktable
-        - mpv
-        - pavucontrol
         - cheese
       # Tools related to development.
       development:
         - curl
-        - spyder3
-        - git
-        - vim
-        - nano
-        - zsh
         - make
-        - shellcheck
-        - python3-pip
-        - python3-venv
-        - python3-tk
       # Everything Else
       # Which is conditional
       other:
-        - htop
+        - screenfetch
       # Packages supplied by external repositories & PPAs
       # Dont Mix packages provided by distribution and PPAs
       # Sometimes external repos and ppas fail, so better isolate it.

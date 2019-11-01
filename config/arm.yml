@@ -63,17 +63,16 @@ config:
     snaps:
       normal:
         # No Beta, No classic
-        - snap-store
         - htop
+    python2:
+      - future
+    python3:
+      - coloredlogs
     apt:
       # Admin related Stuff
       administration:
-        - dconf-editor
-        - apt-xapian-index
-        - gdebi
         - gparted
         - synaptic
-        - bleachbit
       # Security Related Stuff
       security:
         - gufw
@@ -85,30 +84,14 @@ config:
         - evolution
       # Multimedia Tools. Photo Editors Converting tools, plex etc.
       multimedia:
-        - audacity
         - vlc
-        - gimp
-        - inkscape
-        - handbrake
-        - handbrake-cli
-        - rawtherapee
-        - darktable
-        - mpv
-        - pavucontrol
         - cheese
       # Tools related to development.
       development:
         - curl
-        - spyder3
-        - git
-        - vim
         - nano
         - zsh
         - make
-        - shellcheck
-        - python3-pip
-        - python3-venv
-        - python3-tk
       # Everything Else
       # Which is conditional
       # Packages supplied by external repositories & PPAs

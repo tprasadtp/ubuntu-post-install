@@ -6,6 +6,7 @@ dist: bionic
 env:
   global:
   - DEBUG="TRAVIS"
+  - AUTOPILOT="true"
 python:
 - "3.6"
 services:

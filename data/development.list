@@ -1,11 +1,6 @@
 curl
-spyder3
 git
 vim
 nano
 zsh
 make
-shellcheck
-python3-pip
-python3-venv
-python3-tk

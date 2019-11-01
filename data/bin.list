@@ -4,6 +4,4 @@
 # <URL>,<filename>
 # If ypu want to specify relative path you
 # can do so relative to /usr/local/bin
-https://github.com/docker/compose/releases/download/1.21.2/docker-compose-linux-x86_64,docker-compose
-https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64,minikube
 https://github.com/kubernetes/kompose/releases/download/v1.15.0/kompose-linux-amd64,kompose

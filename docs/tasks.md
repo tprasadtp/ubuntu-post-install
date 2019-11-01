@@ -224,11 +224,13 @@ This will perform Following actions. (In the following order)
 - Install Python 3 Modules
 - Install Static binaries
 
-This option will honor --yes and --simulate options as individual tasks would do.
+This option will honor --autopilot and --simulate options as individual tasks would do if used with YAML. Lists mode does not
+support for selecting individiual tasks.
 
-### AUTOPILOT Mode
+## AUTOPILOT Mode
 
-`AUTOPILOT=true` will execute this task.
+Setting `AUTOPILOT=true` or passing `--autopilot` will will skip all UI prompts and confirmations and run ALL In One.
+
 
 ## Delete logs
 

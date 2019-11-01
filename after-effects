@@ -1674,7 +1674,7 @@ function add_repositories()
     wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg -O /tmp/ae/googlecloud.gpg >> "$log_file"
     apt-key add /tmp/ae/googlecloud.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"
   else
-    _debug_log "Neither GCSFUSE nor Google cloud SSK install enabled. Not adding Google cloud APT keys"
+    _debug_log "Neither GCSFUSE nor Google cloud SDK install enabled. Not adding Google cloud APT keys"
   fi
 
   if [ "$add_googlecloud_repo" == "true" ]; then
