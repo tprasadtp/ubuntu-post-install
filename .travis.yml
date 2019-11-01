@@ -3,7 +3,7 @@ language: python
 dist: bionic
 env:
   global:
-    - DEBUG=1
+    - DEBUG="travis"
 python:
   - "3.6"
 services:
@@ -49,10 +49,10 @@ jobs:
 
   - stage: Pre-Release-Builds
     env: TEST_ENV="Ubuntu-Pre-Release-Docker"
-    script: "./tests/test-prerelease.sh"
+    script: ./tests/test-distro.sh "ubuntu" "focal" "pre-release.yml" "true"
 
   - env: TEST_ENV="Debian11-Docker"
-    script: ./tests/test-distro.sh "debian" "bullseye"
+    script: ./tests/test-distro.sh "debian" "bullseye" "pre-release.yml" "true"
 
   - stage: Documentation & Deploy
     env: TEST_ENV="Docs-Build"
@@ -95,6 +95,6 @@ matrix:
   fast_finish: true
   allow_failures:
   - env: TEST_ENV="Ubuntu-Pre-Release-Docker"
-  - env: TEST_ENV="Debian10-Docker"
+  - env: TEST_ENV="Debian11-Docker"
 notifications:
   email: false

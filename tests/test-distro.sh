@@ -38,7 +38,6 @@ function main()
   esac
 
   branch=$(echo $branch | tr -s . - | tr -s / -)
-  sed -i 's/set -o pipefail/set -eo pipefail/g' ./after-effects
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
   if [[ $release == "host" ]]; then

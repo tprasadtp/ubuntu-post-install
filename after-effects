@@ -24,14 +24,12 @@
 #              - Debian 8 & 9
 #
 
-if [[ $DEBUG -eq "1" ]]; then
-  set -o pipefail
-elif [[ $DEBUG == "true" ]]; then
-  DEBUG="1"
-  set -o pipefail
-else
-  set -o pipefail
-fi
+case "${DEBUG}" in
+  1 | "yes" | "true" | "TRUE")     DEBUG="1";set -o pipefail;;
+  42 | "TRAVIS" | "travis" | "CI")     DEBUG="1";set -eo pipefail;;
+  *)                               set -o pipefail;;
+esac
+
 readonly EXEC_START=$(date +%s)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
@@ -821,7 +819,7 @@ function _get_remote_file()
       _debug_log "Successfully retrieved Config file."
     else
       _log_warn "${_error} Something went wrong while retrieving ${file_name}."
-      _log_and_exit "${_error} Error Getiing file." "28"
+      _log_and_exit "${_error} Error Getting file." "28"
     fi
   else
     _log_and_exit "${_error} Invalid number of arguments <_get_remote_file> Requires 2, got $#." "19"
