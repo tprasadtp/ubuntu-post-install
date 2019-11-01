@@ -83,13 +83,16 @@ jobs:
       cleanup: false
       keep_history: true
       target_branch: gh-pages
-      email: ${GITHUB_EMAIL}
+      email:
+        secure: "Gza31zufTUD9qFyRC222M02W1eWB4UmTiFduJwSUY6y3HYcb+HXAHzKm4PI4JkkC5FsC1aB8mw+UafM/1yS9wotFln8fxdm9xugG8mQPEIJbQkWUtrBzOgFqXKpO7dpSK6q8AodE/R9dg285C7p6k0A+sYCyU9YRZ5Tamo9gjiGyy3p2PRtSNbKW10dz8Xh+DpVvsKxG8sT2dkzG0w7+czm+DhWt7Oeu+9bwYnPFdPA/zXUPocMlaerDD8HVzEkBdKubPPvjcCXQcCWquNq/NDI3KRuO2wxp77u+XZ8MOaxht8k3vufZsuQfAQ0Ts2Mb9LxwxqZzPJcxcE0C6sIkmTBbs+jgv1xuYXeb+kFfWuVMKmLlPfmlnk18dClSsb0XV3HNQLPjd9BvAY5hHcYGCxj+vAKBB0VoHM8aYA5ll2+cpFo2d5nIt2iUzKMJXN0KA/uBtC2GqfUsK3j9bVPPZVkNKibEApU5iCKmFEoPzQgZtK1Harb9CBYQ4nJASZ4LpxPOVMOOMZwGUDWuxxhZKRxWQi9RY2mnCbDYwy0fWkmMbVfbjfQIp7NT+ijpr1BAW7md+3FuGL8ltuf68LOt0HH8A9mP/9AT3oxId82xpm6WFU2rA5EUXy5geAMBrU9dW+a1AfrNkWYaPsgFgxJ58YCRCfcTMAseS0JCExn7UiU="
       name: Valarie-CI-bot
-      token: ${GITHUB_TOKEN}
+      token:
+        secure: "EEGtOSThJVPeQNJ3hmx8CwzxWBDDah8cVHP2D9Orl6XYv3JVQscXcQRJm4ZDhLR11OsQrKrTIcR0znl6odkBfsnKcs9DW+LZzD+M0GQtAO66w7i16LC03j57acyNsEHE/yVI69M3S2O5eg+LNn0y3nkVG5a8ejXEYkNDvszwLsgmFZrK8nAuTfksh5flNso67XFU3AR1aOoOQAeKb6LNgiJakD6GRWBkhFx1V8bHNVisqL45DpdUed3Dz9EgNMABtKCG/brtxUtC5lcNaDjRD5z73GYN7LSIuQyWGOS0uKWIb+aysSGGSI6068mZug3GouQnVbLauwiXNwQibq7HK/baairnawwTPHjeTtzRAmyLYWGITbbRzHSp6uUVUY1L6mYLggkD3Uvre8TdmezHhbMuVrMnVyAp+T5px7H6meH9PtGHouB3A+ne3kakUI/0BzagcrtaN10iwdNs9povRAphUuZoLTppATg4lzsk4lCbBAbQQCgs+1KhW3+w6ni+jyRHirwG6NOMcb9iD66N2BVKhmN8Mr31dZHKEltV23uMhJvFRz6JT6hfjjCmlHIYZiXRJJ2MPcs/fu5VGtIz9FeXoSBS5QkXLhWDniNirVKESQ8MVVqWfXvLiKa03tZgREycz1qVGDi79e1A6etFMzEQ1XXPXO4Q5RfXPL5/kvE="
       on:
         branch: master
     - provider: releases
-      token: ${GITHUB_TOKEN}
+      token:
+        secure: "EEGtOSThJVPeQNJ3hmx8CwzxWBDDah8cVHP2D9Orl6XYv3JVQscXcQRJm4ZDhLR11OsQrKrTIcR0znl6odkBfsnKcs9DW+LZzD+M0GQtAO66w7i16LC03j57acyNsEHE/yVI69M3S2O5eg+LNn0y3nkVG5a8ejXEYkNDvszwLsgmFZrK8nAuTfksh5flNso67XFU3AR1aOoOQAeKb6LNgiJakD6GRWBkhFx1V8bHNVisqL45DpdUed3Dz9EgNMABtKCG/brtxUtC5lcNaDjRD5z73GYN7LSIuQyWGOS0uKWIb+aysSGGSI6068mZug3GouQnVbLauwiXNwQibq7HK/baairnawwTPHjeTtzRAmyLYWGITbbRzHSp6uUVUY1L6mYLggkD3Uvre8TdmezHhbMuVrMnVyAp+T5px7H6meH9PtGHouB3A+ne3kakUI/0BzagcrtaN10iwdNs9povRAphUuZoLTppATg4lzsk4lCbBAbQQCgs+1KhW3+w6ni+jyRHirwG6NOMcb9iD66N2BVKhmN8Mr31dZHKEltV23uMhJvFRz6JT6hfjjCmlHIYZiXRJJ2MPcs/fu5VGtIz9FeXoSBS5QkXLhWDniNirVKESQ8MVVqWfXvLiKa03tZgREycz1qVGDi79e1A6etFMzEQ1XXPXO4Q5RfXPL5/kvE="
       file:
       - after-effects
       - after-effects.asc

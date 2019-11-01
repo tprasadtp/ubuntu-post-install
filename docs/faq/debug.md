@@ -53,6 +53,6 @@ You can test the docs locally with provided docker-compose file.
 ```console
 docker-compose build
 docker-compose up
-``
+```
 
 and navigate to localhost:8000 to view the documentation.

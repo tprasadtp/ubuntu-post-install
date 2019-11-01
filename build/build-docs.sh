@@ -53,10 +53,11 @@ printf "${spacing_string}: ${TRAVIS_COMMIT_MESSAGE}\n" "SRC Message" \
 printf "${spacing_string}: ${TRAVIS_BRANCH}\n" "Built from" \
 | tee -a ./_site/commit.txt
 
+COMMIT_SHORT="${TRAVIS_COMMIT:0:7}"
 cat <<EOT > ./_site/commit.json
 {
   "commit": {
-    "id": "${TRAVIS_COMMIT:0:7:-NA}",
+    "id": "${COMMIT_SHORT:-NA}",
     "msg": "${TRAVIS_COMMIT_MESSAGE:-NA}",
     "branch": "${TRAVIS_BRANCH:-NA}"
   },
