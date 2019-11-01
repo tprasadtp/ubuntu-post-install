@@ -68,7 +68,7 @@ function main()
     docker build -t ae:"${distro}-${release}" \
       --build-arg DISTRO="${distro}" \
       --build-arg CODE_NAME="${release}"  \
-      ./dockerfiles/test
+      ./dockerfiles/tests
     echo "Running in ${TEST_ENV:-LOCAL}"
     echo "Testing with YAML"
     if [[ ${enable_fix} == "true" ]]; then

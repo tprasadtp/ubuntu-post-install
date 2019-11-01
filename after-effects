@@ -2394,8 +2394,20 @@ function install_debs ()
     deb_name=$(echo "$index" | cut -d ',' -f2 )
     _debug_log "DEB file url: $deb_url"
     _debug_log "DEB file name: $deb_name"
+
+    if [[ -z $deb_url ]] || [[ -z $deb_name ]]; then
+      _log_error "${_error} Malformed entry either URL or name is empty!"
+      continue
+    fi
+
     _log_and_show "${_deb} Downloading $deb_name"
-    wget -q "$deb_url" -O "${deb_name}" >> "$log_file"
+    {
+      wget -q "$deb_url" -O "${deb_name}" >> "$log_file"
+    } ||
+    {
+      _log_error "${_error} Downloading $deb_name failed."
+      continue
+    }
 
    _log_and_show "${_deb} Installing - $deb_name..."
    # Check if simulate is true
@@ -2456,14 +2468,13 @@ function install_binaries ()
     bin_name=$(echo "$index" | cut -d ',' -f2 )
     _debug_log "BIN file url: $bin_url"
     _debug_log "BIN file name: $bin_name"
-    _log_and_show "${_info} Downloading $bin_name"
-    {
-      wget -q "$bin_url" -O "/tmp/ae/${bin_name}" >> "$log_file"
-    } ||
-    {
-      _log_and_show "${_error} Downloading $bin_name failed."
+
+    if [[ -z $bin_url ]] || [[ -z $bin_name ]]; then
+      _log_error "${_error} Malformed entry either URL or name is empty!"
       continue
-    }
+    fi
+    _log_and_show "${_info} Downloading $bin_name"
+    wget -q "$bin_url" -O "/tmp/ae/${bin_name}" >> "$log_file"
     exit_status="$?"
     if [ $exit_status -eq 0 ]; then
       _log_and_show "${_installing} $bin_name..."
@@ -2477,7 +2488,7 @@ function install_binaries ()
         chmod +x /usr/local/bin/"$bin_name" >> "${log_file}"
       fi
     else
-      _log_warn "${_error} Failed to download $bin_name."
+      _log_error "${_error} Failed to download $bin_name."
     fi
     set_default
   done

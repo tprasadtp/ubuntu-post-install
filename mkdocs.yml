@@ -28,7 +28,7 @@ theme:
   extra:
     manifest: 'manifest.webmanifest'
 
-  include_search_page: true
+  include_search_page: false
   search_index_only: true
 
   # Default values, taken from mkdocs_theme.yml
@@ -94,6 +94,7 @@ nav:
     - Linux Mint: faq/linuxmint.md
     - Others: faq/others.md
     - Exit Codes: faq/exit-codes.md
+    - Debugging: faq/debug.md
   - Options: clioptions.md
   - What can it do?: tasks.md
   - Configuration: configuration.md
