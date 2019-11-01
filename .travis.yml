@@ -90,6 +90,7 @@ jobs:
         secure: "EEGtOSThJVPeQNJ3hmx8CwzxWBDDah8cVHP2D9Orl6XYv3JVQscXcQRJm4ZDhLR11OsQrKrTIcR0znl6odkBfsnKcs9DW+LZzD+M0GQtAO66w7i16LC03j57acyNsEHE/yVI69M3S2O5eg+LNn0y3nkVG5a8ejXEYkNDvszwLsgmFZrK8nAuTfksh5flNso67XFU3AR1aOoOQAeKb6LNgiJakD6GRWBkhFx1V8bHNVisqL45DpdUed3Dz9EgNMABtKCG/brtxUtC5lcNaDjRD5z73GYN7LSIuQyWGOS0uKWIb+aysSGGSI6068mZug3GouQnVbLauwiXNwQibq7HK/baairnawwTPHjeTtzRAmyLYWGITbbRzHSp6uUVUY1L6mYLggkD3Uvre8TdmezHhbMuVrMnVyAp+T5px7H6meH9PtGHouB3A+ne3kakUI/0BzagcrtaN10iwdNs9povRAphUuZoLTppATg4lzsk4lCbBAbQQCgs+1KhW3+w6ni+jyRHirwG6NOMcb9iD66N2BVKhmN8Mr31dZHKEltV23uMhJvFRz6JT6hfjjCmlHIYZiXRJJ2MPcs/fu5VGtIz9FeXoSBS5QkXLhWDniNirVKESQ8MVVqWfXvLiKa03tZgREycz1qVGDi79e1A6etFMzEQ1XXPXO4Q5RfXPL5/kvE="
       on:
         branch: master
+      edge: true
     - provider: releases
       token:
         secure: "EEGtOSThJVPeQNJ3hmx8CwzxWBDDah8cVHP2D9Orl6XYv3JVQscXcQRJm4ZDhLR11OsQrKrTIcR0znl6odkBfsnKcs9DW+LZzD+M0GQtAO66w7i16LC03j57acyNsEHE/yVI69M3S2O5eg+LNn0y3nkVG5a8ejXEYkNDvszwLsgmFZrK8nAuTfksh5flNso67XFU3AR1aOoOQAeKb6LNgiJakD6GRWBkhFx1V8bHNVisqL45DpdUed3Dz9EgNMABtKCG/brtxUtC5lcNaDjRD5z73GYN7LSIuQyWGOS0uKWIb+aysSGGSI6068mZug3GouQnVbLauwiXNwQibq7HK/baairnawwTPHjeTtzRAmyLYWGITbbRzHSp6uUVUY1L6mYLggkD3Uvre8TdmezHhbMuVrMnVyAp+T5px7H6meH9PtGHouB3A+ne3kakUI/0BzagcrtaN10iwdNs9povRAphUuZoLTppATg4lzsk4lCbBAbQQCgs+1KhW3+w6ni+jyRHirwG6NOMcb9iD66N2BVKhmN8Mr31dZHKEltV23uMhJvFRz6JT6hfjjCmlHIYZiXRJJ2MPcs/fu5VGtIz9FeXoSBS5QkXLhWDniNirVKESQ8MVVqWfXvLiKa03tZgREycz1qVGDi79e1A6etFMzEQ1XXPXO4Q5RfXPL5/kvE="
@@ -107,5 +108,6 @@ jobs:
       on:
         branch: master
         tags: true
+      edge: true
 notifications:
   email: false
