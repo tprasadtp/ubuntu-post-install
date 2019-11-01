@@ -1,0 +1,116 @@
+# Install Config
+api: 2
+name: Polaris
+author: Prasad T
+# Configuration
+config:
+  # Enabled Tasks
+  tasks:
+    update: true
+    upgrade: true
+    # Add Repos
+    # individual repos flags are mentioned under config.add_repo key
+    repo: true
+    # Add PPAs
+    ppa: true
+    # APT Packages
+    apt: true
+    # Whether to purge packages mentioned in config.purge key
+    purge: true
+    debs: true
+    pip2: true
+    pip3: true
+    binaries: true
+    snaps: yes
+  # Repository Flags
+  add_repo:
+    winehq: true
+    docker: true
+    mendeley: false
+    googlecloud: true
+    gcsfuse: false
+    spotify: true
+    vscode: true
+    skype: true
+    signal: true
+    insync: true
+    google: true
+    ros: true
+    duo: true
+  # Flags
+  flags:
+  # Simulate flag will never be overridden by remote config.
+    purge_enabled: true
+    preserve_debs: false
+
+  # Packages to purge
+  purge:
+    - gnome-mines
+    - gnome-sudoku
+    - aisleriot
+    - gnome-mahjongg
+  # Install components
+  # APT Packages, Python Modules, Debian packages
+  install:
+    # Debian packages.deb files
+    # CSV format similar to lists
+    # Static Binaries which will be placed in /usr/local/bin
+    # minikube, docker-compose, etc.
+    # Follows same pattern as Debian packages
+    # Name to be saved is second field
+    binaries:
+      - https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-arm,kompose
+    snaps:
+      normal:
+        # No Beta, No classic
+        - snap-store
+        - htop
+    apt:
+      # Admin related Stuff
+      administration:
+        - dconf-editor
+        - apt-xapian-index
+        - gdebi
+        - gparted
+        - synaptic
+        - bleachbit
+      # Security Related Stuff
+      security:
+        - gufw
+        - opensc
+        - scdaemon
+        - gnupg2
+      # Productivity & Office Tools.
+      productivity:
+        - evolution
+      # Multimedia Tools. Photo Editors Converting tools, plex etc.
+      multimedia:
+        - audacity
+        - vlc
+        - gimp
+        - inkscape
+        - handbrake
+        - handbrake-cli
+        - rawtherapee
+        - darktable
+        - mpv
+        - pavucontrol
+        - cheese
+      # Tools related to development.
+      development:
+        - curl
+        - spyder3
+        - git
+        - vim
+        - nano
+        - zsh
+        - make
+        - shellcheck
+        - python3-pip
+        - python3-venv
+        - python3-tk
+      # Everything Else
+      # Which is conditional
+      # Packages supplied by external repositories & PPAs
+      # Dont Mix packages provided by distribution and PPAs
+      # Sometimes external repos and ppas fail, so better isolate it.

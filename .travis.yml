@@ -43,8 +43,10 @@ jobs:
   - env: TEST_ENV="Bionic-Host"
     script: ./tests/test-distro.sh "ubuntu" "host"
 
-  - env: TEST_ENV="Bionic-Host-ARM64"
-    script: ./tests/test-distro.sh "ubuntu" "host"
+  - env:
+    - TEST_ENV="Bionic-Host-ARM64"
+    - TRAVIS_ARCH="arm64"
+    script: ./tests/test-distro.sh "ubuntu" "host" "arm.yml"
     arch: arm64
 
   - env: TEST_ENV="Xenial-Docker"
