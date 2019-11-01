@@ -6,10 +6,9 @@ ENV DEBIAN_FRONTEND noninteractive
 WORKDIR /shared
 RUN dpkg --add-architecture i386
 RUN apt-get update
-RUN apt-get install -y wget \
-lsb-release \
-whiptail \
-iputils-ping \
-apt-transport-https \
-ca-certificates curl \
-ppa-purge
+RUN apt-get install -y --no-install-recommends \
+      wget \
+      lsb-release \
+      whiptail \
+      iputils-ping \
+      procps

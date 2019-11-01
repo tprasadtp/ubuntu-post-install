@@ -3,7 +3,6 @@ spyder3
 git
 vim
 nano
-neovim
 zsh
 make
 shellcheck

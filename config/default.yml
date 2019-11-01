@@ -113,7 +113,6 @@ config:
         - git
         - vim
         - nano
-        - neovim
         - zsh
         - make
         - shellcheck

@@ -1082,7 +1082,7 @@ function _set_yaml_config()
     _check_bool "ae_task_snaps" "${config__tasks__snaps[0]}"
 
 
-    if [ "${bool_hide_config}" != "true" ] || [ "$DEBUG" != "1" ]; then
+    if [ "${bool_hide_config}" != "true" ] && [ "$DEBUG" != "1" ]; then
       _line_fill
       printf "${_table} %-20s | %-10s |\n" "Repository" "Enabled"
       printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"

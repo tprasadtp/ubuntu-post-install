@@ -41,11 +41,11 @@ function main()
   sed -i 's/set -o pipefail/set -eo pipefail/g' ./after-effects
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
-  if [[ $release == "xenial-host" ]]; then
+  if [[ $release == "host" ]]; then
     echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     echo "Testing On HOST"
     echo "Testing with YAML"
-    sudo ./after-effects --yes --autopilot --simulate --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/default.yml --name xenial-host
+    sudo ./after-effects --yes --autopilot --simulate --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/default.yml --name bionic
     exit_code="$?"
     echo "Exit code for YAML is $exit_code"
     if [[ $exit_code -ne 0 ]]; then
@@ -53,7 +53,7 @@ function main()
     fi
 
     echo "Testing with Lists"
-    sudo ./after-effects --yes --autopilot --lists -d --simulate --name xenial-host
+    sudo ./after-effects --yes --autopilot --lists -d --simulate --name bionic
     exit_code="$?"
     echo "Exit code for LIST is $exit_code"
     if [[ $exit_code -ne 0 ]]; then
