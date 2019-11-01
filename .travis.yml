@@ -5,7 +5,7 @@ language: python
 dist: bionic
 env:
   global:
-  - DEBUG="travis"
+  - DEBUG="TRAVIS"
 python:
 - "3.6"
 services:

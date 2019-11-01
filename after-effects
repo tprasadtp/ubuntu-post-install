@@ -1626,7 +1626,7 @@ function add_repositories()
       || _log_warn "${_error} Adding Google Chrome repository failed"
 
     else
-      _log_warn "Architecture: $ARCH is not supported for Chrome. Please use Chromium"
+      _log_warn "${_warn} Architecture: $ARCH is not supported for Chrome. Please use Chromium"
     fi
   else
     _log_and_show "${_repo} Chrome repository is set to false. Skipping."
@@ -1835,7 +1835,7 @@ function add_repositories()
       apt-key add /tmp/ae/microsoft.asc 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_warn "${_error} Adding Visual Studio Code key failed"
       echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list
     else
-      _log_warn "Architecture: $ARCH is not supported by Visual studio Code."
+      _log_warn "${_warn} Architecture: $ARCH is not supported by Visual studio Code."
     fi
   else
     _log_and_show "${_repo} Visual Studio repository is set to false. Skipping."
@@ -1850,7 +1850,7 @@ function add_repositories()
       || _log_warn "${_error} Adding Signal Key Failed"
       echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/signal-xenial.list
     else
-        _log_warn "Architecture: $ARCH is not supported by Signal"
+        _log_warn "${_warn} Architecture: $ARCH is not supported by Signal"
     fi
   else
     _log_and_show "${_repo} Signal repository is set to false. Skipping."
