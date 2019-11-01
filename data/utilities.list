@@ -1,14 +1,5 @@
-ubuntu-restricted-extras
-ubuntu-restricted-addons
-chromium-browser
 p7zip-full
-imwheel
 lm-sensors
-stow
-virtualbox
-virtualbox-qt
 remmina
-sshfs
 scdaemon
 opensc
-xca

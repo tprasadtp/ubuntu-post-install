@@ -1,5 +1,5 @@
 # Install Config
-version: 5
+api: 2
 name: Polaris
 author: Prasad T
 # Configuration
@@ -43,7 +43,6 @@ config:
     purge_enabled: true
     preserve_debs: false
 
-
   # Packages to purge
   purge:
     - gnome-mines
@@ -71,14 +70,15 @@ config:
       - https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-amd64,kompose
     snaps:
       normal:
-        - htop
+        # No Beta, No classic
+        - snap-store
+        - kdenlive
       classic:
-        - vscode
+        - pycharm-community
     apt:
       # Admin related Stuff
       administration:
         - dconf-editor
-        - htop
         - apt-xapian-index
         - gdebi
         - gparted
@@ -87,34 +87,18 @@ config:
       # Security Related Stuff
       security:
         - gufw
+        - opensc
+        - scdaemon
+        - gnupg2
       # Productivity & Office Tools.
       productivity:
-        - empathy
         - evolution
-        - realmd
-        - pandoc-data
-        - pandoc
-        - texstudio
-        - texlive-fonts-extra
-        - texlive-formats-extra
-        - texlive-fonts-recommended
-        - texlive-science
-        - texlive-generic-extra
-        - texlive-xetex
-        - texlive-luatex
-        - texlive-pstricks
-        - texlive-science
-        - texlive-extra-utils
-        - texlive-lang-english
-        - texlive-lang-other
-        - texlive-font-utils
-        - texlive-publishers
-        - gummi
       # Multimedia Tools. Photo Editors Converting tools, plex etc.
       multimedia:
         - audacity
         - vlc
         - gimp
+        - inkscape
         - handbrake
         - handbrake-cli
         - rawtherapee
@@ -125,15 +109,21 @@ config:
       # Tools related to development.
       development:
         - curl
-        - spyder
         - spyder3
         - git
+        - vim
+        - nano
+        - neovim
+        - zsh
+        - make
         - shellcheck
         - python3-pip
+        - python3-venv
+        - python3-tk
       # Everything Else
       # Which is conditional
       other:
-        - gnome-online-miners
+        - htop
       # Packages supplied by external repositories & PPAs
       # Dont Mix packages provided by distribution and PPAs
       # Sometimes external repos and ppas fail, so better isolate it.

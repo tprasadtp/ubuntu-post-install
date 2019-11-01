@@ -48,7 +48,7 @@ The script can fetch remote YAML data from given url. Use `--remote-yaml` URL If
 
 ## Automate
 
-Setting `"AUTOPILOT=true"` will run all the tasks specified in the YAML file, or if `-L` list option is used, then all tasks are executed. the order in which tasks are run is as follows.
+Setting `"AUTOPILOT=true"` or `--autopilot` will run all the tasks specified in the YAML file, or if `-L` list option is used, then all tasks are executed. the order in which tasks are run is as follows.
 
 - Update
 - Upgrade

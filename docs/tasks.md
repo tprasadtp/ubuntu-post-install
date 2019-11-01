@@ -34,7 +34,7 @@ This task can add the following repositories.
     #============================ Switches/ bools ================================
 
       # Latest wine builds
-      add_winehq_repo=true
+      add_winehq_repo=false
 
       #Docker community edition
       add_docker_repo=true
@@ -46,10 +46,10 @@ This task can add the following repositories.
       add_spotify_repo=true
 
       #InSync
-      add_insync_repo=true
+      add_insync_repo=false
 
       #Google Cloud SDK
-      add_googlecloud_repo=true
+      add_googlecloud_repo=false
       add_gcsfuse_Repo=false
 
       #Signal

@@ -24,7 +24,10 @@
 #              - Debian 8 & 9
 #
 
-if [[ $DEBUG -eq "1" ]] || [[ $DEBUG == "true" ]]; then
+if [[ $DEBUG -eq "1" ]]; then
+  set -eo pipefail
+elif [[ $DEBUG == "true" ]]; then
+  DEBUG="1"
   set -eo pipefail
 else
   set -o pipefail
@@ -86,6 +89,7 @@ function _init_printf_variables()
     readonly            _apt="[  APT-Packges  ]"
     readonly           _list="[  Cleaned List ]"
     readonly           _snap="[    Snap PKG   ]"
+    readonly        _success="[    Success    ]"
     #readonly           _falg="[     Flag      ]"
 
     #colors for display
@@ -95,6 +99,7 @@ function _init_printf_variables()
     readonly BLUE=$'\e[34m'
     readonly NC=$'\e[0m'
     readonly MAGENTA=$'\e[35m'
+    readonly GRAY=$'\e[0;30m'
 
 }
 
@@ -109,7 +114,7 @@ function _init_logging()
     mkdir -p "$dir"/logs
   } ||
   {
-    printf "${_error} Failed to Create logs folder\n"; exit 2
+    printf "${RED}${_error} Failed to create logs folder${NC}\n"; exit 2
   }
   # tmp dir
   {
@@ -117,10 +122,16 @@ function _init_logging()
     mkdir -p /tmp/ae/
   } ||
   {
-    printf "${_error} Failed to Create tmp folder\n"; exit 2
+    printf "${RED}${_error} Failed to create tmp folder${NC}\n"; exit 2
   }
-  _debug_log "Executing Script"
-  _line_fill >> "$log_file"
+  # check if logs can be written
+  {
+    _debug_log "Initialize logging"
+    _line_fill >> "$log_file"
+  } ||
+  {
+    printf "${RED}${_error} Failed to create log file ${log_file} ${NC}\n"; exit 2
+  }
 }
 
 
@@ -209,11 +220,19 @@ function _debug_log()
 {
   local msg="$1"
   if [[ $DEBUG -eq "1" ]] || [[ $DEBUG == "true" ]]; then
-    printf "${_debug} $msg\n"
+    printf "${GRAY}${_debug} $msg${NC}\n"
   fi
   printf "[$(date)] ${_debug} $msg\n" >> "$log_file"
 }
 
+function _log_debug()
+{
+  local msg="$1"
+  if [[ $DEBUG -eq "1" ]] || [[ $DEBUG == "true" ]]; then
+    printf "${GRAY}${_debug} $msg${NC}\n"
+  fi
+  printf "[$(date)] ${_debug} $msg\n" >> "$log_file"
+}
 
 function _log_and_show()
 {
@@ -464,7 +483,7 @@ function _check_dependencies()
   done
 
   if [ "$dependency_check_failed_count" -gt 0 ]; then
-    _log_error "${_error} One or more dependencies not installed. Check logs or above message."
+    _log_error "${_error} One or more dependencies not installed."
     _log_and_exit "${_error} Sorry! $SCRIPT cannot continue!" "1"
   fi
 }
@@ -535,7 +554,6 @@ function verify_gpg_signature()
     exit 1;
   fi
 
-
 }
 
 
@@ -544,10 +562,10 @@ function report_stats()
   # Report anonymized stats about the script.
   # Following things are reported.
   # A UUID generated for each execution, (its random and is not persistant across runs)
-  # sha-1 sum of Hostname, Total execution time, system architecture,
+  # sha-1 sum of config, Total execution time, system architecture,
   # Distro name, feaure selected, last exit code, flags used, if Travis or Docker flags are true,
   # timezone and system language. Nothing else is collected. Period.
-  # If you are feaking out, its a shellscript for heaven sake!! You can literally look into it
+  # If you are feaking out, its a shellscript, You can literally look into it
   # and check what's collected. Why if you ask? Just for fun and improvement of course!.
   # Data will be stored in AWS DynamoDB and/or Google Firebase.
   # Data will not be shared with any third party. Period. Only me or my team members will have access
@@ -557,7 +575,7 @@ function report_stats()
   # But I really really don't want to report stats because I Use it in "Top Secret" place under the rock.
   # Well, 1. You should not use this script! There are better tools like Chef and
   #          Ansible for huge deployments.
-  #       2. Okay! Okay! just pass --no-stats or -S as an argument and be done ith it &
+  #       2. Okay! Okay! just pass --no-stats or -S as an argument and be done with it &
   #          the script WILL NOT "phone home".
   true
   if [[ "$ae_internal" == "true" ]]; then
@@ -573,12 +591,9 @@ function _eol_message()
   # ARG 1: Release Name
   # ARG 2: EOL Date
 
-  _log_warn "${_eol} This version of Ubuntu is no longer supported."
+  _log_warn "${_eol} This version of ${distro_name} is no longer supported."
   _log_warn "${_notice} $1 reached EOL on $2."
-  _log_warn "${_notice} Please use a supported version of Ubuntu."
-
-  _log_notice "${_info} Please visit the link below for information on how to upgrade."
-  _log_notice "${_info} https://help.ubuntu.com/community/EOLUpgrades."
+  _log_warn "${_notice} Please use a supported version of ${distro_name}."
 
   _log_and_exit "EOL Release : $code_name" "12";
 }
@@ -631,7 +646,7 @@ function _fix_ubuntu_derivatives()
                                             ;;
       eoan)                                 readonly bool_config_partner_repo="true"
                                             _log_and_show "${_info} This is 19.10 eoan."
-                                            if [[ $bool_fix_repo_not_available_for_latest != "true" ]] && [[ $bool_fix_lts != "true"  ]] ; then _log_warn "If your repos are not yet supported, use --fix option"; fi
+                                            if [[ $bool_fix_repo_not_available_for_latest != "true" ]] && [[ $bool_fix_lts != "true"  ]] ; then _log_notice "${_notice} If your repos are not yet supported, use --fix option"; fi
                                             _log_and_show "${_derivatives} Keeping the codename as: $code_name."
                                             ;;
       focal )                               readonly bool_config_partner_repo="true"
@@ -651,10 +666,10 @@ function _fix_ubuntu_derivatives()
                                             ;;
       trusty)                               _eol_message "$code_name" "April 30th, 2019"
                                             ;;
-      qiana | rebecca | rafaela | rosa )    _log_warn "${_linuxmint} Release is Linux mint 17.X."
+      qiana | rebecca | rafaela | rosa )    _log_error "${_linuxmint} Release is Linux mint 17.X."
                                             _eol_message "$code_name" "April 30th, 2019"
                                             ;;
-      freya )                               _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 14.04 Trusty."
+      freya )                               _log_error "${_elementary} This release of Elementary OS is based on Ubuntu 14.04 Trusty."
                                             _eol_message "$code_name" "April 30th, 2019"
                                             ;;
       zesty )                               _eol_message "$code_name" "January 13th, 2018"
@@ -734,7 +749,6 @@ function _set_custom_api_nodes ()
   # Version, Config ang GPG signature URLS
   readonly api_version_url="${metadata_endpoint}/version.yml"
   _debug_log "Version Info URL is: ${api_version_url}"
-  _log_and_show "${_info} Using Config YAML file at : $api_config_url"
 }
 
 
@@ -878,8 +892,8 @@ function _version_checks ()
     if [[ $bool_report_stats == "false" ]]; then
       _debug_log "Report stats is already disabled"
     else
-      readonly bool_report_stats="true"
-      _log_notice "Stats reporting will be disabled"
+      readonly bool_report_stats="false"
+      _log_notice "${_notice} Stats reporting will be disabled"
     fi
   fi
   #sleep 5
@@ -893,7 +907,20 @@ function _check_bool()
   # Accepted values are true and false
   # If invalid, defaults to false.
   # Accepts global var and bool to check as arguments
-  local g_var param_bool
+  local g_var param_bool default_val
+  if [[ $# -eq 2 ]]; then
+  _debug_log "Two args provided for validation, default is false"
+  default_val="false"
+  elif [[ $# -eq 3 ]]; then
+    _debug_log "Two args provided for validation, default is ${3}"
+    if [[ ${3} == "true" ]] || [[ ${3} == "false" ]]; then
+      default_val="${3}"
+    else
+      _log_warn "Internal error! fallback value is not bool! Report it!"
+      default_val="false"
+    fi
+  fi
+
   g_var="${1}"
   param_bool="${2}"
   _debug_log "Globar var is : $g_var, Param from cfg is $param_bool"
@@ -904,10 +931,10 @@ function _check_bool()
     false | False | FALSE | No | no | NO | 0 )  declare -g ${g_var}="false"
                                                 _debug_log "$g_var is set to false"
                                                 ;;
-    *)                                          declare -g ${g_var}="false"
+    *)                                          declare -g ${g_var}="${default_val}"
                                                 _debug_log "Invalid/empty value for param : $g_var."
                                                 _debug_log "It can either be t[T]rue or f[F]alse."
-                                                _log_warn "${_warn} $g_var will default to false"
+                                                _log_warn "${_warn} $g_var will default to ${default_val}"
                                                 ;;
   esac
 }
@@ -1055,7 +1082,7 @@ function _set_yaml_config()
     _check_bool "ae_task_snaps" "${config__tasks__snaps[0]}"
 
 
-    if [ "${bool_hide_config}" != "true" ]; then
+    if [ "${bool_hide_config}" != "true" ] || [ "$DEBUG" != "1" ]; then
       _line_fill
       printf "${_table} %-20s | %-10s |\n" "Repository" "Enabled"
       printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
@@ -1095,41 +1122,37 @@ function _set_yaml_config()
         _line_fill;
       fi
     else
-      _log_and_show "${_cfg} Configuration data is hidden."
-      _log_and_show "${_cfg} Please check the to display configuration."
-      {
-        printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
-        printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
-        printf "${_cfg} %-20s | %-10s |\n" "Google Cloud SDK" "$add_googlecloud_repo"
-        printf "${_cfg} %-20s | %-10s |\n" "Google Cloud SDK" "$add_gcsfuse_repo"
-        printf "${_cfg} %-20s | %-10s |\n" "Spotify" "$add_spotify_repo"
-        printf "${_cfg} %-20s | %-10s |\n" "Skype" "$add_skype_repo"
-        printf "${_cfg} %-20s | %-10s |\n" "Visual Studio Code" "$add_vscode_repo"
-        printf "${_cfg} %-20s | %-10s |\n" "Insync" "$add_insync_repo"
-        printf "${_cfg} %-20s | %-10s |\n" "Signal for Desktop" "$add_signal_repo"
-        printf "${_cfg} %-20s | %-10s |\n" "Google Chrome & Earth" "$add_google_repo"
-        printf "${_cfg} %-20s | %-10s |\n" "ROS" "$add_ros_repo"
-        printf "${_table} %-20s | %-10s |\n" "Other Flags" "Config"
-        _line_fill;
-        printf "${_cfg} %-20s | %-10s |\n" "Purge Enabled" "$bool_purge_not_required_pkgs"
-        printf "${_cfg} %-20s | %-10s |\n" "Keep DEBs/APT cache" "$bool_preserve_debs"
-        printf "${_cfg} %-20s | %-10s |\n" "Use Uni-Freiburg Mirror" "$bool_use_uni_freiburg_mirror"
-        _line_fill;
-        printf "${_table} %-20s | %-10s |\n" "Task" "Config"
-        printf "${_rtasks} %-20s | %-10s |\n" "Update" "$ae_task_update"
-        printf "${_rtasks} %-20s | %-10s |\n" "Upgrade" "$ae_task_upgrade"
-        printf "${_rtasks} %-20s | %-10s |\n" "Add Repos" "$ae_task_repo"
-        printf "${_rtasks} %-20s | %-10s |\n" "Add PPA" "$ae_task_ppa"
-        printf "${_rtasks} %-20s | %-10s |\n" "APT packages" "$ae_task_apt"
-        printf "${_rtasks} %-20s | %-10s |\n" "DEB packages" "$ae_task_debs"
-        printf "${_rtasks} %-20s | %-10s |\n" "Purge packages" "$ae_task_purge"
-        printf "${_rtasks} %-20s | %-10s |\n" "Python 2 Modules" "$ae_task_pip2"
-        printf "${_rtasks} %-20s | %-10s |\n" "Python 3 Modules" "$ae_task_pip3"
-        printf "${_rtasks} %-20s | %-10s |\n" "Static Binaries" "$ae_task_bin"
-        printf "${_rtasks} %-20s | %-10s |\n" "Snap Packages" "$ae_task_snaps"
-        _line_fill;
-        _line_fill;
-      } >> "${log_file}"
+      _log_and_show "${_cfg} Configuration data is hidden if not in debug mode"
+      _log_debug " AUTOPILOT IS ${AUTOPILOT}"
+      _log_debug "-------- REPO CONFIG ----------"
+      _log_debug "Docker CE           : $add_docker_repo"
+      _log_debug "Wine-HQ             : $add_winehq_repo"
+      _log_debug "Google Cloud SDK    : $add_googlecloud_repo"
+      _log_debug "GCSFUSE             : $add_gcsfuse_repo"
+      _log_debug "Spotify             : $add_spotify_repo"
+      _log_debug "Skype               : $add_skype_repo"
+      _log_debug "Visual Studio Code  : $add_vscode_repo"
+      _log_debug "Insync              : $add_insync_repo"
+      _log_debug "Signal for Desktop  : $add_signal_repo"
+      _log_debug "Google Chrome,Earth : $add_google_repo"
+      _log_debug "ROS                 : $add_ros_repo"
+      _log_debug "-------- FLAG CONFIG ----------"
+      _log_debug "Purge Enabled       : $bool_purge_not_required_pkgs"
+      _log_debug "Keep DEBs/APT cache : $bool_preserve_debs"
+      _log_debug "Use Uni Mirror      : $bool_use_uni_freiburg_mirror"
+      _log_debug "-------- TASK CONFIG ----------"
+      _log_debug "Update              : $ae_task_update"
+      _log_debug "Upgrade             : $ae_task_upgrade"
+      _log_debug "Add Repos           : $ae_task_repo"
+      _log_debug "Add PPA             : $ae_task_ppa"
+      _log_debug "APT packages        : $ae_task_apt"
+      _log_debug "DEB packages        : $ae_task_debs"
+      _log_debug "Purge packages      : $ae_task_purge"
+      _log_debug "Python 2 Modules    : $ae_task_pip2"
+      _log_debug "Python 3 Modules    : $ae_task_pip3"
+      _log_debug "Static Binaries     : $ae_task_bin"
+      _log_debug "Snap Packages       : $ae_task_snaps"
+      _log_debug "--------  END CONFIG ----------"
     fi
     #################################################################################
     #                              Parse Arrays
@@ -1241,7 +1264,7 @@ function _set_list_config()
     _log_and_show "${_cfg} Parsing local lists..."
 
     # Latest wine builds
-    add_winehq_repo=true
+    add_winehq_repo=false
 
     #Docker community edition
     add_docker_repo=true
@@ -1253,10 +1276,10 @@ function _set_list_config()
     add_spotify_repo=true
 
     #InSync
-    add_insync_repo=true
+    add_insync_repo=false
 
     #Google Cloud SDK
-    add_googlecloud_repo=true
+    add_googlecloud_repo=false
     add_gcsfuse_repo=false
 
     #Signal
@@ -1616,7 +1639,7 @@ function add_repositories()
     || _log_warn "${_error} Adding Insync Repository failed"
 
   elif [ "$add_insync_repo" == "true" ] && [ "$bool_is_debian" == "true" ]; then
-    _log_warn "${_whoops} Unfortunately InSync repositoris are not supported on Debian."
+    _log_warn "${_whoops} InSync repositoris are not supported on Debian."
     _log_warn "${_info} Please use debfile instead of repositoris."
     _log_notice "${_info} Visit https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files"
   else
@@ -1685,7 +1708,7 @@ function add_repositories()
       _log_warn "${_error} Architecture not supported!. Please use docker.io package from your distro."
     fi
   else
-    _debug_log "Adding Docekr-CE repository is set to false. Skipping."
+    _debug_log "Adding Docker-CE repository is set to false. Skipping."
   fi
 
   # Skype
@@ -1829,6 +1852,7 @@ function add_repositories()
 
   # Duo Unix
   if [ "$add_duo_repo" == "true" ]; then
+    _log_and_show "${_repo} Adding Duo Security for Unix"
     if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "i386" ] ; then
       case "$code_name" in
         bionic)     duo_repo_url="http://pkg.duosecurity.com/Ubuntu bionic main";
@@ -1846,7 +1870,9 @@ function add_repositories()
         jessie)     duo_repo_url="http://pkg.duosecurity.com/Debian stretch main";
                     duo_supported="true"
                     ;;
-        *)          _log_warn "Only LTS/Stable versions of Ubuntu/Debian are suported. You are running Unsupported version : ${code_name}"
+        *)          _log_warn "${_warn} Only LTS/Stable versions of Ubuntu/Debian are suported."
+                    _log_warn "${_warn} You are running Unsupported version : ${code_name}"
+                    ;;
       esac
       if [[ $duo_supported == "true" ]]; then
         # Repo keys for duosecurity
@@ -1875,7 +1901,7 @@ function add_repositories()
     _log_and_show "${_repo} Canonical partner repositoris"
     add-apt-repository "deb http://archive.canonical.com/ubuntu $code_name partner" >> "$log_file"
   else
-    _log_warn "${_warn} Canonical Partner repositoris may not be supported on this platform. They remain unchanged/unavailable."
+    _log_warn "${_warn} Canonical Partner repositoris may not be supported on this platform."
   fi
 
   # Remove artifacts and keys
@@ -1904,7 +1930,7 @@ function update_repos()
     _log_error "${_oh_no} Something went wrong in updating repo data. Please see the log file for more details."
     _log_error "${_error} Your system might end up completely broken and apt-get isn't reliable with this state."
     _log_error "${_error} The script cannot proceed with this."
-    _log_error "${_notice} Most of the times its either missing repository keys or wrongly configured repositories." "61"
+    _log_and_exit "${_notice} Most of the times its either missing repository keys or wrongly configured repositories." "61"
   fi
 }
 
@@ -2294,7 +2320,7 @@ function _install_pip_python()
     if [ "$simulate_apt_install" == "true" ] && [ "$CI" != "true" ]; then
       _log_warn "${_whoops} PIP does not support simulated installs. Not performing install."
     elif  [ "$simulate_apt_install" == "true" ] && [ "$CI" == "true" ]; then
-      _log_warn "This is TRAVIS disregarding simulate for pip action"
+      _log_warn "This is CI disregarding simulate for pip action"
       $pip_command install -r "${requirements_file}" 2>&1 | _add_timestamp_to_logs "${_pip_logs}"
     else
       _debug_log "Installing requirements file ${requirements_file}"
@@ -2372,12 +2398,12 @@ function install_debs ()
     fi
     # Delete DEBs
     if [ "$bool_preserve_debs" == "false" ];then
-      _log_and_show "${_deb} Deleting ownloaded DEB Packages"
+      _log_and_show "${_deb} Deleting downloaded DEB Packages"
       (
         rm -f "${dir}/${deb_name}" >> "$log_file"
       )
     else
-      _debug_log "Keeping Downloaded DEB Packages"
+      _debug_log "Keeping downloaded DEB packages"
     fi
   done
 
@@ -2669,13 +2695,15 @@ function _ci_cloud_and_container_checks()
     #================================ CI =============================================
     if [ "$TRAVIS" == "true" ]; then
       bool_say_yes_to_all="true"
-      _log_and_show "${_ci} Running in Travis CI :|"
+      _log_and_show "${_ci} Running in Travis CI"
     elif [ "$APPVEYOR" == "true" ]; then
       bool_say_yes_to_all="true"
-      _log_and_show "${_ci} Running in Appveyor CI :|"
+      _log_and_show "${_ci} Running in Appveyor CI"
+    elif [ "$TF_BUILD" == "True" ]; then
+      _log_and_show "Probably running on Azure Pipelines"
     elif [ "$CI" == "true" ]; then
       bool_say_yes_to_all="true"
-      _log_and_show "${_ci} I'm running in  CI :|"
+      _log_and_show "${_ci} I'm running in  CI"
     else
       _debug_log "Probably not running in a CI"
     fi
@@ -2719,7 +2747,7 @@ function _ci_cloud_and_container_checks()
       _log_and_show "${_info} Running on AZURE ${AZURE_REGION}"
 
     else
-      _debug_log "Probably not running on AWS, GCP or Digital Ocean."
+      _debug_log "Probably not running on AWS, GCP, Azure or Digital Ocean."
     fi
 
   fi
@@ -2750,8 +2778,8 @@ ${YELLOW}
 Configuration Options
 -------------------------------------------------${NC}
 [-C | --config-file]   Local yaml config file
-[-L | --lists]         Read Configuration from .lists files
-                       under data folder.
+[-L | --lists]         Read Configuration from .list files
+                       in data folder.
 [-n | --name]          Name of the configuration file to use
                        as a query parameter when -R / --remote-yaml is used
 [-R | --remote-yaml]   Use config yaml hosted somewhere else
@@ -2765,10 +2793,11 @@ tasks chosen.
 [-f | --fix]           Fix codenames for new releases
 [-p | --pre-release]   Same as --fix but for beta/alpha releases
 [--fix-mode-lts]       Similar to --fix but fallback to last LTS
+                        Should be used with --fix
 [-k | --keep-debs]     Do not invoke apt-clean & do not delete
                        downloaded deb packages
 [-l | --delete-log]    Delete logfile (./log/after-effects.log)
-[-s | --simulate]      Try not make changes to system ans use --dry-run
+[-s | --simulate]      Try not make changes to system and use --dry-run
                        whenever possible. Plese read the documentation
                        at http://ae.prasadt.com/clioptions to know its limits
                        Not everything can be simulated.
@@ -2780,7 +2809,7 @@ Other Options
 [-H --hide-config]        Hide configuration table
 [-S | --no-stats]         Do not report usage statistics
 [--use-uf-mirror | -u]    Use University of Freiburg mirrors
-[-A --autopilot]          Enables AUTOPILOT Mode(No Prompts)
+[-A --autopilot]          Enables AUTOPILOT mode(No Prompts)
 ${GREEN}
 GitHub & Documentation:${BLUE}
 * https://github.com/tprasadtp/ubuntu-post-install
@@ -2790,7 +2819,7 @@ Contributions & Issues:
 -------------------------------------------------${NC}
 * You are welcome to contribute
 * Feel free to create a PullRequest/Issue on Github.
-* If it helped go and Star the repo
+* If it helped go and star the repo
 -------------------------------------------------
 EOF
 }
@@ -2841,7 +2870,7 @@ function main()
   else
     # Actual logging starts
     _init_logging
-    _debug_log "OK! running as root."
+    _log_success "${_success} OK! running as root."
   fi
   _init_script_variables;
 
@@ -2949,9 +2978,6 @@ function main()
   # Take care of Mint and other distros
   _fix_ubuntu_derivatives;
 
- # Set API Endpoints
-  _set_custom_api_nodes;
-
   if [ "$bool_custom_config_file" == "true" ] && [ "$bool_remote_yaml" == "true" ]; then
     _log_and_exit "${_error} Cannot use local config (-C) with remote YAML (-R) Use one of them." "25"
   fi
@@ -2959,12 +2985,17 @@ function main()
   if [ "$bool_custom_config_file" == "true" ] && [ ! -f "$custom_config_file" ]; then
     _log_and_exit "${_error} Config file you have specified is not found or not accessible" "36"
   fi
+
   if [ "$bool_custom_version_file" == "true" ] && [ ! -f "$custom_version_file" ]; then
     _log_and_exit "${_error} Custom version info file you have specified is not found or not accessible" "36"
   fi
+
   if [ "$bool_custom_remote_config_name" == "true" ] && [ "$custom_remote_config_name" == "" ]; then
     _log_and_exit "${_error} Custom remote config cannot be empty" "39"
   fi
+
+   # Set API Endpoints
+  _set_custom_api_nodes;
 
   # Get Remote Config File/s, check version & configure
   _version_checks;
@@ -2974,7 +3005,7 @@ function main()
   elif [ "$bool_use_yaml" != "true" ] && [ "$bool_use_lists" == "true" ]; then
     _set_list_config
   else
-    _log_and_exit "${_error} You need to specify single config type to use." "25"
+    _log_and_exit "${_error} You need to specify config type or file to use." "25"
   fi
 
   sleep 3
@@ -2982,7 +3013,7 @@ function main()
   # Autopilot
   if [[ "$AUTOPILOT" == "true" ]]; then
     bool_say_yes_to_all="true"
-    _log_notice "${_autopilot} is Active"
+    _log_notice "${_autopilot} Active"
     sleep 3;
     #_log_and_exit "Because I can" "255"
     _autopilot_check_task_flag_and_run "$ae_task_update" "update_repos"

@@ -143,7 +143,6 @@ config:
         - ruby-dev
         - python-magic
         - putty
-        - s3cmd
         - python3-pip
         - python-dateutil
         - python-pip-whl

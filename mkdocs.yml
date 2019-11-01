@@ -28,8 +28,7 @@ theme:
   extra:
     manifest: 'manifest.webmanifest'
 
-  # Don't include MkDocs' JavaScript
-  include_search_page: false
+  include_search_page: true
   search_index_only: true
 
   # Default values, taken from mkdocs_theme.yml
