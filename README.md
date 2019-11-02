@@ -178,7 +178,7 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 
 See [Contributing and forks](/CONTRIBUTING.md)
 
-![Analytics](https://ga-beacon.prasadt.com/UA-101760811-3/github/localtsting?flat)
+![Analytics](https://ga-beacon.prasadt.com/UA-101760811-3/github/ubuntu-post-install?flat)
 
 [FAQ]: https://ae.prasadt.com/faq/dependencies/
 [docs]: https://ae.prasadt.com/getting-started/
