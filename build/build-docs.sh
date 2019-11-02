@@ -64,7 +64,7 @@ cat <<EOT > ./_site/commit.json
   "build": {
     "number": "${TRAVIS_BUILD_NUMBER:-NA}",
     "tag": "${TRAVIS_TAG:-none}"
-  }
+  },
   "ts": "$(date)"
 }
 EOT

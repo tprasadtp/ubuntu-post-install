@@ -3,14 +3,20 @@
 Effortless way to setup your fresh Ubuntu, Linux Mint, Debian installs. Please read the [FAQ][FAQ] & the [Docs][DOCS]
 before trying out.
 
-[![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.svg?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/110327c5-b5f2-42e3-b5ef-5d5661c94187/deploy-status)](https://app.netlify.com/sites/ubuntu-post-install/deploys)
-[![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=flat&url=https://ae.prasadt.com/config/version.json&query=version.name&prefix=V-)](https://github.com/tprasadtp/ubuntu-post-install/)
-[![What's new?](https://img.shields.io/badge/dynamic/json.svg?label=Whats%20New&style=flat&url=https://ae.prasadt.com/config/version.json&query=version.changelog)](https://ae.prasadt.com/changelogs/)
-[![license](https://img.shields.io/github/license/tprasadtp/ubuntu-post-install.svg?style=flat)](https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE)
-![GitHub repo size in bytes](https://img.shields.io/github/repo-size/tprasadtp/ubuntu-post-install.svg?style=flat)
+[![travis][travis-badge]][travis-link]
+[![Netlify Status][netlify-badge]][netlify]
+![version][version]
+[![new][new]][changelogs]
+[![license][gpl-badge]][license]
+
 
 ![Bash](https://static.prasadt.com/logo64/bash.png)
+
+### Deployment Status
+
+![deployed][deployed]
+![commit][commit]
+![commit][commit-deployed-ts]
 
 ## How to use this
 
@@ -26,7 +32,7 @@ Run this in Terminal
  wget -q https://ae.prasadt.com/get -O - | bash
 ```
 
-> URL redirects to file with last known good commit on GitHub. It is cached & proxies to GitHub at CDN level. If you are paranoid, use git.
+> URL redirects to file with last known good commit ![commit][commit] on GitHub. It is cached & proxies to GitHub at CDN level. If you are paranoid, use git.
 If you wish to use master branch pass `--master` or `-m` as an argument. Eg: `wget -q https://ae.prasadt.com/get -O - | bash -s --master`
 
 #### With Git
@@ -69,10 +75,10 @@ Run the script as **root**.
 
 ## FAQ & Documentation
 
-See /docs or visit [https://after-effects.prasadt.com](https://after-effects.prasadt.com).
+See /docs or visit [docs][docs]
 
 ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
-![Uptime Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
+![Uptime Robot ratio (30 days)](https://img.shields.io/uptimerobot/ratio/30/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
 
 ## Supported Distributions
 
@@ -88,7 +94,7 @@ See /docs or visit [https://after-effects.prasadt.com](https://after-effects.pra
 [![Debian](https://static.prasadt.com/logo64/debian.png)](https://www.debian.org/)
 
 I have not tested the script on the distros listed below. Because they use Ubuntu as their base,
-It should work fine. But no promises. Please note that Ubuntu 19.10 is **enabled**, that does not mean it works well. YMMV
+It should work fine. But no promises.
 
 [![Kde-Neon](https://static.prasadt.com/logo64/kde-neon.png)](https://neon.kde.org/)
 [![Pop-OS](https://static.prasadt.com/logo64/pop-os.png)](https://system76.com/pop)
@@ -126,17 +132,16 @@ A Complete  list of supported distributions is given below.
 
 ## Features
 
-[![APT-Packages](https://img.shields.io/badge/Install_Packages-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-apt-packages)
-[![Add-Repo](https://img.shields.io/badge/Add_Repositories-Limited-yellow.svg)](https://ae.prasadt.com/tasks/#add-repositories)
-[![Remove-Pre-installed](https://img.shields.io/badge/Purge_Pre_Installed-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#purge-unwanted-packages)
-[![PIP](https://img.shields.io/badge/PIP_Packages-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-python-packages-via-pip)
-[![Add-PPA](https://img.shields.io/badge/Add_PPAs-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#add-personal-package-archives-ppa)
-[![Purge-PPA](https://img.shields.io/badge/Purge_PPA-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#what-can-it-do)
-[![Install-Debs](https://img.shields.io/badge/Install_.DEB_Packages-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files)
-[![Install-Static-Binaries](https://img.shields.io/badge/Install_Static_Binaries-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-static-binaries)
-[![Install-CSnaps](https://img.shields.io/badge/Install_Classic_Snaps-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#installing-snap-packages)
-[![Install-NSnaps](https://img.shields.io/badge/Install_Snaps-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#installing-snap-packages)
-[![Install-EDebs](https://img.shields.io/badge/Install_Edge_snaps-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#installing-snap-packages)
+- [Install packages](https://ae.prasadt.com/tasks/#install-apt-packages)
+- [Add repositories](https://ae.prasadt.com/tasks/#add-repositories)
+- [Remove pre installed](https://ae.prasadt.com/tasks/#purge-unwanted-packages)
+- [Python 2 and Python 3 Packages](https://ae.prasadt.com/tasks/#install-python-packages-via-pip)
+- [Add PPAs](https://ae.prasadt.com/tasks/#add-personal-package-archives-ppa)
+- [Install deb packages ](https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files)
+- [Install static binaries](https://ae.prasadt.com/tasks/#install-static-binaries)
+- [Install snap packages](https://ae.prasadt.com/tasks/#installing-snap-packages)
+
+Also handles adding several tweaks and fixes necessary to add repositories and PPAs, supports completely non-interactive mode, so that you can let it run while you have moaar ☕
 
 
 ## Supported External repositories
@@ -165,15 +170,34 @@ A Complete  list of supported distributions is given below.
 
 ## Issues & Help
 
-- Please check [FAQ](https://ae.prasadt.com/faq/dependencies/) & [Known Issues](https://ae.prasadt.com/faq/errors/).
+- Please check [FAQ][FAQ] & [known issues][known-issues].
 - Please include the log file and terminal output while opening an issue.
 - **Never** set environment variable `CI=true` & `TRAVIS=true` unless you are running CI tests or are sure of its effects.
 
 ## Contributing & Forks
 
-See [Contributing and forks](/CONTRIBUTING)
+See [Contributing and forks](/CONTRIBUTING.md)
 
-![Analytics](https://ga-beacon.prasadt.com/UA-101760811-3/github/ubuntu-post-install?flat)
+![Analytics](https://ga-beacon.prasadt.com/UA-101760811-3/github/localtsting?flat)
 
 [FAQ]: https://ae.prasadt.com/faq/dependencies/
-[DOCS]: https://ae.prasadt.com/getting-started/
+[docs]: https://ae.prasadt.com/getting-started/
+[known-issues]: https://ae.prasadt.com/faq/errors/
+[changelogs]: https://ae.prasadt.com/changelogs/
+
+[travis-link]: https://travis-ci.org/tprasadtp/ubuntu-post-install
+[travis-badge]: https://travis-ci.org/tprasadtp/ubuntu-post-install.svg?branch=master
+[netlify-badge]: https://img.shields.io/netlify/110327c5-b5f2-42e3-b5ef-5d5661c94187
+[netlify]: https://app.netlify.com/sites/ubuntu-post-install/deploys
+
+
+[version]: https://img.shields.io/badge/dynamic/json.svg?label=version&style=flat&url=https://ae.prasadt.com/config/version.json&query=version.name
+[new]: https://img.shields.io/badge/dynamic/json.svg?label=news&style=flat&url=https://ae.prasadt.com/config/version.json&query=version.changelog
+
+
+[commit]: https://img.shields.io/badge/dynamic/json.svg?label=SHA&style=flat&url=https://ae.prasadt.com/commit.json&query=commit.id
+[commit-deployed-ts]: https://img.shields.io/badge/dynamic/json.svg?label=on&style=flat&url=https://ae.prasadt.com/commit.json&query=ts
+[deployed]: https://img.shields.io/badge/dynamic/json.svg?label=deployed&color=success&style=flat&prefix=%23&url=https://ae.prasadt.com/commit.json&query=build.number
+
+[gpl-badge]: https://img.shields.io/badge/license-GPLv3-green
+[license]: https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE
