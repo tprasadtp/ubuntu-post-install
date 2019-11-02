@@ -18,6 +18,8 @@ for file in ./config/*.yml;
 do
 	printf "Linting File : ${file}\n"
   yamllint "${file}"
+  printf "Converting Version info to JSON"
+  python3 build/version.py
 done
 
 # Some checksumming

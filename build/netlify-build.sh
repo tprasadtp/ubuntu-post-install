@@ -69,7 +69,7 @@ EOT
 }
 
 
-function html-proofer-checks()
+function html_proofer_checks()
 {
 echo "---> Checking links with HTML Proofer"
 echo "Errors will halt the script and Deployment. Check for recently added links and avoid links which redirect. Remember If a link becomes dead [In Future] build will fail!!"
@@ -78,7 +78,7 @@ bundle exec htmlproofer ./_site --only-4xx --check-favicon --check-html
 echo "---------------------------------------------------------"
 }
 
-function jekyll_production()
+function build_production()
 {
   echo "---> Copying GH-PAGES Branch"
   mkdir -p ./_site/
@@ -86,6 +86,7 @@ function jekyll_production()
   --exclude '*.md*' \
   --exclude '*.MD*' \
   --exclude '.git' \
+  --exclude 'Dockerfile' \
   --exclude 'vendor' \
   --exclude 'netlify.toml' \
   --exclude 'rsync-shared' \
@@ -105,7 +106,7 @@ function jekyll_production()
 
 }
 
-function jekyll_branch()
+function build_branch()
 {
   install_dependencies;
 
@@ -122,6 +123,7 @@ function jekyll_branch()
     printf "Linting : ${file}\n"
     yamllint "${file}"
   done
+  python3 build/version.py
   echo "---> Copying Config Files"
   rsync -Ea --recursive ./config/ ./_site/config/ && echo "Done!"
   find ./_site/config -type f
@@ -166,13 +168,13 @@ function main()
       # Process command line arguments.
       while [ "$1" != "" ]; do
           case ${1} in
-              -p | --production )     jekyll_production;
+              -p | --production )     build_production;
                                       exit $?
                                       ;;
-              -b | --branch )         jekyll_branch;
+              -b | --branch )         build_branch;
                                       exit $?
                                       ;;
-              -pr | --pull-request )  jekyll_branch;
+              -pr | --pull-request )  build_branch;
                                       exit $?
                                       ;;
               * )                     echo "Invalid arguments";
