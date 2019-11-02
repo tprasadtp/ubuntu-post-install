@@ -77,6 +77,7 @@ function _init_printf_variables()
     readonly            _api="[      API      ]"
     readonly          _debug="[     DEBUG     ]"
     readonly       _internal="[    INTERNAL   ]"
+    readonly          _trace="[      TRACE    ]"
     readonly       _ppa_logs="[    PPA-Logs   ]"
     readonly       _apt_logs="[    APT-Logs   ]"
     readonly      _dpkg_logs="[    PKG-Logs   ]"
@@ -267,6 +268,15 @@ function _log_internal()
   printf "[$(date)] $msg\n" >> "$log_file"
 }
 
+function _log_trace()
+{
+  local msg="$1"
+  if [[ $AE_DEBUG -gt 2 ]]; then
+    printf "${LOG_GRAY}${_trace} $msg ${NC}\n"
+  fi
+  printf "[$(date)] $msg\n" >> "$log_file"
+}
+
 function _log_notice()
 {
   local msg="$1"
@@ -436,15 +446,15 @@ function _init_print_basic_info()
 {
   # This function logs and displays the Necessary details which helps in debugging.
   # Should be used after _init_script_variables function.
-  _log_and_show "${_notice} Following details are recognised by the Script."
-  _log_and_show "${_info} Hostname: ${CLIENT_NAME}"
-  _log_and_show "${_info} UUID for Run: ${CLIENT_ID}"
-  _log_and_show "${_info} Distro: ${distro_name}"
-  _log_and_show "${_info} Version: ${VERSION}"
-  _log_and_show "${_info} Code Name: ${code_name}"
-  _log_and_show "${_info} Architecture: ${ARCH}"
-  _log_and_show "${_info} Path for sources.list.d: ${SOURCES_FILE_DIR}"
-  _log_and_show "${_version} ${REL_NAME} - ${REL_NUM}"
+  _log_notice "${_notice} Following details are recognised by the Script."
+  _log_notice "${_info} Hostname: ${CLIENT_NAME}"
+  _log_debug  "UUID for Run: ${CLIENT_ID}"
+  _log_notice "${_info} Distro: ${distro_name}"
+  _log_notice "${_info} Version: ${VERSION}"
+  _log_notice "${_info} Code Name: ${code_name}"
+  _log_notice "${_info} Architecture: ${ARCH}"
+  _log_debug  "Path for sources.list.d: ${SOURCES_FILE_DIR}"
+  _log_success "${_version} ${REL_NAME} - ${REL_NUM}"
 
   #disable hist chars  so that I can print "!!"" properly
   histchars=
@@ -734,10 +744,10 @@ function _test_conflicting_apps ()
     if ps -U root -u root u | grep $lock | grep -v grep > /dev/null; then
       _log_and_exit "${_error} Installation won't work. Please close $lock first then try again." "15"
     else
-      _debug_log "$lock not is running."
+      _debug_log "$lock is not running."
      fi
    done
-   _log_and_show "${_conflicts} None detected."
+   _log_success "${_conflicts} None detected."
 }
 
 
@@ -785,7 +795,6 @@ function parse_yaml() {
   fs="$(echo @|tr @ '\034')"
 
     (
-        #sed -e '/- [^\“]'"[^\']"'.*: /s|\([ ]*\)- \([[:space:]]*\)|\1-\'$'\n''  \1\2|g' |
         #shellcheck disable=SC1003
         sed -e '/- [^\"]'"[^\']"'.*: /s|\([ ]*\)- \([[:space:]]*\)|\1-\'$'\n''  \1\2|g' |
 
@@ -1357,7 +1366,7 @@ function _set_list_config()
         touch /tmp/ae/cleaned.clist && truncate -s 0 /tmp/ae/cleaned.clist
         # Clean comments & empty spaces
         grep -v -e ^% -e ^\# -e '^[[:space:]]*$' "${dir}/data/${list}" > /tmp/ae/cleaned.clist
-        _debug_log "Cleaned List is below"
+        _log_trace "Cleaned List is below"
         _line_fill >> "${log_file}"
         # shellcheck disable=SC2002
         cat /tmp/ae/cleaned.clist | _add_timestamp_to_logs "${_list}"
@@ -1962,11 +1971,11 @@ function upgrade_apps()
   # IF Simulate is set to true this will only list the apps but no upgrade action will be performed.
   local exit_status
   _log_and_show "${_upgrade} Packages..."
-  _debug_log "Listing Upgradable packages"
+  _log_trace "List of upgradable packages if any is listed below."
   _line_fill >> "$log_file"
   # upgradable is not available in apt-get ignore warning about apt being unstable
   apt list --upgradable 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  \
-  || _log_and_show "Something went wrong while listing upgradable packages. Please see the log file for more details."
+  || _log_and_show "Something went wrong while listing upgradable packages. Please see the log file or run in debug mode for details."
 
   _debug_log "The list of packages will be upgraded!"
   # only do upgrades if simulate is set to false
@@ -2301,18 +2310,18 @@ function _install_pip_python()
       if [ "$simulate_apt_install" == "true" ] && [ "$CI" != "true" ]; then
         _log_warn "${_simulate} No Dependencies will be installed!!"
         # shellcheck disable=SC2086
-        apt-get -q -y install -s "${dependency_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+        apt-get -q -y -s --no-install-recommends install "${dependency_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
       elif [ "$simulate_apt_install" == "true" ] && [ "$CI" == "true" ]; then
         _log_warn "${_simulate} This is CI disregarding --simulate flag for installing pip dependencies"
-        apt-get -q -y install "${dependency_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+        apt-get -q -y --no-install-recommends install "${dependency_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
       else
         # shellcheck disable=SC2086
-        apt-get -q -y install "${dependency_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+        apt-get -q -y --no-install-recommends install "${dependency_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
       fi
       exit_status=$?
 
       if [[ $exit_status -eq 0 ]]; then
-        _log_and_show "${_installed} Dependency packages."
+        _log_success "${_installed} Dependency packages."
       else
         _log_warn "${_oh_no} Something went wrong while installing dependencies."
         _log_warn "${_error} Python packages cannot be installed without dependencies."
@@ -2932,10 +2941,9 @@ function main()
                               _log_and_show "${_purge} Purge packages is set to true."
                               _log_warn "${_warn} No checks are being made on the Packages in the list."
                               _log_warn "${_warn} Use carefully!. Purging something like sudo is stupid idea!"
-                              set_default;
                               ;;
       -y | --yes)             bool_say_yes_to_all="true";
-                              _log_warn "${_warn} This option is deprecated, Use Autopilot instead";
+                              _log_warn "${_warn} -y | --yes is deprecated, Use Autopilot instead";
                               ;;
       -l | --delete-log)      delete_log_file;
                               ;;

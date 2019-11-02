@@ -5,8 +5,8 @@
 
 Following Tests are done on Travis-CI.
 
-- `shellcheck` every executable bash script, Test on all supported Ubuntu and Debian distros
-- Test scripts on all supported Ubuntu and Debian releases.
+- `shellcheck` every executable
+- Test scripts on all supported Ubuntu and Debian releases except Jessie.
 
 !!! info
 
