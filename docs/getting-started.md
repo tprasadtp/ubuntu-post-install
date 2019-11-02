@@ -11,8 +11,8 @@ Install (if you haven't already) your choice of Ubuntu/Derivative as you would( 
 Run this in Terminal
 
 ```console
-wget -Nnv https://ae.prasadt.com/get -O - | bash
-```
+ wget -q https://ae.prasadt.com/get -O - | bash
+ ```
 
 > URL redirects to file with last known good commit on GitHub. It is cached & proxies to GitHub at CDN level. If you are paranoid, use git.
 If you wish to use master branch pass `--master` or `-m` as an argument. Eg: `wget -Nnv https://ae.prasadt.com/get -O - | bash -s --master`

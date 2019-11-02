@@ -14,7 +14,7 @@ before trying out.
 
 ## How to use this
 
-Install your choice of Ubuntu/Debian/Mint or its derivative as you would( If you wish to automate that too, you can use `preseed.cfg file`)
+Install your choice of Ubuntu/Debian/Mint or its derivative as you would
 
 ### Step 1: Get the script
 
@@ -23,7 +23,7 @@ Install your choice of Ubuntu/Debian/Mint or its derivative as you would( If you
 Run this in Terminal
 
 ```console
-wget -Nnv https://ae.prasadt.com/get -O - | bash
+ wget -q https://ae.prasadt.com/get -O - | bash
 ```
 
 > URL redirects to file with last known good commit on GitHub. It is cached & proxies to GitHub at CDN level. If you are paranoid, use git.
