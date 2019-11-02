@@ -15,10 +15,6 @@
 Upgrading a Linux machine comes with lot of headache. Somethings might break, somethings might not work or you might just want to
 start fresh. Beauty of Linux is almost everything is scriptable. Re-installing is just a matter of putting your favorite distribution on USB, install and configuring it. If you do it often and over a fleet of machines, then its a pain. You can run a few scripts to automate it, but they are not so flexible. A package changed its name? PPA not available for the current release? You need to edit your script, test it and run it.
 
-## How
-
-What if your script could be "configured"? Just add the package you want to install to your config file. No need to search through code to do it. Separating your preferences and package lists from the script frees you from writing the script every time a new release comes around. This project helps you do just that. Its a glorified script written in bash!.
-
 
 [![Bash](https://static.prasadt.com/logo64/bash.png)](https://ae.prasadt.com)
 
@@ -50,7 +46,7 @@ It should work fine. But no promises.
 [![Elementary-OS](https://static.prasadt.com/logo64/elementary-os.png)](https://elementary.io/)
 
 !!! tip "Tip"
-    Please check [Supported-Distros](/faq/distros/) for complete list of supported distros.
+    Please check [Supported-Distros](/faq/distros/) for complete list of supported distributions.
 
 ## Features
 
@@ -72,7 +68,7 @@ It should work fine. But no promises.
 [![Details](assets/images/details.png)](assets/images/details.png)
 [![Details](assets/images/whiptail.png)](assets/images/whiptail.png)
 
-## Uptime
+## Up-time
 
-![Uptime Robot status](https://img.shields.io/uptimerobot/status/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
-![Uptime Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
+![Up time Robot status](https://img.shields.io/uptimerobot/status/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
+![Up time Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m780628218-79e4106657d18a5abccd3565.svg?style=flat)

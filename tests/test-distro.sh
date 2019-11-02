@@ -55,7 +55,7 @@ function main()
     if [[ $TRAVIS_ARCH == "arm64" ]]; then
         echo "Not testing list in ARM64"
     else
-      sudo ./after-effects --yes --autopilot --lists -d --simulate --name bionic
+      sudo ./after-effects --yes --autopilot --lists -d --simulate
       exit_code="$?"
       echo "Exit code for LIST is $exit_code"
       if [[ $exit_code -ne 0 ]]; then
@@ -72,8 +72,9 @@ function main()
     echo "Running in ${TEST_ENV:-LOCAL}"
     echo "Testing with YAML"
     if [[ ${enable_fix} == "true" ]]; then
-      docker run -it --rm -e TRAVIS="$TRAVIS" \
-      -e DEBUG="${DEBUG}" \
+      docker run -it --rm -e TRAVIS \
+      -e CI \
+      -e DEBUG \
       --hostname="${TEST_ENV}" \
       -v "$(pwd)":/shared \
       ae:"${distro}-${release}" \
@@ -84,8 +85,9 @@ function main()
       --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/"${config_yml}"
       exit_code="$?"
     else
-      docker run -it --rm -e TRAVIS="$TRAVIS" \
-      -e DEBUG="${DEBUG}" \
+      docker run -it --rm -e TRAVIS \
+      -e CI \
+      -e DEBUG \
       --hostname="${TEST_ENV}" \
       -v "$(pwd)":/shared \
       ae:"${distro}-${release}" \
@@ -102,9 +104,10 @@ function main()
     fi
     echo "Testing With Lists"
     if [[ ${enable_fix} == "true" ]]; then
-      docker run -it --rm -e TRAVIS="$TRAVIS" \
-        --hostname="${TEST_ENV}" \
+      docker run -it --rm -e TRAVIS \
+        -e CI \
         -e DEBUG \
+        --hostname="${TEST_ENV}" \
         -v "$(pwd)":/shared \
         ae:"${distro}-${release}" \
         ./after-effects -d \
@@ -115,9 +118,10 @@ function main()
 
         exit_code="$?"
     else
-      docker run -it --rm -e TRAVIS="$TRAVIS" \
-        --hostname="${TEST_ENV}" \
+      docker run -it --rm -e TRAVIS \
+        -e CI \
         -e DEBUG \
+        --hostname="${TEST_ENV}" \
         -v "$(pwd)":/shared \
         ae:"${distro}-${release}" \
         ./after-effects -d \

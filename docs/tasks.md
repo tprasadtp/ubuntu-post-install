@@ -23,7 +23,7 @@ This task can add the following repositories.
 
 
 ??? tip "Using `--fix` falg"
-    Please note that the above repositories are sometimes not updated for latest Ubuntu release and most certainly will not be available for upcoming release of Ubuntu(Alpha/Beta). It might take some time till the repositories are available for the latest release. Use -f or --fix command line option or --pre-release in case you are using a Development version of ubuntu to revert using latest available version of repositories (usually previous Ubuntu release or in case of Beta/Alpha latest stable release of ubuntu). [For more info see command line options.](/clioptions/#fix-for-latest-ubuntu-releases)
+    Please note that the above repositories are sometimes not updated for latest Ubuntu release and most certainly will not be available for upcoming release of Ubuntu(Alpha/Beta). It might take some time till the repositories are available for the latest release. Use -f or --fix command line option or --pre-release in case you are using a Development version of ubuntu to revert using latest available version of repositories (usually previous Ubuntu release or in case of Beta/Alpha latest stable release of Ubuntu). [For more info see command line options.](/clioptions/#fix-for-latest-ubuntu-releases)
 
 ??? tip "Controlling which repository is added using config file"
     You can set your YML file to decide which repository is added. Some repositories may no be supported on your architecture or distribution. Take a look at [config.yml](/api/yaml) for example. If you omit a value, it defaults to false **ALWAYS**. Do note that if you are using lists default values are different, they are mentioned in below.
@@ -72,9 +72,33 @@ This task can add the following repositories.
     ```
 
 !!! warning "ROS Releases & Ubuntu/Debian versions"
-    - ROS releases only support certain Ubuntu/Debian distributions. Please use appropriate packages to install depending on
+    - ROS repository only support certain Ubuntu/Debian distributions. Please use appropriate packages to install depending on
     your distro/version. You can find more info at [ROS-Wiki](http://wiki.ros.org/ROS/Installation)
     - Though Ubuntu derivatives might work, they are not supported.
+
+Example yaml configuration snippet is given below.
+
+```yml
+config:
+  # Enabled Tasks
+  tasks:
+    update: true
+    # Add Repos
+    # individual repos flags are mentioned under config.add_repo key
+    repo: true
+  # Repository Flags
+  add_repo:
+    winehq: true
+    docker: true
+    mendeley: false
+    googlecloud: true
+    spotify: true
+    vscode: true
+    skype: true
+    signal: false
+    insync: true
+    google: true
+```
 
 ### Canonical partner repositories
 
@@ -107,16 +131,15 @@ This task can add the following repositories.
 2. security - Contains Security related tools and packages
 3. productivity - Office tools, writing tools, LateX, document tools and other
 productivity tools, Email clients, browsers, IM clients etc.
-Example : LateX, TeXStudio, Libre office, pandoc empathy, Thunderbird
 4. multimedia - Multimedia tools like media players, audio converters and playes etc.
 5. development - IDEs [Spyder, Jetbeans etc], languages [go, python, ruby, rust, java etc],
 Containers [docker lxc rkt etc], Python libraries, compilers [gcc, clang]
 SDKs [AWS SDK, Google Cloud SDK, open-jdk, Tensor Flow], headers and libraries[ocl-icd-dev],
 Anything related to development and -dev or -devl packages.
 6. other - Everything which does not fit in the above categories.
-Themes, Tools, Utilities like htop etc.
+Themes, Tools, Utilities etc.
 7. external - Any packages which are provided by ppas, or repositories not present in
-base [K/L/Ed/X]-Ubuntu distribution. There's a possibility that the repository might not
+base Ubuntu distribution. There's a possibility that the repository might not
 be added or may be unavailable or offline. So Keeping the list separate from
 others packages minimizes errors if there are any.
 
@@ -146,6 +169,14 @@ This will install deb files specified in the list `deb.list` or YAML config unde
 https://atom-installer.github.com/v1.21.1/atom-amd64.deb,ATOM-Editor.deb
 ```
 
+```yaml
+config:
+  install:
+    debian_packages:
+      - https://atom-installer.github.com/v1.21.1/atom-amd64.deb,ATOM-Editor.deb
+
+```
+
 - First part is the URL to the deb file separated by ',' name of the file.
 
 !!! note "Note on file names in configuration"
@@ -159,10 +190,18 @@ This will install binaries `bin.list` or YAML config under `config.install.binar
 - Configuration file is a `csv` file without headers. first column corresponds to URL ans the second field the file name under which the file is saved.
 - Each DEB file to be installed should have following entry.
 - URL to the deb file which can be accessed using wget`,`Name of the deb file without any spaces or special chars except hyphen.
-- For example, to install kubernetes compose, the entry should look like below.
+- For example, to install `kompose`, the entry should look like below.
 
 ```csv
 https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-amd64,kompose
+```
+
+```yaml
+config:
+  install:
+    binaries:
+      - https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-amd64,kompose
+
 ```
 
 - First part is the URL to the binary file separated by ',' name of the binary.
@@ -177,6 +216,18 @@ This task requires `python-pip package` is installed, If not , will be installed
 
 - The list files follow similar configuration as package list files. One item per line. however you can specify version requirements as you would for requirements file.
 - Simulate flag will skip installing packages, unless `CI=true`.
+
+Example configuration is given below.
+
+```yaml
+config:
+  install:
+    python2:
+      - docker-compose
+    python3:
+      - awscli
+
+```
 
 !!! warning
     Don't mix Python 3 packages with Python 2 packages.
@@ -203,11 +254,24 @@ This will purge Unwanted packages from the system.
 ## Installing Snap packages
 
 Script can install snap packages from snapstore. For example check the default config file.
+You should specify the classic snaps under `install.snaps.calssic`,
+edge snaps under `install.snaps.edge` and normal snaps under `install.snaps.normal` in the yaml file.
+
+
+```yaml
+config:
+  install:
+    snaps:
+      normal:
+        - htop
+      classic:
+        - vscode
+
+```
 
 !!! warning
     List mode does not support installing snap packages. Its responsibility of the user to separate classic
-    snaps, edge and normal snaps. You should specify the classic snaps under `install.snaps.calssic`,
-    edge snaps under `install.snaps.edge` and normal snaps under `install.snaps.normal` in the yaml file.
+    snaps, edge and normal snaps.
 
 ## All In one
 
@@ -229,6 +293,29 @@ support for selecting individiual tasks.
 ## AUTOPILOT Mode
 
 Setting `AUTOPILOT=true` or passing `--autopilot` will will skip all UI prompts and confirmations and run ALL In One.
+
+This mode requires you to specify tasks to be run if using YAML config. Example snippet is given below.
+
+```yaml
+config:
+  # Enabled Tasks
+  tasks:
+    update: true
+    upgrade: true
+    # Add Repos
+    # individual repos flags are mentioned under config.add_repo key
+    repo: true
+    # Add PPAs
+    ppa: true
+    # APT Packages
+    apt: true
+    # Whether to purge packages mentioned in config.purge key
+    purge: true
+    debs: true
+    pip2: true
+    pip3: true
+    binaries: true
+```
 
 
 ## Delete logs

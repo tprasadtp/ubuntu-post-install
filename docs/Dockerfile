@@ -1,6 +1,5 @@
 FROM python:3.7-alpine
 LABEL maintainer="Prasad Tengse <tprasadtp@users.noreply.github.com>"
-# Perform build and cleanup artifacts
 RUN addgroup -g 1000 user \
     && adduser -G user -u 1000 -D -h /home/user -s /usr/bin/bash user \
     && mkdir -p /home/user/app \

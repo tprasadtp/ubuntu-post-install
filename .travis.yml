@@ -74,6 +74,8 @@ jobs:
     script:
       - ./tests/lint-dockerfiles.sh "docs"
       - ./build/build-docs.sh
+      - ls ./ && ls ./_site/
+      - python3 build/version.py
       - cat ./_site/commit.json
     deploy:
     - provider: pages

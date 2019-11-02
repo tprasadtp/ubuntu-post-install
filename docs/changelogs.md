@@ -3,17 +3,17 @@
 ## Version 5.5.0
 
 - Eoan Support
-- Remove Kubernetes repo. (kubespray/kubeadm works better)
+- Remove Kubernetes repo support. (kubespray/kubeadm works better)
 Minikube is still supported via binary method.
-- Option to fallback to non LTS releases
+- Option to fallback to non LTS releases if using `--fix`
 - `--pre-release` flag now supports Debian Bullseye
 - Fix Gist URL not workin g(#17)
 - Introduce `--autopilot` flag
-- Introduce DEBUG modes(activated if DEBUG=1)
+- Introduce DEBUG modes(activated on DEBUG=1)
 
 ## Version 5.4.3
 
-- Fix repo keys and fix classic snap installs
+- Fix repository keys and fix classic snap installs
 
 ## Version 5.4.1
 
@@ -63,7 +63,7 @@ Minikube is still supported via binary method.
 
 ## Version 5.2.0
 
-- New Feature: Static binaries installation (kompose,docker-compose etc)
+- New Feature: Static binaries installation
 - All script tmp files are now created /tmp/ae/
 
 ## Version 5.1.2
@@ -153,7 +153,6 @@ Minikube is still supported via binary method.
 ## Version 3.0
 
 - Add Confirmation dialog using whiptail for Actions like Adding PPA, Repositories, Installing Apps, and Deb files
-
 - Provide an option via command line to bypass the confirmation dialog for ci and automated environments or when its too annoying
 - If the simulate option is selected then Only calculate the upgrade but do not perform upgrade.
 - Added improved Simulate options. Helpful when just want to change somethings and test scripts without really downloading and installing packages
@@ -165,7 +164,7 @@ Minikube is still supported via binary method.
 
 ## Version 2.0
 
-- Complete rewrite from scratch
+- Complete rewrite
 - Improvements in logging and console output
 - Reduced verbosity in terminal output
 - Flexible with packages and deb files

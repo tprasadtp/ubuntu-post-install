@@ -10,10 +10,10 @@ This can generate a lot of output.
 ## Local testing
 
 You can use `./tests/test-distro.sh` to test the scripts locally. It uses docker to build and test the script in simulate mode inside
-containers. This script requires two arguments __distro name__ and __release node name__. They are used as parameters to build the Docker image from dockerfile in `dockerfiles/tests`.eg.to test the script on Ubuntu 18.04 bionic, run it as
-`./tests/test-distro.sh ubuntu bionic`. It will fetch and build the docker image and run the script in simulate mode using the config files at `https://{branch-name}--ubuntu-post-insta..netlify.net/config/default.yml`
+containers. This script requires two arguments __distro name__ and __release name__. They are used as parameters to build the Docker image from dockerfile in `dockerfiles/tests`.eg.to test the script on Ubuntu 18.04 bionic, run it as
+`./tests/test-distro.sh ubuntu bionic`. It will fetch and build the docker image and run the script in simulate mode using the config files at `https://{branch-name}--ubuntu-post-install.netlify.net/config/default.yml`
 
-Alternatively you can build the docker image yourself. and test it.
+Alternatively you can build the docker image yourself.
 
 ```console
 $ export distro="ubuntu"
@@ -38,7 +38,7 @@ root@a9f6bf377494:/shared# DEBUG=1 ./after-effects -c config/default.yml -s -H
 [     Info      ] Hostname: a9f6bf377494
 [     Info      ] UUID for Run: a8ce9e69-b967-4a59-841f-e317f0d18d25
 [     Info      ] Distro: ubuntu
-
+.......
 ```
 
 !!! tip

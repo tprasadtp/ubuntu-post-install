@@ -38,11 +38,11 @@ You can specify local config file to use with -C / --config-file option. To use 
 
 Following details should explain the behavior of this flag. Please do have a look at exceptions, as all tasks cannot be simulated.
 
-- This option will simulate installing packages mentioned in the lists, using the apt-get in-built dry-run option `apt-get install -s` to simulate the installation of packages. Nothing will be downloaded except repository metadata (deb files if option is chosen). Packages will not be installed.
+- This option will simulate installing packages mentioned in the config, using the apt-get in-built dry-run option `apt-get install -s` to simulate the installation of packages.
 - This option can be used to check if the files in the lists are compatible/available in the repository.
 - Installation of DEB files also behaves similarly. It uses `dpkg -i --dry-run` to simulate installation.
 - Its a very good idea to simulate installation when you have reconfigured the apps and packages in the list to check what might be error prone.
-- In case of DEB package files, they **will** be downloaded unlike apt-get package installs.
+- DEB package files, binaries **will** be downloaded unlike apt-get package installs.
 
 ??? bug "Exceptions - Not everything can be simulated"
 
@@ -50,10 +50,9 @@ Following details should explain the behavior of this flag. Please do have a loo
      - If you want to revert the changes please use **Reset Repositories** option.
      - PPAs and repositories **will** be added regardless of the flag.
      - Python package installation cannot be simulated. (pip lacks support for it) The script will skip installing apt dependencies and python packages, if simulate option is used.
-      it simulate option is used.
-     - APT package upgrades and apt repository metadata updates cannot be simulated. Only a list of packages upgrade-able will be listed in the log file in case of upgrades.
-     - Simulate flag will not simulate installing dependencies for adding or deleting repositories and PPAs.
-     - Please do not set CI="true" and TRAVIS="true" in environment variables as they are reserved for testing and CI. They do not abide by the rules mentioned above.
+     - APT package upgrades and apt repository metadata updates cannot be simulated. Only a list of packages will be shown inn the logs.
+     - Simulate flag will **NOT** simulate installing dependencies for adding or deleting repositories and PPAs.
+     - Please do not set `CI="true"`` and `TRAVIS="true"` in environment variables as they are reserved for testing and CI. They do not abide by the rules mentioned above.
 
 ## Skip Version Checks
 
@@ -93,12 +92,11 @@ This will also disable reporting usage stats.
      - Docker Community Edition
      - Wine HQ
 
-Usually it takes a while for additional Repositories (Docker, Google Cloud SDK etc) to add support for latest release of Ubuntu. However we can use the previous release for which packages are available. So, using packages built for previous release works fine most of the time. This is also good fix if you are running a alpha or beta release of Ubuntu. These options only work on Ubuntu or distros using ubuntu codenames and Linux Mint.
+Usually it takes a while for additional Repositories (Docker, Google Cloud SDK etc) to add support for latest release of Ubuntu. However we can use the previous release for which packages are available. So, using packages built for previous release works fine most of the time. This is also good fix if you are running a alpha or beta release of Ubuntu. These options only work on Ubuntu or distros using ubuntu code-names and Linux Mint.
 
 - By default this option is disabled.
-- Use `-f` or `--fix` option to enable this.
 - Repositories like Spotify and Google Chrome do not use code names in their repository URLs. So the above workaround is not necessary.
-- Derivatives of Ubuntu will use the code name of Ubuntu on which they are based. For example Linux mint 18.2 Serena will use code name xenial as it is based on Ubuntu 16.04 Xenial Xerus
+- Derivatives of Ubuntu will use the code name of Ubuntu on which they are based. For example Linux mint 18.2 Serena will use code name `xenial` as it is based on Ubuntu 16.04 Xenial Xerus
 - This option applies only for the latest release mentioned in the variable `code_name_latest_release`. and will be ignored if the release is not latest.
 
 ## Fix fallback to LTS
@@ -117,7 +115,7 @@ Use LTS as fallback. This flag should be used in conjunction with `--fix` Otherw
     - If you are using a pre-release version of Ubuntu, you can use `--pre-release` flag to apply the above mentioned fix to pre-release version of Ubuntu.
     - This flag can be used independent of `--fix`. If both are used together then both flags will be applied if the release is upcoming-release.
     - If the release is stable, only `--fix` flag will be valid and `--pre-release` is ignored.
-    - This is how it works:  If the repositories are  not available for latest stable release as well, go back a release. Ex. If the pre-release is 18.04 and the repositories is not available for 17.10 as well, we use 17.04 repositories. Usually happens in first few days of development cycle of 18.04.
+    - Eg:  If the repositories are  not available for latest stable release as well, go back a release. Ex. If the pre-release is 18.04 and the repositories is not available for 17.10 as well, we use 17.04 repositories. Usually happens in first few days of development cycle of 18.04.
 
 ## Purge not required packages
 
@@ -157,7 +155,7 @@ Usually Ubuntu comes with some pre-installed games, packages which you might not
 Just a quick way to delete logs generated by this script.
 
 !!! warning "Flag priority"
-    If you pass `-l` in the beginning rest of the commands will be ignored, as the script exits after deleting the log!
+    If you pass `-l`  rest of the commands will be ignored, as the script exits after deleting the log!
 
 ## Keep downloaded DEB files
 
@@ -179,7 +177,7 @@ Default behavior is to clean apt cache and delete downloaded DEB packages.
 !!! bug "Python packages"
     Python package installation does not honor this flag.
 
-## Hide Remote/local YAML configuration data
+## Hide configuration data
 
 !!! snippet "Usage"
 
@@ -193,7 +191,7 @@ Default behavior is to clean apt cache and delete downloaded DEB packages.
     ./after-effects -H
     ```
 
-Hides displaying YAML configuration data in the output.
+Hides displaying configuration data in the output.
 
 ## Prefer Local lists
 
@@ -226,7 +224,7 @@ It is advised that you switch to YAML though. Not all options are supported with
     ./after-effects -C <filename>
     ```
 
-You can prefer using custom configuration file you have stored locally [It should be available via local paths or network share. not via ftp or http]. Enabling this option will disable fetching remote configuration even if you have specified `--remote-yaml`
+You can prefer using custom configuration file you have stored locally [It should be available via local paths or network share. not via ftp or http].
 
 ## Use Custom Version information file
 
@@ -260,10 +258,12 @@ Example version file is in `config` directory. All the fields are mandatory.
     ./after-effects -R <URL to YAML file>
     ```
 
-You can specify YAML file to use. Script will fetch it and parse it. Please note that local Config file specified takes priority over `-R`. If both -C & -R are used, only local config file is considered. The file should be available without any soft of interactive logins.
+You can specify YAML file to use. Script will fetch it and parse it.The file should be available without any interactive logins.
 
 !!! warning
-    If using gists, please provide raw gist URL.
+    - If using GitHub gists, please provide raw gist URL.
+    - You should only use trusted remote configurations. As its a bash script a malicious remote configuration can cause remote code to execute on your system.
+    - Please use `https`
 
 
 ## Do not report statistics
@@ -282,25 +282,25 @@ You can specify YAML file to use. Script will fetch it and parse it. Please note
 
 Disables reporting statistics back to server.
 
-Following things are reported. (Nothing more than that)
+Following might be reported. (Nothing more than that)
 
 - A UUID generated for each execution, (its random and is not persistent across runs),
 - Last exit code.
 - System Architecture (x64/x86/ARM/ARM64).
 - Total execution time.
-- Randomized hostname
+- Masked hostname
 - Distribution name (Ubuntu, Linux Mint etc.)
 - Distribution code name (bionic, artful etc)
-- Feature/Task selected.
-- Flags used.
-- Timezone and system language.
+- Feature/Task selected
+- Flags used
+- Timezone and system language
 
 ??? question "Privacy Concerns?"
 
     - If you are freaking out, its a shell script !! You can literally look into it and check what's collected. Why if you ask? I mostly use it on a bunch of machines/VMs and would like to keep an eye on how it did.
     - Data will be stored in AWS DynamoDB and Google Firebase Real-time Database.
     Data will not be shared with any third party. Period. Only me or my team members will have access
-    to it. If you run a search query on google, it probably collects more data than me. API endpoints/PaaS/IaaS provider may log your IP addresses, but script does not and WILL not collect IP addresses(local or otehrwise).
+    to it. If you run a search query on google, it probably collects more data than me. API endpoints/PaaS/IaaS provider may log your IP addresses, but script does not and WILL not collect IP addresses(local or otherwise).
     - Script will not collect your full config file either. Just flags used (like simulate, fix etc)
     - If you flood the reporting endpoints, you might get HTTP 429 errors as reporting endpoints have rate limits.
 
@@ -309,11 +309,10 @@ Following things are reported. (Nothing more than that)
 
 !!! warning
     Enabling this option will use mirrors from Uni-Freiburg if they are available. You may have to be within Uni-Freiburg network
-    to access it. The mirror may not work or be up-to date with upstream. Use this option only if you are inside Uni-Freiburg network
-    and know what versions/libs are hosted on the mirror.
+    to access it. The mirror may not work or be up-to date with upstream. Use this option only if you are inside Uni-Freiburg network and know what versions/libs are hosted on the mirror.
 
 - Uses mirrors from `University of Freiburg`. Only available for limited number of repositories. **DO NOT** use this option if you are not a faculty or student of Uni-Freiburg, as it may have un-intended side effects.
-- Arguments: `-u` or `--use-uf-mirror`. Because I do not wish to waste bandwidth this option is not tested on Travis builds.
+- Arguments: `-u` or `--use-uf-mirror`. This option is not tested on Travis builds.
 
 !!! warning
     **This script/github-repository/or this website is not affiliated in with University of Freiburg.**

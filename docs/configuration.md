@@ -61,8 +61,8 @@ Setting `"AUTOPILOT=true"` or `--autopilot` will run all the tasks specified in 
 - Purge unwanted Packages
 - Install Snap packages
 
-## Reserved Environmenat Variables
+## Reserved Environment Variables
 
 Prefix `AE_` is reserved along with `TRAVIS_` as they are used for configuration and testing.
-Please do not set CI="true" in your environment variables. they will alter how script honors `--similate` flag and `--autopilot` flag
+Please do not set CI="true" in your environment variables. they will alter how script honors `--simulate` flag and `--autopilot` flag
 as they are reserved for testing on CI systems.

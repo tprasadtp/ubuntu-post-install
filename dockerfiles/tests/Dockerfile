@@ -7,8 +7,8 @@ ENV DEBIAN_FRONTEND noninteractive
 # Install essentials
 WORKDIR /shared
 RUN dpkg --add-architecture i386
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
+RUN apt-get -qq update \
+    && apt-get install -qq -y --no-install-recommends \
       wget \
       lsb-release \
       whiptail \
