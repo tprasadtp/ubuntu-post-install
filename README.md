@@ -4,8 +4,8 @@ Effortless way to setup your fresh Ubuntu, Linux Mint, Debian installs. Please r
 before trying out.
 
 [![travis][travis-badge]][travis-link]
-[![Netlify Status][netlify-badge]][netlify]
-![version][version]
+[![netlify][netlify-badge]][netlify]
+[![version][version]][changelogs]
 [![new][new]][changelogs]
 [![license][gpl-badge]][license]
 
@@ -195,7 +195,7 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [new]: https://img.shields.io/badge/dynamic/json.svg?label=news&style=flat&url=https://ae.prasadt.com/config/version.json&query=version.changelog
 
 
-[commit]: https://img.shields.io/badge/dynamic/json.svg?label=SHA&style=flat&url=https://ae.prasadt.com/commit.json&query=commit.id
+[commit]: https://img.shields.io/badge/dynamic/json.svg?label=sha&style=flat&url=https://ae.prasadt.com/commit.json&query=commit.id
 [commit-deployed-ts]: https://img.shields.io/badge/dynamic/json.svg?label=on&style=flat&url=https://ae.prasadt.com/commit.json&query=ts
 [deployed]: https://img.shields.io/badge/dynamic/json.svg?label=deployed&color=success&style=flat&prefix=%23&url=https://ae.prasadt.com/commit.json&query=build.number
 
