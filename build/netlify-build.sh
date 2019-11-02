@@ -123,7 +123,7 @@ function build_branch()
     printf "Linting : ${file}\n"
     yamllint "${file}"
   done
-  python3 build/version.py
+
   echo "---> Copying Config Files"
   rsync -Ea --recursive ./config/ ./_site/config/ && echo "Done!"
   find ./_site/config -type f
@@ -132,6 +132,7 @@ function build_branch()
     mkdir -p ./config/gpg
     cp ./after-effects.asc ./config/gpg/after-effects
   fi
+  python3 build/version.py
   gen_metadata;
 }
 
