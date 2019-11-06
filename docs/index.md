@@ -20,7 +20,7 @@ start fresh. Beauty of Linux is almost everything is scriptable. Re-installing i
 
 ## How to
 
-See [Getting Started](/getting-started.md).
+See [Getting Started](/getting-started).
 
 ## Supported Distros
 
