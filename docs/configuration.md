@@ -5,7 +5,7 @@ This Script is designed to be flexible. You have two options of configuring this
 
 ## Configuration using  lists
 
-These files contain list of apt packages which can be installed. Please see [Installing APT packages](tasks/apt) for more information.
+These files contain list of apt packages which can be installed. Please see [Installing APT packages](tasks/) for more information.
 
 | File           | Contents                                                                                                        |
 | :------------- | :-------------------------------------------------------------------------------------------------------------- |
@@ -20,14 +20,14 @@ These files contain list of apt packages which can be installed. Please see [Ins
 ---
 Non package related lists (settings, deb files, delete packages list). The use and format is explained in individual sections.
 
-| File      | Contents                                                     | Used by function      | Link to section                                                                                           |
-| :-------- | :----------------------------------------------------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------- |
-| gsettings | Various gsettings                                            | None Yet              | NA                                                                                                        |
-| purge     | List of packages to be purged                                | `purge_not_required`  | [Link](tasks/#purge-unwanted-packages)                                                                    |
-| ppa       | List of ppas to be added                                     | `add_ppas`            | [Link](tasks/#add-personal-package-archives-ppa)                                                          |
-| deb       | List of DEB files to be installed (csv)                      | `install_debs`        | [Link](tasks/#install-debian-package-package-archives-deb-files)                                          |
-| get.mlist | Used by get-after-effects.sh to download required list files | NA                    | [get-after-effects.sh](https://github.com/tprasadtp/ubuntu-post-install/blob/master/get-after-effects.sh) |
-| pip2/pip3 | Python packages (Installed System wide)                      | _install_pip_packages | [Link](tasks/#install-python-packages-via-pip)                                                            |
+| File      | Contents                                                     | Used by function      |
+| :-------- | :----------------------------------------------------------- | :-------------------- |
+| gsettings | Various gsettings                                            | None Yet              |                                                                                                   |
+| purge     | List of packages to be purged                                | `purge_not_required`  |
+| ppa       | List of ppas to be added                                     | `add_ppas`            |
+| deb       | List of DEB files to be installed (csv)                      | `install_debs`        |
+| get.mlist | Used by get-after-effects.sh to download required list files | NA                    |
+| pip2/pip3 | Python packages (Installed System wide)                      | _install_pip_packages |
 
 !!! tip
     After you customize, might want to use simulate flag. `sudo ./after-effects -s -L`

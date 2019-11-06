@@ -9,7 +9,6 @@ before trying out.
 [![new][new]][changelogs]
 [![license][gpl-badge]][license]
 
-
 ![Bash](https://static.prasadt.com/logo64/bash.png)
 
 ### Deployment Status
@@ -137,7 +136,7 @@ A Complete  list of supported distributions is given below.
 - [Remove pre installed](https://ae.prasadt.com/tasks/#purge-unwanted-packages)
 - [Python 2 and Python 3 Packages](https://ae.prasadt.com/tasks/#install-python-packages-via-pip)
 - [Add PPAs](https://ae.prasadt.com/tasks/#add-personal-package-archives-ppa)
-- [Install deb packages ](https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files)
+- [Install deb packages](https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files)
 - [Install static binaries](https://ae.prasadt.com/tasks/#install-static-binaries)
 - [Install snap packages](https://ae.prasadt.com/tasks/#installing-snap-packages)
 

@@ -1,33 +1,29 @@
-["Config: Issue"]
-color = "a6bc27"
-name = "Config: Issue"
-description = "Config Issue"
 
-["New : Ubuntu"]
+["New: Ubuntu"]
 color = "2bb5c4"
-name = "New : Ubuntu"
+name = "New: Ubuntu"
 description = "New Version of ubuntu support"
 
-["New : Debian"]
+["New: Debian"]
 color = "2bb5c4"
-name = "New : Debian"
+name = "New: Debian"
 description = "New Version of Debian support"
 
-["New : Mint"]
+["New: Mint"]
 color = "2bb5c4"
-name = "New : Mint"
+name = "New: Mint"
 description = "New Version of Mint support"
 
 
-["New : Other"]
+["New: Other"]
 color = "2bb5c4"
-name = "New : Other"
+name = "New: Other"
 description = "New Version of Derivative support"
 
 
 ["Area: APT"]
 color = "fcc7f0"
-name = "Type: APT"
+name = "Area: APT"
 description = "APT/Repo related issues and PRs"
 
 ["Area: Snaps"]
@@ -39,6 +35,11 @@ description = "Snaps related issues and PRs"
 color = "fcc7f0"
 name = "Area: PIP"
 description = "PIP related issues and PRs"
+
+["Area: Config"]
+color = "fcc7f0"
+name = "Area: Config"
+description = "Config Issue"
 
 
 ["Actor: Dependabot"]
@@ -116,9 +117,9 @@ color = "c2c2c2"
 name = "Status: Stale"
 description = ""
 
-["Status: WontFix"]
+["Status: Wont-Fix"]
 color = "AFAFED"
-name = "Status: WontFix"
+name = "Status: Wont-Fix"
 description = "Works as intended/beyond scope"
 
 ["Type: Bug"]
