@@ -36,7 +36,7 @@ config:
     insync: true
     google: true
     ros: true
-    duo: true
+    duo: false
   # Flags
   flags:
   # Simulate flag will never be overridden by remote config.

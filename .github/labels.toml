@@ -3,20 +3,48 @@ color = "a6bc27"
 name = "Config: Issue"
 description = "Config Issue"
 
-["Meta: Automation"]
-color = "C8A2C8"
-name = "Meta: Automation"
-description = "Automation"
+["New : Ubuntu"]
+color = "2bb5c4"
+name = "New : Ubuntu"
+description = "New Version of ubuntu support"
+
+["New : Debian"]
+color = "2bb5c4"
+name = "New : Debian"
+description = "New Version of Debian support"
+
+["New : Mint"]
+color = "2bb5c4"
+name = "New : Mint"
+description = "New Version of Mint support"
+
+
+["New : Other"]
+color = "2bb5c4"
+name = "New : Other"
+description = "New Version of Derivative support"
+
+
+["Area: APT"]
+color = "fcc7f0"
+name = "Type: APT"
+description = "APT/Repo related issues and PRs"
+
+["Area: Snaps"]
+color = "fcc7f0"
+name = "Area: Snaps"
+description = "Snaps related issues and PRs"
+
+["Area: PIP"]
+color = "fcc7f0"
+name = "Area: PIP"
+description = "PIP related issues and PRs"
+
 
 ["Actor: Dependabot"]
-color = "C8A2C8"
+color = "025E8C"
 name = "Actor: Dependabot"
-description = "Acted by Dependabot"
-
-["Type: Duplicate"]
-color = "C8A2C8"
-name = "Type: Duplicate"
-description = "Issue or PR is duplicate"
+description = "Action by Dependabot"
 
 ["Priority: Critical"]
 color = "FF0000"
@@ -28,28 +56,28 @@ color = "FFA500"
 name = "Priority: High"
 description = "High importance"
 
+["Priority: Low"]
+color = "85e595"
+name = "Priority: Low"
+description = "Low prioirty tasks"
+
 ["Priority: Medium"]
 color = "fbca04"
 name = "Priority: Medium"
 description = "Medium priority PR/issues"
 
-["Priority: Low"]
-color = "009800"
-name = "Priority: Low"
-description = "Low prioirty tasks"
-
-["Status : Awaiting-Response"]
+["Status: Awaiting-Response"]
 color = "00b1ed"
-name = "Status : Awaiting-Response"
+name = "Status: Awaiting-Response"
 description = ""
 
-["Status : Keep-Open"]
+["Status: Keep-Open"]
 color = "00b1ed"
-name = "Status : Keep-Open"
+name = "Status: Keep-Open"
 description = ""
 
 ["Status: Abandoned"]
-color = "89CFF0"
+color = "000000"
 name = "Status: Abandoned"
 description = "Issue/feature has been abandoned."
 
@@ -58,20 +86,20 @@ color = "00FF9F"
 name = "Status: Done"
 description = "Completed and closed tasks/pr/issues"
 
-["Status: InProgress"]
+["Status: In-Progress"]
 color = "FFD649"
-name = "Status: InProgress"
+name = "Status: In-Progress"
 description = "PR/Bug-fix WIP"
 
 ["Status: Invalid"]
-color = "8A8AE5"
+color = "cccccc"
 name = "Status: Invalid"
 description = "Invalid"
 
-["Status: Pending Tests"]
-color = "FFEC1A"
-name = "Status: Pending Tests"
-description = "Tests/more tests are required"
+["Status: Pending"]
+color = "fef2c0"
+name = "Status: Pending"
+description = "Pending Tests and some more work"
 
 ["Status: Resolved"]
 color = "00D100"
@@ -82,6 +110,11 @@ description = "Issue/PR has been resolved"
 color = "C4FF36"
 name = "Status: Review Required"
 description = "Further review required"
+
+["Status: Stale"]
+color = "c2c2c2"
+name = "Status: Stale"
+description = ""
 
 ["Status: WontFix"]
 color = "AFAFED"
@@ -94,9 +127,14 @@ name = "Type: Bug"
 description = "Issue is a bug, Add Type: BugFix for PR"
 
 ["Type: Documentation"]
-color = "cc317c"
+color = "fca6da"
 name = "Type: Documentation"
 description = "Docs"
+
+["Type: Duplicate"]
+color = "C8A2C8"
+name = "Type: Duplicate"
+description = "Issue or PR is duplicate"
 
 ["Type: Enhancement"]
 color = "84b6eb"
@@ -108,36 +146,52 @@ color = "7eed76"
 name = "Type: Feature"
 description = "Feature request/new feature"
 
-["Type: Maintanance"]
-color = "fbca04"
-name = "Type: Maintanance"
-description = "Maintanance taks/package updates/prettify etc"
-
-["Type: Dependencies"]
-color = "fbca04"
-name = "Type: Dependencies"
-description = "Dependency update"
-
-["Deps: Python"]
-color = "fbca04"
-name = "Deps: Python"
-description = "Python Deps"
+["Type: Maintenance"]
+color = "f4aea1"
+name = "Type: Maintenance"
+description = "Maintenance tasks/package updates/prettify etc"
 
 ["Type: Question"]
-color = "d876e3"
+color = "cc317c"
 name = "Type: Question"
-description = "Issues with Questions"
+description = "Questions"
 
 ["Type: Security"]
-color = "ffede9"
+color = "f75d68"
 name = "Type: Security"
 description = "Security fixes"
 
-["Status: Stale"]
-color = "ffffff"
-name = "Status: Stale"
+["Deps: Docker"]
+color = "ceef86"
+name = "Deps: Docker"
+description = ""
+
+["Deps: Go"]
+color = "ceef86"
+name = "Deps: Go"
+description = ""
+
+["Deps: Python"]
+color = "ceef86"
+name = "Deps: Python"
+description = "Python Deps"
+
+["Deps: Rust"]
+color = "ceef86"
+name = "Deps: Rust"
+description = ""
+
+["Deps: Submodule"]
+color = "ceef86"
+name = "Deps: Submodule"
+description = ""
+
+["Deps: Terraform"]
+color = "ceef86"
+name = "Deps: Terraform"
+description = "Terraform Module updates"
 
 ["Status: Locked"]
-color = "C8A2C8"
+color = "4e5154"
 name = "Status: Locked"
 description = "Issue is locked"
