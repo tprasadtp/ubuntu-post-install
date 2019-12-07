@@ -650,12 +650,7 @@ function _fix_ubuntu_derivatives()
                                             code_name="xenial"
                                             _log_success "${_elementary} Changed codename to $code_name"
                                             ;;
-      juno )                                _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 18.04 Bionic."
-                                            _log_and_show "${_notice} External repositories will use Ubuntu 18.04."
-                                            code_name="bionic"
-                                            _log_success "${_elementary} Changed codename to $code_name"
-                                            ;;
-      hera )                                _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 18.04 Bionic."
+      juno | hera)                                _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 18.04 Bionic."
                                             _log_and_show "${_notice} External repositories will use Ubuntu 18.04."
                                             code_name="bionic"
                                             _log_success "${_elementary} Changed codename to $code_name"
