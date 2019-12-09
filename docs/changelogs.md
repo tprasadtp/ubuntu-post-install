@@ -1,5 +1,10 @@
 # Changelogs
 
+## Version 5.5.1
+
+- Support for elementaryOS 5.1 Thanks, [IslamAlam](https://github.com/IslamAlam)
+- Fix JSON errors while fetching commit data in README
+
 ## Version 5.5.0
 
 - Eoan Support
