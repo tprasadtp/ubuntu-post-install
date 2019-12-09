@@ -58,7 +58,6 @@ cat <<EOT > ./_site/commit.json
 {
   "commit": {
     "id": "${COMMIT_SHORT:-NA}",
-    "msg": "${TRAVIS_COMMIT_MESSAGE:-NA}",
     "branch": "${TRAVIS_BRANCH:-NA}"
   },
   "build": {

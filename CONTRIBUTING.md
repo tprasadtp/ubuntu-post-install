@@ -14,7 +14,7 @@ Conduct][code of conduct]. By participating in this project you agree to
 abide by its terms.
 
 [readme]: https://github.com/tprasadtp/ubuntu-post-install/blob/master/README.md
-[new issue]: https://github.com/tprasadtp/ubuntu-post-install/issues/new/choose
+[new issue]: https://github.com/tprasadtp/ubuntu-post-install/issues/new/
 [new pull request]: https://github.com/tprasadtp/ubuntu-post-install/compare
 [pull requests]: https://github.com/tprasadtp/ubuntu-post-install/pulls
 [code of conduct]: /.github/CODE_OF_CONDUCT.md
