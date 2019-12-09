@@ -51,6 +51,7 @@ A Complete  list of supported distributions is given below.
 | Debian 10         | Buster                | ---            | Only use it for testing       |
 | Elementary-OS 0.4 | Loki                  | Yes            | Not tested                    |
 | Elementary-OS 5.0 | Juno                  | Yes            | Not tested                    |
+| Elementary-OS 5.1 | Hera                  | Yes            | Tested                        |
 | Budgie Remix      | 16.04                 | Yes            |
 | PoP! OS           | Supported Ubuntu      | Yes            | Not tested                    |
 | Linux-Lite        | 3.X                   | Yes            | (Based on Ubuntu 16.04)       |
