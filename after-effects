@@ -35,8 +35,8 @@ esac
 readonly EXEC_START=$(date +%s)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.5.0 Beta"
-readonly REL_NUM=550
+readonly REL_NAME="5.5.1 Beta"
+readonly REL_NUM=551
 
 function _init_printf_variables()
 {

@@ -41,6 +41,9 @@ You might see an error like this,
 [     Info      ] Please visit the link below for information on how to upgrade.
 ```
 
+You are using a version of Ubuntu/Debian which is EOL. Please update to supported version of Ubuntu/Debian.
+> Ubuntu ESM versions are considered as EOL, because it is marginal case.
+
 ## SSL Errors
 
 ```console

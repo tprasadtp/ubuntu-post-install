@@ -2,9 +2,9 @@
 api: 2
 # Configuraion
 version:
-  number: 550
-  name: 5.5.0-Beta
-  changelog: 19.10 Support, Enhancemets
+  number: 551
+  name: 5.5.1-Beta
+  changelog: 19.10, ElementaryOS 5.1 Support
 # Stats reporting
 stats:
   report: false

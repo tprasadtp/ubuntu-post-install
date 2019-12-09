@@ -7,9 +7,7 @@ update_configs:
     update_schedule: "live"
     target_branch: "master"
     default_labels:
-      - "Meta: Automation"
       - "Actor: Dependabot"
-      - "Type: Dependencies"
       - "Deps: Python"
     automerged_updates:
       - match:

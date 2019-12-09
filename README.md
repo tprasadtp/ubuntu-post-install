@@ -49,10 +49,10 @@ If you already have cloned the repo, you can use `git pull` to get the latest ch
 ### Step 2: Update the lists or your YAML configuration file
 
 Update the list files or YAML file to suit your needs. Change PPAs, add or delete packages to list, tweak flags etc.
-Please see [Configuration](https://ae.prasadt.com/config/#package-lists) & [Tasks](https://ae.prasadt.com/tasks/#what-can-it-do).
+Please see [Configuration](https://ae.prasadt.com/configuration/) & [Tasks](https://ae.prasadt.com/tasks/).
 
-[![Configuration-Page](https://img.shields.io/badge/Info-Configuration-blue.svg)](https://ae.prasadt.com/config/#package-lists)
-[![Tasks-Page](https://img.shields.io/badge/Info-Tasks-green.svg)](https://ae.prasadt.com/tasks/#what-can-it-do)
+[![Configuration-Page](https://img.shields.io/badge/Info-Configuration-blue.svg)](https://ae.prasadt.com/configuration/)
+[![Tasks-Page](https://img.shields.io/badge/Info-Tasks-green.svg)](https://ae.prasadt.com/tasks/)
 
 ### Step 3: Run the script
 

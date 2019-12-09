@@ -51,8 +51,7 @@ function gen_metadata()
 {
   "commit": {
     "id": "${COMMIT_REF:0:7}",
-    "msg": "${TRAVIS_COMMIT_MESSAGE:-NA}",
-    "branch": "${TRAVIS_BRANCH:-NA}",
+    "branch": "${BRANCH:-NA}",
     "pr": "${PULL_REQUEST:-NA}"
   },
   "build": {
