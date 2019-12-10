@@ -1,13 +1,13 @@
 # YAML Config
 
-The configuration file is pretty much self explanatory so, I am going to just post a sample config file below. All Boolean fields are optional and if not provided or if found to be invalid, fallback to false. ample configs can be found in config directory.
+The configuration file is pretty much self explanatory so, I am going to just post a sample config file below. All Boolean fields are optional and if not provided or if found to be invalid, fallback to false. Sample configs can be found in config directory.
 
 ```yml
 # Install Config
 version: 5
 name: Polaris
 author: Prasad T
-# Configurtaion
+# Configuration
 config:
   # Enabled Tasks
   tasks:

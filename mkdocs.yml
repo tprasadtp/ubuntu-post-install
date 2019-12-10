@@ -1,6 +1,6 @@
 
 # Project information
-site_name: Documentaion for After Effects
+site_name: Documentation for After Effects
 site_description: Effortless & Simple Ubuntu post-installation script
 site_author: Prasad Tengse
 site_url: https://ae.prasadt.com/
@@ -14,7 +14,7 @@ remote_branch: gh-pages
 remote_name: origin
 
 # Copyright
-copyright: 'Copyright &copy; 2018 Prasad Tengse'
+copyright: 'Copyright &copy; 2017-2020 Prasad Tengse'
 
 # Configuration
 theme:
@@ -88,10 +88,9 @@ nav:
   - Introduction: index.md
   - Getting Started: getting-started.md
   - FAQ:
-    - Dependecies: faq/dependencies.md
+    - Dependencies: faq/dependencies.md
     - Distros: faq/distros.md
     - Errors & Issues: faq/errors.md
-    - Linux Mint: faq/linuxmint.md
     - Others: faq/others.md
     - Exit Codes: faq/exit-codes.md
     - Debugging: faq/debug.md

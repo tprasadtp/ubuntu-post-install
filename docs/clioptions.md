@@ -375,7 +375,7 @@ tasks chosen.
                        downloaded deb packages
 [-l | --delete-log]    Delete logfile (./log/after-effects.log)
 [-s | --simulate]      Try not make changes to system and use --dry-run
-                       whenever possible. Plese read the documentation
+                       whenever possible. Please read the documentation
                        at http://ae.prasadt.com/clioptions to know its limits
                        Not everything can be simulated.
 

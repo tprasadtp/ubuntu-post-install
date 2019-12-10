@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This is a bash utility to test the shellscripts in this repo using shellcheck
+# This is a bash utility to test the shell scripts in this repo using shellcheck
 # Version:0.1
 # Author: Prasad Tengse
 # Licence: GPLv3
@@ -16,7 +16,7 @@ for file in $(find . -type f -not -iwholename '*.git*' -executable | sort -u); d
 	if file "${file}" ; then
 		{
 			# ignore , double  quote strings  2086
-			shellcheck -e SC2154 -e SC2086 -e SC1117 "${file}" && printf " [ OK ]: sucessfully linted %s\n\n" "${file}"
+			shellcheck -e SC2154 -e SC2086 -e SC1117 "${file}" && printf " [ OK ]: Successfully linted %s\n\n" "${file}"
 
 		} ||
 		{

@@ -2,7 +2,7 @@ apt_sources:
   # Comment, This will show in software properties
   - comment: Google Chrome
     # GPG key Can be URL or a GPG key
-    # Keys will be retreived from ubuntu keyserver.
+    # Keys will be retrieved from ubuntu keyserver.
     key_url:
     key_id:
     # URL for repo

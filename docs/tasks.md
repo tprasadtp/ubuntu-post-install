@@ -23,7 +23,7 @@ This task can add the following repositories.
 
 
 ??? tip "Using `--fix` falg"
-    Please note that the above repositories are sometimes not updated for latest Ubuntu release and most certainly will not be available for upcoming release of Ubuntu(Alpha/Beta). It might take some time till the repositories are available for the latest release. Use -f or --fix command line option or --pre-release in case you are using a Development version of ubuntu to revert using latest available version of repositories (usually previous Ubuntu release or in case of Beta/Alpha latest stable release of Ubuntu). [For more info see command line options.](/clioptions/#fix-for-latest-ubuntu-releases)
+    Please note that the above repositories are sometimes not updated for latest Ubuntu release and most certainly will not be available for upcoming release of Ubuntu(Alpha/Beta). It might take some time till the repositories are available for the latest release. Use -f or --fix command line option or --pre-release in case you are using a development version of Ubuntu to revert using latest available version of repositories (usually previous Ubuntu release or in case of Beta/Alpha latest stable release of Ubuntu). [For more info see command line options.](/clioptions/#fix-for-latest-ubuntu-releases)
 
 ??? tip "Controlling which repository is added using config file"
     You can set your YML file to decide which repository is added. Some repositories may no be supported on your architecture or distribution. Take a look at [config.yml](/api/yaml) for example. If you omit a value, it defaults to false **ALWAYS**. Do note that if you are using lists default values are different, they are mentioned in below.
@@ -207,7 +207,7 @@ config:
 - First part is the URL to the binary file separated by ',' name of the binary.
 
 !!! note "Note on file names in configuration"
-    Please note that file will be saved with the name mentioned in the file & can be executed as such.
+    Please note that file will be saved with the name mentioned in the file and will be in your path.
 
 ## Install python packages (via pip)
 
@@ -270,8 +270,8 @@ config:
 ```
 
 !!! warning
-    List mode does not support installing snap packages. Its responsibility of the user to separate classic
-    snaps, edge and normal snaps.
+    - List mode does not support installing snap packages.
+    - Its responsibility of the user to separate classic snaps, edge and normal snaps.
 
 ## All In one
 
@@ -288,11 +288,11 @@ This will perform Following actions. (In the following order)
 - Install Static binaries
 
 This option will honor --autopilot and --simulate options as individual tasks would do if used with YAML. Lists mode does not
-support for selecting individiual tasks.
+support for selecting individual tasks.
 
 ## AUTOPILOT Mode
 
-Setting `AUTOPILOT=true` or passing `--autopilot` will will skip all UI prompts and confirmations and run ALL In One.
+Setting `AUTOPILOT=true` or passing `--autopilot` will skip all UI prompts and confirmations and run ALL In One.
 
 This mode requires you to specify tasks to be run if using YAML config. Example snippet is given below.
 

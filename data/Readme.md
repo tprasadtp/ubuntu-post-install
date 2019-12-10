@@ -7,7 +7,7 @@ Package lists
 | administration | Administration Tools like Synaptic                                                                               | Yes                 |
 | development    | Used for development tasks eg: rake                                                                              | Yes                 |
 | external       | Packages from PPAs or External repositories. eg : Google Chrome, Spotify, Visual Studio Code, Google Cloud SDKs  | Yes                 |
-| multimedia     | Tools to edit photos and videos, video players and editors and downloaders. Tools like mpv, darktable, kdenlive. | Yes                 |
+| multimedia     | Tools to edit photos and videos, video players and editors. Tools like mpv, darktable, kdenlive. | Yes                 |
 | productivity   | Email, Chat, Office tools, Document converters etc.                                                              | Yes                 |
 | security       | Security related tools                                                                                           | Yes                 |
 | utilities      | Utilities and Tools                                                                                              | Yes                 |

@@ -1,8 +1,12 @@
 # Changelogs
 
+## Version 5.5.2
+
+- Add support for Mint 19.3 Tricia
+
 ## Version 5.5.1
 
-- Support for elementaryOS 5.1 Thanks, [IslamAlam](https://github.com/IslamAlam)
+- Support for ElementaryOS 5.1 Thanks, [IslamAlam](https://github.com/IslamAlam)
 - Fix JSON errors while fetching commit data in README
 
 ## Version 5.5.0
@@ -12,7 +16,7 @@
 Minikube is still supported via binary method.
 - Option to fallback to non LTS releases if using `--fix`
 - `--pre-release` flag now supports Debian Bullseye
-- Fix Gist URL not workin g(#17)
+- Fix Gist URL not working(#17)
 - Introduce `--autopilot` flag
 - Introduce DEBUG modes(activated on DEBUG=1)
 
@@ -22,7 +26,7 @@ Minikube is still supported via binary method.
 
 ## Version 5.4.1
 
-- Add disco support, start testing on eoan
+- Add disco support, start testing on Eoan
 
 ## Version 5.4.0
 
@@ -44,7 +48,6 @@ Minikube is still supported via binary method.
 - Add new wine HQ keys to repo cleanup
 - Add new Spotify key to repo cleanup
 - Add new warning msg function
-- Remove repeated debug msgs
 
 ## Version 5.3.3
 

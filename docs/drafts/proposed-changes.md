@@ -19,7 +19,7 @@ by their vendors and often require some tweaks or for other reasons. You can add
 
 - InSync
 - Duo Security
-- GCSFUSE(hasen't been updated since bionic)
+- GCSFUSE(hasn't been updated since bionic)
 
 
 ```yaml
@@ -27,7 +27,7 @@ by their vendors and often require some tweaks or for other reasons. You can add
       # Comment, This will show in software properties
     - comment: Google Chrome
       # GPG key Can be URL or a GPG key
-      # Keys will be retreived from ubuntu keyserver.
+      # Keys will be retrieved from Ubuntu key-server.
       key_url:
       key_id:
       # URL for repo
@@ -54,6 +54,6 @@ by their vendors and often require some tweaks or for other reasons. You can add
       ltsonly: false
       # Save .list file as
       # Mandatory
-      # Do not inlude .list it will be added automatically
+      # Do not include .list it will be added automatically
       name: google-chrome
 ```

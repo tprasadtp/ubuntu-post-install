@@ -34,7 +34,7 @@ root@a9f6bf377494:/shared# DEBUG=1 ./after-effects -c config/default.yml -s -H
 [   Simulating  ] is set to true
 [     Info      ] YAML config will not be displayed.
 [     Info      ] Checking dependencies...
-[    Notice     ] Following details are recognised by the Script.
+[    Notice     ] Following details are recognized by the Script.
 [     Info      ] Hostname: a9f6bf377494
 [     Info      ] UUID for Run: a8ce9e69-b967-4a59-841f-e317f0d18d25
 [     Info      ] Distro: ubuntu

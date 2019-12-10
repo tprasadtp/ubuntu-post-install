@@ -10,7 +10,7 @@ Following Tests are done on Travis-CI.
 
 !!! info
 
-    - Test on arm only use YAML config not lists
+    - Tests on arm only use YAML config not lists
 
 - Additionally script is also tested on ARM64 on bionic
 - Dockerfiles used for building the image are in `/dockerfiles` directory.

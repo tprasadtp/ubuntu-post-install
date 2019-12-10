@@ -35,8 +35,8 @@ esac
 readonly EXEC_START=$(date +%s)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.5.1 Beta"
-readonly REL_NUM=551
+readonly REL_NAME="5.5.2 Beta"
+readonly REL_NUM=552
 
 function _init_printf_variables()
 {
@@ -101,8 +101,8 @@ function _init_printf_variables()
     readonly BLUE=$'\e[34m'
     readonly NC=$'\e[0m'
     readonly MAGENTA=$'\e[35m'
-    readonly GRAY=$'\e[0;30m'
-    readonly LOG_GRAY=$'\e[38;5;240m'
+    readonly GRAY=$'\e[38;5;247m'
+    readonly LOG_GRAY=$'\e[38;5;241m'
     readonly INTERNAL_GRAY=$'\e[38;5;244m'
 }
 
@@ -111,7 +111,7 @@ function _init_logging()
 {
   # Initialize phase 2
   # Only variables necessary for logging & start logging
-  # Script relatead variables are defined in _init_script_variables
+  # Script related variables are defined in _init_script_variables
   readonly log_file="$dir"/logs/after-effects.log
   {
     mkdir -p "$dir"/logs
@@ -210,7 +210,7 @@ function _script_exit_log()
 
     # Report Stats
     report_stats
-    # Generage Exit message & log
+    # Generate Exit message & log
     _goodbye_msg
     _log_debug "Exiting Script"
     printf "\nFinished %s in %d seconds, on %s.\nLast exit code was: %d\n" "$SCRIPT" "$EXEC_TIME" "$(date)" "$?" | tee -a "$log_file"
@@ -305,7 +305,7 @@ function _init_script_variables()
     armhf)          _log_debug "Running on ARM CPU with HW Floating point Processor";
                     readonly ARCH="armhf";
                     ;;
-    arm64)           _log_debug "This is an ARM 64. Please be advised that not all reposirories support this arch.";
+    arm64)           _log_debug "This is an ARM 64. Please be advised that not all repositories support this arch.";
                     readonly ARCH="arm64";
                     ;;
     * )             _log_error "${_error} Sorry! This architecture is not supported by this script!"
@@ -333,7 +333,7 @@ function _init_script_variables()
   readonly code_name_latest_debian_release="buster"
   readonly codename_upcoming_debian_release="bullseye"
 
-  #============================ Switches/ bools & Vars ================================
+  #============================ Switches/ booleans & Vars ================================
 
 
   # Fix Repo not available for latest release
@@ -343,7 +343,7 @@ function _init_script_variables()
   # Allow repo fixes for Upcoming releases of ubuntu and its derivatives.
   bool_fix_repo_not_available_for_upcoming_release="false"
 
-  # Checks for Version and Changelogs via APIs
+  # Checks for Version
   # Define API node endpoints
 
   bool_check_version="true"
@@ -356,14 +356,14 @@ function _init_script_variables()
 
   # Purge not required packages
   # Default is false
-  # Requires commad line option -d to be passed via command line otherwise it will not work.
-  # Set this to true if you dont want to pass -d every time
+  # Requires command line option -d to be passed via command line otherwise it will not work.
+  # Set this to true if you don't want to pass -d every time
   bool_purge_not_required_pkgs="false"
 
   # Say yes to all (No whiptail dialogs)
   # Default is false
   # Can be set to true and dialog boxes will be skipped if command line option -y is passed.
-  # Set this to true if you dont want to pass -y every time
+  # Set this to true if you don't want to pass -y every time
   bool_say_yes_to_all="false"
 
   # Keep Downloaded DEB packages
@@ -413,7 +413,7 @@ function _init_script_variables()
   #
   # ================================================================================== #
   # Achtung!
-  # Do not change any of the variables below this if you dont know what they do.
+  # Do not change any of the variables below this if you don't know what they do.
   # They are essential for correct working of the script or use unstable builds/repos.
 
   # Check Debian Flags
@@ -533,7 +533,7 @@ function verify_gpg_signature()
 {
   # Verifies the file with its detached GPG signature.
   # Assumes that you already have public key in your keyring.
-  # Assumes signature file is present at same localtion,
+  # Assumes signature file is present at same location,
   # with same name but with .sig or .gpg or .asc extension.
   # Lets declare variables
   local sig_file
@@ -580,18 +580,18 @@ function verify_gpg_signature()
 
 function report_stats()
 {
-  # Report anonymized stats about the script.
+  # Report anonymous stats about the script.
   # Following things are reported.
-  # A UUID generated for each execution, (its random and is not persistant across runs)
+  # A UUID generated for each execution, (its random and is not persistent across runs)
   # sha-1 sum of config, Total execution time, system architecture,
-  # Distro name, feaure selected, last exit code, flags used, if Travis or Docker flags are true,
+  # Distro name, feature selected, last exit code, flags used, if Travis or Docker flags are true,
   # timezone and system language. Nothing else is collected. Period.
-  # If you are feaking out, its a shellscript, You can literally look into it
+  # If you are freaking out, its a shellscript, You can literally look into it
   # and check what's collected. Why if you ask? Just for fun and improvement of course!.
   # Data will be stored in AWS DynamoDB and/or Google Firebase.
   # Data will not be shared with any third party. Period. Only me or my team members will have access
   # to it. If you run a search query on google, it probably collects more data than me.
-  # API endpoints may log public IP addresses (Github, Google and AWS). But they are not saved in the
+  # API endpoints may log public IP addresses (GitHub, Google and AWS). But they are not saved in the
   # database.
   # But I really really don't want to report stats because I Use it in "Top Secret" place under the rock.
   # Well, 1. You should not use this script! There are better tools like Chef and
@@ -627,21 +627,24 @@ function _fix_ubuntu_derivatives()
   # This function fixes that for
   # Linux mint 17.X : Ubuntu 14.04 Trusty,
   # Linux mint 18.x : Ubuntu 16.04 Xenial,
+  # Linux mint 19.x : Ubuntu 18.04 Xenial,
   # Elementary OS Loki : Ubuntu 14.04 Trusty,
-  # Elementary OS Freya and Juno : Ubuntu 16.04 Xenial
-  # POP_OS! uses Ubuntu codenames (No need to apply fix)
+  # Elementary OS Freya: Ubuntu 16.04 Xenial
+  # Elementary OS Juno,Hera: Ubuntu 18.04 Xenial
+  # Pop!_OS uses Ubuntu codenames (No need to apply fix)
+  # KDE Neon, Bodhi, Peppermint use Ubuntu codenames
   # If the release is not known this function exits the script for safety.
 
   _log_and_show "${_derivatives} Checking..."
   _log_debug "Variable code_name is : $code_name"
   case ${code_name} in
       sarah | serena | sonya | sylvia )     _log_and_show "${_linuxmint} Release is Linux mint 18.X."
-                                            _log_and_show "${_notice} Setting additional repositoris to follow Ubuntu 16.04."
+                                            _log_and_show "${_notice} Setting additional repositories to follow Ubuntu 16.04."
                                             code_name="xenial";distro_name="ubuntu"
                                             _log_success "${_linuxmint} Changed codename to $code_name"
                                             ;;
-      tara | tessa | tina)                  _log_and_show "${_linuxmint} Release is Linux mint 19.X."
-                                            _log_and_show "${_notice} Setting additional repositoris to follow Ubuntu 18.04."
+      tara | tessa | tina | tricia)         _log_and_show "${_linuxmint} Release is Linux mint 19.X."
+                                            _log_and_show "${_notice} Setting additional repositories to follow Ubuntu 18.04."
                                             code_name="bionic";distro_name="ubuntu"
                                             _log_success "${_linuxmint} Changed codename to $code_name"
                                             ;;
@@ -656,13 +659,13 @@ function _fix_ubuntu_derivatives()
                                             _log_success "${_elementary} Changed codename to $code_name"
                                             ;;
       xenial | bionic )                     readonly bool_config_partner_repo="true"
-                                            _log_and_show "${_info} This is an LTS relesae of Ubuntu"
+                                            _log_and_show "${_info} This is an LTS release of Ubuntu"
                                             _log_success "${_derivatives} Keeping the codename as: $code_name."
                                             ;;
                                             # previous release
       disco )                               readonly bool_config_partner_repo="true"
                                             _log_and_show "${_info} This is Ubuntu 19.04"
-                                            _log_warn "${_warning} Ubuntu 19.10 was released recetly please consider using it!"
+                                            _log_warn "${_warning} Ubuntu 19.10 was released recently please consider using it!"
                                             _log_success "${_derivatives} Keeping the codename as: $code_name."
                                             ;;
       eoan)                                 readonly bool_config_partner_repo="true"
@@ -840,7 +843,7 @@ function _get_remote_file()
 
     _log_debug "Exit code from wget is : $exit_status"
     if [[ $exit_status -eq 0 ]]; then
-      _log_debug "Successfully retrieved Config file."
+      _log_debug "Successfully retrieved config file."
     else
       _log_warn "${_error} Something went wrong while retrieving ${file_name}."
       _log_and_exit "${_error} Error Getting file." "28"
@@ -862,7 +865,7 @@ function _version_checks ()
       _log_debug "Version Checks are enabled."
       _log_and_show "${_version} Checking for Updates..."
       if [ "$bool_custom_version_file" != "true" ]; then
-        _log_debug "Using Remote Config file."
+        _log_debug "Using remote config file."
         _log_debug "Deleting old YAMLS"
         rm -f "/tmp/ae/api-version.yml" || _log_debug "Deleting old version YAML failed."
         readonly version_yaml_file="/tmp/ae/api-version.yml"
@@ -925,7 +928,7 @@ function _version_checks ()
 
 function _check_bool()
 {
-  # Function to check if config has valid values for bools.
+  # Function to check if config has valid values for bool.
   # Accepted values are true and false
   # If invalid, defaults to false.
   # Accepts global var and bool to check as arguments
@@ -1054,8 +1057,8 @@ function _set_yaml_config()
     _check_bool "add_duo_repo" "${config__add_repo__duo[0]}"
 
     # Other Script Flags
-
     #################################################################################
+
     # Purge Packages
     _check_bool "bool_purge_not_required_pkgs" "${config__flags__purge_enabled[0]}"
     #bool_purge_not_required_pkgs="${config__flags__purge_enabled[0]}"
@@ -1215,12 +1218,6 @@ function _set_yaml_config()
     # There is a special package list under key, config.purge or purge.list, which contains
     # list of apt packages to be purged from the system if present.
 
-    #--------------------------------------------------------------------------------
-    #                             Special list - Purge list
-    #--------------------------------------------------------------------------------
-    # There is a special package list under key, config.purge, which contains list of apt packages to be
-    # purges from the system if present.
-
     # Lets get em, shall we?
 
     # Copy package list
@@ -1278,8 +1275,9 @@ function _set_yaml_config()
 
 function _set_list_config()
 {
-   # If --local or --list option is used then we dont need to fetch Configs
-  # We need to just parse the .list files in data.Flags will be local and can be alterd via options or editing the
+  # If --local or --list option is used then we don't need to fetch Configs
+  # We need to just parse the .list files in data.Flags will be local and can be
+  # altered via options or editing the
   # Script itself.
   if [ "$bool_use_lists" == "true" ]; then
     _log_and_show "${_cfg} Local Flags and Configs are preferred."
@@ -1396,14 +1394,14 @@ function _set_list_config()
 
 function _show_confirmation_dialog_for_tasks()
 {
-  # Function to confirm whether action selected should be perfromed or not.
+  # Function to confirm whether action selected should be performed or not.
   # Accepts 3 arguments
   # ARG-1 Name of the task/function selected
   # ARG-2 Message to be displayed in confirmation box
   # ARG-3 name of the function to execute
   # Depends on whiptail
   # To overide and say yes to all dialog pass -y as command line option while running the script.
-  local name_of_task="${1}" #Name of the task to be perfromed
+  local name_of_task="${1}" #Name of the task to be performed
   local confirm_msg="${2}" #Message shown in Confirmation dialogue
   local exec_function="${3}" #Function to run if user selected yes
   COLUMNS=$(tput cols)
@@ -1422,7 +1420,7 @@ function _show_confirmation_dialog_for_tasks()
         _process_menu;
     fi
   elif [ "$bool_say_yes_to_all" = "true" ]; then
-    _log_debug "Yes to all: No confirm dialogs to be displayed."
+    _log_debug "Yes to all: No confirm dialog to be displayed."
     _log_debug "Executing: $exec_function"
     $exec_function;
   else
@@ -1452,7 +1450,7 @@ function _install_dependencies()
 {
   # Install packages mentioned in the arguments.
   # If installation fails exit the script.
-  # ARG 1: Packages in quote seperated by space.
+  # ARG 1: Packages in quote separated by space.
   local packages=("$@")
   _log_debug "Installing Packages"
   {
@@ -1481,7 +1479,7 @@ function _install_dependencies()
 function _install_pre_requisites()
 {
   # This function installs required packages for adding apt repositories
-  # These should be present in your base ubuntu instal. If not present then, this function
+  # These should be present in your base Ubuntu install. If not present then, this function
   # will install them.
   # Following are the packages installed by this function:
   # linux-image-extra-<>, apt-transport-https, ca-certificates,
@@ -1496,7 +1494,7 @@ function _install_pre_requisites()
 
 function _fix_repo_not_available()
 {
-  # If repository is not available for latest ubuntu release, this uses last stable release
+  # If repository is not available for latest Ubuntu release, this uses last stable release
   # (may not be LTS) for adding repository
   if [ "$bool_fix_repo_not_available_for_latest" == "true" ]; then
     # Only do this on latest releases
@@ -1521,9 +1519,9 @@ function _fix_repo_not_available()
 function _fix_repo_not_available_upcoming_release()
 {
   # If repository is not available for upcoming  release, this uses last stable release
-  # Aka if the pre-release release is 18.04 it might use 17.10 if used wiht --fix, it will use 18.04 repos.
-  # With debian If release is 11, when used with this flag we will use Debian 10 repos.
-  # --fix is not valid in case of debian, only --pre-release applies.
+  # Aka if the pre-release release is 18.04 it might use 17.10 if used with --fix, it will use 18.04 repos.
+  # With Debian If release is 11, when used with this flag we will use Debian 10 repos.
+  # --fix is not valid in case of Debian, only --pre-release applies.
 
   # check for fix-pre-release flag
   if [ "$bool_fix_repo_not_available_for_upcoming_release" == "true" ]; then
@@ -1549,7 +1547,7 @@ function _fix_repo_not_available_upcoming_release()
         _log_and_show "${_pre_release} Using repositories for current stable Debian release: $code_name_latest_debian_release"
         code_name="$code_name_latest_release"
     else
-        _log_debug "This Release/Distro does not support this option. Flag --pre-release will be ignored."
+        _log_debug "This release/distribution does not support this option. Flag --pre-release will be ignored."
     fi
   else
     _log_debug "Feature fix_repo_not_available_upcoming_release is disabled."
@@ -1593,7 +1591,7 @@ function add_repositories()
 {
   # This function adds repositories for several apps like
   # Google Chrome, Spotify, Google Cloud SDK, GCSFUSE(Part of google cloud),
-  # Skype, Docker, Skype, Microsoft Visual Studio Code, Google Earth, Insync client, WineHQ etc
+  # Skype, Docker, Skype, Microsoft Visual Studio Code, Google Earth, Insync client, Wine-HQ etc
   # WARNING: Some repositories might not support latest version of Ubuntu.
 
   local CLOUD_SDK_REPO
@@ -1753,9 +1751,9 @@ function add_repositories()
 
   # ROS
   # Arch support varies on distro so lot of ugly elifs.
-  # Packges share same name across RC and Stable. so its not possible to
+  # Packages share same name across RC and Stable. so its not possible to
   # use both RC(ros-shadow-fixed and ros) repos at the same time.
-  # rusty will reach EOL soon, ITs not supoorted and its complicated due to
+  # rusty will reach EOL soon, ITs not supported and its complicated due to
   # http://wiki.ros.org/indigo/Installation/Ubuntu
   # Dependency issues which might pop up.
   ros_arch_supported="false"
@@ -1914,7 +1912,7 @@ function add_repositories()
   fi
 
   # Enable Canonical Partner repos
-  # Some Releases like linux mint have their own way of enabling partner Repositoris,
+  # Some Releases like linux mint have their own way of enabling partner repositories,
   # Disable adding partner Repositoris when using Ubuntu Derivatives like Linux Mint.
   # Default is true
   # _fix_ubuntu_derivatives will take care of this and bool_config_partner_repo is set to true only if
@@ -1923,7 +1921,7 @@ function add_repositories()
     _log_and_show "${_repo} Canonical partner repositoris"
     add-apt-repository "deb http://archive.canonical.com/ubuntu $code_name partner" >> "$log_file"
   else
-    _log_warn "${_warn} Canonical Partner repositoris may not be supported on this platform."
+    _log_warn "${_warn} Canonical Partner repositories may not be supported on this platform."
   fi
 
   # Remove artifacts and keys
@@ -1959,7 +1957,7 @@ function update_repos()
 
 function upgrade_apps()
 {
-  # This function will list upgradable apps and upgrade it.
+  # This function will list up-gradable apps and upgrade it.
   # IF Simulate is set to true this will only list the apps but no upgrade action will be performed.
   local exit_status
   _log_and_show "${_upgrade} Packages..."
@@ -2008,7 +2006,7 @@ function  upgrade_system()
 
 function purge_ppa()
 {
-  # PPAs added or repositoris added by actions other than this script are not removed.
+  # PPAs added or repositories added by actions other than this script are not removed.
   # Simulate option has no effect on this function. PPAs will be purged irrespective of its value.
   local exit_status index dependency_packages
   dependency_packages=(ppa-purge)
@@ -2044,13 +2042,13 @@ function purge_ppa()
 
 function disable_external_repos()
 {
-  # Function to disable external repositoris added by this script.
-  # PPAs added or repositoris added by actions other than this script are not removed.
-  # Repositoris added by dpkg post install scripts and deb files will not be removed!!
+  # Function to disable external repositories added by this script.
+  # PPAs added or repositories added by actions other than this script are not removed.
+  # Repositories added by dpkg post install scripts and deb files will not be removed!!
   # Simulate option has no effect on this function. PPAs will be purged irrespective of its value.
 
     # Remove keys and list files.
-    _log_and_show "${_deleting} Keys and external repositoris"
+    _log_and_show "${_deleting} Keys and external repositories"
     _log_and_show "${_info} You can igore failed messages if those were not added in first place."
     set_default
     _log_and_show "${_deleting} Google signing key   7FAC5991"
@@ -2138,7 +2136,7 @@ function purge_not_required()
 {
   # This function purges not required packages from the list ${dir}/data/purge.list
   # A flag -d MUST be passed for this option to work
-  # Not passing a flag and choosing purge will result in error and acrion being aborted.
+  # Not passing a flag and choosing purge will result in error and action being aborted.
   # Simulate is not properly tested and use it with caution!
   # Combination of simulate and purge is UNSTABLE
   # You can modify -d requirement by setting the d_flag_passed=true
@@ -2170,7 +2168,7 @@ function purge_not_required()
     fi
 
   else
-    _log_and_exit "${_error} Purge switch is set to false. Did you pass -d along wth the command?" "20"
+    _log_and_exit "${_error} Purge switch is set to false. Did you pass -d along with the command?" "20"
   fi
   _line_fill >> "$log_file"
 
@@ -2430,7 +2428,7 @@ function install_debs ()
      if [ "$exit_status" = "0" ]; then
       _log_success "${_deb} Installed $deb_name successfully."
      else
-      _log_warn "${_oh_no} Some error occured during downloading and installing $index."
+      _log_warn "${_oh_no} Some error occurred during downloading and installing $index."
       $?="0"
     fi
     # Delete DEBs
@@ -2455,7 +2453,7 @@ function install_binaries ()
   # Function to get the binaries files from URL in the ${dir}/data/bin.list
   # The list file has following format
   # <URL>,<filename>
-  # If ypu want to specify relative path you
+  # If you want to specify relative path you
   # can do so relative to /usr/local/bin
   # Be careful not to rename existing ones
 
@@ -2536,7 +2534,7 @@ function __install_snaps()
               if snap install "${snapd_options[@]}" "$index"  2>&1 | _add_timestamp_to_logs "${_snap}"  ; then
                 _log_success "${_snap} $line installed successfully."
               else
-                _log_warn "${_oh_no} Some Error occured while installing $line."
+                _log_warn "${_oh_no} Some Error occurred while installing $line."
               fi
             fi
         done
@@ -2556,11 +2554,11 @@ function install_snaps()
     _install_dependencies "${dependency_packages[@]}"
   fi
 
-  _log_and_show "${_info} Installig Snaps [Normal Packages]"
+  _log_and_show "${_info} Installing Snaps [Normal Packages]"
   __install_snaps "normal"
-    _log_and_show "${_info} Installig Snaps [Classic Packages]"
+    _log_and_show "${_info} Installing Snaps [Classic Packages]"
   __install_snaps "classic"
-    _log_and_show "${_info} Installig Snaps [Edge Packages]"
+    _log_and_show "${_info} Installing Snaps [Edge Packages]"
   __install_snaps "edge"
 
 }
@@ -2832,7 +2830,7 @@ tasks chosen.
                        downloaded deb packages
 [-l | --delete-log]    Delete logfile (./log/after-effects.log)
 [-s | --simulate]      Try not make changes to system and use --dry-run
-                       whenever possible. Plese read the documentation
+                       whenever possible. Please read the documentation
                        at http://ae.prasadt.com/clioptions to know its limits
                        Not everything can be simulated.
 ${YELLOW}
@@ -2852,7 +2850,7 @@ ${GREEN}
 Contributions & Issues:
 -------------------------------------------------${NC}
 * You are welcome to contribute
-* Feel free to create a PullRequest/Issue on Github.
+* Feel free to create a Pull-Request/Issue on Github.
 * If it helped go and star the repo
 -------------------------------------------------
 EOF
@@ -2897,7 +2895,7 @@ function main()
   printf "${_checking} Permissions...\n"
   if [[ $EUID -ne 0 ]]; then
     set_red;
-    printf "${_whoops} Insufficinet privilages!!\n"
+    printf "${_whoops} Insufficient privileges!!\n"
     set_default;
     printf "${_whoops} This script must be run as root.\n"
     printf "${_notice} Please use sudo ${dir}/$SCRIPT to run this as root.\n"
@@ -3001,7 +2999,7 @@ function main()
 
   _init_print_basic_info;
 
-  # I dont like when someone else is occupying my room
+  # I don't like when someone else is occupying my room
   # Test if any apt-get ops are running
   _test_conflicting_apps;
 

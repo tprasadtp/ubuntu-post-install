@@ -114,18 +114,21 @@ A Complete  list of supported distributions is given below.
 | Linux-Mint 18.2   | Sonya                 | Yes            |
 | Linux-Mint 18.3   | Sylvia                | Yes            |
 | Linux Mint 19     | Tara                  | Yes            |
-| Linux Mint 19.1   | Tessa                 | Yes            |
-| Linux Mint 19.2   | Tina                  | Yes            |
-| Debian 8          | Jessie                | Yes            |
+| Linux Mint 19.1   | Tessa                 | Yes            | Not tested
+| Linux Mint 19.2   | Tina                  | Yes            | Not tested
+| Linux Mint 19.3   | Tricia                | Yes            | Not tested
+| Debian 8          | Jessie                | Yes            | Not tested
 | Debian 9          | Stretch               | Yes            |
-| Debian 10         | Buster                | ---            | Only use it for testing       |
+| Debian 10         | Buster                | Yes            |
+| MX Linux 19       | Buster                | Yes            | Not tested
 | Elementary-OS 0.4 | Loki                  | Yes            | Not tested                    |
 | Elementary-OS 5.0 | Juno                  | Yes            | Not tested                    |
 | Elementary-OS 5.1 | Hera                  | Yes            | Tested                        |
-| Budgie Remix      | 16.04                 | Yes            |
-| PoP! OS           | Supported Ubuntu      | Yes            | Not tested                    |
+| Budgie Remix      | Ubuntu 16.04          | Yes            |
+| PoP! OS           | *Ubuntu releases      | Yes            | Not tested                    |
 | Linux-Lite        | 3.X                   | Yes            | (Based on Ubuntu 16.04)       |
 | Bodhi Linux       | 4                     | Yes            | (Based on Ubuntu 16.04)       |
+| Bodhi Linux       | 5                     | Yes            | (Based on Ubuntu 18.04)       |
 | KDE Neon          | Based on Ubuntu LTS   | Might be buggy | Not Tested                    |
 | Peppermint 9,10   | Based on Ubuntu 18.04 | Yes            | Not Tested                    |
 | Peppermint 8      | Based on Ubuntu 16.04 | Yes            | Not tested                    |
