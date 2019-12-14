@@ -44,7 +44,11 @@ function main()
     echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     echo "Testing On HOST"
     echo "Testing with YAML"
-    sudo ./after-effects --yes --autopilot --simulate --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/"${config_yml}" --name bionic
+    sudo ./after-effects \
+      --yes \
+      --autopilot \
+      --simulate \
+      --config-file config/"${config_yml}"
     exit_code="$?"
     echo "Exit code for YAML is $exit_code"
     if [[ $exit_code -ne 0 ]]; then
@@ -82,7 +86,7 @@ function main()
       --fix \
       --simulate \
       --autopilot \
-      --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/"${config_yml}"
+      --config-file config/"${config_yml}"
       exit_code="$?"
     else
       docker run -it --rm -e TRAVIS \
@@ -94,7 +98,7 @@ function main()
       ./after-effects \
       --simulate \
       --autopilot \
-      --remote-yaml https://"${branch}"--ubuntu-post-install.netlify.com/config/"${config_yml}"
+      --config-file config/"${config_yml}"
       exit_code="$?"
     fi
 
