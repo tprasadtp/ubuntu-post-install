@@ -9,19 +9,19 @@ htmlmin==0.1.12           # via mkdocs-minify-plugin
 jinja2==2.10.3            # via mkdocs
 jsmin==2.2.2              # via mkdocs-minify-plugin
 livereload==2.6.1         # via mkdocs
-markdown==3.1.1           # via mkdocs, pymdown-extensions
+markdown==3.1.1           # via mkdocs, mkdocs-material, pymdown-extensions
 markupsafe==1.1.1         # via jinja2
-mkdocs-material==4.4.3
+mkdocs-material==4.6.0
 mkdocs-minify-plugin==0.2.1  # via mkdocs-material
 mkdocs==1.0.4
 pathspec==0.6.0           # via yamllint
 pep562==1.0               # via pymdown-extensions
-pygments==2.4.2
-pymdown-extensions==6.1
-pyyaml==5.1               # via mkdocs, yamllint
-six==1.12.0               # via livereload
+pygments==2.5.2
+pymdown-extensions==6.2
+pyyaml==5.2               # via mkdocs, yamllint
+six==1.13.0               # via livereload
 tornado==6.0.3            # via livereload, mkdocs
-yamllint==1.18.0
+yamllint==1.19.0
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.6.0        # via markdown
+# setuptools
