@@ -11,11 +11,6 @@ before trying out.
 
 ![Bash](https://static.prasadt.com/logo64/bash.png)
 
-### Deployment Status
-
-![deployed][deployed]
-![commit][commit]
-![commit][commit-deployed-ts]
 
 ## How to use this
 
@@ -75,6 +70,10 @@ Run the script as **root**.
 ## FAQ & Documentation
 
 See /docs or visit [docs][docs]
+
+![deployed][deployed]
+![commit][commit]
+![commit][commit-deployed-ts]
 
 ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
 ![Uptime Robot ratio (30 days)](https://img.shields.io/uptimerobot/ratio/30/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
