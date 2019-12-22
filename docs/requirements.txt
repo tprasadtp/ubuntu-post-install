@@ -17,7 +17,7 @@ mkdocs==1.0.4
 pathspec==0.6.0           # via yamllint
 pep562==1.0               # via pymdown-extensions
 pygments==2.5.2
-pymdown-extensions==6.2
+pymdown-extensions==6.2.1
 pyyaml==5.2               # via mkdocs, yamllint
 six==1.13.0               # via livereload
 tornado==6.0.3            # via livereload, mkdocs
