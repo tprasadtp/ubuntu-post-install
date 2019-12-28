@@ -21,7 +21,7 @@ pymdown-extensions==6.2.1
 pyyaml==5.2               # via mkdocs, yamllint
 six==1.13.0               # via livereload
 tornado==6.0.3            # via livereload, mkdocs
-yamllint==1.19.0
+yamllint==1.20.0
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
