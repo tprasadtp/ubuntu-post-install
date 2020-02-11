@@ -2,9 +2,9 @@
 api: 2
 # Configuration
 version:
-  number: 552
-  name: 5.5.2-Beta
-  changelog: 19.10, ElementaryOS 5.1 & LinuxMint 19.3 Support
+  number: 553
+  name: 5.5.3-Beta
+  changelog: BugFixes
 # Stats reporting
 stats:
   report: false

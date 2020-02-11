@@ -36,7 +36,6 @@ A Complete  list of supported distributions is given below.
 | Distribution      | Code name/Version     | Supported      | Notes                         |
 | :---------------- | :-------------------- | -------------- | :---------------------------- |
 | Ubuntu 19.10      | Eoan Ermine           | Yes            |
-| Ubuntu 19.04      | Disco Dingo           | Yes            |
 | Ubuntu 18.04      | Bionic Beaver         | Yes            |
 | Ubuntu 16.04      | Xenial Xerus          | Yes            |
 | Linux Mint 18     | Sarah                 | Yes            |

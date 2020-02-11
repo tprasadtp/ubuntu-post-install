@@ -35,8 +35,8 @@ esac
 readonly EXEC_START=$(date +%s)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.5.2 Beta"
-readonly REL_NUM=552
+readonly REL_NAME="5.5.3 Beta"
+readonly REL_NUM=553
 
 function _init_printf_variables()
 {
@@ -48,12 +48,11 @@ function _init_printf_variables()
     readonly          _oh_no="[     Oh No!    ]"
     readonly     _installing="[   Installing  ]"
     readonly      _installed="[   Installed   ]"
-    readonly       _removing="[    Removing   ]"
+    # readonly       _removing="[    Removing   ]"
     readonly        _removed="[    Removed    ]"
     readonly       _deleting="[    Deleting   ]"
     readonly      _linuxmint="[  Linux - Mint ]"
     readonly     _elementary="[ Elementary-OS ]"
-    readonly      _canonical="[  Canonical-y  ]"
     readonly          _purge="[     Purge     ]"
     readonly          _error="[     Error!    ]"
     readonly         _update="[     Update    ]"
@@ -68,7 +67,7 @@ function _init_printf_variables()
     readonly           _warn="[    Warning    ]"
     readonly         _whoops="[     Oops!     ]"
     readonly    _pre_release="[  Pre Release  ]"
-    readonly    _new_release="[  New Release  ]"
+    # readonly    _new_release="[  New Release  ]"
     readonly        _version="[    Version    ]"
     readonly       _checking="[    Checking   ]"
     readonly            _eol="[      EOL      ]"
@@ -291,7 +290,7 @@ function _init_script_variables()
   # Grabbing OS info
   distro_name=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
   readonly VERSION=$(lsb_release -rs)
-  readonly LONG_VERSION=$(lsb_release -ds)
+  # readonly LONG_VERSION=$(lsb_release -ds)
   # Achtung: Do not set code_name as readonly!!
   code_name=$(lsb_release -cs)
   readonly architecture=$(dpkg --print-architecture)
@@ -616,7 +615,7 @@ function _eol_message()
   _log_warn "${_notice} $1 reached EOL on $2."
   _log_warn "${_notice} Please use a supported version of ${distro_name}."
 
-  _log_and_exit "EOL Release : $code_name" "12";
+  _log_and_exit "${_eol} EOL Release : $code_name" "12";
 }
 
 
@@ -662,11 +661,7 @@ function _fix_ubuntu_derivatives()
                                             _log_and_show "${_info} This is an LTS release of Ubuntu"
                                             _log_success "${_derivatives} Keeping the codename as: $code_name."
                                             ;;
-                                            # previous release
-      disco )                               readonly bool_config_partner_repo="true"
-                                            _log_and_show "${_info} This is Ubuntu 19.04"
-                                            _log_warn "${_warning} Ubuntu 19.10 was released recently please consider using it!"
-                                            _log_success "${_derivatives} Keeping the codename as: $code_name."
+      disco )                               _eol_message "$code_name" "January 23rd, 2020"
                                             ;;
       eoan)                                 readonly bool_config_partner_repo="true"
                                             _log_and_show "${_info} This is 19.10 eoan."
@@ -957,9 +952,9 @@ function _check_bool()
                                                 _log_internal "$g_var is set to false"
                                                 ;;
     *)                                          declare -g ${g_var}="${default_val}"
-                                                _log_internal "Invalid/empty value for param : $g_var."
+                                                _log_internal "Invalid or empty value for param : $g_var."
                                                 _log_internal "It can either be t[T]rue or f[F]alse."
-                                                _log_warn "${_warn} $g_var will default to ${default_val}"
+                                                _log_internal "${_warn} $g_var will default to ${default_val}"
                                                 ;;
   esac
 }
@@ -1461,7 +1456,7 @@ function _install_dependencies()
   if [[ ${#packages[@]} -eq 0 ]]; then
     _log_warn "${_error} Package array is empty!" "19"
   else
-    apt-get -q -y --no-install-recommends install "${packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  \
+    apt-get -q -y --no-install-recommends install "${packages[@]}" |& _add_timestamp_to_logs "${_apt_logs}"  \
     || _log_and_exit "${_error} Failed to install dependencies. Script cannot continue!!" "21"
 
     exit_status=$?
@@ -1574,7 +1569,7 @@ function add_ppas()
               _log_and_show "${_ppa} Found and empty entry Moving on to next.."
               continue
             fi
-            if add-apt-repository -y "$index" 2>&1 | _add_timestamp_to_logs "${_ppa_logs}" ; then
+            if add-apt-repository -y "$index" |& _add_timestamp_to_logs "${_ppa_logs}" ; then
               _log_success "${_ppa} Success!"
             else
               _log_error "${_ppa} Some Error occured while adding $index. Ignoring and moving on.\n"
@@ -1612,7 +1607,7 @@ function add_repositories()
         _log_debug "Adding Google package signing Key"
       wget -q  https://dl.google.com/linux/linux_signing_key.pub -O /tmp/ae/google_signing_key.pub >> $"$log_file"
       _log_debug "Adding Google key to trusted keys list"
-      apt-key add /tmp/ae/google_signing_key.pub 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
+      apt-key add /tmp/ae/google_signing_key.pub |& _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_warn "${_error} Adding trusted keys for Google failed."
 
       _log_and_show "${_repo} Google Chrome repository"
@@ -1671,7 +1666,7 @@ function add_repositories()
   if [ "$add_googlecloud_repo" == "true" ] || [ "$add_gcsfuse_repo" == "true" ]; then
     _log_debug "Adding Google-Cloud repository sigining key"
     wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg -O /tmp/ae/googlecloud.gpg >> "$log_file"
-    apt-key add /tmp/ae/googlecloud.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"
+    apt-key add /tmp/ae/googlecloud.gpg |& _add_timestamp_to_logs "${_apt_key_logs}"
   else
     _log_debug "Neither GCSFUSE nor Google cloud SDK install enabled. Not adding Google cloud APT keys"
   fi
@@ -1703,7 +1698,7 @@ function add_repositories()
     _log_debug "Getting WineHQ repository Key"
     wget -q https://dl.winehq.org/wine-builds/winehq.key -O /tmp/ae/wine-hq-sigining-key.key >> "$log_file"  2>&1
     _log_debug "Adding WineHQ key"
-    apt-key add /tmp/ae/wine-hq-sigining-key.key 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
+    apt-key add /tmp/ae/wine-hq-sigining-key.key |& _add_timestamp_to_logs "${_apt_key_logs}" \
     || _log_warn "${_error} Adding WineHQ keys failed"
     _log_debug "Adding WineHQ repository"
     echo "deb https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list \
@@ -1719,7 +1714,7 @@ function add_repositories()
       _log_debug "Getting Docker-CE repository Key"
       wget -q https://download.docker.com/linux/"${distro_name}"/gpg -O /tmp/ae/docker-key.gpg >> "$log_file"  2>&1
       _log_debug "Adding Docker repository key"
-      apt-key add /tmp/ae/docker-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
+      apt-key add /tmp/ae/docker-key.gpg |& _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_warn "${_error} Adding Docker-CE keys failed"
       _log_debug "Adding Docker-CE sources .list"
       echo "deb [arch=$ARCH] https://download.docker.com/linux/${distro_name}  ${code_name} stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list \
@@ -1738,7 +1733,7 @@ function add_repositories()
       _log_debug "Getting Skype repository key"
       wget -q https://repo.skype.com/data/SKYPE-GPG-KEY -O /tmp/ae/skype-linux-key.gpg >> "$log_file"
       _log_debug "Adding Skype keys to trusted list"
-      apt-key add /tmp/ae/skype-linux-key.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
+      apt-key add /tmp/ae/skype-linux-key.gpg |& _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_warn "${_error} Adding Skype for linux key failed"
       echo "deb [arch=$ARCH] https://repo.skype.com/deb stable main #Skype" > $SOURCES_FILE_DIR/skype-stable.list \
       || _log_warn "${_error} Adding Skype for linux repository failed"
@@ -1802,7 +1797,7 @@ function add_repositories()
     if [[ $ros_arch_supported == "true" ]]; then
       _log_and_show "${_repo} ROS is Supported on this distro/ARCH : ${code_name}/${ARCH}"
       _log_debug "Adding ROS repo key(latest)..."
-      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 |& _add_timestamp_to_logs "${_apt_key_logs}"  \
        || _log_warn "${_error} Adding ROS repository key failed!"
 
        if [[ $bool_use_uni_freiburg_mirror == "true" ]] && [[ $distro_name == "ubuntu" ]]; then
@@ -1831,7 +1826,7 @@ function add_repositories()
       _log_debug "Getting GPG keys for repository"
       wget -q https://packages.microsoft.com/keys/microsoft.asc -O /tmp/ae/microsoft.asc
       _log_debug "Adding Key to trusted GPG keys directory"
-      apt-key add /tmp/ae/microsoft.asc 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" || _log_warn "${_error} Adding Visual Studio Code key failed"
+      apt-key add /tmp/ae/microsoft.asc |& _add_timestamp_to_logs "${_apt_key_logs}" || _log_warn "${_error} Adding Visual Studio Code key failed"
       echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list
     else
       _log_warn "${_warn} Architecture: $ARCH is not supported by Visual studio Code."
@@ -1845,7 +1840,7 @@ function add_repositories()
    if [ "$ARCH" == "amd64" ]; then
       _log_and_show "${_repo} Signal repository"
       wget -q https://updates.signal.org/desktop/apt/keys.asc -O /tmp/ae/signal.asc >> "$log_file"
-      apt-key add /tmp/ae/signal.asc  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
+      apt-key add /tmp/ae/signal.asc  |& _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_warn "${_error} Adding Signal Key Failed"
       echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/signal-xenial.list
     else
@@ -1859,7 +1854,7 @@ function add_repositories()
   if [ "$add_mendeley_repo" == "true" ]; then
     if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "i386" ] ; then
       _log_and_show "${_repo} Mendeley repository"
-      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
+      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 |& _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_warn "${_error} Adding Mendeley Desktop Key Failed"
       echo "deb [arch=$ARCH] https://desktop-download.mendeley.com/download/apt stable main #Mendeley-Desktop"  > ${SOURCES_FILE_DIR}/mendeleydesktop.list
     else
@@ -1898,7 +1893,7 @@ function add_repositories()
         # Repo keys for duosecurity
         _log_debug "Downloading GPG key..."
         wget -q https://duo.com/APT-GPG-KEY-DUO  -O /tmp/ae/duosecurity.gpg >> "$log_file"
-        apt-key add /tmp/ae/duosecurity.gpg 2>&1 | _add_timestamp_to_logs "${_apt_key_logs}" \
+        apt-key add /tmp/ae/duosecurity.gpg |& _add_timestamp_to_logs "${_apt_key_logs}" \
         || _log_warn "${_error} Adding Duo Key Failed"
 
         # Add repo
@@ -1942,7 +1937,7 @@ function update_repos()
 {
   local exit_status
   _log_and_show "${_update} Repository index/metadata..."
-  apt-get -q update 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+  apt-get -q update |& _add_timestamp_to_logs "${_apt_logs}"
   exit_status=$?
   if [[ $exit_status -eq 0 ]]; then
     _log_success "${_update} Success!"
@@ -1964,15 +1959,15 @@ function upgrade_apps()
   _log_trace "List of upgradable packages if any is listed below."
   _line_fill >> "$log_file"
   # upgradable is not available in apt-get ignore warning about apt being unstable
-  apt list --upgradable 2>&1 | _add_timestamp_to_logs "${_apt_logs}"  \
+  apt list --upgradable |& _add_timestamp_to_logs "${_apt_logs}"  \
   || _log_and_show "Something went wrong while listing upgradable packages. Please see the log file or run in debug mode for details."
 
   _log_debug "The list of packages will be upgraded!"
   # only do upgrades if simulate is set to false
   if [ "$simulate_apt_install" != "true" ]; then
 
-    DEBIAN_FRONTEND=noninteractive apt-get -q -y upgrade | _add_timestamp_to_logs "${_apt_logs}"
-    DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::='--force-confold' --force-yes -fuy dist-upgrade\
+    DEBIAN_FRONTEND=noninteractive apt-get -q -y upgrade |& _add_timestamp_to_logs "${_apt_logs}"
+    DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --allow-remove-essential --allow-change-held-packages -fuy dist-upgrade \
     | _add_timestamp_to_logs "${_apt_logs}"
     exit_status=$?
   else
@@ -2021,7 +2016,7 @@ function purge_ppa()
               _log_warn "${_purge} Found an empty entry, Ignoring"
               continue;
             fi
-            if ppa-purge -y "$index"  2>&1 | _add_timestamp_to_logs "${_apt_logs}"  ; then
+            if ppa-purge -y "$index"  |& _add_timestamp_to_logs "${_apt_logs}"  ; then
               sleep 5 #wait sometimes apt lock isnt released soon.
               _log_success "${_purge} $line successfully."
             else
@@ -2052,51 +2047,51 @@ function disable_external_repos()
     _log_and_show "${_info} You can igore failed messages if those were not added in first place."
     set_default
     _log_and_show "${_deleting} Google signing key   7FAC5991"
-    apt-key del 7FAC5991  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+    apt-key del 7FAC5991  |& _add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_warn "${_deleting}  Google signing key -1 failed."
 
     _log_and_show "${_deleting} Google signing key   D38B4796"
-    apt-key del D38B4796  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+    apt-key del D38B4796  |& _add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_warn "${_deleting}  Google signing key -2 failed."
 
     _log_and_show "${_deleting} GCP signing key -2   BA07F4FB"
-    apt-key del BA07F4FB  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+    apt-key del BA07F4FB  |& _add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_warn "${_deleting}  Google cloud key -1 failed."
 
     _log_and_show "${_deleting} GCP signing key -2   A7317B0F"
-    apt-key del A7317B0F  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+    apt-key del A7317B0F  |& _add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_warn "${_deleting}  GCP signing key -2  failed."
 
     _log_and_show "${_deleting} Spotify signing key  E130D1D45"
-    apt-key del E130D1D45  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+    apt-key del E130D1D45  |& _add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_warn "${_deleting}  Spotify signing key failed."
 
     _log_and_show "${_deleting} WineHQ key [latest]  F987672F"
-    apt-key del F987672F  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+    apt-key del F987672F  |& _add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_warn "${_deleting}  WineHQ keys [latest] failed."
 
     _log_and_show "${_deleting} InSync signing key   ACCAF35C"
-    apt-key del ACCAF35C  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+    apt-key del ACCAF35C  |& _add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_warn "${_deleting}  InSync keys failed."
 
     _log_and_show "${_deleting} Docker signing key   0EBFCD88"
-    apt-key del 0EBFCD88  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+    apt-key del 0EBFCD88  |& _add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_warn "${_deleting}  Docker-CE keys failed."
 
     _log_and_show "${_deleting} VS-Code signing key  BE1229CF"
-    apt-key del BE1229CF  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+    apt-key del BE1229CF  |& _add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_warn "${_deleting}  Visual Studio Code keys failed."
 
     _log_and_show "${_deleting} Signal signing key   57F6FB06"
-    apt-key del 57F6FB06  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+    apt-key del 57F6FB06  |& _add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_warn "${_deleting}  Signal keys failed."
 
     _log_and_show "${_deleting} Mendeley signing key 6F036044"
-    apt-key del 57F6FB06  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+    apt-key del 57F6FB06  |& _add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_warn "${_deleting}  Mendeley Desktop keys failed."
 
     _log_and_show "${_deleting} ROS signing key B01FA116"
-    apt-key del 421C365BD9FF1F717815A3895523BAEEB01FA116  2>&1 | _add_timestamp_to_logs "${_apt_key_logs}"  \
+    apt-key del 421C365BD9FF1F717815A3895523BAEEB01FA116  |& _add_timestamp_to_logs "${_apt_key_logs}"  \
     || _log_warn "${_deleting}  ROS keys failed."
 
     _log_and_show "${_repo} Removing external repositoris"
@@ -2153,9 +2148,9 @@ function purge_not_required()
     else
       if [ "$simulate_apt_install" == "true" ]; then
         _log_warn "${_simulate} Purging will be simulated!!"
-      apt-get -q -y remove --purge --dry-run "${parsed_purge_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+      apt-get -q -y remove --purge --dry-run "${parsed_purge_packages[@]}" |& _add_timestamp_to_logs "${_apt_logs}"
       else
-        apt-get -q -y purge "${parsed_purge_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+        apt-get -q -y purge "${parsed_purge_packages[@]}" |& _add_timestamp_to_logs "${_apt_logs}"
       fi
       exit_status=$?
 
@@ -2300,13 +2295,13 @@ function _install_pip_python()
       if [ "$simulate_apt_install" == "true" ] && [ "$CI" != "true" ]; then
         _log_warn "${_simulate} No Dependencies will be installed!!"
         # shellcheck disable=SC2086
-        apt-get -q -y -s --no-install-recommends install "${dependency_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+        apt-get -q -y -s --no-install-recommends install "${dependency_packages[@]}" |& _add_timestamp_to_logs "${_apt_logs}"
       elif [ "$simulate_apt_install" == "true" ] && [ "$CI" == "true" ]; then
         _log_warn "${_simulate} This is CI disregarding --simulate flag for installing pip dependencies"
-        apt-get -q -y --no-install-recommends install "${dependency_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+        apt-get -q -y --no-install-recommends install "${dependency_packages[@]}" |& _add_timestamp_to_logs "${_apt_logs}"
       else
         # shellcheck disable=SC2086
-        apt-get -q -y --no-install-recommends install "${dependency_packages[@]}" 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+        apt-get -q -y --no-install-recommends install "${dependency_packages[@]}" |& _add_timestamp_to_logs "${_apt_logs}"
       fi
       exit_status=$?
 
@@ -2344,10 +2339,10 @@ function _install_pip_python()
       _log_warn "${_whoops} PIP does not support simulated installs. Not performing install."
     elif  [ "$simulate_apt_install" == "true" ] && [ "$CI" == "true" ]; then
       _log_warn "${_simulate} This is CI disregarding simulate for pip action"
-      $pip_command install -r "${requirements_file}" 2>&1 | _add_timestamp_to_logs "${_pip_logs}"
+      $pip_command install -r "${requirements_file}" |& _add_timestamp_to_logs "${_pip_logs}"
     else
       _log_debug "Installing requirements file ${requirements_file}"
-      $pip_command install -r "${requirements_file}" 2>&1 | _add_timestamp_to_logs "${_pip_logs}"
+      $pip_command install -r "${requirements_file}" |& _add_timestamp_to_logs "${_pip_logs}"
 
     fi
     exit_status=$?
@@ -2412,15 +2407,15 @@ function install_debs ()
    # Check if simulate is true
    if [ "$simulate_apt_install" == "true" ]; then
      _log_warn "${_simulate} $deb_name Installation!!"
-     dpkg -i --dry-run "$deb_name" 2>&1 | _add_timestamp_to_logs "${_dpkg_logs}"
+     dpkg -i --dry-run "$deb_name" |& _add_timestamp_to_logs "${_dpkg_logs}"
 
      _log_debug "Installing missing packages..."
-     apt-get -q -y install -f 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+     apt-get -q -y install -f |& _add_timestamp_to_logs "${_apt_logs}"
      exit_status=$?
     else
-      dpkg -i "$deb_name" 2>&1 | _add_timestamp_to_logs "${_dpkg_logs}"
+      dpkg -i "$deb_name" |& _add_timestamp_to_logs "${_dpkg_logs}"
       _log_debug "Installing missing packages..."
-      apt-get -q -y install -f 2>&1 | _add_timestamp_to_logs "${_apt_logs}"
+      apt-get -q -y install -f |& _add_timestamp_to_logs "${_apt_logs}"
       exit_status=$?
     fi
 
@@ -2531,7 +2526,7 @@ function __install_snaps()
               _log_warn "${_info} Snaps do not support --dry-run, skipping install"
             else
               _log_debug "Options are ${snapd_options[*]}"
-              if snap install "${snapd_options[@]}" "$index"  2>&1 | _add_timestamp_to_logs "${_snap}"  ; then
+              if snap install "${snapd_options[@]}" "$index"  |& _add_timestamp_to_logs "${_snap}"  ; then
                 _log_success "${_snap} $line installed successfully."
               else
                 _log_warn "${_oh_no} Some Error occurred while installing $line."
@@ -2732,7 +2727,9 @@ function _ci_cloud_and_container_checks()
     elif [ "$APPVEYOR" == "true" ]; then
       _log_and_show "${_ci} Running in Appveyor CI"
     elif [ "$TF_BUILD" == "True" ]; then
-      _log_and_show "Probably running on Azure Pipelines"
+      _log_and_show "${_ci} Probably running on Azure Pipelines"
+    elif [ "$GITHUB_ACTIONS" == "true" ]; then
+      _log_and_show "${_ci} I'm running on GitHub Actions"
     elif [ "$CI" == "true" ]; then
       _log_and_show "${_ci} I'm running in  CI"
     else
@@ -3006,7 +3003,7 @@ function main()
   # Did I tell you that I need to call My friends over internet?
   _test_internet_connection;
 
-  # Checks CI & Containers If running on EC2 or GCP0
+  # Checks CI & Containers If running on EC2/GCP/Azure/DO
   _ci_cloud_and_container_checks;
 
   # Take care of Mint and other distros

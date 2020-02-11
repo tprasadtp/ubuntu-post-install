@@ -19,8 +19,6 @@
 # Github Repository: https://github.com/tprasadtp/ubuntu-post-install
 
 set -o pipefail
-readonly SCRIPT=$(basename "$0")
-readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 #colors for display
 readonly BLUE=$(tput setaf 6)
 readonly YELLOW=$(tput setaf 3)
