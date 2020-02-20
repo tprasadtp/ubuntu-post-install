@@ -116,13 +116,6 @@ function build_branch()
   echo "---> Building Website with Branch"
   mkdocs build;
 
-  echo "---> Linting YAML Files"
-  for file in ./config/*.yml;
-  do
-    printf "Linting : ${file}\n"
-    yamllint "${file}"
-  done
-
   echo "---> Copying Config Files"
   rsync -Ea --recursive ./config/ ./_site/config/ && echo "Done!"
   find ./_site/config -type f
