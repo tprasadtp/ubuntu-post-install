@@ -1,0 +1,69 @@
+name: release
+on:
+  push:
+    tags:
+      - v*
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    # Because github action's way of referencing commits and tags sucks
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+    # create a release on tag
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.get_version.outputs.VERSION }}
+        release_name: Release ${{ steps.get_version.outputs.VERSION }}
+        body: |
+          Please check the changelogs at https://ae.prasadt.com/changelogs/.
+        draft: false
+        prerelease: false
+
+    # Upload Release assets
+    - name: Upload Script
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: after-effects
+        asset_name: after-effects
+        asset_content_type: text/plain
+    - name: Upload SIG
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: after-effects.asc
+        asset_name: after-effects.asc
+        asset_content_type: text/plain
+    - name: Upload Checksum SHA256
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: sha256sum.txt
+        asset_name: sha256sum.txt
+        asset_content_type: text/plain
+    - name: Upload Checksum SHA512
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: sha512sum.txt
+        asset_name: sha512sum.txt
+        asset_content_type: text/plain

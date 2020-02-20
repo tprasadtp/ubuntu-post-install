@@ -1,0 +1,12 @@
+on:
+  push:
+    paths-ignore:
+      - ".gitignore"
+      - ".envrc"
+      - "**.md"
+      - ".vscode/**"
+      - ".dependabot/**"
+      - "_config.yml"
+    tags-ignore:
+      - "*"
+  pull_request:
