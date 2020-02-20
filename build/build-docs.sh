@@ -14,11 +14,6 @@ pip install -r ./docs/requirements.txt
 echo "Building Docs"
 mkdocs build -v -s
 
-for file in ./config/*.yml;
-do
-	printf "Linting File : ${file}\n"
-  yamllint "${file}"
-done
 
 # Some checksumming
 echo "Checksums"
