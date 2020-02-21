@@ -25,5 +25,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: shellcheck -e SC2154 -e SC2086 -e SC1117 after-effects
-      - name: Test on PRe Release
+      - name: Test on Pre Release
         run: ./tests/test-distro ${{ matrix.distro }} ${{ matrix.release }} "pre-release.yml" "true"
