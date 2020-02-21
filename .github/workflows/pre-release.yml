@@ -9,7 +9,7 @@ on:
       - "_config.yml"
       - "README.md"
     tags-ignore:
-      - "*"
+      - "v*"
   pull_request:
 jobs:
   prerelease:
