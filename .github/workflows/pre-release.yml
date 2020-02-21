@@ -4,7 +4,6 @@ on:
 name: pre-release
 jobs:
   prerelease:
-    needs: shellcheck
     runs-on: ubuntu-latest
     strategy:
       matrix:

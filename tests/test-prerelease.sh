@@ -24,7 +24,7 @@ function main()
   docker build -t ubuntu:ae-pre-release ./dockerfiles/pre-release
   echo "Codename : $PRE_REL_CODENAME"
 
-  docker run -it -e TRAVIS="$TRAVIS" \
+  docker run -i -e TRAVIS="$TRAVIS" \
       -e DEBUG="${DEBUG}" \
       --hostname=Ubuntu-Pre-Release \
       -v "$(pwd)":/shared \

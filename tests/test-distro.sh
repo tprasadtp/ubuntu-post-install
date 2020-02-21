@@ -76,7 +76,7 @@ function main()
     echo "Running in ${TEST_ENV:-LOCAL}"
     echo "Testing with YAML"
     if [[ ${enable_fix} == "true" ]]; then
-      docker run -it --rm -e TRAVIS \
+      docker run -i --rm -e TRAVIS \
       -e CI \
       -e DEBUG \
       --hostname="${TEST_ENV}" \
@@ -89,7 +89,7 @@ function main()
       --config-file config/"${config_yml}"
       exit_code="$?"
     else
-      docker run -it --rm -e TRAVIS \
+      docker run -i --rm -e TRAVIS \
       -e CI \
       -e DEBUG \
       --hostname="${TEST_ENV}" \
@@ -108,7 +108,7 @@ function main()
     fi
     echo "Testing With Lists"
     if [[ ${enable_fix} == "true" ]]; then
-      docker run -it --rm -e TRAVIS \
+      docker run -i --rm -e TRAVIS \
         -e CI \
         -e DEBUG \
         --hostname="${TEST_ENV}" \
@@ -122,7 +122,7 @@ function main()
 
         exit_code="$?"
     else
-      docker run -it --rm -e TRAVIS \
+      docker run -i --rm -e TRAVIS \
         -e CI \
         -e DEBUG \
         --hostname="${TEST_ENV}" \
