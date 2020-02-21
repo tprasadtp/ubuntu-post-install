@@ -30,14 +30,6 @@ function main()
     config_yml="$3"
   fi
 
-  # Brach name based on Event Types. (cope with Netlify branch URLs hosting config file)
-  case "${TRAVIS_EVENT_TYPE}" in
-    pull_request )           branch="deploy-preview-${TRAVIS_PULL_REQUEST}";;
-    push | cron | api )      branch="${TRAVIS_BRANCH}";;
-    * )                      branch="$(git rev-parse --abbrev-ref HEAD)";;
-  esac
-
-  branch=$(echo $branch | tr -s . - | tr -s / -)
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
   if [[ $release == "host" ]]; then
@@ -56,15 +48,11 @@ function main()
     fi
 
     echo "Testing with Lists"
-    if [[ $TRAVIS_ARCH == "arm64" ]]; then
-        echo "Not testing list in ARM64"
-    else
-      sudo ./after-effects --yes --autopilot --lists -d --simulate
-      exit_code="$?"
-      echo "Exit code for LIST is $exit_code"
-      if [[ $exit_code -ne 0 ]]; then
-        exit "$exit_code"
-      fi
+    sudo ./after-effects --yes --autopilot --lists -d --simulate
+    exit_code="$?"
+    echo "Exit code for LIST is $exit_code"
+    if [[ $exit_code -ne 0 ]]; then
+      exit "$exit_code"
     fi
 
   else
@@ -73,23 +61,8 @@ function main()
       --build-arg DISTRO="${distro}" \
       --build-arg CODE_NAME="${release}"  \
       ./dockerfiles/tests
-    echo "Running in ${TEST_ENV:-LOCAL}"
     echo "Testing with YAML"
-    if [[ ${enable_fix} == "true" ]]; then
-      docker run -i --rm -e TRAVIS \
-      -e CI \
-      -e DEBUG \
-      --hostname="${TEST_ENV}" \
-      -v "$(pwd)":/shared \
-      ae:"${distro}-${release}" \
-      ./after-effects \
-      --fix \
-      --simulate \
-      --autopilot \
-      --config-file config/"${config_yml}"
-      exit_code="$?"
-    else
-      docker run -i --rm -e TRAVIS \
+    docker run -i --rm -e TRAVIS \
       -e CI \
       -e DEBUG \
       --hostname="${TEST_ENV}" \
@@ -100,41 +73,26 @@ function main()
       --autopilot \
       --config-file config/"${config_yml}"
       exit_code="$?"
-    fi
 
     echo "Exit code for YAML is $exit_code"
     if [[ $exit_code -ne 0 ]]; then
       exit "$exit_code"
     fi
     echo "Testing With Lists"
-    if [[ ${enable_fix} == "true" ]]; then
-      docker run -i --rm -e TRAVIS \
-        -e CI \
-        -e DEBUG \
-        --hostname="${TEST_ENV}" \
-        -v "$(pwd)":/shared \
-        ae:"${distro}-${release}" \
-        ./after-effects -d \
-        --lists \
-        --fix \
-        --simulate \
-        --autopilot
+    docker run -i --rm -e TRAVIS \
+      -e CI \
+      -e DEBUG \
+      --hostname="${TEST_ENV}" \
+      -v "$(pwd)":/shared \
+      ae:"${distro}-${release}" \
+      ./after-effects -d \
+      --lists \
+      --fix \
+      --simulate \
+      --autopilot
 
-        exit_code="$?"
-    else
-      docker run -i --rm -e TRAVIS \
-        -e CI \
-        -e DEBUG \
-        --hostname="${TEST_ENV}" \
-        -v "$(pwd)":/shared \
-        ae:"${distro}-${release}" \
-        ./after-effects -d \
-        --lists \
-        --simulate \
-        --autopilot
+    exit_code="$?"
 
-      exit_code="$?"
-    fi
     echo "Exit code for LIST is $exit_code"
     if [[ $exit_code -ne 0 ]]; then
       exit "$exit_code"

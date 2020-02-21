@@ -17,4 +17,4 @@ jobs:
       - uses: actions/checkout@v2
       - run: shellcheck -e SC2154 -e SC2086 -e SC1117 after-effects
       - name: Test on Pre Release
-        run: ./tests/test-distro.sh ${{ matrix.distro }} ${{ matrix.release }} "pre-release.yml" "true"
+        run: ./tests/test-distro.sh ${{ matrix.distro }} ${{ matrix.release }}

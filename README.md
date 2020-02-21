@@ -3,7 +3,8 @@
 Effortless way to setup your fresh Ubuntu, Linux Mint, Debian installs. Please read the [FAQ][FAQ] & the [Docs][DOCS]
 before trying out.
 
-[![travis][travis-badge]][travis-link]
+[![build][build-badge]][build-link]
+[![pre-release][pre-release-badge]][pre-release-link]
 [![netlify][netlify-badge]][netlify]
 [![version][version]][changelogs]
 [![license][gpl-badge]][license]
@@ -185,8 +186,10 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [known-issues]: https://ae.prasadt.com/faq/errors/
 [changelogs]: https://ae.prasadt.com/changelogs/
 
-[travis-link]: https://travis-ci.org/tprasadtp/ubuntu-post-install
-[travis-badge]: https://travis-ci.org/tprasadtp/ubuntu-post-install.svg?branch=master
+[build-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/build/badge.svg
+[build-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Abuild
+[pre-release-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/build/badge.svg
+[pre-release-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Apre-release
 [netlify-badge]: https://img.shields.io/netlify/110327c5-b5f2-42e3-b5ef-5d5661c94187
 [netlify]: https://app.netlify.com/sites/ubuntu-post-install/deploys
 
