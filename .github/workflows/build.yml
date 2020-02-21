@@ -1,15 +1,5 @@
 on:
   push:
-    paths-ignore:
-      - ".gitignore"
-      - ".envrc"
-      - "**.md"
-      - ".vscode/**"
-      - ".dependabot/**"
-      - "_config.yml"
-      - "README.md"
-    tags-ignore:
-      - "v*"
   pull_request:
 jobs:
   shellcheck:
