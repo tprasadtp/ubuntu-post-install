@@ -1,0 +1,29 @@
+on:
+  push:
+    paths-ignore:
+      - ".gitignore"
+      - ".envrc"
+      - "**.md"
+      - ".vscode/**"
+      - ".dependabot/**"
+      - "_config.yml"
+      - "README.md"
+    tags-ignore:
+      - "*"
+  pull_request:
+jobs:
+  prerelease:
+    needs: shellcheck
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - distro: "debian"
+            release: bullsye
+          - distro: "ubuntu"
+            release: "focal"
+    steps:
+      - uses: actions/checkout@v2
+      - run: shellcheck -e SC2154 -e SC2086 -e SC1117 after-effects
+      - name: Test on PRe Release
+        run: ./tests/test-distro ${{ matrix.distro }} ${{ matrix.release }} "pre-release.yml" "true"
