@@ -18,28 +18,9 @@ Install your choice of Ubuntu/Debian/Mint or its derivative as you would
 
 ### Step 1: Get the script
 
-#### Without Git
-
-Run this in Terminal
-
 ```console
  wget -q https://ae.prasadt.com/get -O - | bash
 ```
-
-> URL redirects to file with last known good commit ![commit][commit] on GitHub. It is cached & proxies to GitHub at CDN level. If you are paranoid, use git.
-If you wish to use master branch pass `--master` or `-m` as an argument. Eg: `wget -q https://ae.prasadt.com/get -O - | bash -s --master`
-
-#### With Git
-
-If you already have git on your system, you can use,
-
-```console
-git clone https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install
-```
-
-If you already have cloned the repo, you can use `git pull` to get the latest changes.
-
-> This will use master branch which may not be as stable as versioned releases.
 
 ### Step 2: Update the lists or your YAML configuration file
 
@@ -64,8 +45,6 @@ Run the script as **root**.
   ```console
     sudo ./after-effects -L
   ```
-
-> If you are running this in a docker container, you probably are root and its possible that you might be missing `sudo`. So In that case just run it as `./after-effects`. Be warned! You might be missing several dependencies of the script!!
 
 ## FAQ & Documentation
 
