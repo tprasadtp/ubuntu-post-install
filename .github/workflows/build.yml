@@ -12,7 +12,7 @@ on:
       - ".github/*.md"
       - "after-effects.asc"
     tags-ignore:
-      - '**'
+      - "v*"
   pull_request:
 name: build
 env:
