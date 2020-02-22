@@ -27,7 +27,6 @@ jobs:
       - name: Prepare
         run: |
           chmod +x after-effects
-          chmod +x get-after-effects.sh
           chmod +x tests/*.sh
       - name: Shellcheck
         run: ./tests/test-shell-scripts.sh
