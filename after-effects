@@ -35,8 +35,8 @@ esac
 readonly EXEC_START=$(date +%s)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.5.3 Beta"
-readonly REL_NUM=553
+readonly REL_NAME="5.6.0 Beta"
+readonly REL_NUM=560
 
 function _init_printf_variables()
 {
@@ -2742,12 +2742,18 @@ function _ci_cloud_and_container_checks()
       _log_and_show "${_ci} Probably running on Azure Pipelines"
     elif [ "$GITHUB_ACTIONS" == "true" ]; then
       _log_and_show "${_ci} I'm running on GitHub Actions"
-    elif [ "$AE_INTERNAL_CI_MODE" == "true" ]; then
+    fi
+
+    # CI checks
+    if [ "$CI" == "true" ]; then
+      _log_and_show "${_ci} Probably running in a CI"
+    fi
+
+    # Internal checks
+    if [ "$AE_INTERNAL_CI_MODE" == "true" ]; then
       _log_warn "${_ci} Enforcing CI MODE"
       _log_warn "${_warn} This is to be used only white testing the script."
       _log_warn "${_warn} This will ignore Simulate flag in some cases!!"
-    else
-      _log_debug "Probably not running in a CI"
     fi
 
     if [ "$(uname -r | cut -f3 -d '-')" == "Microsoft" ]; then

@@ -1,5 +1,9 @@
 # Changelogs
 
+## Version 5.6.0
+
+- Internal changes
+
 ## Version 5.5.2
 
 - Add support for Mint 19.3 Tricia

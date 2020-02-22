@@ -1,5 +1,18 @@
 on:
   push:
+    paths-ignore:
+      - ".gitignore"
+      - ".envrc"
+      - "**.md"
+      - ".vscode/**"
+      - "README.md"
+      - "CONTRIBUTING.md"
+      - ".github/workflows/labels.yml"
+      - ".github/labels.toml"
+      - ".github/*.md"
+      - "after-effects.asc"
+    tags-ignore:
+      - '**'
   pull_request:
 name: build
 env:
@@ -50,7 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: est on Ubuntu Upcoming
+      - name: Test on Ubuntu Upcoming
         run: ./tests/test-pre-release.sh "ubuntu" "focal"
   debian-upcoming:
     needs: [ "shellcheck", "dockerlint"]
@@ -64,12 +77,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Setup Git
-        run: |
-          echo "Setting git conf user.email"
-          git config --global user.email "valarie-ci-bot@users.noreply.github.com" && echo "Done"
-          echo "Setting git conf user.name"
-          git config --global user.name "valarie-ci-bot" && echo "Done"
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
@@ -82,3 +89,34 @@ jobs:
           ls ./ && ls ./_site/
           python3 build/version.py
           cat ./_site/commit.json
+      - name: Clone gh-pages branch
+        uses: actions/checkout@v2
+        with:
+          ref: gh-pages
+          path: pages
+      - name: Setup Git
+        run: |
+          echo "Setting git conf user.email"
+          git config --global user.email "valarie-ci-bot@users.noreply.github.com" && echo "Done"
+          echo "Setting git conf user.name"
+          git config --global user.name "valarie-ci-bot" && echo "Done"
+      - name: Copy _site folder to pages
+        run: |
+          rsync -avh --ignore-times --delete ./_site/ pages/
+      - name: Commit changes
+        run: |
+          cd pages
+          git add -A
+          git commit -m "Pages Build for ${GITHUB_SHA:0:7}"
+      - name: View Tree
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get install -qq -y tree
+          cd pages
+          tree -I '.git' ./
+      - name: Push Pages
+        run: |
+          cd pages
+          git checkout
+          git push
+        if: github.ref == 'refs/heads/master'

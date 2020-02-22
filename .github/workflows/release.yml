@@ -12,6 +12,11 @@ jobs:
     - name: Get the version
       id: get_version
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+    - name: Compute Checksums
+      run: |
+        sha256sum after-effects | tee -a sha256sums.txt
+        sha512sum after-effects | tee -a sha512sums.txt
     # create a release on tag
     - name: Create Release
       id: create_release

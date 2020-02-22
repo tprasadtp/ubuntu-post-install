@@ -4,7 +4,7 @@ Effortless way to setup your fresh Ubuntu, Linux Mint, Debian installs. Please r
 before trying out.
 
 [![build][build-badge]][build-link]
-[![pre-release][pre-release-badge]][pre-release-link]
+[![release][release-ci-badge]][release-ci-link]
 [![netlify][netlify-badge]][netlify]
 [![version][version]][changelogs]
 [![license][gpl-badge]][license]
@@ -15,13 +15,13 @@ before trying out.
 ## How to use this
 
 
-### Get the script
+### 1. Get the script
 
 ```console
  wget -q https://ae.prasadt.com/get -O - | bash
 ```
 
-### Update the lists or your YAML configuration file
+### 2. Update the lists or your YAML configuration file
 
 Update the list files or YAML file to suit your needs. Change PPAs, add or delete packages to list, tweak flags etc.
 Please see [Configuration](https://ae.prasadt.com/configuration/) & [Tasks](https://ae.prasadt.com/tasks/).
@@ -29,7 +29,7 @@ Please see [Configuration](https://ae.prasadt.com/configuration/) & [Tasks](http
 [![Configuration-Page](https://img.shields.io/badge/Info-Configuration-blue.svg)](https://ae.prasadt.com/configuration/)
 [![Tasks-Page](https://img.shields.io/badge/Info-Tasks-green.svg)](https://ae.prasadt.com/tasks/)
 
-### Step 3: Run the script
+### 3. Run the script
 
 Run the script as **root**.
 
@@ -151,7 +151,6 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 
 - Please check [FAQ][FAQ] & [known issues][known-issues].
 - Please include the log file and terminal output while opening an issue.
-- **Never** set environment variable `CI=true` & `TRAVIS=true` unless you are running CI tests or are sure of its effects.
 
 ## Contributing & Forks
 
@@ -166,8 +165,8 @@ See [Contributing and forks](/CONTRIBUTING.md)
 
 [build-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/build/badge.svg
 [build-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Abuild
-[pre-release-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/build/badge.svg
-[pre-release-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Apre-release
+[release-ci-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/release/badge.svg
+[release-ci-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Arelease
 [netlify-badge]: https://img.shields.io/netlify/110327c5-b5f2-42e3-b5ef-5d5661c94187
 [netlify]: https://app.netlify.com/sites/ubuntu-post-install/deploys
 
