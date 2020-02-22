@@ -140,11 +140,10 @@ function _init_logging()
 # Utility Functions
 function _line_fill()
 {
-  local columns
   if [[ -z ${PS1} ]]; then
-    printf "%-30s@%s\n" | sed -e "s/ /-/g" -e "s/-@/ /" -e "s/@-/ /"
+    printf "__________________________________________\n"
   else
-    printf "%-$(tput cols)s@%s\n" | sed -e "s/ /-/g" -e "s/-@/ /" -e "s/@-/ /"
+    printf "%_$(tput cols)s@%s\n" | sed -e "s/ /-/g" -e "s/-@/ /" -e "s/@-/ /"
   fi
 }
 
