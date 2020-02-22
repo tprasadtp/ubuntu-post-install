@@ -15,11 +15,7 @@ function main()
     exit 1
   fi
 
-  if [[ $# -eq 4 ]]; then
-    enable_fix="$4"
-  else
-    enable_fix="false"
-  fi
+
   distro="$1"
   release="$2"
 

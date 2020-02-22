@@ -10,7 +10,7 @@ jobs:
         distro: ["debian", "ubuntu"]
         include:
           - distro: "debian"
-            release: bullsye
+            release: bullseye
           - distro: "ubuntu"
             release: "focal"
     steps:
