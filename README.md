@@ -33,12 +33,12 @@ Please see [Configuration](https://ae.prasadt.com/configuration/) & [Tasks](http
 
 Run the script as **root**.
 
-- To use default YAML configuration, which can be found here `https://ae.prasadt.com/dl/config/default.yml`.
+Sample configuration can be found here `https://ae.prasadt.com/dl/config/default.yml`.
 
-  ```console
-    chmod +x after-effects
-    sudo ./after-effects --config-file ./config/default.yml
-  ```
+```console
+  chmod +x after-effects
+  sudo ./after-effects --config-file ./config/default.yml
+```
 
 ## FAQ & Documentation
 
