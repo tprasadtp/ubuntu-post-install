@@ -51,29 +51,7 @@ function main()
     --config-file config/"${config_yml}"
     exit_code="$?"
 
-  echo "Exit code for YAML is $exit_code"
-  if [[ $exit_code -ne 0 ]]; then
-    exit "$exit_code"
-  fi
-  echo "Testing With Lists"
-  docker run --rm -e TRAVIS \
-    -e CI \
-    -e DEBUG \
-    -e GITHUB_ACTIONS \
-    --hostname="${distro}-${release}" \
-    -v "$(pwd)":/shared \
-    ae:"${distro}-${release}" \
-    ./after-effects -d \
-    --lists \
-    --fix \
-    --pre-release \
-    --simulate \
-    --autopilot \
-    --internal-ci-mode
-
-  exit_code="$?"
-
-  echo "Exit code for LIST is $exit_code"
+  echo "Exit code is $exit_code"
   if [[ $exit_code -ne 0 ]]; then
     exit "$exit_code"
   fi

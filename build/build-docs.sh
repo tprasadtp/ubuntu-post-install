@@ -6,7 +6,6 @@
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 set -e pipefail
-spacing_string="%-15s"
 
 ## Install Python packages
 pip install -r ./docs/requirements.txt
@@ -31,23 +30,13 @@ cp -R ./config/ ./_site/config/
 echo "Copying Signature file"
 if [ -f after-effects.asc ]; then
   mkdir -p ./_site/config/gpg || echo "Failed to create dir _site"
-	cp ./after-effects.asc ./_site/config/gpg/after-effects \
+	cp ./after-effects.asc ./_site/config/gpg/after-effects.asc \
 		|| echo "Failed to copy gpg files"
 fi
 echo "Copy Netlify Files"
 cp  ./netlify.toml ./_site/netlify.toml
 mkdir -p ./_site/build
 cp ./build/netlify-build.sh ./_site/build/netlify-build.sh
-
-echo "Commit Info"
-
-true > ./_site/commit.txt
-printf "${spacing_string}: ${TRAVIS_COMMIT:0:7}\n" "SRC Commit ID"  \
-| tee -a ./_site/commit.txt
-printf "${spacing_string}: ${TRAVIS_COMMIT_MESSAGE}\n" "SRC Message" \
-| tee -a ./_site/commit.txt
-printf "${spacing_string}: ${TRAVIS_BRANCH}\n" "Built from" \
-| tee -a ./_site/commit.txt
 
 COMMIT_SHORT="${GITHUB_SHA:0:7}"
 cat <<EOT > ./_site/commit.json
@@ -65,14 +54,3 @@ cat <<EOT > ./_site/commit.json
   "ts": "$(date)"
 }
 EOT
-
-
-# Commit only
-# TODO: Replace Metadata gen with Go/Python
-printf "Writing Commit Hash to file for redirects to netlify...\n"
-printf "${GITHUB_SHA}" > ./_site/COMMIT_SHA.txt
-# Install htmlproofer
-#echo "Installing bundler dependencies"
-#bundle install
-# html-proofer tests
-#bundle exec htmlproofer ./_site --only-4xx --check-favicon

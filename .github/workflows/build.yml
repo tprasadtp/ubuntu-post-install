@@ -1,5 +1,7 @@
 on:
   push:
+    branches:
+      - "**"
     paths-ignore:
       - ".gitignore"
       - ".envrc"
@@ -11,6 +13,8 @@ on:
       - ".github/labels.toml"
       - ".github/*.md"
       - "after-effects.asc"
+    tags-ignore:
+      - "**"
   pull_request:
 name: build
 env:

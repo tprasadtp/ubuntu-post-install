@@ -270,7 +270,6 @@ config:
 ```
 
 !!! warning
-    - List mode does not support installing snap packages.
     - Its responsibility of the user to separate classic snaps, edge and normal snaps.
 
 ## All In one

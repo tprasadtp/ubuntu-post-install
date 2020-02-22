@@ -1,18 +1,19 @@
 # Command line options
 
-## Configuration type
+## Configuration file
 
-You have two options of configuring this script.
+!!! snippet "Usage"
 
-- Using .list files in `data`
+    ```console
+    ./after-effects --config-file <filename>
+    ```
 
-  ```console
-    ./after-effects --lists
-  ```
+    OR
 
-- Using YAML files [they can be local or remote]
+    ```console
+    ./after-effects -C <filename>
+    ```
 
-You can specify local config file to use with -C / --config-file option. To use remote config file see -R/--remote-yaml
 
 ## Simulating package installation
 
@@ -193,38 +194,6 @@ Default behavior is to clean apt cache and delete downloaded DEB packages.
 
 Hides displaying configuration data in the output.
 
-## Prefer Local lists
-
-!!! snippet "Usage"
-
-    ```console
-    ./after-effects -L
-    ```
-
-    OR
-
-    ```console
-    ./after-effects --lists
-    ```
-
-Using this option, you can chose to use the lists file which you have locally and not worry about YAML.
-It is advised that you switch to YAML though. Not all options are supported with lists.
-
-## Use Custom Configuration file
-
-!!! snippet "Usage"
-
-    ```console
-    ./after-effects --config-file <filename>
-    ```
-
-    OR
-
-    ```console
-    ./after-effects -C <filename>
-    ```
-
-You can prefer using custom configuration file you have stored locally [It should be available via local paths or network share. not via ftp or http].
 
 ## Use Custom Version information file
 
@@ -334,7 +303,7 @@ This will display version info. You do **not** have to be root to run this. For 
 
 ## Autopilot Mode
 
-Autopilot mode is designed to run the script in a non interactive mannaer. Please see Autopilot in tasks for more info.
+Autopilot mode is designed to run the script in a non interactive manner. Please see Autopilot in tasks for more info.
 
 ## Help
 
@@ -354,8 +323,6 @@ Non-Action options (can be run as non-root user)
 Configuration Options
 -------------------------------------------------
 [-C | --config-file]   Local yaml config file
-[-L | --lists]         Read Configuration from .list files
-                       in data folder.
 [-n | --name]          Name of the configuration file to use
                        as a query parameter when -R / --remote-yaml is used
 [-R | --remote-yaml]   Use config yaml hosted somewhere else

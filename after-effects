@@ -88,7 +88,6 @@ function _init_printf_variables()
     readonly          _table="[  ---Table---  ]"
     readonly          _array="[   PKG Array   ]"
     readonly            _apt="[  APT-Packges  ]"
-    readonly           _list="[  Cleaned List ]"
     readonly           _snap="[    Snap PKG   ]"
     readonly        _success="[    Success    ]"
     #readonly           _falg="[     Flag      ]"
@@ -753,28 +752,22 @@ function _test_conflicting_apps ()
 function _set_custom_api_nodes ()
 {
 
-  # Set custom YAML
-  if [ "$bool_use_yaml" == "true" ]; then
-
-    # Custom Remote Config name as Query parameter name
-    if [ "$bool_custom_remote_config_name" == "true" ]; then
-     readonly remote_config_name="$custom_remote_config_name"
-    else
-     readonly remote_config_name="default"
-    fi
-
-    if [ "$bool_remote_yaml" == "true" ]; then
-     readonly api_config_url="$url_remote_yaml?name=${remote_config_name}"
-     _log_debug "Will use config ${api_config_url}"
-    elif [ "$bool_custom_config_file" == "true" ]; then
-     _log_debug "Config file specified will be used."
-    else
-      _log_warn "${_error} No yaml file specified!"
-      _log_and_exit "${_error} Script cannot continue. Exiting" "25"
-    fi
-
+  # Custom Remote Config name as Query parameter name
+  if [ "$bool_custom_remote_config_name" == "true" ]; then
+    readonly remote_config_name="$custom_remote_config_name"
+  else
+    readonly remote_config_name="default"
   fi
 
+  if [ "$bool_remote_yaml" == "true" ]; then
+    readonly api_config_url="$url_remote_yaml?name=${remote_config_name}"
+  _log_debug "Will use config ${api_config_url}"
+  elif [ "$bool_custom_config_file" == "true" ]; then
+    _log_debug "Config file specified will be used."
+  else
+    _log_warn "${_error} No yaml file specified!"
+    _log_and_exit "${_error} Script cannot continue. Exiting" "25"
+  fi
 
   # Version, Config ang GPG signature URLS
   readonly api_version_url="${metadata_endpoint}/version.yml"
@@ -999,275 +992,270 @@ function _set_yaml_config()
     _log_and_show "${_info} Usage reporting is disabled."
   fi
 
-  # If yaml is set parse it.
-  if [ "$bool_use_yaml" == "true" ]; then
+  # Get and parse the file
+  _log_and_show "${_info} Processing config..."
+  if [ "$bool_custom_config_file" != "true" ]; then
+    _log_and_show "${_cfg} Using Remote Config file."
+    _log_debug "Deleting old YAMLS"
+    rm -f "/tmp/ae/api-config.yml" || _log_debug "Deleting old version YAML failed."
+    readonly config_yaml_file="/tmp/ae/api-config.yml"
+    # Get response/file
+    _get_remote_file "$config_yaml_file" "$api_config_url"
+  else
+    _log_and_show "${_cfg} Using local config file : $custom_config_file"
+    readonly config_yaml_file="$custom_config_file"
+  fi
 
-    # Get and parse the file
-    _log_and_show "${_info} Processing config..."
-    if [ "$bool_custom_config_file" != "true" ]; then
-      _log_and_show "${_cfg} Using Remote Config file."
-      _log_debug "Deleting old YAMLS"
-      rm -f "/tmp/ae/api-config.yml" || _log_debug "Deleting old version YAML failed."
-      readonly config_yaml_file="/tmp/ae/api-config.yml"
-      # Get response/file
-      _get_remote_file "$config_yaml_file" "$api_config_url"
-    else
-      _log_and_show "${_cfg} Using local config file : $custom_config_file"
-      readonly config_yaml_file="$custom_config_file"
+  # Parse YAML to variables
+  _log_debug "Parsing Config File "
+  eval "$(parse_yaml "$config_yaml_file")"
+
+
+  set_default;
+  # Repo flags
+  #################################################################################
+  _check_bool "add_docker_repo" "${config__add_repo__docker[0]}"
+  #add_docker_repo="${config__add_repo__docker[0]}"
+
+  _check_bool "add_winehq_repo" "${config__add_repo__winehq[0]}"
+  #add_winehq_repo="${config__add_repo__winehq[0]}"
+
+  _check_bool "add_mendeley_repo" "${config__add_repo__mendeley[0]}"
+  #add_mendeley_repo="${config__add_repo__mendeley[0]}"
+
+  _check_bool "add_googlecloud_repo" "${config__add_repo__googlecloud[0]}"
+  #add_googlecloud_repo="${config__add_repo__googlecloud[0]}"
+  _check_bool "add_gcsfuse_repo" "${config__add_repo__gcsfuse[0]}"
+
+  _check_bool "add_spotify_repo" "${config__add_repo__spotify[0]}"
+  #add_spotify_repo="${config__add_repo__spotify[0]}"
+
+  _check_bool "add_skype_repo" "${config__add_repo__skype[0]}"
+  #add_skype_repo="${config__add_repo__skype[0]}"
+
+  _check_bool "add_vscode_repo" "${config__add_repo__vscode[0]}"
+  #add_vscode_repo="${config__add_repo__vscode[0]}"
+
+  _check_bool "add_insync_repo" "${config__add_repo__insync[0]}"
+  #add_insync_repo="${config__add_repo__insync[0]}"
+
+  _check_bool "add_signal_repo" "${config__add_repo__signal[0]}"
+  #add_signal_repo="${config__add_repo__signal[0]}"
+
+  _check_bool "add_google_repo" "${config__add_repo__google[0]}"
+  #add_google_repo="${config__add_repo__google[0]}"
+
+  # ROS
+  _check_bool "add_ros_repo" "${config__add_repo__ros[0]}"
+
+  # DUO
+  _check_bool "add_duo_repo" "${config__add_repo__duo[0]}"
+
+  # Other Script Flags
+  #################################################################################
+
+  # Purge Packages
+  _check_bool "bool_purge_not_required_pkgs" "${config__flags__purge_enabled[0]}"
+  #bool_purge_not_required_pkgs="${config__flags__purge_enabled[0]}"
+
+  # Keep Debs
+  _check_bool "bool_preserve_debs" "${config__flags__preserve_debs[0]}"
+  #bool_preserve_debs="${config__flags__preserve_debs[0]}"
+
+  # Uni-Mirror
+  _check_bool "bool_use_uni_freiburg_mirror" "${config__flags__uni_freiburg_mirror[0]}"
+
+  # Tasks Flags
+  ##################################################################################
+
+  #ae_task_update="${config__tasks__update[0]}"
+  _check_bool "ae_task_update" "${config__tasks__update[0]}"
+
+  #ae_task_upgrade="${config__tasks__upgrade[0]}"
+  _check_bool "ae_task_upgrade" "${config__tasks__upgrade[0]}"
+
+  #ae_task_repo="${config__tasks__repo[0]}"
+  _check_bool "ae_task_repo" "${config__tasks__repo[0]}"
+
+  #ae_task_ppa="${config__tasks__ppa[0]}"
+  _check_bool "ae_task_ppa" "${config__tasks__ppa[0]}"
+
+  #ae_task_apt="${config__tasks__apt[0]}"
+  _check_bool "ae_task_apt" "${config__tasks__apt[0]}"
+
+  #ae_task_debs="${config__tasks__debs[0]}"
+  _check_bool "ae_task_debs" "${config__tasks__debs[0]}"
+
+  #ae_task_purge="${config__tasks__purge[0]}"
+  _check_bool "ae_task_purge" "${config__tasks__purge[0]}"
+
+  #ae_task_pip2="${config__tasks__pip2[0]}"
+  _check_bool "ae_task_pip2" "${config__tasks__pip2[0]}"
+
+  #ae_task_pip3="${config__tasks__pip3[0]}"
+  _check_bool "ae_task_pip3" "${config__tasks__pip3[0]}"
+
+  # Binaries Install
+  _check_bool "ae_task_bin" "${config__tasks__binaries[0]}"
+
+  # snap Packages
+  _check_bool "ae_task_snaps" "${config__tasks__snaps[0]}"
+
+
+  if [[ ${bool_hide_config} != "true" ]] && [[ $AE_DEBUG -lt 1 ]]; then
+    _line_fill
+    printf "${_table} %-20s | %-10s |\n" "Repository" "Enabled"
+    printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Google Cloud SDK" "$add_googlecloud_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "GCSFUSE" "$add_gcsfuse_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Spotify" "$add_spotify_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Skype" "$add_skype_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Visual Studio Code" "$add_vscode_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Insync" "$add_insync_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Signal for Desktop" "$add_signal_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "Google Chrome, Earth" "$add_google_repo"
+    printf "${_cfg} %-20s | %-10s |\n" "ROS" "$add_ros_repo"
+    _line_fill;
+    printf "${_table} %-20s | %-10s |\n" "Other Flags" "Config"
+    _line_fill;
+    printf "${_cfg} %-20s | %-10s |\n" "Purge Enabled" "$bool_purge_not_required_pkgs"
+    printf "${_cfg} %-20s | %-10s |\n" "Keep DEBs/APT cache" "$bool_preserve_debs"
+    printf "${_cfg} %-20s | %-10s |\n" "Uni-Freiburg Mirror" "$bool_use_uni_freiburg_mirror"
+    _line_fill;
+
+    # Only display tasks column when autopilot = true is set.
+    if [ "$AUTOPILOT" == "true" ]; then
+      printf "${_table} %-20s | %-10s |\n" "Task" "Config"
+      _line_fill;
+      printf "${_rtasks} %-20s | %-10s |\n" "Update" "$ae_task_update"
+      printf "${_rtasks} %-20s | %-10s |\n" "Upgrade" "$ae_task_upgrade"
+      printf "${_rtasks} %-20s | %-10s |\n" "Add Repos" "$ae_task_repo"
+      printf "${_rtasks} %-20s | %-10s |\n" "Add PPA" "$ae_task_ppa"
+      printf "${_rtasks} %-20s | %-10s |\n" "APT packages" "$ae_task_apt"
+      printf "${_rtasks} %-20s | %-10s |\n" "DEB packages" "$ae_task_debs"
+      printf "${_rtasks} %-20s | %-10s |\n" "Purge packages" "$ae_task_purge"
+      printf "${_rtasks} %-20s | %-10s |\n" "Python 2 Modules" "$ae_task_pip2"
+      printf "${_rtasks} %-20s | %-10s |\n" "Python 3 Modules" "$ae_task_pip3"
+      printf "${_rtasks} %-20s | %-10s |\n" "Static Binaries" "$ae_task_bin"
+      printf "${_rtasks} %-20s | %-10s |\n" "Snap Packages" "$ae_task_snaps"
+      _line_fill;
     fi
+  else
+    _log_and_show "${_cfg} Configuration data is hidden if not in debug mode"
+    _log_debug "-------- REPO CONFIG ----------"
+    _log_debug "Docker CE           : $add_docker_repo"
+    _log_debug "Wine-HQ             : $add_winehq_repo"
+    _log_debug "Google Cloud SDK    : $add_googlecloud_repo"
+    _log_debug "GCSFUSE             : $add_gcsfuse_repo"
+    _log_debug "Spotify             : $add_spotify_repo"
+    _log_debug "Skype               : $add_skype_repo"
+    _log_debug "Visual Studio Code  : $add_vscode_repo"
+    _log_debug "Insync              : $add_insync_repo"
+    _log_debug "Signal for Desktop  : $add_signal_repo"
+    _log_debug "Google Chrome,Earth : $add_google_repo"
+    _log_debug "ROS                 : $add_ros_repo"
+    _log_debug "-------- FLAG CONFIG ----------"
+    _log_debug "Purge Enabled       : $bool_purge_not_required_pkgs"
+    _log_debug "Keep DEBs/APT cache : $bool_preserve_debs"
+    _log_debug "Use Uni Mirror      : $bool_use_uni_freiburg_mirror"
+    _log_debug "-------- TASK CONFIG ----------"
+    _log_debug " AUTOPILOT IS ${AUTOPILOT}"
+    _log_debug "Update              : $ae_task_update"
+    _log_debug "Upgrade             : $ae_task_upgrade"
+    _log_debug "Add Repos           : $ae_task_repo"
+    _log_debug "Add PPA             : $ae_task_ppa"
+    _log_debug "APT packages        : $ae_task_apt"
+    _log_debug "DEB packages        : $ae_task_debs"
+    _log_debug "Purge packages      : $ae_task_purge"
+    _log_debug "Python 2 Modules    : $ae_task_pip2"
+    _log_debug "Python 3 Modules    : $ae_task_pip3"
+    _log_debug "Static Binaries     : $ae_task_bin"
+    _log_debug "Snap Packages       : $ae_task_snaps"
+    _log_debug "--------  END CONFIG ----------"
+  fi
+  #################################################################################
+  #                              Parse Arrays
+  #################################################################################
+  # Config file YAML has arrays of apt packages.
+  # We need to parse apt packages, ppa's, deb packages, python modules listed in yaml
+  # to bash arrays.
 
-    # Parse YAML to variables
-    _log_debug "Parsing Config File "
-    eval "$(parse_yaml "$config_yaml_file")"
+  #--------------------------------------------------------------------------------
+  #                               APT Lists
+  #--------------------------------------------------------------------------------
+  # There are Seven lists under key config.install.apt.[mentioned from 1-7]
+  # 1. administration : Contains Administrative packages
+  # 2. security       : contains Security related tools and packages
+  # 3. productivity   : Office tools, writing tools, LateX, document tools and other
+  #                     productivity tools, Email clients, browsers, IM clients etc.
+  #                   : Example : LateX, TeXStudio, Libre office, pandoc empathy, Thunderbird
+  # 4. Multimedia     : Multimedia tools like media players, audio converters and playes etc.
+  # 5. development    : IDEs [Spyder, Jetbeans etc], languages [go, python, ruby, rust, java etc],
+  #                   : Containers [docker lxc rkt etc], Python libraries, compilers [gcc, clang]
+  #                   : SDKs [AWS SDK, Coogle Cloud SDK, open-jdk, Tensor Flow], headers
+  #                   : and libraries[ocl-icd-dev],
+  #                   : Anything related to development and *-dev or *-devl packages.
+  # 6. other          : Everything which doesnot fit in the above categories.
+  #                   : Themes, Tools, Utilities like htop etc.
+  # 7. External       : Any packages which are provided by ppas, or repositories not present in
+  #                   : base *buntu distribution. There's a possibility that the repository might not
+  #                   : be added or may be unavailable or offline. So Keeping the list seperate from
+  #                   : others packages minimizes errors if there are any.
+  # This classification is only for ease of use and need not be strictly followed. You can put
+  # vlc package in 'security', it will still install fine. This classification helps
+  # while writing configs and editing them. Its advised to follow it if your configs
+  # tend to get to couple of hundreds of lines. Also YAML file should be a valid YAML.
 
+  #--------------------------------------------------------------------------------
+  #                             Special list - Purge list
+  #--------------------------------------------------------------------------------
+  # There is a special package list under key, config.purge or purge.list, which contains
+  # list of apt packages to be purged from the system if present.
+  # Lets get em, shall we?
 
-    set_default;
-    # Repo flags
-    #################################################################################
-    _check_bool "add_docker_repo" "${config__add_repo__docker[0]}"
-    #add_docker_repo="${config__add_repo__docker[0]}"
+  # Copy package list
+  declare -gar parsed_purge_packages=("${config__purge_[@]}")
+  declare -gar parsed_administration_packages=("${config__install__apt__administration_[@]}")
+  declare -gar parsed_secutity_packages=("${config__install__apt__security_[@]}")
+  declare -gar parsed_productivity_packages=("${config__install__apt__productivity_[@]}")
+  declare -gar parsed_multimedia_packages=("${config__install__apt__multimedia_[@]}")
+  declare -gar parsed_development_packages=("${config__install__apt__development_[@]}")
+  declare -gar parsed_other_packages=("${config__install__apt__other_[@]}")
+  declare -gar parsed_external_packages=("${config__install__apt__external_[@]}")
 
-    _check_bool "add_winehq_repo" "${config__add_repo__winehq[0]}"
-    #add_winehq_repo="${config__add_repo__winehq[0]}"
+  #--------------------------------------------------------------------------------
+  #                             PPA Lists
+  #--------------------------------------------------------------------------------
+  # Config file contains list of PPAs to be added under key
+  # config.ppa
+  declare -gar parsed_ppa_list=("${config__ppa_[@]}")
 
-    _check_bool "add_mendeley_repo" "${config__add_repo__mendeley[0]}"
-    #add_mendeley_repo="${config__add_repo__mendeley[0]}"
+  #--------------------------------------------------------------------------------
+  #                             Debian packages
+  #--------------------------------------------------------------------------------
+  # Config file contains list of DEB packages to be downloaded & installed under key
+  # config.install.debian_packages
+  # The configuration is not simple URL its csv. <URL to Deb file>,<Name of the Package>
+  # This is for compatiblity reasons
+  declare -gar parsed_deb_files_list=("${config__install__debian_packages_[@]}")
 
-    _check_bool "add_googlecloud_repo" "${config__add_repo__googlecloud[0]}"
-    #add_googlecloud_repo="${config__add_repo__googlecloud[0]}"
-    _check_bool "add_gcsfuse_repo" "${config__add_repo__gcsfuse[0]}"
+  #--------------------------------------------------------------------------------
+  #                             Python Modules
+  #--------------------------------------------------------------------------------
+  # There are two keys under config.install.python(2/3) which contain Python 2 and Python 3
+  # Modules respectively. Please donot mix python 2 Modules with Python 3.
 
-    _check_bool "add_spotify_repo" "${config__add_repo__spotify[0]}"
-    #add_spotify_repo="${config__add_repo__spotify[0]}"
+  declare -gar parsed_pip2_packages=("${config__install__python2_[@]}")
+  declare -gar parsed_pip3_packages=("${config__install__python3_[@]}")
+  declare -gar parsed_bin_packages=("${config__install__binaries_[@]}")
 
-    _check_bool "add_skype_repo" "${config__add_repo__skype[0]}"
-    #add_skype_repo="${config__add_repo__skype[0]}"
-
-    _check_bool "add_vscode_repo" "${config__add_repo__vscode[0]}"
-    #add_vscode_repo="${config__add_repo__vscode[0]}"
-
-    _check_bool "add_insync_repo" "${config__add_repo__insync[0]}"
-    #add_insync_repo="${config__add_repo__insync[0]}"
-
-    _check_bool "add_signal_repo" "${config__add_repo__signal[0]}"
-    #add_signal_repo="${config__add_repo__signal[0]}"
-
-    _check_bool "add_google_repo" "${config__add_repo__google[0]}"
-    #add_google_repo="${config__add_repo__google[0]}"
-
-    # ROS
-    _check_bool "add_ros_repo" "${config__add_repo__ros[0]}"
-
-    # DUO
-    _check_bool "add_duo_repo" "${config__add_repo__duo[0]}"
-
-    # Other Script Flags
-    #################################################################################
-
-    # Purge Packages
-    _check_bool "bool_purge_not_required_pkgs" "${config__flags__purge_enabled[0]}"
-    #bool_purge_not_required_pkgs="${config__flags__purge_enabled[0]}"
-
-    # Keep Debs
-    _check_bool "bool_preserve_debs" "${config__flags__preserve_debs[0]}"
-    #bool_preserve_debs="${config__flags__preserve_debs[0]}"
-
-    # Uni-Mirror
-    _check_bool "bool_use_uni_freiburg_mirror" "${config__flags__uni_freiburg_mirror[0]}"
-
-    # Tasks Flags
-    ##################################################################################
-
-    #ae_task_update="${config__tasks__update[0]}"
-    _check_bool "ae_task_update" "${config__tasks__update[0]}"
-
-    #ae_task_upgrade="${config__tasks__upgrade[0]}"
-    _check_bool "ae_task_upgrade" "${config__tasks__upgrade[0]}"
-
-    #ae_task_repo="${config__tasks__repo[0]}"
-    _check_bool "ae_task_repo" "${config__tasks__repo[0]}"
-
-    #ae_task_ppa="${config__tasks__ppa[0]}"
-    _check_bool "ae_task_ppa" "${config__tasks__ppa[0]}"
-
-    #ae_task_apt="${config__tasks__apt[0]}"
-    _check_bool "ae_task_apt" "${config__tasks__apt[0]}"
-
-    #ae_task_debs="${config__tasks__debs[0]}"
-    _check_bool "ae_task_debs" "${config__tasks__debs[0]}"
-
-    #ae_task_purge="${config__tasks__purge[0]}"
-    _check_bool "ae_task_purge" "${config__tasks__purge[0]}"
-
-    #ae_task_pip2="${config__tasks__pip2[0]}"
-    _check_bool "ae_task_pip2" "${config__tasks__pip2[0]}"
-
-    #ae_task_pip3="${config__tasks__pip3[0]}"
-    _check_bool "ae_task_pip3" "${config__tasks__pip3[0]}"
-
-    # Binaries Install
-    _check_bool "ae_task_bin" "${config__tasks__binaries[0]}"
-
-    # snap Packages
-    _check_bool "ae_task_snaps" "${config__tasks__snaps[0]}"
-
-
-    if [[ ${bool_hide_config} != "true" ]] && [[ $AE_DEBUG -lt 1 ]]; then
-      _line_fill
-      printf "${_table} %-20s | %-10s |\n" "Repository" "Enabled"
-      printf "${_cfg} %-20s | %-10s |\n" "Docker CE" "$add_docker_repo"
-      printf "${_cfg} %-20s | %-10s |\n" "Wine-HQ" "$add_winehq_repo"
-      printf "${_cfg} %-20s | %-10s |\n" "Google Cloud SDK" "$add_googlecloud_repo"
-      printf "${_cfg} %-20s | %-10s |\n" "GCSFUSE" "$add_gcsfuse_repo"
-      printf "${_cfg} %-20s | %-10s |\n" "Spotify" "$add_spotify_repo"
-      printf "${_cfg} %-20s | %-10s |\n" "Skype" "$add_skype_repo"
-      printf "${_cfg} %-20s | %-10s |\n" "Visual Studio Code" "$add_vscode_repo"
-      printf "${_cfg} %-20s | %-10s |\n" "Insync" "$add_insync_repo"
-      printf "${_cfg} %-20s | %-10s |\n" "Signal for Desktop" "$add_signal_repo"
-      printf "${_cfg} %-20s | %-10s |\n" "Google Chrome, Earth" "$add_google_repo"
-      printf "${_cfg} %-20s | %-10s |\n" "ROS" "$add_ros_repo"
-      _line_fill;
-      printf "${_table} %-20s | %-10s |\n" "Other Flags" "Config"
-      _line_fill;
-      printf "${_cfg} %-20s | %-10s |\n" "Purge Enabled" "$bool_purge_not_required_pkgs"
-      printf "${_cfg} %-20s | %-10s |\n" "Keep DEBs/APT cache" "$bool_preserve_debs"
-      printf "${_cfg} %-20s | %-10s |\n" "Uni-Freiburg Mirror" "$bool_use_uni_freiburg_mirror"
-      _line_fill;
-
-      # Only display tasks column when autopilot = true is set.
-      if [ "$AUTOPILOT" == "true" ]; then
-        printf "${_table} %-20s | %-10s |\n" "Task" "Config"
-        _line_fill;
-        printf "${_rtasks} %-20s | %-10s |\n" "Update" "$ae_task_update"
-        printf "${_rtasks} %-20s | %-10s |\n" "Upgrade" "$ae_task_upgrade"
-        printf "${_rtasks} %-20s | %-10s |\n" "Add Repos" "$ae_task_repo"
-        printf "${_rtasks} %-20s | %-10s |\n" "Add PPA" "$ae_task_ppa"
-        printf "${_rtasks} %-20s | %-10s |\n" "APT packages" "$ae_task_apt"
-        printf "${_rtasks} %-20s | %-10s |\n" "DEB packages" "$ae_task_debs"
-        printf "${_rtasks} %-20s | %-10s |\n" "Purge packages" "$ae_task_purge"
-        printf "${_rtasks} %-20s | %-10s |\n" "Python 2 Modules" "$ae_task_pip2"
-        printf "${_rtasks} %-20s | %-10s |\n" "Python 3 Modules" "$ae_task_pip3"
-        printf "${_rtasks} %-20s | %-10s |\n" "Static Binaries" "$ae_task_bin"
-        printf "${_rtasks} %-20s | %-10s |\n" "Snap Packages" "$ae_task_snaps"
-        _line_fill;
-      fi
-    else
-      _log_and_show "${_cfg} Configuration data is hidden if not in debug mode"
-      _log_debug "-------- REPO CONFIG ----------"
-      _log_debug "Docker CE           : $add_docker_repo"
-      _log_debug "Wine-HQ             : $add_winehq_repo"
-      _log_debug "Google Cloud SDK    : $add_googlecloud_repo"
-      _log_debug "GCSFUSE             : $add_gcsfuse_repo"
-      _log_debug "Spotify             : $add_spotify_repo"
-      _log_debug "Skype               : $add_skype_repo"
-      _log_debug "Visual Studio Code  : $add_vscode_repo"
-      _log_debug "Insync              : $add_insync_repo"
-      _log_debug "Signal for Desktop  : $add_signal_repo"
-      _log_debug "Google Chrome,Earth : $add_google_repo"
-      _log_debug "ROS                 : $add_ros_repo"
-      _log_debug "-------- FLAG CONFIG ----------"
-      _log_debug "Purge Enabled       : $bool_purge_not_required_pkgs"
-      _log_debug "Keep DEBs/APT cache : $bool_preserve_debs"
-      _log_debug "Use Uni Mirror      : $bool_use_uni_freiburg_mirror"
-      _log_debug "-------- TASK CONFIG ----------"
-      _log_debug " AUTOPILOT IS ${AUTOPILOT}"
-      _log_debug "Update              : $ae_task_update"
-      _log_debug "Upgrade             : $ae_task_upgrade"
-      _log_debug "Add Repos           : $ae_task_repo"
-      _log_debug "Add PPA             : $ae_task_ppa"
-      _log_debug "APT packages        : $ae_task_apt"
-      _log_debug "DEB packages        : $ae_task_debs"
-      _log_debug "Purge packages      : $ae_task_purge"
-      _log_debug "Python 2 Modules    : $ae_task_pip2"
-      _log_debug "Python 3 Modules    : $ae_task_pip3"
-      _log_debug "Static Binaries     : $ae_task_bin"
-      _log_debug "Snap Packages       : $ae_task_snaps"
-      _log_debug "--------  END CONFIG ----------"
-    fi
-    #################################################################################
-    #                              Parse Arrays
-    #################################################################################
-    # Config file YAML has arrays of apt packages.
-    # We need to parse apt packages, ppa's, deb packages, python modules listed in yaml
-    # to bash arrays.
-
-    #--------------------------------------------------------------------------------
-    #                               APT Lists
-    #--------------------------------------------------------------------------------
-    # There are Seven lists under key config.install.apt.[mentioned from 1-7]
-    # 1. administration : Contains Administrative packages
-    # 2. security       : contains Security related tools and packages
-    # 3. productivity   : Office tools, writing tools, LateX, document tools and other
-    #                     productivity tools, Email clients, browsers, IM clients etc.
-    #                   : Example : LateX, TeXStudio, Libre office, pandoc empathy, Thunderbird
-    # 4. Multimedia     : Multimedia tools like media players, audio converters and playes etc.
-    # 5. development    : IDEs [Spyder, Jetbeans etc], languages [go, python, ruby, rust, java etc],
-    #                   : Containers [docker lxc rkt etc], Python libraries, compilers [gcc, clang]
-    #                   : SDKs [AWS SDK, Coogle Cloud SDK, open-jdk, Tensor Flow], headers
-    #                   : and libraries[ocl-icd-dev],
-    #                   : Anything related to development and *-dev or *-devl packages.
-    # 6. other          : Everything which doesnot fit in the above categories.
-    #                   : Themes, Tools, Utilities like htop etc.
-    # 7. External       : Any packages which are provided by ppas, or repositories not present in
-    #                   : base *buntu distribution. There's a possibility that the repository might not
-    #                   : be added or may be unavailable or offline. So Keeping the list seperate from
-    #                   : others packages minimizes errors if there are any.
-    # This classification is only for ease of use and need not be strictly followed. You can put
-    # vlc package in 'security', it will still install fine. This classification helps
-    # while writing configs and editing them. Its advised to follow it if your configs
-    # tend to get to couple of hundreds of lines. Also YAML file should be a valid YAML.
-
-    #--------------------------------------------------------------------------------
-    #                             Special list - Purge list
-    #--------------------------------------------------------------------------------
-    # There is a special package list under key, config.purge or purge.list, which contains
-    # list of apt packages to be purged from the system if present.
-
-    # Lets get em, shall we?
-
-    # Copy package list
-    declare -gar parsed_purge_packages=("${config__purge_[@]}")
-    declare -gar parsed_administration_packages=("${config__install__apt__administration_[@]}")
-    declare -gar parsed_secutity_packages=("${config__install__apt__security_[@]}")
-    declare -gar parsed_productivity_packages=("${config__install__apt__productivity_[@]}")
-    declare -gar parsed_multimedia_packages=("${config__install__apt__multimedia_[@]}")
-    declare -gar parsed_development_packages=("${config__install__apt__development_[@]}")
-    declare -gar parsed_other_packages=("${config__install__apt__other_[@]}")
-    declare -gar parsed_external_packages=("${config__install__apt__external_[@]}")
-
-    #--------------------------------------------------------------------------------
-    #                             PPA Lists
-    #--------------------------------------------------------------------------------
-    # Config file contains list of PPAs to be added under key
-    # config.ppa
-    declare -gar parsed_ppa_list=("${config__ppa_[@]}")
-
-    #--------------------------------------------------------------------------------
-    #                             Debian packages
-    #--------------------------------------------------------------------------------
-    # Config file contains list of DEB packages to be downloaded & installed under key
-    # config.install.debian_packages
-    # The configuration is not simple URL its csv. <URL to Deb file>,<Name of the Package>
-    # This is for compatiblity reasons
-    declare -gar parsed_deb_files_list=("${config__install__debian_packages_[@]}")
-
-    #--------------------------------------------------------------------------------
-    #                             Python Modules
-    #--------------------------------------------------------------------------------
-    # There are two keys under config.install.python(2/3) which contain Python 2 and Python 3
-    # Modules respectively. Please donot mix python 2 Modules with Python 3.
-
-    declare -gar parsed_pip2_packages=("${config__install__python2_[@]}")
-    declare -gar parsed_pip3_packages=("${config__install__python3_[@]}")
-    declare -gar parsed_bin_packages=("${config__install__binaries_[@]}")
-
-    #--------------------------------------------------------------------------------
-    #                             Snap Packages
-    #--------------------------------------------------------------------------------
-    declare -gar parsed_snap_normal_packages=("${config__install__snaps__normal_[@]}")
-    declare -gar parsed_snap_classic_packages=("${config__install__snaps__classic_[@]}")
-    declare -gar parsed_snap_edge_packages=("${config__install__snaps__edge_[@]}")
- fi
+  #--------------------------------------------------------------------------------
+  #                             Snap Packages
+  #--------------------------------------------------------------------------------
+  declare -gar parsed_snap_normal_packages=("${config__install__snaps__normal_[@]}")
+  declare -gar parsed_snap_classic_packages=("${config__install__snaps__classic_[@]}")
+  declare -gar parsed_snap_edge_packages=("${config__install__snaps__edge_[@]}")
 
   {
   _line_fill
@@ -1275,125 +1263,6 @@ function _set_yaml_config()
   _line_fill
   } >> "${log_file}"
 
-}
-
-
-function _set_list_config()
-{
-  # If --local or --list option is used then we don't need to fetch Configs
-  # We need to just parse the .list files in data.Flags will be local and can be
-  # altered via options or editing the
-  # Script itself.
-  if [ "$bool_use_lists" == "true" ]; then
-    _log_and_show "${_cfg} Local Flags and Configs are preferred."
-    _log_and_show "${_cfg} Parsing local lists..."
-
-    # Latest wine builds
-    add_winehq_repo=false
-
-    #Docker community edition
-    add_docker_repo=true
-
-    #Mendeley Desktop
-    add_mendeley_repo=false
-
-    #Spotify
-    add_spotify_repo=true
-
-    #InSync
-    add_insync_repo=false
-
-    #Google Cloud SDK
-    add_googlecloud_repo=false
-    add_gcsfuse_repo=false
-
-    #Signal
-    add_signal_repo=true
-
-    #Skype
-    add_skype_repo=true
-
-    #VS code
-    add_vscode_repo=true
-
-    #Google
-    add_google_repo=true
-
-    #ROS
-    add_ros_repo=false
-
-    #DUO
-    add_duo_repo=false
-
-    ae_task_update="true"
-    ae_task_upgrade="true"
-    ae_task_repo="true"
-    ae_task_ppa="true"
-    ae_task_apt="true"
-    ae_task_debs="true"
-    ae_task_pip2="true"
-    ae_task_pip3="true"
-    ae_task_purge="true"
-    ae_task_bin="true"
-
-    #shellcheck disable=SC2034
-    local list_file line
-    readonly local lists=(
-                          administration.list
-                          security.list
-                          productivity.list
-                          multimedia.list
-                          development.list
-                          others.list
-                          external.list
-                          ppa.list
-                          deb.list
-                          purge.list
-                          pip.list
-                          pip3.list
-                          bin.list
-                        )
-
-    for list in "${lists[@]}"; do
-      declare -a tmp_arr
-      _log_debug "Processing List : $list"
-      if [ -f "${dir}/data/${list}" ]; then
-        touch /tmp/ae/cleaned.clist && truncate -s 0 /tmp/ae/cleaned.clist
-        # Clean comments & empty spaces
-        grep -v -e ^% -e ^\# -e '^[[:space:]]*$' "${dir}/data/${list}" > /tmp/ae/cleaned.clist
-        _log_trace "Cleaned List is below"
-        _line_fill >> "${log_file}"
-        # shellcheck disable=SC2002
-        cat /tmp/ae/cleaned.clist | _add_timestamp_to_logs "${_list}"
-        # Read line by line & Parse array
-        i=0;
-        while IFS= read -r line; do
-          tmp_arr[i]="${line}" && ((++i))
-        done < /tmp/ae/cleaned.clist
-        _log_debug "Parsed $list"
-        case "${list}" in
-          administration.list)  declare -gar parsed_administration_packages=("${tmp_arr[@]}");;
-          security.list)        declare -gar parsed_secutity_packages=("${tmp_arr[@]}");;
-          productivity.list)    declare -gar parsed_productivity_packages=("${tmp_arr[@]}");;
-          multimedia.list)      declare -gar parsed_multimedia_packages=("${tmp_arr[@]}");;
-          others.list)          declare -gar parsed_other_packages=("${tmp_arr[@]}");;
-          development.list)     declare -gar parsed_development_packages=("${tmp_arr[@]}");;
-          external.list)        declare -gar parsed_external_packages=("${tmp_arr[@]}");;
-          ppa.list)             declare -gar parsed_ppa_list=("${tmp_arr[@]}");;
-          deb.list)             declare -gar parsed_deb_files_list=("${tmp_arr[@]}");;
-          purge.list)           declare -gar parsed_purge_packages=("${tmp_arr[@]}");;
-          pip.list)             declare -gar parsed_pip2_packages=("${tmp_arr[@]}");;
-          pip3.list)            declare -gar parsed_pip3_packages=("${tmp_arr[@]}");;
-          bin.list)             declare -gar parsed_bin_packages=("${tmp_arr[@]}");;
-        esac
-        # Unset local array
-      else
-        _log_and_show "${_warn} $list not found under data directory."
-      fi
-      unset tmp_arr || _log_and_exit "Unable to unset array" "40"
-    done
-
-  fi
 }
 
 
@@ -2184,8 +2053,8 @@ function purge_not_required()
 
 function install_apps()
 {
-  # Function to install apps mentioned in lists/arrays
-  # external-repos should always be at last to avoid any errors in previous lists.
+  # Function to install apps mentioned in arrays
+  # external-repos should always be at last to avoid any errors in previous .
   # No checks are being made on any of the files for validity. One entry per line is recommended.
   # If a package is not available entire collection in the file *.list will not be installed!!
 
@@ -2522,30 +2391,27 @@ function __install_snaps()
     * )         _log_and_exit "Internal Function Error. Arguments for snap type." "19";;
   esac
 
-  if [[ $bool_use_lists == "true" ]]; then
-    _log_warn "${_warn} Lists mode does not support installing snap packages"
-  else
-    if [[ ${#parsed_snaps_list[@]} -eq 0 ]]; then
+  if [[ ${#parsed_snaps_list[@]} -eq 0 ]]; then
       _log_warn "${_warn} Snaps array is empty!" "19"
-    else
-      for index in "${parsed_snaps_list[@]}"; do
-            _log_and_show "${_snap} $index..."
-            if [ "$index" == "" ] || [ "$index" == " " ]; then
-              _log_warn "${_snap} Found an empty entry, Ignoring"
-              continue;
-            fi
-            if [ "$simulate_apt_install" == "true" ]; then
-              _log_warn "${_info} Snaps do not support --dry-run, skipping install"
-            else
-              _log_debug "Options are ${snapd_options[*]}"
-              if snap install "${snapd_options[@]}" "$index"  |& _add_timestamp_to_logs "${_snap}"  ; then
-                _log_success "${_snap} $line installed successfully."
-              else
-                _log_warn "${_oh_no} Some Error occurred while installing $line."
-              fi
-            fi
-        done
-    fi
+  else
+    for index in "${parsed_snaps_list[@]}"; do
+      _log_and_show "${_snap} $index..."
+      if [ "$index" == "" ] || [ "$index" == " " ]; then
+        _log_warn "${_snap} Found an empty entry, Ignoring"
+        continue;
+      fi
+
+      if [ "$simulate_apt_install" == "true" ]; then
+        _log_warn "${_info} Snaps do not support --dry-run, skipping install"
+      else
+        _log_debug "Options are ${snapd_options[*]}"
+        if snap install "${snapd_options[@]}" "$index"  |& _add_timestamp_to_logs "${_snap}"  ; then
+          _log_success "${_snap} $line installed successfully."
+        else
+          _log_warn "${_oh_no} Some Error occurred while installing $line."
+        fi
+      fi
+    done
   fi
 }
 
@@ -2668,7 +2534,7 @@ function _process_menu
                   ;;
       apps)       _show_confirmation_dialog_for_tasks \
                   "Install Apps" \
-                  "I can Install the packages listed in lists files.\nNo checks are being made on the validity of the list.\n\nShall I do it?" \
+                  "I can Install the packages listed in config file.\nNo checks are being made on the validity of the packages in config.\n\nShall I do it?" \
                   "install_apps"
                   ;;
       repo_rst)   _show_confirmation_dialog_for_tasks \
@@ -2827,8 +2693,6 @@ ${YELLOW}
 Configuration Options
 -------------------------------------------------${NC}
 [-C | --config-file]   Local yaml config file
-[-L | --lists]         Read Configuration from .list files
-                       in data folder.
 [-n | --name]          Name of the configuration file to use
                        as a query parameter when -R / --remote-yaml is used
 [-R | --remote-yaml]   Use config yaml hosted somewhere else
@@ -2959,7 +2823,6 @@ function main()
                               ;;
       -R | --remote-yaml)     _log_and_show "${_info} Using Remote YAML";
                               readonly bool_remote_yaml="true";
-                              readonly bool_use_yaml="true";
                               shift;
                               readonly url_remote_yaml="${1}";
                               ;;
@@ -2973,7 +2836,6 @@ function main()
     -c | -C | --config-file)  shift;
                               readonly custom_config_file="${1}";
                               readonly bool_custom_config_file="true";
-                              readonly bool_use_yaml="true";
                               _log_and_show "${_info} Using custom config file"
                               ;;
       -V | --version-file)    shift;
@@ -2983,10 +2845,7 @@ function main()
                               ;;
       -Y | --yaml)            _log_and_exit "${_error} This option is obsolete. You can use -C/--config-file or -R/--remote-yaml" "26"
                               ;;
-      -L | --lists)           readonly bool_use_lists="true";
-                              _log_notice "${_info} Using local Lists...";
-                              _log_warn "${_warn} Prefer using YAML instead, No new features will be added to list mode";
-                              ;;
+      -L | --lists)           _log_and_exit "${_error} List mode is no longer supported." "53";;
       -n | --name)            shift;
                               readonly bool_custom_remote_config_name="true";
                               readonly custom_remote_config_name="${1}";
@@ -3054,19 +2913,13 @@ function main()
   # Get Remote Config File/s, check version & configure
   _version_checks;
 
-  if [ "$bool_use_yaml" == "true" ] && [ "$bool_use_lists" != "true" ]; then
     _set_yaml_config;
-  elif [ "$bool_use_yaml" != "true" ] && [ "$bool_use_lists" == "true" ]; then
-    _set_list_config
-  else
-    _log_and_exit "${_error} You need to specify config type or file to use." "25"
-  fi
 
   sleep 3
 
   if [[ -z ${PS1} ]] && [[ ${AUTOPILOT} != "true" ]]; then
     _log_error "Terminal is not interactive, yet you have not specified --autopilot flag!"
-    _log_and_exit "Non Interactive Terminal requires --autopilot" "52"
+    _log_and_exit "Non Interactive Terminal requires --autopilot" "54"
   fi
 
   # Autopilot

@@ -3,6 +3,7 @@
 ## Version 5.6.0
 
 - Internal changes
+- Remove Lists mode
 
 ## Version 5.5.2
 

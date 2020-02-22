@@ -1,46 +1,11 @@
 # Overview of Configuration files
 
-This Script is designed to be flexible. You have two options of configuring this script.
-`list` files directory `/data` & YAML configurations are in `config`.
+This Script is designed to be flexible. use `--config-file FILENAME`
 
-## Configuration using  lists
-
-These files contain list of apt packages which can be installed. Please see [Installing APT packages](tasks/) for more information.
-
-| File           | Contents                                                                                                        |
-| :------------- | :-------------------------------------------------------------------------------------------------------------- |
-| administration | Administration Tools like Synaptic                                                                              |
-| development    | Used for development tasks eg: ruby                                                                             |
-| external       | Packages from PPAs or External repositories. eg : Google Chrome, Spotify, Visual Studio Code, Google Cloud SDKs |
-| multimedia     | Tools to edit photos and videos, video players and editors.                                                     |
-| productivity   | Email, Chat, Office tools, Document converters etc.                                                             |
-| security       | Security related tools                                                                                          |
-| utilities      | Utilities and Tools                                                                                             |
-
----
-Non package related lists (settings, deb files, delete packages list). The use and format is explained in individual sections.
-
-| File      | Contents                                                     | Used by function      |
-| :-------- | :----------------------------------------------------------- | :-------------------- |
-| gsettings | Various gsettings                                            | None Yet              |                                                                                                   |
-| purge     | List of packages to be purged                                | `purge_not_required`  |
-| ppa       | List of ppas to be added                                     | `add_ppas`            |
-| deb       | List of DEB files to be installed (csv)                      | `install_debs`        |
-| get.mlist | Used by get-after-effects.sh to download required list files | NA                    |
-| pip2/pip3 | Python packages (Installed System wide)                      | _install_pip_packages |
-
-!!! tip
-    After you customize, might want to use simulate flag. `sudo ./after-effects -s -L`
-
-## YAML File
-
-The script can fetch remote YAML data from given url. Use `--remote-yaml` URL If you want to use a local config file, use `--config-file FILENAME` It contains following details.
-
-- If you specify a an option via command line and provide config file which has conflicting option, Config file takes precedence.
 - Remote configuration is displayed as `[  R-Config  ]` in the logs and on the screen. To hide it use `--hide-config`
 - Check [Sample YAML](/yaml/#yaml-config) configuration file [here.](/yaml/#yaml-config)
 
-!!! tip "Using local file"
+!!! tip "Using config file"
 
     - If you are testing, it might be a good idea to use a local file which holds this configuration data. In that  case use `-C <filename>` option.
     - After you customize, might want to use simulate flag. `sudo ./after-effects -s -C config.yml -Y`

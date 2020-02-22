@@ -29,11 +29,6 @@ function gen_metadata()
   printf "${spacing_string}: $CONTEXT\n" "Deploy Type" >>${DEPLOY_PARAM}
   printf "${spacing_string}: $DEPLOY_URL\n" "Deploy URL" >>${DEPLOY_PARAM}
   printf "${spacing_string}: $DEPLOY_PRIME_URL\n" "Prime URL" >>${DEPLOY_PARAM}
-  if [ "$BRANCH" == "gh-pages" ]; then
-    echo ">>---------------------------- From SRC Branch ------------------------------------<<" >>${DEPLOY_PARAM}
-    cat ./commit.txt >> ${DEPLOY_PARAM}
-  fi
-
   echo ">>--------------------------- End Build Metadata ----------------------------------<<" >>${DEPLOY_PARAM}
   #shellcheck disable=SC2129
   cat ${DEPLOY_PARAM}
@@ -89,32 +84,15 @@ function build_production()
   ./ ./_site && echo "---> Copied gh-pages"
   gen_metadata;
 
-  COMMIT_SHA_MASTER="$(cat COMMIT_SHA.txt)"
-
-  echo "Replace placeholder with master SHA1 commit"
-  sed -i s/PLACEHOLDER_REDIRECT/${COMMIT_SHA_MASTER}/g netlify.toml
-
 }
 
 function build_branch()
 {
   install_dependencies;
 
-  # Replace PLACEHOLDER_REDIRECT
-  echo "Replacing Placeholder with ${COMMIT_REF} in Netlify TOML file"
-  sed -i s/PLACEHOLDER_REDIRECT/${COMMIT_REF}/g netlify.toml
-
-  echo "---> Building Website with Branch"
-  mkdocs build;
-
   echo "---> Copying Config Files"
   rsync -Ea --recursive ./config/ ./_site/config/ && echo "Done!"
   find ./_site/config -type f
-  echo "---> Copying Signature file"
-  if [ -f after-effects.asc ]; then
-    mkdir -p ./config/gpg
-    cp ./after-effects.asc ./config/gpg/after-effects
-  fi
   python3 build/version.py
   gen_metadata;
 }

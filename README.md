@@ -18,12 +18,12 @@ before trying out.
 ### 1. Get the script
 
 ```console
- wget -q https://ae.prasadt.com/get -O - | bash
+wget -q https://github.com/tprasadtp/ubuntu-post-install/releases/download/latest/after-effects -O after-effects
 ```
 
-### 2. Update the lists or your YAML configuration file
+### 2. Setup your YAML configuration file
 
-Update the list files or YAML file to suit your needs. Change PPAs, add or delete packages to list, tweak flags etc.
+Setup YAML file to suit your needs. Change PPAs, add or delete packages to list, tweak flags etc.
 Please see [Configuration](https://ae.prasadt.com/configuration/) & [Tasks](https://ae.prasadt.com/tasks/).
 
 [![Configuration-Page](https://img.shields.io/badge/Info-Configuration-blue.svg)](https://ae.prasadt.com/configuration/)
@@ -36,13 +36,8 @@ Run the script as **root**.
 - To use default YAML configuration, which can be found here `https://ae.prasadt.com/dl/config/default.yml`.
 
   ```console
+    chmod +x after-effects
     sudo ./after-effects --config-file ./config/default.yml
-  ```
-
-- To use local list files in `data`
-
-  ```console
-    sudo ./after-effects -L
   ```
 
 ## FAQ & Documentation

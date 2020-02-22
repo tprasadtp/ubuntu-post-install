@@ -1,7 +1,6 @@
 # License
 
-This project is licensed under GPL v3. You should have received a copy of the
-license along with this software.
+This project is licensed under GPL v3.
 
 ## External libraries and tools
 
