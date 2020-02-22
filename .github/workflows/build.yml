@@ -15,7 +15,6 @@ jobs:
       - name: Shellcheck
         run: ./tests/test-shell-scripts.sh
   dockerlint:
-    needs: ["debian", "ubuntu"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
