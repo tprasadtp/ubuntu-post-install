@@ -61,7 +61,8 @@ function main()
     docker run -i --rm -e TRAVIS \
       -e CI \
       -e DEBUG \
-      --hostname="${TEST_ENV}" \
+      -e GITHUB_ACTIONS \
+      --hostname="${distro}-${release}" \
       -v "$(pwd)":/shared \
       ae:"${distro}-${release}" \
       ./after-effects \
@@ -79,7 +80,8 @@ function main()
     docker run -i --rm -e TRAVIS \
       -e CI \
       -e DEBUG \
-      --hostname="${TEST_ENV}" \
+      -e GITHUB_ACTIONS \
+      --hostname="${distro}-${release}" \
       -v "$(pwd)":/shared \
       ae:"${distro}-${release}" \
       ./after-effects -d \

@@ -43,6 +43,26 @@ jobs:
       - uses: actions/checkout@v2
       - name: Debian Test on ${{ matrix.release }}
         run: ./tests/test-distro.sh "debian" ${{ matrix.release }}
+  pre-release:
+    needs: [ "shellcheck", "dockerlint"]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # This is pretty useless but github forces us to specify a vector
+        distro: ["debian", "ubuntu"]
+        include:
+          - distro: "debian"
+            release: bullseye
+          - distro: "ubuntu"
+            release: "focal"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Test on Pre Release
+        run: ./tests/test-distro.sh ${{ matrix.distro }} ${{ matrix.release }}
+      - name: force pass
+        run: echo "Failed ${{ matrix.distro }} ${{ matrix.release }}"
+        if: failure ()
   docs:
     needs: ["debian", "ubuntu"]
     runs-on: ubuntu-latest

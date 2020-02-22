@@ -6,12 +6,11 @@ jobs:
   prerelease:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         distro: ["debian", "ubuntu"]
         include:
           - distro: "debian"
-            release: bullseye
+            release: bullsye
           - distro: "ubuntu"
             release: "focal"
     steps:
