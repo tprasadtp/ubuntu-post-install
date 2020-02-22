@@ -6,6 +6,7 @@ jobs:
   prerelease:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         distro: ["debian", "ubuntu"]
         include:

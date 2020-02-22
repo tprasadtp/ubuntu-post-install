@@ -14,26 +14,6 @@ jobs:
           chmod +x tests/*.sh
       - name: Shellcheck
         run: ./tests/test-shell-scripts.sh
-  ubuntu:
-    needs: shellcheck
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        release: [ "bionic", "eoan", "xenial", "host"]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Test on ${{ matrix.release }}
-        run: ./tests/test-distro.sh "ubuntu" "${{ matrix.release }}"
-  debian:
-    needs: shellcheck
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        release: [ "buster", "stretch"]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Debian Test on ${{ matrix.release }}
-        run: ./tests/test-distro.sh "debian" ${{ matrix.release }}
   dockerlint:
     needs: ["debian", "ubuntu"]
     runs-on: ubuntu-latest
@@ -42,8 +22,30 @@ jobs:
       - name: Lint Dockerfiles
         run: |
           ./tests/lint-dockerfiles.sh "docs"
+  ubuntu:
+    needs: [ "shellcheck", "dockerlint"]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        release: [ "bionic", "eoan", "xenial", "host"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Test on ${{ matrix.release }}
+        run: ./tests/test-distro.sh "ubuntu" "${{ matrix.release }}"
+  debian:
+    needs: [ "shellcheck", "dockerlint"]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        release: [ "buster", "stretch"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Debian Test on ${{ matrix.release }}
+        run: ./tests/test-distro.sh "debian" ${{ matrix.release }}
   docs:
-    needs: ["debian", "ubuntu", "dockerlint"]
+    needs: ["debian", "ubuntu"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

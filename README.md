@@ -14,15 +14,14 @@ before trying out.
 
 ## How to use this
 
-Install your choice of Ubuntu/Debian/Mint or its derivative as you would
 
-### Step 1: Get the script
+### Get the script
 
 ```console
  wget -q https://ae.prasadt.com/get -O - | bash
 ```
 
-### Step 2: Update the lists or your YAML configuration file
+### Update the lists or your YAML configuration file
 
 Update the list files or YAML file to suit your needs. Change PPAs, add or delete packages to list, tweak flags etc.
 Please see [Configuration](https://ae.prasadt.com/configuration/) & [Tasks](https://ae.prasadt.com/tasks/).

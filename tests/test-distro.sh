@@ -66,6 +66,7 @@ function main()
       ae:"${distro}-${release}" \
       ./after-effects \
       --simulate \
+      --fix \
       --autopilot \
       --config-file config/"${config_yml}"
       exit_code="$?"

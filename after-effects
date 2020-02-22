@@ -140,7 +140,11 @@ function _init_logging()
 # Utility Functions
 function _line_fill()
 {
-  printf "%-$(tput cols)s@%s\n" | sed -e "s/ /-/g" -e "s/-@/ /" -e "s/@-/ /"
+  if [[ -z ${PS1} ]]; then
+    printf "---------------------------------------\n"
+  else
+    printf "%-$(tput cols)s@%s\n" | sed -e "s/ /-/g" -e "s/-@/ /" -e "s/@-/ /"
+  fi
 }
 
 
@@ -678,8 +682,8 @@ function _fix_ubuntu_derivatives()
       stretch | jessie | buster )           bool_is_debian="true";
                                             _log_notice "${_notice} This is Debian. PPAs are disabled."
                                             ;;
-      bullseye )                            bool_is_debian="true";
-                                            _log_warn "${_warn} You are running Debian Bullseye!"
+      bullseye | testing/unstable )         bool_is_debian="true";
+                                            _log_warn "${_warn} You are running Debian Testing!"
                                             _log_and_show "${_pre_release} This is a pre release version of Debian still under development. Use with caution!"
                                             _log_notice "${_notice} PPAs are disabled."
                                             ;;
@@ -3041,6 +3045,11 @@ function main()
   fi
 
   sleep 3
+
+  if [[ -z ${PS1} ]] && [[ ${AUTOPILOT} != "true" ]]; then
+    _log_error "Terminal is not interactive, yet you have not specified --autopilot flag!"
+    _log_and_exit "Non Interactive Terminal requires --autopilot" "52"
+  fi
 
   # Autopilot
   if [[ "$AUTOPILOT" == "true" ]]; then
