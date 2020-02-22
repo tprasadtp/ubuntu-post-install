@@ -1,6 +1,6 @@
 # Base docker image
-ARG DISTRO="ubuntu"
-ARG CODE_NAME="bionic"
+ARG DISTRO
+ARG CODE_NAME
 FROM ${DISTRO}:${CODE_NAME}
 LABEL maintainer "Prasad Tengse <tprasadtp@users.noreply.github.com>"
 ENV DEBIAN_FRONTEND noninteractive

@@ -35,7 +35,7 @@ function main()
     --build-arg CODE_NAME="${release}"  \
     ./dockerfiles/tests
   echo "Testing with YAML"
-  docker run -i --rm -e TRAVIS \
+  docker run --userns=host --rm -e TRAVIS \
     -e CI \
     -e DEBUG \
     -e GITHUB_ACTIONS \
@@ -47,6 +47,7 @@ function main()
     --fix \
     --pre-release \
     --autopilot \
+    --internal-ci-mode \
     --config-file config/"${config_yml}"
     exit_code="$?"
 
@@ -55,7 +56,7 @@ function main()
     exit "$exit_code"
   fi
   echo "Testing With Lists"
-  docker run -i --rm -e TRAVIS \
+  docker run --rm -e TRAVIS \
     -e CI \
     -e DEBUG \
     -e GITHUB_ACTIONS \
@@ -67,7 +68,8 @@ function main()
     --fix \
     --pre-release \
     --simulate \
-    --autopilot
+    --autopilot \
+    --internal-ci-mode
 
   exit_code="$?"
 

@@ -36,6 +36,7 @@ function main()
       --yes \
       --autopilot \
       --simulate \
+      --internal-ci-mode \
       --config-file config/"${config_yml}"
     exit_code="$?"
     echo "Exit code for YAML is $exit_code"
@@ -44,7 +45,7 @@ function main()
     fi
 
     echo "Testing with Lists"
-    sudo ./after-effects --yes --autopilot --lists -d --simulate
+    sudo ./after-effects --yes --autopilot --lists -d --simulate --internal-ci-mode
     exit_code="$?"
     echo "Exit code for LIST is $exit_code"
     if [[ $exit_code -ne 0 ]]; then
@@ -58,7 +59,7 @@ function main()
       --build-arg CODE_NAME="${release}"  \
       ./dockerfiles/tests
     echo "Testing with YAML"
-    docker run -i --rm -e TRAVIS \
+    docker run --rm -e TRAVIS \
       -e CI \
       -e DEBUG \
       -e GITHUB_ACTIONS \
@@ -69,6 +70,7 @@ function main()
       --simulate \
       --fix \
       --autopilot \
+      --internal-ci-mode \
       --config-file config/"${config_yml}"
       exit_code="$?"
 
@@ -77,7 +79,7 @@ function main()
       exit "$exit_code"
     fi
     echo "Testing With Lists"
-    docker run -i --rm -e TRAVIS \
+    docker run --rm -e TRAVIS \
       -e CI \
       -e DEBUG \
       -e GITHUB_ACTIONS \
@@ -88,7 +90,8 @@ function main()
       --lists \
       --fix \
       --simulate \
-      --autopilot
+      --autopilot \
+      --internal-ci-mode
 
     exit_code="$?"
 

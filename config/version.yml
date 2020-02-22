@@ -2,9 +2,9 @@
 api: 2
 # Configuration
 version:
-  number: 553
-  name: 5.5.3-Beta
-  changelog: BugFixes
+  number: 560
+  name: 5.6.0-Beta
+  changelog: PPA Improvements, ROS2, 20.04
 # Stats reporting
 stats:
   report: false

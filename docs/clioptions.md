@@ -263,7 +263,6 @@ You can specify YAML file to use. Script will fetch it and parse it.The file sho
 !!! warning
     - If using GitHub gists, please provide raw gist URL.
     - You should only use trusted remote configurations. As its a bash script a malicious remote configuration can cause remote code to execute on your system.
-    - Please use `https`
 
 
 ## Do not report statistics
