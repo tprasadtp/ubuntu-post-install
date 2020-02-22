@@ -66,13 +66,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Test on Ubuntu Upcoming
         run: ./tests/test-pre-release.sh "ubuntu" "focal"
-  debian-upcoming:
-    needs: [ "shellcheck", "dockerlint"]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Test on Debian Upcoming
-        run: ./tests/test-pre-release.sh "debian" "bullseye" || true
   docs:
     needs: ["debian", "ubuntu"]
     runs-on: ubuntu-latest
@@ -103,7 +96,7 @@ jobs:
           git config --global user.name "valarie-ci-bot" && echo "Done"
       - name: Copy _site folder to pages
         run: |
-          rsync -avh --ignore-times --delete ./_site/ pages/
+          rsync -avh --ignore-times --delete --filter 'protect pages/.git'  ./_site/ pages/
       - name: Commit changes
         run: |
           cd pages

@@ -18,7 +18,7 @@
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/ubuntu-post-install
 # Requirements - Bash v4 and above
-#              - whiptail, lsb-release, wget, iputils-ping
+#              - whiptail, wget, iputils-ping, awk, sed, grep
 #              - Ubuntu 14.04/16.04/17.04/17.10/18.04 or Elementary Freya/Loki/Juno
 #              - Mint 17.X or 18.X or 19.X
 #              - Debian 8 & 9
@@ -32,7 +32,7 @@ case "${DEBUG}" in
   *)                               AE_DEBUG=0;set -o pipefail;;
 esac
 
-readonly EXEC_START=$(date +%s)
+readonly AE_EXEC_START=$(date +%s)
 readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 readonly REL_NAME="5.6.0 Beta"
@@ -184,7 +184,7 @@ function set_default()
 
 function _goodbye_msg ()
 {
-  printf "\n${MAGENTA}It was a pleasure helping you,\nHave a great time with this Linux Machine.\nWith loads of love,\n${BLUE}${SCRIPT} running on $(uname -n)${NC}\n"
+  printf "\nShow your support by starring the repo on GitHub.\n Link - ${BLUE}https://git.io/Jv08V${MAGENTA}\nHave a great time with this Linux Machine.${NC}"
 }
 
 
@@ -207,8 +207,8 @@ function _log_and_exit()
 function _script_exit_log()
 {
     # Script time
-    readonly EXEC_END=$(date +%s)
-    readonly EXEC_TIME=$(( EXEC_END - EXEC_START ))
+    readonly AE_EXEC_END=$(date +%s)
+    readonly AE_EXEC_TIME=$(( AE_EXEC_END - AE_EXEC_START ))
 
     # Report Stats
     report_stats
@@ -231,7 +231,7 @@ function _log_and_show()
 function _log_debug()
 {
   local msg="$1"
-  if [[ $AE_DEBUG -gt 0 ]]; then
+  if [[ ${AE_DEBUG} -gt 0 ]]; then
     printf "${GRAY}${_debug} $msg${NC}\n"
   fi
   printf "[$(date)] ${_debug} $msg\n" >> "$log_file"
@@ -284,18 +284,41 @@ function _log_error()
   printf "[$(date)] $msg\n" >> "$log_file"
 }
 
+#shellcheck disable=SC2120
+function detect_distribution()
+{
+  # Read /etc/os-release and get
+  local OS_RELEASE_FILE
+
+  OS_RELEASE_FILE="${1:-/etc/os-release}"
+  if [[ -r "${OS_RELEASE_FILE}" ]]; then
+    _log_debug "Found os-release file ${OS_RELEASE_FILE}, attemping to read it."
+    # Read Version Code Name
+    readonly AE_DISTRO_CODENAME="$(awk '/VERSION_CODENAME=/' "${OS_RELEASE_FILE}" | sed 's/VERSION_CODENAME=//' | tr '[:upper:]' '[:lower:]')"
+
+    # Read Human Readable Full Version Name
+    readonly AE_DISTRO_PRETTY_NAME="$(awk '/PRETTY_NAME=/' "${OS_RELEASE_FILE}" | sed 's/PRETTY_NAME=//' | tr -d '"')"
+
+    # Read Human Readable Distro Name
+    readonly AE_DISTRO_NAME="$(awk '/^NAME=/' "${OS_RELEASE_FILE}" | sed 's/^NAME=//' | tr -d '"')"
+  else
+    _log_error "${_error} Hey, What are you running this script on?"
+    _log_and_exit "${_error} I cannot determine distro/codename!" "5"
+  fi
+}
+
+
 function _init_script_variables()
 {
   # Function defines Script variables
   # Necessary variables used by the script are initialized here. This function
   # should be called first before choices are made, always.
 
-  # Grabbing OS info
-  distro_name=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
-  readonly VERSION=$(lsb_release -rs)
-  # readonly LONG_VERSION=$(lsb_release -ds)
+  #shellcheck disable=SC2119
+  detect_distribution
+
   # Achtung: Do not set code_name as readonly!!
-  code_name=$(lsb_release -cs)
+  code_name="${AE_DISTRO_CODENAME}"
   readonly architecture=$(dpkg --print-architecture)
   case "${architecture}" in
     amd64)          _log_debug "Architecture is 64 bit.";
@@ -375,43 +398,6 @@ function _init_script_variables()
   #shellcheck disable=SC2034
   stats_node="https://stats.ae.prasadt.com/report"
 
-  # Latest wine builds
-  add_winehq_repo=false
-
-  #Docker community edition
-  add_docker_repo=false
-
-  #Mendeley Desktop
-  add_mendeley_repo=false
-
-  #Spotify
-  add_spotify_repo=false
-
-  #InSync
-  add_insync_repo=false
-
-  #Google Cloud SDK
-  add_googlecloud_repo=false
-  add_gcsfuse_repo=false
-
-  #Signal
-  add_signal_repo=false
-
-  #Skype
-  add_skype_repo=false
-
-  #VS code
-  add_vscode_repo=false
-
-  #Google
-  add_google_repo=false
-
-  #ROS
-  add_ros_repo=false
-
-  # Duo security
-  add_duo_repo=false
-
   #
   # ================================================================================== #
   # Achtung!
@@ -423,11 +409,6 @@ function _init_script_variables()
 
   # Check Signature
   #readonly bool_verify_gpg_signatures="true"
-
-
-  #ROS RC repo
-  # change this to true if you wish to use Release candidate repo for ROS
-  ros_rc_repo="false"
 
   # Azure
   readonly AZURE_METADATA_URL="http://169.254.169.254/metadata/instance/compute/location?api-version=2017-08-01&format=text"
@@ -442,9 +423,9 @@ function _init_print_basic_info()
   _log_notice "${_notice} Following details are recognized by the Script."
   _log_notice "${_info} Hostname: ${CLIENT_NAME}"
   _log_debug  "UUID for Run: ${CLIENT_ID}"
-  _log_notice "${_info} Distro: ${distro_name}"
-  _log_notice "${_info} Version: ${VERSION}"
-  _log_notice "${_info} Code Name: ${code_name}"
+  _log_notice "${_info} OS: ${AE_DISTRO_PRETTY_NAME}"
+  _log_notice "${_info} Distro: ${AE_DISTRO_NAME}"
+  _log_notice "${_info} Code Name: ${AE_DISTRO_CODENAME}"
   _log_notice "${_info} Architecture: ${ARCH}"
   _log_debug  "Path for sources.list.d: ${SOURCES_FILE_DIR}"
   _log_success "${_version} ${REL_NAME} - ${REL_NUM}"
@@ -610,15 +591,11 @@ function report_stats()
 function _eol_message()
 {
   # Display EOL Message and upgrade instruction URLs.
-  # Arguments: 2
-  # ARG 1: Release Name
-  # ARG 2: EOL Date
+  # Arguments: 1
+  # ARG 1: EOL Date
 
-  _log_warn "${_eol} This version of ${distro_name} is no longer supported."
-  _log_warn "${_notice} $1 reached EOL on $2."
-  _log_warn "${_notice} Please use a supported version of ${distro_name}."
-
-  _log_and_exit "${_eol} EOL Release : $code_name" "12";
+  _log_error "${_eol} This version of ${AE_DISTRO_NAME} is no longer supported."
+  _log_and_exit "${_eol} ${AE_DISTRO_PRETTY_NAME} reached EOL on $1." "12"
 }
 
 
@@ -642,41 +619,48 @@ function _fix_ubuntu_derivatives()
   case ${code_name} in
       sarah | serena | sonya | sylvia )     _log_and_show "${_linuxmint} Release is Linux mint 18.X."
                                             _log_and_show "${_notice} Setting additional repositories to follow Ubuntu 16.04."
-                                            code_name="xenial";distro_name="ubuntu";
+                                            code_name="xenial";
+                                            readonly distro_name="ubuntu";
                                             readonly enable_ppa="true";
                                             _log_success "${_linuxmint} Changed codename to $code_name"
                                             ;;
       tara | tessa | tina | tricia)         _log_and_show "${_linuxmint} Release is Linux mint 19.X."
                                             _log_and_show "${_notice} Setting additional repositories to follow Ubuntu 18.04."
-                                            code_name="bionic";distro_name="ubuntu";
+                                            code_name="bionic";
+                                            readonly distro_name="ubuntu";
                                             readonly enable_ppa="true";
                                             _log_success "${_linuxmint} Changed codename to $code_name"
                                             ;;
       loki )                                _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 16.04 Xenial."
                                             _log_and_show "${_notice} External repositories will use Ubuntu 16.04."
                                             code_name="xenial";
+                                            readonly distro_name="ubuntu";
                                             readonly enable_ppa="true";
                                             _log_success "${_elementary} Changed codename to $code_name"
                                             ;;
       juno | hera)                          _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 18.04 Bionic."
                                             _log_and_show "${_notice} External repositories will use Ubuntu 18.04."
-                                            code_name="bionic";distro_name="ubuntu";
+                                            code_name="bionic";
+                                            readonly distro_name="ubuntu";
                                             readonly enable_ppa="true";
                                             _log_success "${_elementary} Changed codename to $code_name"
                                             ;;
       xenial | bionic )                     readonly bool_config_partner_repo="true";
                                             readonly enable_ppa="true";
+                                            readonly distro_name="ubuntu";
                                             _log_and_show "${_info} This is an LTS release of Ubuntu"
                                             _log_success "${_derivatives} Keeping the codename as: $code_name."
                                             ;;
       eoan)                                 readonly bool_config_partner_repo="true";
                                             readonly enable_ppa="true";
+                                            readonly distro_name="ubuntu";
                                             _log_and_show "${_info} This is 19.10 eoan."
                                             if [[ $bool_fix_repo_not_available_for_latest != "true" ]] && [[ $bool_fix_lts != "true"  ]] ; then _log_notice "${_notice} If your repos are not yet supported, use --fix option"; fi
                                             _log_success "${_derivatives} Keeping the codename as: $code_name."
                                             ;;
       focal )                               readonly bool_config_partner_repo="true";
                                             readonly enable_ppa="false";
+                                            readonly distro_name="ubuntu";
                                             set_magenta;
                                             _log_and_show "${_pre_release} This is Ubuntu 20.04 Focal"
                                             _log_and_show "${_pre_release} Please use --pre-release flag,"
@@ -686,24 +670,26 @@ function _fix_ubuntu_derivatives()
                                             _log_warn "${_warn} This is pre-release version of Ubuntu, Use with caution!"
                                             ;;
       stretch | jessie | buster )           bool_is_debian="true";
+                                            readonly distro_name="debian";
                                             readonly enable_ppa="false";
                                             _log_notice "${_notice} This is Debian. PPAs are disabled."
                                             ;;
       bullseye)                             bool_is_debian="true";
                                             readonly enable_ppa="false";
+                                            readonly distro_name="debian";
                                             _log_warn "${_warn} You are running Debian Testing!"
                                             _log_warn "${_pre_release} This is pre release version of Debian. Use with caution!"
                                             _log_notice "${_notice} PPAs are disabled."
                                             ;;
-      trusty)                               _eol_message "$code_name" "April 30th, 2019"
+      trusty)                               _eol_message "April 30th, 2019"
                                             ;;
       qiana | rebecca | rafaela | rosa )    _log_error "${_linuxmint} Release is Linux mint 17.X."
-                                            _eol_message "$code_name" "April 30th, 2019"
+                                            _eol_message "April 30th, 2019"
                                             ;;
       freya )                               _log_error "${_elementary} This release of Elementary OS is based on Ubuntu 14.04 Trusty."
-                                            _eol_message "$code_name" "April 30th, 2019"
+                                            _eol_message "April 30th, 2019"
                                             ;;
-      disco )                               _eol_message "$code_name" "January 23rd, 2020"
+      disco )                               _eol_message "January 23rd, 2020"
                                             ;;
       *)                                    _log_error "${_error} Unknown Distribution/Release."
                                             _log_notice "${_notice} This Script is not designed to run on this ($code_name) distro/release."
@@ -1125,7 +1111,7 @@ function _set_yaml_config()
     _line_fill;
 
     # Only display tasks column when autopilot = true is set.
-    if [ "$AUTOPILOT" == "true" ]; then
+    if [[ ${AE_AUTOPILOT} == "true" ]]; then
       printf "${_table} %-20s | %-10s |\n" "Task" "Config"
       _line_fill;
       printf "${_rtasks} %-20s | %-10s |\n" "Update" "$ae_task_update"
@@ -1160,7 +1146,7 @@ function _set_yaml_config()
     _log_debug "Keep DEBs/APT cache : $bool_preserve_debs"
     _log_debug "Use Uni Mirror      : $bool_use_uni_freiburg_mirror"
     _log_debug "-------- TASK CONFIG ----------"
-    _log_debug " AUTOPILOT IS ${AUTOPILOT}"
+    _log_debug " AUTOPILOT IS ${AE_AUTOPILOT}"
     _log_debug "Update              : $ae_task_update"
     _log_debug "Upgrade             : $ae_task_upgrade"
     _log_debug "Add Repos           : $ae_task_repo"
@@ -1358,9 +1344,9 @@ function _install_pre_requisites()
   # Following are the packages installed by this function:
   # linux-image-extra-<>, apt-transport-https, ca-certificates,
   # curl, software-properties-common
-  local pre_requisite_packages=(apt-transport-https ca-certificates curl software-properties-common gnupg2)
+  local pre_requisite_packages=(apt-transport-https ca-certificates curl gnupg2)
   _log_and_show "${_installing} Necessary dependencies..."
-  _log_debug "Dependencies are apt-transport-https, ca-certificates, curl, software-properties-common gnupg2"
+  _log_debug "Dependencies are apt-transport-https, ca-certificates, curl, gnupg2"
   _install_dependencies "${pre_requisite_packages[@]}"
 
 }
@@ -1438,10 +1424,12 @@ function add_ppas()
   # ppa:ppa:<author>/<ppa> for example, ppa:mozillateam/firefox-nex for adding firefox next/Beta PPA
   _log_debug "Adding PPA Fucntion"
   local index;
+  local _ppa_dependencies=(apt-transport-https ca-certificates curl gnupg2 software-properties-common)
   # Function Reads the file ${dir}/data/ppa.index and adds the ppa one by one.
   # Install dependencies required
   if [ "$bool_is_debian" != "true" ]; then
     _install_pre_requisites;
+    _install_dependencies "${_ppa_dependencies[@]}"
 
       for index in "${parsed_ppa_list[@]}"; do
             _log_and_show "${_ppa} $index"
@@ -1647,7 +1635,7 @@ function add_repositories()
     fi
 
     # Distro/Version/Arch checks
-    if [[ $distro_name == "ubuntu" ]] || [[ $distro_name == "linuxmint" ]] ; then
+    if [[ $distro_name == "ubuntu" ]]; then
         # Check architectures
         # Bionic
         if [[ $code_name == "bionic" ]]; then
@@ -1795,7 +1783,8 @@ function add_repositories()
   # Ubuntu and its flavors are used.
   if [ "$bool_config_partner_repo" == "true" ] && [ "$bool_is_debian" != "true" ]; then
     _log_and_show "${_repo} Canonical partner repositoris"
-    add-apt-repository "deb http://archive.canonical.com/ubuntu $code_name partner" >> "$log_file"
+    echo "deb http://archive.canonical.com/ubuntu $code_name partner # Canonical Partner Repository"  > ${SOURCES_FILE_DIR}/canonical-partner.list \
+    || _log_error "${_error} Failed to add Canocial Parner Repos."
   else
     _log_warn "${_warn} Canonical Partner repositories may not be supported on this platform."
   fi
@@ -2597,8 +2586,7 @@ function _ci_cloud_and_container_checks()
   else
     _log_and_show "${_running} Env checks..."
     # Check if running in CI & Containers
-    # VMs, GCP, AWS, Docker. If running in CI Assign AUTOPILOT=true
-
+    # VMs, GCP, AWS, Docker.
     #================================ CI =============================================
     if [ "$TRAVIS" == "true" ]; then
       _log_and_show "${_ci} Running in Travis CI"
@@ -2683,7 +2671,7 @@ function display_usage()
 cat <<EOF
 ${GREEN}
 A Post Installation Script for Ubuntu/Debian/Linux Mint${NC}
-Usage: ${BLUE}${SCRIPT} ${YELLOW}  [options]${NC}
+Usage: ${GREEN} [sudo] ./${SCRIPT} ${YELLOW}  [options]${NC}
 ${YELLOW}
 Non-Action options (can be run as non-root user)
 -------------------------------------------------${NC}
@@ -2699,8 +2687,7 @@ Configuration Options
 [-V | --version-file]  Specify a local file from which version info will be read
 ${BLUE}
 The following options are "action" options and
-these will make changes to your system depending on
-tasks chosen.
+will make changes to your system depending on tasks chosen.
 -------------------------------------------------${NC}
 [-d | --purge]         Enable Purging packages
 [-f | --fix]           Fix codenames for new releases
@@ -2711,9 +2698,8 @@ tasks chosen.
                        downloaded deb packages
 [-l | --delete-log]    Delete logfile (./log/after-effects.log)
 [-s | --simulate]      Try not make changes to system and use --dry-run
-                       whenever possible. Please read the documentation
-                       at http://ae.prasadt.com/clioptions to know its limits
-                       Not everything can be simulated.
+  Please read the documentation at http://ae.prasadt.com/clioptions
+  to know its limits as not everything can be simulated.
 ${YELLOW}
 Other Options
 -------------------------------------------------${NC}
@@ -2724,15 +2710,12 @@ Other Options
 [--use-uf-mirror | -u]    Use University of Freiburg mirrors
 [-A --autopilot]          Enables AUTOPILOT mode(No Prompts)
 ${GREEN}
-GitHub & Documentation:${BLUE}
-* https://github.com/tprasadtp/ubuntu-post-install
-* https://ae.prasadt.com${NC}
-${GREEN}
-Contributions & Issues:
+Links & License:
 -------------------------------------------------${NC}
-* You are welcome to contribute
-* Feel free to create a Pull-Request/Issue on Github.
-* If it helped go and star the repo
+GitHub        : ${BLUE}https://git.io/Jv08V${NC}
+Documentation : ${BLUE}https://ae.prasadt.com${NC}
+* This script is licensed under GPLv3.
+* Show your support by starring the repo on GitHub
 -------------------------------------------------
 EOF
 }
@@ -2740,7 +2723,13 @@ EOF
 function _process_non_root_options()
 {
   # Process command line arguments which does not require root.
-  if [[  $# -eq 1 ]]; then
+  if [[  $# -eq 0 ]]; then
+    set_red
+    printf "Error! No arguments specified! See Usage Below\n"
+    set_default
+    display_usage
+    exit 1
+  elif [[  $# -eq 1 ]]; then
     while [ "${1}" != "" ]; do
       case ${1} in
         -v | --version)   display_version;
@@ -2857,7 +2846,7 @@ function main()
                               ;;
       --internal-ci-mode)     readonly AE_INTERNAL_CI_MODE="true";
                               ;;
-      -A | --autopilot)       readonly AUTOPILOT="true";;
+      -A | --autopilot)       readonly AE_AUTOPILOT="true";;
       --use-uf-mirror)        _log_and_show "Will use Uni-Freiburg mirror(s) if available";
                               readonly bool_use_uni_freiburg_mirror="true";
                               ;;
@@ -2872,7 +2861,7 @@ function main()
 
 
   # Initialize variables and checks
-  local after_effects_core_dependencies=(wget lsb_release whiptail ping ps grep cut tr)
+  local after_effects_core_dependencies=(wget whiptail ping ps grep cut tr awk)
   _check_dependencies "${after_effects_core_dependencies[@]}"
 
   _init_print_basic_info;
@@ -2913,17 +2902,17 @@ function main()
   # Get Remote Config File/s, check version & configure
   _version_checks;
 
-    _set_yaml_config;
+  _set_yaml_config;
 
   sleep 3
 
-  if [[ -z ${PS1} ]] && [[ ${AUTOPILOT} != "true" ]]; then
+  if [[ -z ${PS1} ]] && [[ ${AE_AUTOPILOT} != "true" ]]; then
     _log_error "Terminal is not interactive, yet you have not specified --autopilot flag!"
     _log_and_exit "Non Interactive Terminal requires --autopilot" "54"
   fi
 
   # Autopilot
-  if [[ "$AUTOPILOT" == "true" ]]; then
+  if [[ ${AE_AUTOPILOT} == "true" ]]; then
     bool_say_yes_to_all="true"
     _log_notice "${_autopilot} Active"
     sleep 3;

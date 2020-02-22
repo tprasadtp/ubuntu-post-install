@@ -75,50 +75,6 @@ function sign_file()
   fi
 }
 
-function verify_gpg_signature()
-{
-  # Verifies the file with its detached GPG signature.
-  # Assumes that you already have public key in your keyring.
-  # Assumes signature file is present at same localtion,
-  # with same name but with .sig or .gpg or .asc extension.
-  # Lets declare variables
-  local checksum_sig_file
-  # Checks if file is present
-  if [ -f "${AE_SCRIPT}.asc" ]; then
-    checksum_sig_file="${AE_SCRIPT}.asc"
-  else
-    print_error "Error! Signature file not found!"
-    exit 1;
-  fi
-
-  # Check for signature files
-  print_info "Verifying GPG signature of file.."
-  print_info "Signature File : ${checksum_sig_file}"
-  print_info "Data File      : ${AE_SCRIPT}"
-  # Checks for commands
-  if command -v gpg > /dev/null; then
-    if gpg --verify "${checksum_sig_file}" "${AE_SCRIPT}" 2>/dev/null; then
-      print_success "Signature verified"
-    else
-      print_error "Signature checks failed"
-      print_error "Check signature manually via gpg --verify ${AE_SCRIPT}.asc"
-      exit 50;
-    fi
-  elif command -v gpgv > /dev/null; then
-    if gpgv --keyring "$HOME/.gnupg/pubring.kbx" "${checksum_sig_file}" "${AE_SCRIPT}"; then
-      print_success "Signature verified"
-    else
-      print_error "Signature checks failed!!"
-      print_error "Check signature manually via gpg --verify ${AE_SCRIPT}"
-      exit 50;
-    fi
-  else
-    print_error "Cannot perform verification. gpgv or gpg is not installed."
-    print_error "This action requires gnugpg/gnupg2 or gpgv package.\n"
-    exit 1;
-  fi
-}
-
 function main()
 {
   # No args just run the setup function
@@ -132,7 +88,6 @@ function main()
     case ${1} in
       -h | --help )           display_usage;exit 0;;
       -s | --sign)            bool_sign="true";;
-      -v | --verify)          bool_verify="true";;
       * )                    echo -e "\e[91mInvalid argument(s). See usage below. \e[39m";display_usage;;
     esac
     shift
@@ -142,10 +97,6 @@ function main()
 
   if [[ $bool_sign == "true" ]]; then
     sign_file
-  fi
-
-  if [[ $bool_verify == "true" ]]; then
-    verify_gpg_signature
   fi
 
 }
