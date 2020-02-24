@@ -98,7 +98,7 @@ jobs:
           fetch-depth: 0
       - name: Copy _site folder to pages
         run: |
-          rsync -avh --ignore-times --delete --exclude '**/.git/**/*'  ./_site/ pages/
+          rsync -avh --ignore-times --delete --exclude '**/.git/**/*' --exclude '**/.git/' ./_site/ pages/
       - name: Commit Pages Built
         run: |
           cd pages
