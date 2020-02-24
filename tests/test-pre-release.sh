@@ -35,7 +35,7 @@ function main()
     --build-arg CODE_NAME="${release}"  \
     ./dockerfiles/tests
   echo "Testing with YAML"
-  docker run --userns=host --rm -e TRAVIS \
+  docker run --userns=host --rm  \
     -e CI \
     -e DEBUG \
     -e GITHUB_ACTIONS \

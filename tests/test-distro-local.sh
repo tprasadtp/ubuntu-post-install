@@ -36,10 +36,10 @@ function main()
   docker run --rm \
     --userns=host \
     -it \
-    -e TRAVIS \
     -e CI \
     -e DEBUG \
     -e GITHUB_ACTIONS \
+    -e AE_INTERNAL_NO_EXECUTE \
     --hostname="${distro}-${release}" \
     -v "$(pwd)":/shared \
     ae:"${distro}-${release}" \

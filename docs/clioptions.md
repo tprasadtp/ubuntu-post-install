@@ -1,6 +1,6 @@
 # Command line options
 
-## Configuration file
+## YAML Configuration file
 
 !!! snippet "Usage"
 
@@ -40,9 +40,9 @@
 Following details should explain the behavior of this flag. Please do have a look at exceptions, as all tasks cannot be simulated.
 
 - This option will simulate installing packages mentioned in the config, using the apt-get in-built dry-run option `apt-get install -s` to simulate the installation of packages.
-- This option can be used to check if the files in the lists are compatible/available in the repository.
+- This option can be used to check if the config is compatible/available in the repository.
 - Installation of DEB files also behaves similarly. It uses `dpkg -i --dry-run` to simulate installation.
-- Its a very good idea to simulate installation when you have reconfigured the apps and packages in the list to check what might be error prone.
+- Its a very good idea to simulate installation when you have reconfigured the apps and packages in the config to check what might be error prone.
 - DEB package files, binaries **will** be downloaded unlike apt-get package installs.
 
 ??? bug "Exceptions - Not everything can be simulated"
@@ -51,9 +51,8 @@ Following details should explain the behavior of this flag. Please do have a loo
      - If you want to revert the changes please use **Reset Repositories** option.
      - PPAs and repositories **will** be added regardless of the flag.
      - Python package installation cannot be simulated. (pip lacks support for it) The script will skip installing apt dependencies and python packages, if simulate option is used.
-     - APT package upgrades and apt repository metadata updates cannot be simulated. Only a list of packages will be shown inn the logs.
+     - APT package upgrades and apt repository metadata updates cannot be simulated. Only a list of packages will be shown in the logs.
      - Simulate flag will **NOT** simulate installing dependencies for adding or deleting repositories and PPAs.
-     - Please do not set `CI="true"`` and `TRAVIS="true"` in environment variables as they are reserved for testing and CI. They do not abide by the rules mentioned above.
 
 ## Skip Version Checks
 

@@ -16,7 +16,7 @@ for file in $(find . -type f -not -iwholename '*.git*' -executable | sort -u); d
 	if file "${file}" ; then
 		{
 			# ignore , double  quote strings  2086
-			shellcheck -e SC2154 -e SC2086 -e SC1117 "${file}" && printf " [ OK ]: Successfully linted %s\n\n" "${file}"
+			shellcheck -e SC2154 -e SC2086 "${file}" && printf " [ OK ]: Successfully linted %s\n\n" "${file}"
 
 		} ||
 		{

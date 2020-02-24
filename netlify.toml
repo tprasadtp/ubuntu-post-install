@@ -21,22 +21,6 @@
 [context.branch-deploy]
   command = "chmod +x ./build/*.sh && ./build/netlify-build.sh --branch"
 
-# Redirects
-# SEO
-[[redirects]]
-  from = "http://after-effects.prasadt.com/*"
-  to = "http://ae.prasadt.com/:splat"
-  status = 301
-  force = true
-
-
-[[redirects]]
-  from = "https://after-effects.prasadt.com/*"
-  to = "https://ae.prasadt.com/:splat"
-  status = 301
-  force = true
-
-
 # Country specific rules
 #[[redirects]]
 #  from = "/"
@@ -48,12 +32,6 @@
 # GH URLs
 [[redirects]]
   from = "/git"
-  to = "https://github.com/tprasadtp/ubuntu-post-install"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "/g"
   to = "https://github.com/tprasadtp/ubuntu-post-install"
   status = 301
   force = true
@@ -94,16 +72,8 @@
   status = 301
   force = true
 
-# Deploy Data
 [[redirects]]
   from = "/dp"
-  to = "/deploy-params.txt"
-  status = 301
-  force = true
-
-
-[[redirects]]
-  from = "/build"
   to = "/deploy.json"
   status = 301
   force = true
@@ -114,34 +84,62 @@
   status = 301
   force = true
 
-# Version  to version.yml
+# Version to old version.yml
+# Avoid breaking old version checks
+[[redirects]]
+  from = "/config/version.yml"
+  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/e1b891d9bf3885cd9939548277deb1392b331b65/config/version.yml"
+  status = 200
+  force = true
+
+# /version stuff
 [[redirects]]
   from = "/version"
-  to = "/config/version.yml"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml"
+  status = 301
+  force = true
+
+
+[[redirects]]
+  from = "/sig/version"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml.asc"
+  status = 301
+  force = true
+
+# /v2/version stuff
+[[redirects]]
+  from = "/v2/version"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/v2/sig/version"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml.asc"
   status = 301
   force = true
 
 # Scripts
 [[redirects]]
   from = "/get"
-  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/download/latest/get-after-effects"
-  status = 200
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects"
+  status = 301
   force = true
 
 [[redirects]]
-  from = "/get-sig"
-  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/download/latest/get-after-effects.asc"
-  status = 200
+  from = "/sig/get"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects.asc"
+  status = 301
   force = true
 
 [[redirects]]
   from = "/sha256"
   to = "https://github.com/tprasadtp/ubuntu-post-install/releases/download/latest/sha256sum.txt"
-  status = 200
+  status = 301
   force = true
 
 [[redirects]]
   from = "/sha512"
   to = "https://github.com/tprasadtp/ubuntu-post-install/releases/download/latest/sha512.txt"
-  status = 200
+  status = 301
   force = true

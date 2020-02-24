@@ -13,7 +13,7 @@ This Script is designed to be flexible. use `--config-file FILENAME`
 
 ## Autopilot mode
 
-Setting `"AUTOPILOT=true"` or `--autopilot` will run all the tasks specified in the YAML file, or if `-L` list option is used, then all tasks are executed. the order in which tasks are run is as follows.
+Setting `"AUTOPILOT=true"` or `--autopilot` will run all the tasks specified in the YAML file. The order in which tasks are run is as follows.
 
 - Update
 - Upgrade
@@ -28,6 +28,4 @@ Setting `"AUTOPILOT=true"` or `--autopilot` will run all the tasks specified in 
 
 ## Reserved Environment Variables
 
-Prefix `AE_` is reserved along with `TRAVIS_` as they are used for configuration and testing.
-Please do not set CI="true" in your environment variables. they will alter how script honors `--simulate` flag and `--autopilot` flag
-as they are reserved for testing on CI systems.
+Prefix `AE_` is reserved along with `GITHUB_` as they are used for configuration and testing.

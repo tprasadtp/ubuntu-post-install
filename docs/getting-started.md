@@ -12,8 +12,8 @@ Install (if you haven't already) your choice of Ubuntu/Derivative as you would( 
 
 ## Step 2: Update the config to suit your needs
 
-Update the config files to suit your needs. Change PPAs, add or delete packages to list, tweak variables etc.
-Please see [Configuration](https://ae.prasadt.com/config/#package-lists) & [Tasks](https://ae.prasadt.com/tasks/#what-can-it-do) for more details. Some example configs can be found [here](https://github.com/tprasadtp/ubuntu-post-install/tree/master/config).
+Update the config files to suit your needs.
+Please see [Configuration](https://ae.prasadt.com/config) & [Tasks](https://ae.prasadt.com/tasks) for more details. Some example configs can be found [here](https://github.com/tprasadtp/ubuntu-post-install/tree/master/config).
 
 ## Step 3: Run it
 

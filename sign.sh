@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 
-# This is a bash script to Generate checksums
-# And sign them
-# Version:1.0
-# Author: Prasad Tengse
-# Licence: MIT
-# Requirements - Bash v4
 set -eo pipefail
 readonly SCRIPT=$(basename "$0")
 readonly DIR="$(pwd)"
@@ -57,20 +51,22 @@ function print_error()
 
 function sign_file()
 {
-  if [[ -f $AE_SCRIPT ]]; then
-    print_info "Signing $AE_SCRIPT"
+  local SIGNER
+  SIGNER="${1}"
+  if [[ -f $SIGNER ]]; then
+    print_info "Signing $SIGNER"
 
     if gpg --armor --detach-sign \
-      --output "${AE_SCRIPT}.asc" \
+      --output "${SIGNER}.asc" \
       --yes --no-tty \
       "${AE_SCRIPT}"; then
-      print_success "Signed $AE_SCRIPT"
+      print_success "Signed $SIGNER"
     else
-      print_error "Failed to sign $AE_SCRIPT"
+      print_error "Failed to sign $SIGNER"
       exit 2
     fi
   else
-    print_error "script not found!"
+    print_error "$SIGNER not found!"
     exit 2
   fi
 }
@@ -96,7 +92,8 @@ function main()
   # Actions
 
   if [[ $bool_sign == "true" ]]; then
-    sign_file
+    sign_file "after-effects"
+    sign_file "config/version.yml"
   fi
 
 }

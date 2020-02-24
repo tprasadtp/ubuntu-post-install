@@ -5,14 +5,12 @@ on:
     paths-ignore:
       - ".gitignore"
       - ".envrc"
-      - "**.md"
       - ".vscode/**"
       - "README.md"
       - "CONTRIBUTING.md"
       - ".github/workflows/labels.yml"
       - ".github/labels.toml"
-      - ".github/*.md"
-      - "after-effects.asc"
+      - ".github/**/*.md"
     tags-ignore:
       - "**"
   pull_request:
@@ -66,8 +64,9 @@ jobs:
       - uses: actions/checkout@v2
       - name: Test on Ubuntu Upcoming
         run: ./tests/test-pre-release.sh "ubuntu" "focal"
+  # Build Docs, artifacts and upload them
   docs:
-    needs: ["debian", "ubuntu"]
+    needs: [ "debian", "ubuntu", "ubuntu-upcoming" ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -80,37 +79,54 @@ jobs:
       - name: Build Docs
         run: |
           ./build/build-docs.sh
-          ls ./ && ls ./_site/
-          python3 build/version.py
           cat ./_site/commit.json
-      - name: Clone gh-pages branch
-        uses: actions/checkout@v2
-        with:
-          ref: gh-pages
-          path: pages
+
+      # Git Settings
       - name: Setup Git
         run: |
           echo "Setting git conf user.email"
           git config --global user.email "valarie-ci-bot@users.noreply.github.com" && echo "Done"
           echo "Setting git conf user.name"
           git config --global user.name "valarie-ci-bot" && echo "Done"
+
+      # Get Current gh-pages
+      - name: Clone gh-pages branch
+        uses: actions/checkout@v2
+        with:
+          ref: gh-pages
+          path: pages
+          fetch-depth: 0
+      - name: Unshallow
+        run: |
+          cd pages
+          git fetch --prune --unshallow
       - name: Copy _site folder to pages
         run: |
           rsync -avh --ignore-times --delete --filter 'protect pages/.git'  ./_site/ pages/
-      - name: Commit changes
+      - name: Commit Pages Built
         run: |
           cd pages
           git add -A
-          git commit -m "Pages Build for ${GITHUB_SHA:0:7}"
-      - name: View Tree
+          git commit -s -m "Pages deploy ${GITHUB_SHA:0:7} BUILD-${GITHUB_RUN_NUMBER}"
+      # Calculate Checksums
+      - name: Compute Checksums
         run: |
-          sudo apt-get -qq update
-          sudo apt-get install -qq -y tree
-          cd pages
-          tree -I '.git' ./
-      - name: Push Pages
-        run: |
-          cd pages
-          git checkout
-          git push
-        if: github.ref == 'refs/heads/master'
+          sha256sum after-effects | tee -a sha256sums.txt
+          sha512sum after-effects | tee -a sha512sums.txt
+
+      # Upload site data and checksums to artifacts
+      - name: Artifacts _site
+        uses: actions/upload-artifact@v1
+        with:
+          name: pages.zip
+          path: pages
+      - name: Artifact SHA256
+        uses: actions/upload-artifact@v1
+        with:
+          name: sha256sums.txt
+          path: sha256sums.txt
+      - name: Artifact SHA256
+        uses: actions/upload-artifact@v1
+        with:
+          name: sha512sums.txt
+          path: sha512sums.txt

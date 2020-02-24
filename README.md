@@ -18,7 +18,7 @@ before trying out.
 ### 1. Get the script
 
 ```console
-wget -q https://github.com/tprasadtp/ubuntu-post-install/releases/download/latest/after-effects -O after-effects
+wget -q https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O after-effects
 ```
 
 ### 2. Setup your YAML configuration file
@@ -44,6 +44,7 @@ Sample configuration can be found here `https://ae.prasadt.com/dl/config/default
 
 See /docs or visit [docs][docs]
 
+[![netlify][netlify-badge]][netlify]
 ![deployed][deployed]
 ![commit][commit]
 ![commit][commit-deployed-ts]
@@ -162,7 +163,7 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [build-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Abuild
 [release-ci-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/release/badge.svg
 [release-ci-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Arelease
-[netlify-badge]: https://img.shields.io/netlify/110327c5-b5f2-42e3-b5ef-5d5661c94187
+[netlify-badge]: https://api.netlify.com/api/v1/badges/887c3d5c-5203-46b9-a31d-67cada282f36/deploy-status
 [netlify]: https://app.netlify.com/sites/ubuntu-post-install/deploys
 
 

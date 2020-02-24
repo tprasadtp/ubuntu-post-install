@@ -31,7 +31,7 @@
 | 38 | Failed to delete a file |
 | 39 | Custom remote config name cannot be empty |
 | 40 | Failed to unset an array |
-| 41 | Failed to truncate clist file |
+| 41 | DEPRECATED_EXIT_CODE |
 | 51 | GPG signature checks failed |
 | 52 | SHA checksums did not match |
 | 53 | List mode is no longer supported. |

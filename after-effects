@@ -1,33 +1,18 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2059
-# Legal Preamble:
-#
-# This script is free software; you can redistribute it and/or modify it under
-# the terms of the GNU General Public License as published by the Free Software
-# Foundation; version 3.
-#
-# This script is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
-# details.
-#
-# You should have received a copy of the GNU General Public License along with
-# this program; if not, see <https://www.gnu.org/licenses/gpl-3.0.txt>
+# vim: filetype=sh
 
 # Author: Prasad Tengse
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/ubuntu-post-install
 # Requirements - Bash v4 and above
 #              - whiptail, wget, iputils-ping, awk, sed, grep
-#              - Ubuntu 14.04/16.04/17.04/17.10/18.04 or Elementary Freya/Loki/Juno
-#              - Mint 17.X or 18.X or 19.X
-#              - Debian 8 & 9
 #
 
 case "${DEBUG}" in
   1 | "yes" | "true" | "TRUE")     AE_DEBUG=1;set -o pipefail;;
   "internal")                      AE_DEBUG=2;set -o pipefail;;
-  "TRAVIS" | "ci" | "CI")          AE_DEBUG=2;set -eo pipefail;;
+  "ci" | "CI")                     AE_DEBUG=2;set -eo pipefail;;
   "trace")                         AE_DEBUG=3;set -o pipefail;;
   *)                               AE_DEBUG=0;set -o pipefail;;
 esac
@@ -102,6 +87,10 @@ function _init_printf_variables()
     readonly GRAY=$'\e[38;5;247m'
     readonly LOG_GRAY=$'\e[38;5;241m'
     readonly INTERNAL_GRAY=$'\e[38;5;244m'
+
+    # Generate a UUID
+    readonly CLIENT_ID=$(cat /proc/sys/kernel/random/uuid)
+
 }
 
 
@@ -111,6 +100,7 @@ function _init_logging()
   # Only variables necessary for logging & start logging
   # Script related variables are defined in _init_script_variables
   readonly log_file="$dir"/logs/after-effects.log
+  printf "${GRAY}${_debug} Creating Logs folder $dir/logs/${NC}\n"
   {
     mkdir -p "$dir"/logs
   } ||
@@ -125,24 +115,39 @@ function _init_logging()
   {
     printf "${RED}${_error} Failed to create tmp folder${NC}\n"; exit 2
   }
+
+  # if file not exists touch it
+  if [[ ! -f ${log_file} ]]; then
+    if touch "${log_file}"; then
+      printf "${GRAY}${_debug} Created Log file${NC}\n"
+    else
+      printf "${GRAY}${_debug} Failed to create logfile!${NC}\n"
+      exit 2
+    fi
+  fi
+
   # check if logs can be written
-  {
-    _log_debug "Initialize logging"
-    _line_fill >> "$log_file"
-  } ||
-  {
-    printf "${RED}${_error} Failed to create log file ${log_file} ${NC}\n"; exit 2
-  }
+  if [[ -w $log_file ]]; then
+    {
+      _log_debug "Initialize logging for RUN ID: ${CLIENT_ID}"
+    } ||
+    {
+      printf "${RED}${_error} Failed to write to log file ${log_file} ${NC}\n"; exit 2
+    }
+  else
+    printf "${RED}${_error} Log File is not writable!${NC}\n"
+    exit 2
+  fi
 }
 
 
 # Utility Functions
 function _line_fill()
 {
-  if [[ -z ${PS1} ]]; then
+   if [[ ! -t 1 ]]; then
     printf "_______________________________________________________\n"
   else
-    printf "%_$(tput cols)s@%s\n" | sed -e "s/ /-/g" -e "s/-@/ /" -e "s/@-/ /"
+    printf "%-$(tput cols)s@%s\n" | sed -e "s/ /-/g" -e "s/-@/ /" -e "s/@-/ /"
   fi
 }
 
@@ -176,6 +181,11 @@ function set_red()
 }
 
 
+function set_log_gray()
+{
+  printf "${LOG_GRAY}"
+}
+
 function set_default()
 {
   printf "${NC}"
@@ -199,7 +209,8 @@ function _log_and_exit()
     printf "\nFinished %s on $(date).\nExit code: %d\n" "$SCRIPT" "$2"
   } >> "$log_file"
   report_stats
-  _line_fill | tee -a "$log_file"
+  _line_fill
+  _line_fill >> "$log_file"
   exit "$2";
 }
 
@@ -258,7 +269,7 @@ function _log_internal()
   if [[ $AE_DEBUG -gt 1 ]]; then
     printf "${INTERNAL_GRAY}${_internal} $msg ${NC}\n"
   fi
-  printf "[$(date)] $msg\n" >> "$log_file"
+  printf "[$(date)]${_internal} $msg\n" >> "$log_file"
 }
 
 function _log_trace()
@@ -319,13 +330,13 @@ function _init_script_variables()
 
   # Achtung: Do not set code_name as readonly!!
   code_name="${AE_DISTRO_CODENAME}"
-  readonly architecture=$(dpkg --print-architecture)
+  readonly architecture="$(dpkg --print-architecture)"
   case "${architecture}" in
     amd64)          _log_debug "Architecture is 64 bit.";
                     readonly ARCH="amd64";
                     ;;
     i386)           _log_debug "Architecture is 32 bit.";
-                    readonly ARCH="i386";
+                    _log_and_exit "i386 is no longer Supported!" "11"
                     ;;
     armhf)          _log_debug "Running on ARM CPU with HW Floating point Processor";
                     readonly ARCH="armhf";
@@ -340,8 +351,6 @@ function _init_script_variables()
 
   # Get Hostname
   readonly CLIENT_NAME=$(hostname)
-  # Generate a UUID
-  readonly CLIENT_ID=$(cat /proc/sys/kernel/random/uuid)
 
   # etc sources list dir
   readonly SOURCES_FILE_DIR=/etc/apt/sources.list.d
@@ -374,7 +383,7 @@ function _init_script_variables()
   bool_check_version="true"
 
   # Define API endpoint for version and config
-  readonly metadata_endpoint="https://ae.prasadt.com/config"
+  readonly api_version_url="https://ae.prasadt.com/v2/version"
 
   # Achtung!!
   # ========================================================================================= #
@@ -438,16 +447,16 @@ function _init_print_basic_info()
 function delete_log_file()
 {
   printf "${_deleting} log file...\n"
-  {
-    rm -f "${log_file}" &> /dev/null \
-    && printf "${GREEN}${_success} Deleted log file %s ${NC}\n" "$log_file"
-  } ||
-  {
-    printf "${RED}${_error} Deleting log file failed. %s ${NC}\n" "$log_file"
+  if rm "${dir}/logs/after-effects.log"; then
+    set_green
+    printf "${GREEN}${_success} Deleted log file %s\n" "$log_file"
+    set_default
+    exit 0
+  else
+    set_red
+    printf "${_error} Deleting log file failed. %s\n" "$log_file"
     exit 1;
-  }
-  exit 0
-
+  fi
 }
 
 
@@ -518,7 +527,6 @@ function verify_gpg_signature()
   # Assumes that you already have public key in your keyring.
   # Assumes signature file is present at same location,
   # with same name but with .sig or .gpg or .asc extension.
-  # Lets declare variables
   local sig_file
   # Checks if file is present
   if [ -f "${SCRIPT}.sig" ]; then
@@ -566,9 +574,7 @@ function report_stats()
   # Report anonymous stats about the script.
   # Following things are reported.
   # A UUID generated for each execution, (its random and is not persistent across runs)
-  # sha-1 sum of config, Total execution time, system architecture,
-  # Distro name, feature selected, last exit code, flags used, if Travis or Docker flags are true,
-  # timezone and system language. Nothing else is collected. Period.
+  # Total execution time, system architecture, Distro name
   # If you are freaking out, its a shellscript, You can literally look into it
   # and check what's collected. Why if you ask? Just for fun and improvement of course!.
   # Data will be stored in AWS DynamoDB and/or Google Firebase.
@@ -576,15 +582,8 @@ function report_stats()
   # to it. If you run a search query on google, it probably collects more data than me.
   # API endpoints may log public IP addresses (GitHub, Google and AWS). But they are not saved in the
   # database.
-  # But I really really don't want to report stats because I Use it in "Top Secret" place under the rock.
-  # Well, 1. You should not use this script! There are better tools like Chef and
-  #          Ansible for huge deployments.
-  #       2. Okay! Okay! just pass --no-stats or -S as an argument and be done with it &
-  #          the script WILL NOT "phone home".
+  # But I really don't want to report stats, just pass --no-stats as an argument.
   true
-  if [[ "$ae_internal" == "true" ]]; then
-    _log_debug "Martian Field is TRUE"
-  fi
 }
 
 
@@ -648,7 +647,7 @@ function _fix_ubuntu_derivatives()
       xenial | bionic )                     readonly bool_config_partner_repo="true";
                                             readonly enable_ppa="true";
                                             readonly distro_name="ubuntu";
-                                            _log_and_show "${_info} This is an LTS release of Ubuntu"
+                                            _log_and_show "${_info} This is a LTS release of Ubuntu"
                                             _log_success "${_derivatives} Keeping the codename as: $code_name."
                                             ;;
       eoan)                                 readonly bool_config_partner_repo="true";
@@ -663,9 +662,7 @@ function _fix_ubuntu_derivatives()
                                             readonly distro_name="ubuntu";
                                             set_magenta;
                                             _log_and_show "${_pre_release} This is Ubuntu 20.04 Focal"
-                                            _log_and_show "${_pre_release} Please use --pre-release flag,"
-                                            _log_and_show "${_pre_release} if there are issues in adding repos."
-                                            set_default
+                                            set_defaults
                                             _log_warn "${_warn} Because this is Debian, PPAs are disabled!"
                                             _log_warn "${_warn} This is pre-release version of Ubuntu, Use with caution!"
                                             ;;
@@ -735,7 +732,7 @@ function _test_conflicting_apps ()
 }
 
 
-function _set_custom_api_nodes ()
+function _handle_remote_configs ()
 {
 
   # Custom Remote Config name as Query parameter name
@@ -754,10 +751,6 @@ function _set_custom_api_nodes ()
     _log_warn "${_error} No yaml file specified!"
     _log_and_exit "${_error} Script cannot continue. Exiting" "25"
   fi
-
-  # Version, Config ang GPG signature URLS
-  readonly api_version_url="${metadata_endpoint}/version.yml"
-  _log_debug "Version Info URL is: ${api_version_url}"
 }
 
 
@@ -849,8 +842,8 @@ function _version_checks ()
       _log_debug "Version Checks are enabled."
       _log_and_show "${_version} Checking for Updates..."
       if [ "$bool_custom_version_file" != "true" ]; then
-        _log_debug "Using remote config file."
-        _log_debug "Deleting old YAMLS"
+        _log_debug "Using version config file."
+        _log_debug "Deleting old Version YAMLS"
         rm -f "/tmp/ae/api-version.yml" || _log_debug "Deleting old version YAML failed."
         readonly version_yaml_file="/tmp/ae/api-version.yml"
         # Get response/file
@@ -863,11 +856,6 @@ function _version_checks ()
       # Parse YAML to variables
       _log_debug "Parsing Version Config File"
       eval "$(parse_yaml "$version_yaml_file")"
-      {
-      _line_fill
-      #declare -p
-      _line_fill
-      } >> "${log_file}"
       # Assign them to local variables as sometimes bash if does not handle array elements very well.
       local api_rel_num="${version__number[0]}"
 
@@ -943,7 +931,7 @@ function _check_bool()
     *)                                          declare -g ${g_var}="${default_val}"
                                                 _log_internal "Invalid or empty value for param : $g_var."
                                                 _log_internal "It can either be t[T]rue or f[F]alse."
-                                                _log_internal "${_warn} $g_var will default to ${default_val}"
+                                                _log_internal "$g_var will default to ${default_val}"
                                                 ;;
   esac
 }
@@ -1128,7 +1116,6 @@ function _set_yaml_config()
       _line_fill;
     fi
   else
-    _log_and_show "${_cfg} Configuration data is hidden if not in debug mode"
     _log_debug "-------- REPO CONFIG ----------"
     _log_debug "Docker CE           : $add_docker_repo"
     _log_debug "Wine-HQ             : $add_winehq_repo"
@@ -1200,7 +1187,7 @@ function _set_yaml_config()
   # list of apt packages to be purged from the system if present.
   # Lets get em, shall we?
 
-  # Copy package list
+  # Copy package array
   declare -gar parsed_purge_packages=("${config__purge_[@]}")
   declare -gar parsed_administration_packages=("${config__install__apt__administration_[@]}")
   declare -gar parsed_secutity_packages=("${config__install__apt__security_[@]}")
@@ -1242,12 +1229,6 @@ function _set_yaml_config()
   declare -gar parsed_snap_normal_packages=("${config__install__snaps__normal_[@]}")
   declare -gar parsed_snap_classic_packages=("${config__install__snaps__classic_[@]}")
   declare -gar parsed_snap_edge_packages=("${config__install__snaps__edge_[@]}")
-
-  {
-  _line_fill
-#  declare -p
-  _line_fill
-  } >> "${log_file}"
 
 }
 
@@ -1469,11 +1450,16 @@ function add_repositories()
   _fix_repo_not_available;
   _log_debug "Adding External Repositories"
 
-  # Add Google Chrome and Google Earth
-  if [ "$add_google_repo" == "true" ]; then
-    _log_and_show "${_repo} Google repositories"
-    if [ "$ARCH" == "amd64" ]; then
-        _log_debug "Adding Google package signing Key"
+
+  if [ "$ARCH" != "amd64" ]; then
+    _log_notice "Chrome, Spotify, Insync, VSCode, Mendeley, signal and Duo Unix are only supported on 64 Bit"
+  else
+    _log_debug "Arch is 64 Bit Enable adding 64 bit repos."
+    # 64 bit Only REPOS
+    # Add Google Chrome and Google Earth
+    if [ "$add_google_repo" == "true" ]; then
+      _log_and_show "${_repo} Google repositories"
+      _log_debug "Adding Google package signing Key"
       wget -q  https://dl.google.com/linux/linux_signing_key.pub -O /tmp/ae/google_signing_key.pub >> $"$log_file"
       _log_debug "Adding Google key to trusted keys list"
       apt-key add /tmp/ae/google_signing_key.pub |& _add_timestamp_to_logs "${_apt_key_logs}" \
@@ -1487,79 +1473,159 @@ function add_repositories()
 
       echo "deb [arch=amd64] http://dl.google.com/linux/earth/deb/ stable main #Google-Earth" > ${SOURCES_FILE_DIR}/google-earth.list \
       || _log_warn "${_error} Adding Google Chrome repository failed"
-
     else
-      _log_warn "${_warn} Architecture: $ARCH is not supported for Chrome. Please use Chromium"
+      _log_and_show "${_repo} Chrome repository is set to false. Skipping."
     fi
-  else
-    _log_and_show "${_repo} Chrome repository is set to false. Skipping."
+
+
+    # Spotify client
+    if [ "$add_spotify_repo" == "true" ]; then
+      _log_and_show "${_repo} Spotify repository"
+      _log_debug "Adding Spotify keys"
+      wget -q   https://download.spotify.com/debian/pubkey.gpg -O /tmp/ae/spotify_signing_key.pub >> $"$log_file"
+      apt-key add /tmp/ae/spotify_signing_key.pub  2>&1 \
+      |_add_timestamp_to_logs "${_apt_key_logs}"  \
+      || _log_warn "${_error} Adding Spotify repository failed"
+
+      echo "deb [arch=$ARCH] http://repository.spotify.com stable non-free #Spotify" > ${SOURCES_FILE_DIR}/spotify.list \
+      || _log_warn "${_error} Adding Spotify Repository Failed"
+    else
+      _log_and_show "${_repo} Spotify repository is set to false. Skipping."
+    fi
+
+    # Insync
+    if [ "$add_insync_repo" == "true" ] && [ "$bool_is_debian" != "true" ]; then
+      _log_and_show "${_repo} Insync repository"
+      _log_debug "Adding Insync keys"
+      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ACCAF35C  2>&1 \
+      | _add_timestamp_to_logs "${_apt_key_logs}" \
+      || _log_warn "${_error} Adding Insync Repository failed"
+
+      echo "deb [arch=$ARCH] http://apt.insynchq.com/${distro_name} $code_name non-free contrib #Insync-Client" > ${SOURCES_FILE_DIR}/insync.list \
+      || _log_warn "${_error} Adding Insync Repository failed"
+
+    elif [ "$add_insync_repo" == "true" ] && [ "$bool_is_debian" == "true" ]; then
+      _log_warn "${_whoops} InSync repositoris are not supported on Debian."
+      _log_warn "${_info} Please use debfile instead of repositoris."
+      _log_notice "${_info} Visit https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files"
+    else
+      _log_and_show "${_repo} Insync repository is set to false. Skipping."
+    fi
+
+
+    # Google Cloud SDK and GCS-FUSE
+    if [ "$add_googlecloud_repo" == "true" ] || [ "$add_gcsfuse_repo" == "true" ]; then
+      _log_debug "Adding Google-Cloud repository sigining key"
+      wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg -O /tmp/ae/googlecloud.gpg >> "$log_file"
+      apt-key add /tmp/ae/googlecloud.gpg |& _add_timestamp_to_logs "${_apt_key_logs}"
+    else
+      _log_debug "Neither GCSFUSE nor Google cloud SDK install enabled. Not adding Google cloud APT keys"
+    fi
+
+    if [ "$add_googlecloud_repo" == "true" ]; then
+      CLOUD_SDK_REPO="cloud-sdk-${code_name}"
+      _log_and_show "${_repo} Google-Cloud-SDK repository"
+      echo "deb [arch=$ARCH] http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  \
+      || _log_warn "${_error} Adding Google Clouf SDK Repository failed"
+    else
+      _log_and_show "${_repo} Google Cloud SDK repository is set to false. Skipping."
+    fi
+
+    if [ "$add_gcsfuse_repo" == "true" ]; then
+      GCSFUSE_REPO="gcsfuse-${code_name}"
+      _log_and_show "${_repo} GCSFUSE repository"
+      echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list  \
+      || _log_warn "${_error} Adding GCSFUSE Repository failed"
+    else
+      _log_and_show "${_repo} GCSFUSE repository is set to false. Skipping."
+    fi
+
+    # Skype
+    if [ "$add_skype_repo" == "true" ]; then
+      _log_and_show "${_repo} Skype for Linux repository"
+      _log_debug "Getting Skype repository key"
+      wget -q https://repo.skype.com/data/SKYPE-GPG-KEY -O /tmp/ae/skype-linux-key.gpg >> "$log_file"
+      _log_debug "Adding Skype keys to trusted list"
+      apt-key add /tmp/ae/skype-linux-key.gpg |& _add_timestamp_to_logs "${_apt_key_logs}" \
+      || _log_warn "${_error} Adding Skype for linux key failed"
+      echo "deb [arch=$ARCH] https://repo.skype.com/deb stable main #Skype" > $SOURCES_FILE_DIR/skype-stable.list \
+      || _log_warn "${_error} Adding Skype for linux repository failed"
+    else
+      _log_and_show "${_repo} Skype repository is set to false. Skipping."
+    fi
+
+    # Visual Studio Code
+    if [ "$add_vscode_repo" == "true" ]; then
+      _log_and_show "${_repo} Visual Studio Code repository"
+      _log_debug "Getting GPG keys for repository"
+      wget -q https://packages.microsoft.com/keys/microsoft.asc -O /tmp/ae/microsoft.asc
+      _log_debug "Adding Key to trusted GPG keys directory"
+      apt-key add /tmp/ae/microsoft.asc |& _add_timestamp_to_logs "${_apt_key_logs}" || _log_warn "${_error} Adding Visual Studio Code key failed"
+      echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list
+    else
+      _log_and_show "${_repo} Visual Studio repository is set to false. Skipping."
+    fi
+
+    # Signal App
+    if [ "$add_signal_repo" == "true" ]; then
+      _log_and_show "${_repo} Signal repository"
+      wget -q https://updates.signal.org/desktop/apt/keys.asc -O /tmp/ae/signal.asc >> "$log_file"
+      apt-key add /tmp/ae/signal.asc  |& _add_timestamp_to_logs "${_apt_key_logs}" \
+      || _log_warn "${_error} Adding Signal Key Failed"
+      echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/signal-xenial.list
+    else
+      _log_and_show "${_repo} Signal repository is set to false. Skipping."
+    fi
+
+    # Mendeley Desktop App
+    if [ "$add_mendeley_repo" == "true" ]; then
+      _log_and_show "${_repo} Mendeley repository"
+      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 |& _add_timestamp_to_logs "${_apt_key_logs}" \
+      || _log_warn "${_error} Adding Mendeley Desktop Key Failed"
+      echo "deb [arch=$ARCH] https://desktop-download.mendeley.com/download/apt stable main #Mendeley-Desktop"  > ${SOURCES_FILE_DIR}/mendeleydesktop.list
+    else
+      _log_and_show "${_repo} Mendeley Desktop is set to false."
+    fi
+
+    # Duo Unix
+    if [ "$add_duo_repo" == "true" ]; then
+      _log_and_show "${_repo} Adding Duo Security for Unix"
+      case "$code_name" in
+        bionic)     duo_repo_url="http://pkg.duosecurity.com/Ubuntu bionic main";
+                    duo_supported="true"
+                    ;;
+        xenial)     duo_repo_url="http://pkg.duosecurity.com/Ubuntu xenial main"
+                    duo_supported="true"
+                    ;;
+        trusty)     duo_repo_url="http://pkg.duosecurity.com/Ubuntu trusty main";
+                    duo_supported="true"
+                    ;;
+        stretch)    duo_repo_url="http://pkg.duosecurity.com/Debian stretch main";
+                    duo_supported="true"
+                    ;;
+        jessie)     duo_repo_url="http://pkg.duosecurity.com/Debian stretch main";
+                    duo_supported="true"
+                    ;;
+        *)          _log_warn "${_warn} Only LTS/Stable versions of Ubuntu/Debian are suported."
+                    _log_warn "${_warn} You are running Unsupported version : ${code_name}"
+                    ;;
+      esac
+      if [[ $duo_supported == "true" ]]; then
+        # Repo keys for duosecurity
+        _log_debug "Downloading GPG key..."
+        wget -q https://duo.com/APT-GPG-KEY-DUO  -O /tmp/ae/duosecurity.gpg >> "$log_file"
+        apt-key add /tmp/ae/duosecurity.gpg |& _add_timestamp_to_logs "${_apt_key_logs}" \
+        || _log_warn "${_error} Adding Duo Key Failed"
+
+        # Add repo
+        echo "deb [arch=$ARCH] ${duo_repo_url} #Duo Unix"  > ${SOURCES_FILE_DIR}/duounix.list
+      fi
+    else
+      _log_and_show "${_repo} Duo Unix is set to false."
+    fi
+
+  # End if ARCH==64 Check
   fi
-
-
-  # Spotify client
-  if [ "$add_spotify_repo" == "true" ]; then
-    _log_and_show "${_repo} Spotify repository"
-    _log_debug "Adding Spotify keys"
-    wget -q   https://download.spotify.com/debian/pubkey.gpg -O /tmp/ae/spotify_signing_key.pub >> $"$log_file"
-    apt-key add /tmp/ae/spotify_signing_key.pub  2>&1 \
-    |_add_timestamp_to_logs "${_apt_key_logs}"  \
-    || _log_warn "${_error} Adding Spotify repository failed"
-
-    echo "deb [arch=$ARCH] http://repository.spotify.com stable non-free #Spotify" > ${SOURCES_FILE_DIR}/spotify.list \
-    || _log_warn "${_error} Adding Spotify Repository Failed"
-  else
-    _log_and_show "${_repo} Spotify repository is set to false. Skipping."
-  fi
-
-  # Insync
-  if [ "$add_insync_repo" == "true" ] && [ "$bool_is_debian" != "true" ]; then
-    _log_and_show "${_repo} Insync repository"
-    _log_debug "Adding Insync keys"
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ACCAF35C  2>&1 \
-    | _add_timestamp_to_logs "${_apt_key_logs}" \
-    || _log_warn "${_error} Adding Insync Repository failed"
-
-    echo "deb [arch=$ARCH] http://apt.insynchq.com/${distro_name} $code_name non-free contrib #Insync-Client" > ${SOURCES_FILE_DIR}/insync.list \
-    || _log_warn "${_error} Adding Insync Repository failed"
-
-  elif [ "$add_insync_repo" == "true" ] && [ "$bool_is_debian" == "true" ]; then
-    _log_warn "${_whoops} InSync repositoris are not supported on Debian."
-    _log_warn "${_info} Please use debfile instead of repositoris."
-    _log_notice "${_info} Visit https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files"
-  else
-    _log_and_show "${_repo} Insync repository is set to false. Skipping."
-  fi
-
-
-  # Google Cloud SDK and GCS-FUSE
-  if [ "$add_googlecloud_repo" == "true" ] || [ "$add_gcsfuse_repo" == "true" ]; then
-    _log_debug "Adding Google-Cloud repository sigining key"
-    wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg -O /tmp/ae/googlecloud.gpg >> "$log_file"
-    apt-key add /tmp/ae/googlecloud.gpg |& _add_timestamp_to_logs "${_apt_key_logs}"
-  else
-    _log_debug "Neither GCSFUSE nor Google cloud SDK install enabled. Not adding Google cloud APT keys"
-  fi
-
-  if [ "$add_googlecloud_repo" == "true" ]; then
-    CLOUD_SDK_REPO="cloud-sdk-${code_name}"
-    _log_and_show "${_repo} Google-Cloud-SDK repository"
-    echo "deb [arch=$ARCH] http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  \
-    || _log_warn "${_error} Adding Google Clouf SDK Repository failed"
-  else
-    _log_and_show "${_repo} Google Cloud SDK repository is set to false. Skipping."
-  fi
-
-  if [ "$add_gcsfuse_repo" == "true" ]; then
-    GCSFUSE_REPO="gcsfuse-${code_name}"
-    _log_and_show "${_repo} GCSFUSE repository"
-    echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list  \
-    || _log_warn "${_error} Adding GCSFUSE Repository failed"
-  else
-    _log_and_show "${_repo} GCSFUSE repository is set to false. Skipping."
-  fi
-
-  #AWS
-  # Handled by pip
 
   #Wine HQ
   if [ "$add_winehq_repo" == "true" ]; then
@@ -1595,23 +1661,7 @@ function add_repositories()
     _log_debug "Adding Docker-CE repository is set to false. Skipping."
   fi
 
-  # Skype
-  if [ "$add_skype_repo" == "true" ]; then
-    if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "i386" ]; then
-      _log_and_show "${_repo} Skype for Linux repository"
-      _log_debug "Getting Skype repository key"
-      wget -q https://repo.skype.com/data/SKYPE-GPG-KEY -O /tmp/ae/skype-linux-key.gpg >> "$log_file"
-      _log_debug "Adding Skype keys to trusted list"
-      apt-key add /tmp/ae/skype-linux-key.gpg |& _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_warn "${_error} Adding Skype for linux key failed"
-      echo "deb [arch=$ARCH] https://repo.skype.com/deb stable main #Skype" > $SOURCES_FILE_DIR/skype-stable.list \
-      || _log_warn "${_error} Adding Skype for linux repository failed"
-    else
-      _log_warn "${_error} Skype doesnot support this architecture"
-    fi
-  else
-    _log_and_show "${_repo} Skype repository is set to false. Skipping."
-  fi
+
 
   # ROS
   # Arch support varies on distro so lot of ugly elifs.
@@ -1687,93 +1737,6 @@ function add_repositories()
     _log_and_show "${_repo} Adding ROS repository is set to false, skipping..."
   fi # add_ros_repo
 
-
-  # Visual Studio Code
-  if [ "$add_vscode_repo" == "true" ]; then
-    if [ "$ARCH" == "amd64" ]; then
-      _log_and_show "${_repo} Visual Studio Code repository"
-      _log_debug "Getting GPG keys for repository"
-      wget -q https://packages.microsoft.com/keys/microsoft.asc -O /tmp/ae/microsoft.asc
-      _log_debug "Adding Key to trusted GPG keys directory"
-      apt-key add /tmp/ae/microsoft.asc |& _add_timestamp_to_logs "${_apt_key_logs}" || _log_warn "${_error} Adding Visual Studio Code key failed"
-      echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list
-    else
-      _log_warn "${_warn} Architecture: $ARCH is not supported by Visual studio Code."
-    fi
-  else
-    _log_and_show "${_repo} Visual Studio repository is set to false. Skipping."
-  fi
-
-  # Signal App
-  if [ "$add_signal_repo" == "true" ]; then
-   if [ "$ARCH" == "amd64" ]; then
-      _log_and_show "${_repo} Signal repository"
-      wget -q https://updates.signal.org/desktop/apt/keys.asc -O /tmp/ae/signal.asc >> "$log_file"
-      apt-key add /tmp/ae/signal.asc  |& _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_warn "${_error} Adding Signal Key Failed"
-      echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/signal-xenial.list
-    else
-        _log_warn "${_warn} Architecture: $ARCH is not supported by Signal"
-    fi
-  else
-    _log_and_show "${_repo} Signal repository is set to false. Skipping."
-  fi
-
-  # Mendeley Desktop App
-  if [ "$add_mendeley_repo" == "true" ]; then
-    if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "i386" ] ; then
-      _log_and_show "${_repo} Mendeley repository"
-      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 |& _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_warn "${_error} Adding Mendeley Desktop Key Failed"
-      echo "deb [arch=$ARCH] https://desktop-download.mendeley.com/download/apt stable main #Mendeley-Desktop"  > ${SOURCES_FILE_DIR}/mendeleydesktop.list
-    else
-      _log_warn "${_warn} Architecture: ${ARCH} is not supported. You might manually compile from source."
-    fi
-  else
-      _log_and_show "${_repo} Mendeley Desktop is set to false."
-  fi
-
-
-  # Duo Unix
-  if [ "$add_duo_repo" == "true" ]; then
-    _log_and_show "${_repo} Adding Duo Security for Unix"
-    if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "i386" ] ; then
-      case "$code_name" in
-        bionic)     duo_repo_url="http://pkg.duosecurity.com/Ubuntu bionic main";
-                    duo_supported="true"
-                    ;;
-        xenial)     duo_repo_url="http://pkg.duosecurity.com/Ubuntu xenial main"
-                    duo_supported="true"
-                    ;;
-        trusty)     duo_repo_url="http://pkg.duosecurity.com/Ubuntu trusty main";
-                    duo_supported="true"
-                    ;;
-        stretch)    duo_repo_url="http://pkg.duosecurity.com/Debian stretch main";
-                    duo_supported="true"
-                    ;;
-        jessie)     duo_repo_url="http://pkg.duosecurity.com/Debian stretch main";
-                    duo_supported="true"
-                    ;;
-        *)          _log_warn "${_warn} Only LTS/Stable versions of Ubuntu/Debian are suported."
-                    _log_warn "${_warn} You are running Unsupported version : ${code_name}"
-                    ;;
-      esac
-      if [[ $duo_supported == "true" ]]; then
-        # Repo keys for duosecurity
-        _log_debug "Downloading GPG key..."
-        wget -q https://duo.com/APT-GPG-KEY-DUO  -O /tmp/ae/duosecurity.gpg >> "$log_file"
-        apt-key add /tmp/ae/duosecurity.gpg |& _add_timestamp_to_logs "${_apt_key_logs}" \
-        || _log_warn "${_error} Adding Duo Key Failed"
-
-        # Add repo
-        echo "deb [arch=$ARCH] ${duo_repo_url} #Duo Unix"  > ${SOURCES_FILE_DIR}/duounix.list
-      fi
-    else
-        _log_warn "${_warn} Architecture: ${ARCH} is not supported. You might manually compile from source."
-    fi
-  else
-        _log_and_show "${_repo} Duo Unix is set to false."
-  fi
 
   # Enable Canonical Partner repos
   # Some Releases like linux mint have their own way of enabling partner repositories,
@@ -2461,8 +2424,9 @@ function all_in_one()
   purge_not_required;
   install_binaries;
   install_snaps;
-  _line_fill;
   set_default;
+  _line_fill;
+
 }
 
 
@@ -2528,16 +2492,16 @@ function _process_menu
                   ;;
       repo_rst)   _show_confirmation_dialog_for_tasks \
                   "Remove External Repositories" \
-                  "I can remove External Repositories added and PPAs in the ppa.list. Apps installed via ppa will be reverted to original versions/uninstalled.\n\nShall I do it for you?" \
+                  "I can remove External Repositories added and PPAs in the ppa. Apps installed via ppa will be reverted to original versions/uninstalled.\n\nShall I do it for you?" \
                   "disable_external_repos"
                   ;;
-      ppa_rst)    _show_confirmation_dialog_for_tasks "Purge PPAs is ppa.list or mentioned in config."\
-                  "PPAs listed in ppa.list or under YAML key config.ppa will be purged.\nhis will install ppa-purge on your system.\n\n Continue"
+      ppa_rst)    _show_confirmation_dialog_for_tasks "Purge PPAs is ppa or mentioned in config."\
+                  "PPAs listed in ppa.list or under YAML key config.ppa will be purged.\nThis will install ppa-purge on your system.\n\n Continue"
                   "purge_ppa"
                   ;;
       purge)      _show_confirmation_dialog_for_tasks \
                   "Purge Unwanted Packages" \
-                  "Shall I Purge Unwanted packages mentioned in purge.list?" \
+                  "Shall I Purge Unwanted packages mentioned in purge?" \
                   "purge_not_required"
                   ;;
       all)        _show_confirmation_dialog_for_tasks \
@@ -2545,26 +2509,26 @@ function _process_menu
                   "all_in_one"
                   ;;
       debs)       _show_confirmation_dialog_for_tasks \
-                  "Download & Install DEB files" "DEB Files in the list deb-files.list will be Download and installed. Proceed with the task?" \
+                  "Download & Install DEB files" "DEB Files in the config will be Download and installed. Proceed with the task?" \
                   "install_debs"
                   ;;
       pip2)       _show_confirmation_dialog_for_tasks \
-                  "Install Python2 packages" "Python packaes for Python 2 mentioned in pip.list will be installed via pip. If necessary python-pip package will be installed from apt. \n\nProceed?" \
+                  "Install Python2 packages" "Python packaes for Python 2 mentioned in config will be installed via pip. If necessary python-pip package will be installed from apt. \n\nProceed?" \
                   "install_pip_packages_2"
                   ;;
       pip3)       _show_confirmation_dialog_for_tasks \
                   "Install Python3 packages" \
-                  "Python packaes for Python 3 listed in pip3.list will be installed via pip. If necessary python3-pip package will be installed from apt.\n\nProceed?" \
+                  "Python packaes for Python 3 mentioned in the config will be installed via pip. If necessary python3-pip package will be installed from apt.\n\nProceed?" \
                   "install_pip_packages_3"
                   ;;
       bin)        _show_confirmation_dialog_for_tasks \
                   "Install Static Binaries" \
-                  "Download & Install binaries listed in bin.list or config.install.binaries?" \
+                  "Download & Install binaries listed in config.install.binaries?" \
                   "install_binaries"
                   ;;
       snaps)     _show_confirmation_dialog_for_tasks \
                   "Install Snap Packages" \
-                  "Download & Install binaries listed inconfig.install.snaps?" \
+                  "Download & Install binaries listed in config.install.snaps?" \
                   "install_snaps"
                   ;;
       log)        _log_debug "Delete log selected"
@@ -2763,16 +2727,24 @@ function main()
 
   _line_fill;
   printf "${_checking} Permissions...\n"
-  if [[ $EUID -ne 0 ]]; then
+
+  if [[ $AE_INTERNAL_NO_EXECUTE == "true" ]]; then
+    set_log_gray
+    printf "${_internal} No Execute ignoring UID checks!\n"
+    set_default
+    # Actual logging starts
+    _init_logging
+    _log_success "${_success} Running as no Execute mode"
+  elif [[ $EUID -ne 0 ]]; then
     set_red;
     printf "${_whoops} Insufficient privileges!!\n"
+    printf "${_error} This script must be run as root.\n"
+    printf "${_error} Please use sudo ${dir}/$SCRIPT to run this as root.\n"
     set_default;
-    printf "${_whoops} This script must be run as root.\n"
-    printf "${_notice} Please use sudo ${dir}/$SCRIPT to run this as root.\n"
     _line_fill;
     exit 2;
   else
-    # Actual logging starts
+    # We were not running in NX mode, and we are root.
     _init_logging
     _log_success "${_success} OK! running as root."
   fi
@@ -2842,10 +2814,7 @@ function main()
     -H | --hide-config)       readonly bool_hide_config="true";
                               _log_and_show "${_info} YAML config will not be displayed."
                               ;;
-      --internal)             ae_internal="true";
-                              ;;
-      --internal-ci-mode)     readonly AE_INTERNAL_CI_MODE="true";
-                              ;;
+      --internal-ci-mode)     readonly AE_INTERNAL_CI_MODE="true";;
       -A | --autopilot)       readonly AE_AUTOPILOT="true";;
       --use-uf-mirror)        _log_and_show "Will use Uni-Freiburg mirror(s) if available";
                               readonly bool_use_uni_freiburg_mirror="true";
@@ -2897,18 +2866,24 @@ function main()
   fi
 
   # Set API Endpoints
-  _set_custom_api_nodes;
+
+  _handle_remote_configs;
+
+  # Version, Config and GPG signature URLS
+  _log_debug "Version Info URL is: ${api_version_url}"
 
   # Get Remote Config File/s, check version & configure
   _version_checks;
 
   _set_yaml_config;
 
-  sleep 3
-
-  if [[ -z ${PS1} ]] && [[ ${AE_AUTOPILOT} != "true" ]]; then
+  if [[ ! -t 1 ]] && [[ $AE_AUTOPILOT != "true" ]]; then
     _log_error "Terminal is not interactive, yet you have not specified --autopilot flag!"
     _log_and_exit "Non Interactive Terminal requires --autopilot" "54"
+  fi
+
+  if [[ $AE_INTERNAL_NO_EXECUTE == "true" ]]; then
+    _log_and_exit "${_internal} No Execute is Active" "255"
   fi
 
   # Autopilot

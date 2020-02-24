@@ -50,7 +50,7 @@ function main()
       --build-arg DISTRO="${distro}" \
       --build-arg CODE_NAME="${release}"  \
       ./dockerfiles/tests
-    docker run --rm -e TRAVIS \
+    docker run --rm \
       -e CI \
       -e DEBUG \
       -e GITHUB_ACTIONS \
