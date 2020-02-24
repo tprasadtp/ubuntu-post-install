@@ -88,8 +88,8 @@
 # Avoid breaking old version checks
 [[redirects]]
   from = "/config/version.yml"
-  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/e1b891d9bf3885cd9939548277deb1392b331b65/config/version.yml"
-  status = 200
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml"
+  status = 301
   force = true
 
 # /version stuff

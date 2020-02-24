@@ -383,7 +383,8 @@ function _init_script_variables()
   bool_check_version="true"
 
   # Define API endpoint for version and config
-  readonly api_version_url="https://ae.prasadt.com/v2/version"
+  # readonly api_version_url="https://ae.prasadt.com/v2/version"
+  readonly api_version_url="https://ae.prasadt.com//config/version.yml"
 
   # Achtung!!
   # ========================================================================================= #
@@ -662,7 +663,7 @@ function _fix_ubuntu_derivatives()
                                             readonly distro_name="ubuntu";
                                             set_magenta;
                                             _log_and_show "${_pre_release} This is Ubuntu 20.04 Focal"
-                                            set_defaults
+                                            set_default
                                             _log_warn "${_warn} Because this is Debian, PPAs are disabled!"
                                             _log_warn "${_warn} This is pre-release version of Ubuntu, Use with caution!"
                                             ;;
@@ -873,13 +874,13 @@ function _version_checks ()
         _log_warn "${_version} A newer release is available.\n${_version} Please download latest release and try again."
         _log_warn "${_version} You are running version ${REL_NAME} with version number ${REL_NUM}."
         _log_and_show "${_version} Latest available version is ${version__name[0]}-${api_rel_num}."
-        _log_and_exit "${_info} You can disable version checks by passing\n${_version} --no-version-checks" "24"
+        _log_and_exit "${_version} You can disable version checks by passing\n${_version} --no-version-checks" "24"
       elif [[ $api_rel_num -eq $REL_NUM ]]; then
         _log_success "${_version} All Good! You are running the latest version of script."
       elif [[ $api_rel_num -lt $REL_NUM ]]; then
-        _log_notice "${_info} Hey Time traveler!\n${_version} You seem to be running a development version of script."
-        _log_notice "${_info} You are running version ${REL_NAME} - ${REL_NUM}."
-        _log_notice "${_info} Latest stable version is ${version__name[0]}-${api_rel_num}."
+        _log_notice "${_version} Hey Time traveler!\n${_version} You seem to be running a development version of script."
+        _log_notice "${_version} You are running version ${REL_NAME} - ${REL_NUM}."
+        _log_notice "${_version} Latest stable version is ${version__name[0]}-${api_rel_num}."
       fi
 
   # If version checks have been disabled
