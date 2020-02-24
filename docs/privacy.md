@@ -14,12 +14,8 @@ The script `after-effects` collects anonymous usage statistics. The following mi
 - Last exit code.
 - System Architecture (x64/x86/ARM/ARM64).
 - Total execution time.
-- Randomized hostname
 - Distribution name (Ubuntu, Linux Mint etc.)
 - Distribution code name (bionic, artful etc)
-- Feature/Task selected.
-- Flags used.
-- Timezone and system language.
 
 !!! tip
 

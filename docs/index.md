@@ -56,7 +56,6 @@ It should work fine. But no promises.
 [![Add-PPA](https://img.shields.io/badge/Add_PPAs-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#add-personal-package-archives-ppa)
 [![Purge-PPA](https://img.shields.io/badge/Purge_PPA-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#what-can-it-do)
 [![Install-Debs](https://img.shields.io/badge/Install_.DEB_Packages-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files)
-
 [![Install-CSnaps](https://img.shields.io/badge/Install_Classic_Snaps-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#installing-snap-packages)
 [![Install-NSnaps](https://img.shields.io/badge/Install_Snaps-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#installing-snap-packages)
 [![Install-EDebs](https://img.shields.io/badge/Install_Edge_snaps-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#installing-snap-packages)

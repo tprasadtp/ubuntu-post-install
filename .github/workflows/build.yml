@@ -96,10 +96,6 @@ jobs:
           ref: gh-pages
           path: pages
           fetch-depth: 0
-      - name: Unshallow
-        run: |
-          cd pages
-          git fetch --prune --unshallow
       - name: Copy _site folder to pages
         run: |
           rsync -avh --ignore-times --delete --filter 'protect pages/.git'  ./_site/ pages/

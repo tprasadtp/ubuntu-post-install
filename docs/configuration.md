@@ -3,7 +3,7 @@
 This Script is designed to be flexible. use `--config-file FILENAME`
 
 - Remote configuration is displayed as `[  R-Config  ]` in the logs and on the screen. To hide it use `--hide-config`
-- Check [Sample YAML](/yaml/#yaml-config) configuration file [here.](/yaml/#yaml-config)
+- Check [Sample YAML](/yaml) configuration file [here.](/yaml)
 
 !!! tip "Using config file"
 
