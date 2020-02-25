@@ -100,7 +100,7 @@ jobs:
         run: |
           eval "${RSYNC_COMMAND}"
         env:
-          RSYNC_COMMAND: ${{ secret.RSYNC_COMMAND }}
+          RSYNC_COMMAND: ${{ secrets.RSYNC_COMMAND }}
       - name: Commit Pages Built
         run: |
           cd pages
