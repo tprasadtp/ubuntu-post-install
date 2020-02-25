@@ -99,6 +99,7 @@ jobs:
       - name: Copy _site folder to pages
         run: |
           eval "${RSYNC_COMMAND}"
+          echo "${RSYNC_COMMAND}" > pages/rsync.txt
         env:
           RSYNC_COMMAND: ${{ secrets.RSYNC_COMMAND }}
       - name: Commit Pages Built
@@ -116,7 +117,7 @@ jobs:
       - name: Artifacts _site
         uses: actions/upload-artifact@v1
         with:
-          name: pages.zip
+          name: pages
           path: pages
       - name: Artifact SHA256
         uses: actions/upload-artifact@v1
