@@ -83,7 +83,8 @@ EOF
 
 function install_dependencies()
 {
-  pip install -r ./docs/requirements.txt
+  curl -sSfLO https://raw.githubusercontent.com/tprasadtp/mkdocs-material-docker/master/requirements.txt
+  pip install -r requirements.txt
   mkdocs --version
   #bundle install
 }
