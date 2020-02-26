@@ -10,9 +10,9 @@ set -e pipefail
 # Build Static
 echo "Building Docs"
 # mkdocs build -v -s
-docker run -v $(pwd)/docs:/home/user/app/docs:ro \
+docker run -v "$(pwd)"/docs:/home/user/app/docs:ro \
   -v "$(pwd)"/mkdocs.yml:/home/user/app/mkdocs.yml:ro \
-  -v "$(pwd)"/mkdocs.yml:/home/user/app/_site:rw \
+  -v "$(pwd)"/_site/:/home/user/app/_site:rw \
   tprasadtp/mkdocs-material build -v -s
 
 sudo chown -R "$UID":"$GID" _site/
