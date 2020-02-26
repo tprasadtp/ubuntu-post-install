@@ -18,55 +18,55 @@ name: build
 env:
   DEBUG: ci
 jobs:
-  # shellcheck:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Prepare
-  #       run: |
-  #         chmod +x after-effects
-  #         chmod +x tests/*.sh
-  #     - name: Shellcheck
-  #       run: ./tests/test-shell-scripts.sh
-  # dockerlint:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Lint Dockerfiles
-  #       run: |
-  #         ./tests/lint-dockerfiles.sh "docs"
-  # ubuntu:
-  #   needs: [ "shellcheck", "dockerlint"]
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       release: [ "bionic", "eoan", "xenial", "host"]
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Ubuntu ${{ matrix.release }}
-  #       run: ./tests/test-distro.sh "ubuntu" "${{ matrix.release }}"
-  # debian:
-  #   needs: [ "shellcheck", "dockerlint"]
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       release: [ "buster", "stretch"]
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Debian ${{ matrix.release }}
-  #       run: ./tests/test-distro.sh "debian" ${{ matrix.release }}
-  # ubuntu-upcoming:
-  #   needs: [ "shellcheck", "dockerlint"]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Test on Ubuntu Upcoming
-  #       run: ./tests/test-pre-release.sh "ubuntu" "focal"
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Prepare
+        run: |
+          chmod +x after-effects
+          chmod +x tests/*.sh
+      - name: Shellcheck
+        run: ./tests/test-shell-scripts.sh
+  dockerlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Lint Dockerfiles
+        run: |
+          ./tests/lint-dockerfiles.sh "docs"
+  ubuntu:
+    needs: [ "shellcheck", "dockerlint"]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        release: [ "bionic", "eoan", "xenial", "host"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Ubuntu ${{ matrix.release }}
+        run: ./tests/test-distro.sh "ubuntu" "${{ matrix.release }}"
+  debian:
+    needs: [ "shellcheck", "dockerlint"]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        release: [ "buster", "stretch"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Debian ${{ matrix.release }}
+        run: ./tests/test-distro.sh "debian" ${{ matrix.release }}
+  ubuntu-upcoming:
+    needs: [ "shellcheck", "dockerlint"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Test on Ubuntu Upcoming
+        run: ./tests/test-pre-release.sh "ubuntu" "focal"
   # Build Docs, artifacts and upload them
   docs:
-    # needs: [ "debian", "ubuntu", "ubuntu-upcoming" ]
+    needs: [ "debian", "ubuntu", "ubuntu-upcoming" ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -98,10 +98,7 @@ jobs:
           fetch-depth: 0
       - name: Copy _site folder to pages
         run: |
-          eval "${RSYNC_COMMAND}"
-          echo "${RSYNC_COMMAND}" > pages/rsync.txt
-        env:
-          RSYNC_COMMAND: ${{ secrets.RSYNC_COMMAND }}
+          rsync -avh --ignore-times --delete --exclude '**/.git/**/*' --exclude '**/.git/' ./_site/ pages/
       - name: Commit Pages Built
         run: |
           cd pages
@@ -110,6 +107,7 @@ jobs:
       # Calculate Checksums
       - name: Compute Checksums
         run: |
+          mkdir checksums
           sha256sum after-effects | tee -a sha256sums.txt
           sha512sum after-effects | tee -a sha512sums.txt
 
@@ -119,13 +117,8 @@ jobs:
         with:
           name: pages
           path: pages
-      - name: Artifact SHA256
+      - name: Artifact Checksums
         uses: actions/upload-artifact@v1
         with:
-          name: sha256sums.txt
-          path: sha256sums.txt
-      - name: Artifact SHA256
-        uses: actions/upload-artifact@v1
-        with:
-          name: sha512sums.txt
-          path: sha512sums.txt
+          name: checksums
+          path: checksums
