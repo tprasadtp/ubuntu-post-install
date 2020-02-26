@@ -1,7 +1,6 @@
 # Ubuntu / Debian Post Installation Script
 
-Effortless way to setup your fresh Ubuntu, Linux Mint, Debian installs. Please read the [FAQ][FAQ] & the [Docs][DOCS]
-before trying out.
+Effortless way to setup your fresh Ubuntu, Linux Mint, Debian installs.
 
 [![build][build-badge]][build-link]
 [![release][release-ci-badge]][release-ci-link]
@@ -44,7 +43,6 @@ Sample configuration can be found here `https://ae.prasadt.com/dl/config/default
 
 See /docs or visit [docs][docs]
 
-[![netlify][netlify-badge]][netlify]
 ![deployed][deployed]
 ![commit][commit]
 ![commit][commit-deployed-ts]

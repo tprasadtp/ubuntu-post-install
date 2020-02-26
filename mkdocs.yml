@@ -1,7 +1,7 @@
 
 # Project information
 site_name: Documentation for After Effects
-site_description: Effortless & Simple Ubuntu post-installation script
+site_description: Effortless & Simple post-installation script for Ubuntu, Linux Mint and Debian
 site_author: Prasad Tengse
 site_url: https://ae.prasadt.com/
 docs_dir: 'docs'
@@ -10,7 +10,7 @@ site_dir: '_site/'
 repo_name: ubuntu-post-install
 repo_url: https://github.com/tprasadtp/ubuntu-post-install
 edit_uri: "blob/master/docs/"
-remote_branch: gh-pages
+remote_branch: master
 remote_name: origin
 
 # Copyright
@@ -19,7 +19,7 @@ copyright: 'Copyright &copy; 2017-2020 Prasad Tengse'
 # Configuration
 theme:
   name: material
-  custom_dir: 'docs/theme-overrides/'
+  # custom_dir: 'docs/theme-overrides/'
 
   # 404 page
   static_templates:
