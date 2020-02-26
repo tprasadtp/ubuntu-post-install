@@ -3,8 +3,7 @@
 <small>An effortless post install script for Ubuntu </small>
 
 
-[![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.svg?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/887c3d5c-5203-46b9-a31d-67cada282f36/deploy-status)](https://app.netlify.com/sites/ubuntu-post-install/deploys)
+![build](https://github.com/tprasadtp/ubuntu-post-install/workflows/build/badge.svg)[![Netlify Status](https://api.netlify.com/api/v1/badges/887c3d5c-5203-46b9-a31d-67cada282f36/deploy-status)](https://app.netlify.com/sites/ubuntu-post-install/deploys)
 [![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=flat&url=https://ae.prasadt.com/config/version.json&query=version.name&prefix=V-)](https://github.com/tprasadtp/ubuntu-post-install/)
 [![What's new?](https://img.shields.io/badge/dynamic/json.svg?label=Whats%20New&style=flat&url=https://ae.prasadt.com/config/version.json&query=version.changelog)](https://ae.prasadt.com/changelogs/)
 [![license](https://img.shields.io/github/license/tprasadtp/ubuntu-post-install.svg?style=flat)](https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE)
@@ -65,8 +64,3 @@ It should work fine. But no promises.
 
 [![Details](assets/images/details.png)](assets/images/details.png)
 [![Details](assets/images/whiptail.png)](assets/images/whiptail.png)
-
-## Up-time
-
-![Up time Robot status](https://img.shields.io/uptimerobot/status/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
-![Up time Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m780628218-79e4106657d18a5abccd3565.svg?style=flat)

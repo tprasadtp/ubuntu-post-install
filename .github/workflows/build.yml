@@ -18,55 +18,55 @@ name: build
 env:
   DEBUG: ci
 jobs:
-  shellcheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Prepare
-        run: |
-          chmod +x after-effects
-          chmod +x tests/*.sh
-      - name: Shellcheck
-        run: ./tests/test-shell-scripts.sh
-  dockerlint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Lint Dockerfiles
-        run: |
-          ./tests/lint-dockerfiles.sh "docs"
-  ubuntu:
-    needs: [ "shellcheck", "dockerlint"]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        release: [ "bionic", "eoan", "xenial", "host"]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Ubuntu ${{ matrix.release }}
-        run: ./tests/test-distro.sh "ubuntu" "${{ matrix.release }}"
-  debian:
-    needs: [ "shellcheck", "dockerlint"]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        release: [ "buster", "stretch"]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Debian ${{ matrix.release }}
-        run: ./tests/test-distro.sh "debian" ${{ matrix.release }}
-  ubuntu-upcoming:
-    needs: [ "shellcheck", "dockerlint"]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Test on Ubuntu Upcoming
-        run: ./tests/test-pre-release.sh "ubuntu" "focal"
+  # shellcheck:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Prepare
+  #       run: |
+  #         chmod +x after-effects
+  #         chmod +x tests/*.sh
+  #     - name: Shellcheck
+  #       run: ./tests/test-shell-scripts.sh
+  # dockerlint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Lint Dockerfiles
+  #       run: |
+  #         ./tests/lint-dockerfiles.sh "docs"
+  # ubuntu:
+  #   needs: [ "shellcheck", "dockerlint"]
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       release: [ "bionic", "eoan", "xenial", "host"]
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Ubuntu ${{ matrix.release }}
+  #       run: ./tests/test-distro.sh "ubuntu" "${{ matrix.release }}"
+  # debian:
+  #   needs: [ "shellcheck", "dockerlint"]
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       release: [ "buster", "stretch"]
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Debian ${{ matrix.release }}
+  #       run: ./tests/test-distro.sh "debian" ${{ matrix.release }}
+  # ubuntu-upcoming:
+  #   needs: [ "shellcheck", "dockerlint"]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Test on Ubuntu Upcoming
+  #       run: ./tests/test-pre-release.sh "ubuntu" "focal"
   # Build Docs, artifacts and upload them
   docs:
-    needs: [ "debian", "ubuntu", "ubuntu-upcoming" ]
+    # needs: [ "debian", "ubuntu", "ubuntu-upcoming" ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

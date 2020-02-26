@@ -6,6 +6,7 @@ LABEL maintainer "Prasad Tengse <tprasadtp@users.noreply.github.com>"
 ENV DEBIAN_FRONTEND noninteractive
 # Install essentials
 WORKDIR /shared
+# hadolint ignore=DL3008
 RUN apt-get -qq update \
     && apt-get install -qq -y --no-install-recommends \
       wget \

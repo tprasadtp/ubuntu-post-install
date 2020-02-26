@@ -2705,6 +2705,10 @@ function _process_non_root_options()
                           ;;
       -l | --delete-log)  delete_log_file;
                           ;;
+      -L | --lists)       set_red;
+                          printf "${_error} List mode is no longer supported.";
+                          set_default;
+                          exit 53;;
         -h | --help)      display_usage;
                           exit 0;
                           ;;
@@ -2773,7 +2777,7 @@ function main()
       -d | --purge)           bool_purge_not_required_pkgs="true";
                               _log_and_show "${_purge} Purge packages is set to true."
                               _log_warn "${_warn} No checks are being made on the Packages in the list."
-                              _log_warn "${_warn} Use carefully!. Purging something like sudo is stupid idea!"
+                              _log_warn "${_warn} Use carefully!. Purging system packages is stupid idea!"
                               ;;
       -y | --yes)             bool_say_yes_to_all="true";
                               _log_warn "${_warn} -y | --yes is deprecated, Use Autopilot instead";

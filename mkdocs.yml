@@ -44,15 +44,12 @@ theme:
   favicon: assets/images/favicon.png
   logo:
     icon: "book"
-
-# tasksization
 extra:
   social:
     - type: globe
       link: https://ae.prasadt.com
     - type: github-alt
       link: https://github.com/tprasadtp
-
 # Extensions
 markdown_extensions:
   - markdown.extensions.admonition
@@ -82,31 +79,37 @@ markdown_extensions:
       repo_url_shorthand: true
       user: tprasadtp
       repo: ubuntu-post-install
-
 # Page tree
 nav:
   - Introduction: index.md
-  - Getting Started: getting-started.md
+  - Usage: usage.md
   - FAQ:
     - Dependencies: faq/dependencies.md
     - Distros: faq/distros.md
-    - Errors & Issues: faq/errors.md
+    - Errors: faq/errors.md
     - Others: faq/others.md
     - Exit Codes: faq/exit-codes.md
     - Debugging: faq/debug.md
   - Options: clioptions.md
-  - What can it do?: tasks.md
+  - Tasks: tasks.md
   - Configuration: configuration.md
-  - Example Config YAML: yaml.md
+  - Example Config: yaml.md
   - Logs: logs.md
   - Testing: testing.md
   - News:
     - Changelog: changelogs.md
   - Other:
     - License: license.md
-    - Privacy Policy: privacy.md
+    - Privacy: privacy.md
 
 # Google Analytics
 google_analytics:
   - UA-101760811-5
   - auto
+
+plugins:
+  - search
+  - minify:
+      minify_html: true
+  - git-revision-date-localized:
+      type: timeago

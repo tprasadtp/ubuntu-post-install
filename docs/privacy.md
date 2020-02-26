@@ -1,12 +1,12 @@
 # Privacy Policy
 
-Privacy policy related to website is available [here](https://prasadt.com/privacy-policy).
-
 ## Anonymous stats collection
 
 !!! info
     - Your passwords, usernames, environment variables or anything sensitive is not collected.
     - This feature is currently **disabled**
+    - No personally identifiable information is collected or reported back.
+    - This feature can be disabled via `--no-stats` flag.
 
 The script `after-effects` collects anonymous usage statistics. The following might be collected.
 
@@ -16,8 +16,3 @@ The script `after-effects` collects anonymous usage statistics. The following mi
 - Total execution time.
 - Distribution name (Ubuntu, Linux Mint etc.)
 - Distribution code name (bionic, artful etc)
-
-!!! tip
-
-    - No personally identifiable information is collected or reported back.
-    - This feature can be disabled via `--no-stats` flag.

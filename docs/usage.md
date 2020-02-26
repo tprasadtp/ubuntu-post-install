@@ -1,4 +1,4 @@
-# How to use?
+# How to
 
 ## Step 1: Get the script
 
@@ -8,7 +8,7 @@ wget -q https://ae.prasadt.com/get -O after-effects
 
 ## Step 2: Update the config to suit your needs
 
-Update the config files to suit your needs. Please see [Configuration](/config/) & [Tasks](/tasks) for more details. Some example configs can be found [here](https://github.com/tprasadtp/ubuntu-post-install/tree/master/config).
+Update the config files to suit your needs. Please see [Configuration](/configuration/) & [Tasks](/tasks/) for more details. Some example configs can be found [here](https://github.com/tprasadtp/ubuntu-post-install/tree/master/config).
 
 ## Step 3: Run it
 

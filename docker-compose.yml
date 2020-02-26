@@ -1,10 +1,12 @@
 version: "2.4"
 services:
   site:
-    image: tprasadtp/mkdocs-material
+    image: tprasadtp/mkdocs-material:latest-user
     # userns_mode: host
+    command: serve --dev-addr=0.0.0.0:8000
     volumes:
-      - ./docs:/home/user/app/docs:ro
-      - ./mkdocs.yml:/home/user/app/mkdocs.yml:ro
+      - ./.git:/home/user/docs/.git:ro
+      - ./docs:/home/user/docs/docs:ro
+      - ./mkdocs.yml:/home/user/docs/mkdocs.yml:ro
     ports:
       - 127.0.0.1:8000:8000
