@@ -1,6 +1,6 @@
 # Ubuntu / Debian Post Installation Script
 
-Effortless way to setup your fresh Ubuntu, Linux Mint, Debian installs.
+Effortless way to setup your fresh Ubuntu, Linux Mint and Debian installation.
 
 [![build][build-badge]][build-link]
 [![release][release-ci-badge]][release-ci-link]

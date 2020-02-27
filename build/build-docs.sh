@@ -12,12 +12,13 @@ echo "Building Docs"
 # mkdocs build -v -s
 docker run -v "$(pwd)":/docs tprasadtp/mkdocs-material build -v -s
 
-sudo chown -R "$UID":"$GID" _site/
+sudo chown -R "$USER" _site/
 
 echo "Copy Netlify Files"
 cp  ./netlify.toml ./_site/netlify.toml
 mkdir -p ./_site/build
 cp ./build/netlify-build.sh ./_site/build/netlify-build.sh
+chmod +x ./_site/build/netlify-build.sh
 
 COMMIT_SHORT="${GITHUB_SHA:0:7}"
 cat <<EOT > ./_site/commit.json

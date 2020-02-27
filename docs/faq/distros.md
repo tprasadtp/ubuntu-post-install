@@ -66,6 +66,3 @@ A Complete  list of supported distributions is given below.
 
     - Support for Pre-release builds, **experimental** and things might break.
     - It is strongly advised to use them in a chroot or a in a VM and **not** as a daily driver.
-
-??? info "New App-store on Linux Mint 18.3 and above"
-    Linux mint 18.3 & later releases uses a new App-Store, from which you can directly install Chrome and other popular tools. There may be some conflicts in the `/etc/apt/sources.list.d`. Where, a single repository might be configured multiple times with same priority. Use it with caution. The scripts are not tested on Travis on Linux Mint.

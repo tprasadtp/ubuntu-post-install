@@ -1,6 +1,6 @@
 # After-Effects
 
-<small>An effortless post install script for Ubuntu </small>
+<small>An Effortless & Simple post-installation script for Ubuntu, Linux Mint and Debian </small>
 
 
 ![build](https://github.com/tprasadtp/ubuntu-post-install/workflows/build/badge.svg)[![Netlify Status](https://api.netlify.com/api/v1/badges/887c3d5c-5203-46b9-a31d-67cada282f36/deploy-status)](https://app.netlify.com/sites/ubuntu-post-install/deploys)

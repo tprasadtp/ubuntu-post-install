@@ -1,6 +1,5 @@
-
 # Project information
-site_name: Documentation for After Effects
+site_name: After Effects
 site_description: Effortless & Simple post-installation script for Ubuntu, Linux Mint and Debian
 site_author: Prasad Tengse
 site_url: https://ae.prasadt.com/
@@ -20,11 +19,9 @@ copyright: 'Copyright &copy; 2017-2020 Prasad Tengse'
 theme:
   name: material
   # custom_dir: 'docs/theme-overrides/'
-
   # 404 page
   static_templates:
     - 404.html
-
   extra:
     manifest: 'manifest.webmanifest'
 
@@ -36,7 +33,7 @@ theme:
   feature:
     tabs: true
   palette:
-    primary: indigo
+    primary: blue
     accent: cyan
   font:
     text: Roboto
@@ -87,7 +84,6 @@ nav:
     - Dependencies: faq/dependencies.md
     - Distros: faq/distros.md
     - Errors: faq/errors.md
-    - Others: faq/others.md
     - Exit Codes: faq/exit-codes.md
     - Debugging: faq/debug.md
   - Options: clioptions.md
@@ -97,6 +93,7 @@ nav:
   - Logs: logs.md
   - Testing: testing.md
   - News:
+    # - Release Notes: release-notes.md
     - Changelog: changelogs.md
   - Other:
     - License: license.md
