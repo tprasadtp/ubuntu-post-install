@@ -21,6 +21,7 @@ jobs:
       run: |
         sha256sum after-effects | tee -a sha256sums.txt
         sha512sum after-effects | tee -a sha512sums.txt
+        sleep 50
 
     - name: Get Site artifacts
       uses: actions/download-artifact@v1
