@@ -70,13 +70,11 @@ jobs:
 
     - name: Lister
       run: |
-        cd artifacts
+        cd artifacts/pages/
         ls -al
-        ls pages/
-        ls checksums
+        git log --oneline -n 10
 
-    - name: List
-      run: git log --oneline -n 10
+
 
     # # create a release on tag
     # - name: Create Release
