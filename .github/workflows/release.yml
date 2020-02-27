@@ -1,13 +1,16 @@
 name: release
 on:
   push:
-    tags:
-      - v*
+    # tags:
+    #   - v*
 jobs:
   release:
     needs: docs
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
     - name: Get the version
       id: get_version
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
@@ -15,11 +18,10 @@ jobs:
     - name: Version
       run: echo $VERSION
 
-    - name: Get Checksum artifacts
-      uses: actions/download-artifact@v1
-      with:
-        name: checksums
-        path: artifacts/checksums
+    - name: Checksums
+      run: |
+        sha256sum after-effects | tee -a sha256sums.txt
+        sha512sum after-effects | tee -a sha512sums.txt
 
     - name: Get Site artifacts
       uses: actions/download-artifact@v1
@@ -33,6 +35,9 @@ jobs:
         ls -al
         ls pages/
         ls checksums
+
+    - name: List
+      run: git log --oneline -n 10
 
     # # create a release on tag
     # - name: Create Release
@@ -88,4 +93,24 @@ jobs:
     #     upload_url: ${{ steps.create_release.outputs.upload_url }}
     #     asset_path: sha512sum.txt
     #     asset_name: sha512sum.txt
+    #     asset_content_type: text/plain
+    # - name: Upload Version
+    #   uses: actions/upload-release-asset@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`
+    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+    #     asset_path: config/version.yml
+    #     asset_name: version.yml
+    #     asset_content_type: text/plain
+    # - name: Upload VERSION SIG
+    #   uses: actions/upload-release-asset@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`
+    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+    #     asset_path: config/version.yml.asc
+    #     asset_name: version.yml.asc
     #     asset_content_type: text/plain

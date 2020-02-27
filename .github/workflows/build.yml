@@ -98,21 +98,9 @@ jobs:
           cd pages
           git add --all
           git commit -s -m "Pages deploy ${GITHUB_SHA:0:7} BUILD-${GITHUB_RUN_NUMBER}"
-      # Calculate Checksums
-      - name: Compute Checksums
-        run: |
-          mkdir checksums
-          sha256sum after-effects | tee -a sha256sums.txt
-          sha512sum after-effects | tee -a sha512sums.txt
-
       # Upload site data and checksums to artifacts
       - name: Artifacts _site
         uses: actions/upload-artifact@v1
         with:
           name: pages
           path: pages
-      - name: Artifact Checksums
-        uses: actions/upload-artifact@v1
-        with:
-          name: checksums
-          path: checksums
