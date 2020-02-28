@@ -9,6 +9,9 @@
 #              - whiptail, wget, iputils-ping, awk, sed, grep
 #
 
+readonly AE_EXEC_START=$(date +%s)
+readonly SCRIPT=$(basename "$0")
+
 case "${DEBUG}" in
   1 | "yes" | "true" | "TRUE")     AE_DEBUG=1;set -o pipefail;;
   "internal")                      AE_DEBUG=2;set -o pipefail;;
@@ -17,11 +20,16 @@ case "${DEBUG}" in
   *)                               AE_DEBUG=0;set -o pipefail;;
 esac
 
-readonly AE_EXEC_START=$(date +%s)
-readonly SCRIPT=$(basename "$0")
+# SCRIPT METADATA
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 readonly REL_NAME="5.6.0 Beta"
 readonly REL_NUM=560
+
+# YQ CHECKSUMS
+readonly YQ_AMD64_SHA512="5d315287d04b7689eb9061980db5c8a1e093b7561c769478c348e2ae38b5ea7524fd822f63bab3606864ba6b1a9df83377fa530c293369aa91c51c30dc2a8d5f"
+readonly YQ_ARM64_SHA512="5d315287d04b7689eb9061980db5c8a1e093b7561c769478c348e2ae38b5ea7524fd822f63bab3606864ba6b1a9df83377fa530c293369aa91c51c30dc2a8d5f"
+readonly YQ_ARM_SHA512="5d315287d04b7689eb9061980db5c8a1e093b7561c769478c348e2ae38b5ea7524fd822f63bab3606864ba6b1a9df83377fa530c293369aa91c51c30dc2a8d5f"
+readonly YQ_BASE_URL="https://github.com/tprasadtp/yq-bin-for-ae/releases/latest/download/"
 
 function _init_printf_variables()
 {
