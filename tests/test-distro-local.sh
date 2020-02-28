@@ -26,10 +26,12 @@ function main()
     config_yml="$3"
   fi
 
+  docker_tag="${distro//[\/]/-}-${release}"
+
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
   echo "Building $distro:$release Docker Image"
-  docker build -t ae:"${distro}-${release}" \
+  docker build -t ae:"${docker_tag}" \
     --build-arg DISTRO="${distro}" \
     --build-arg CODE_NAME="${release}"  \
     ./dockerfiles/tests
@@ -40,9 +42,9 @@ function main()
     -e DEBUG \
     -e GITHUB_ACTIONS \
     -e AE_INTERNAL_NO_EXECUTE \
-    --hostname="${distro}-${release}" \
+    --hostname="${docker_tag}" \
     -v "$(pwd)":/shared \
-    ae:"${distro}-${release}" \
+    ae:"${docker_tag}" \
     ./after-effects \
     --simulate \
     --fix \

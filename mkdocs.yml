@@ -93,7 +93,6 @@ nav:
   - Logs: logs.md
   - Testing: testing.md
   - News:
-    # - Release Notes: release-notes.md
     - Changelog: changelogs.md
   - Other:
     - License: license.md

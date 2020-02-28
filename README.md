@@ -165,7 +165,7 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [netlify]: https://app.netlify.com/sites/ubuntu-post-install/deploys
 
 
-[version]: https://img.shields.io/badge/dynamic/json.svg?label=version&style=flat&url=https://ae.prasadt.com/config/version.json&query=version.name
+[version]: https://img.shields.io/badge/dynamic/yaml.svg?label=Version&style=flat&url=https://ae.prasadt.com/config/version.yml&query=version.name
 [new]: https://img.shields.io/badge/dynamic/json.svg?label=news&style=flat&url=https://ae.prasadt.com/config/version.json&query=version.changelog
 
 
@@ -173,5 +173,5 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [commit-deployed-ts]: https://img.shields.io/badge/dynamic/json.svg?label=on&style=flat&url=https://ae.prasadt.com/commit.json&query=ts
 [deployed]: https://img.shields.io/badge/dynamic/json.svg?label=deployed&color=success&style=flat&prefix=%23&url=https://ae.prasadt.com/commit.json&query=build.number
 
-[gpl-badge]: https://img.shields.io/badge/license-GPLv3-green
+[gpl-badge]: https://img.shields.io/badge/License-GPLv3-ff69b4
 [license]: https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE

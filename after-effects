@@ -75,11 +75,13 @@ function _init_printf_variables()
     readonly            _apt="[  APT-Packges  ]"
     readonly           _snap="[    Snap PKG   ]"
     readonly        _success="[    Success    ]"
-    #readonly           _falg="[     Flag      ]"
+    readonly       _dev_mode="[    DEV-MODE   ]"
 
     #colors for display
     readonly YELLOW=$'\e[33m'
     readonly GREEN=$'\e[32m'
+    readonly BOLD_GREEN=$'\e[1;32m'
+    readonly BOLD_ORANGE=$'\e[1;38;5;209m'
     readonly RED=$'\e[31m'
     readonly BLUE=$'\e[34m'
     readonly NC=$'\e[0m'
@@ -87,6 +89,7 @@ function _init_printf_variables()
     readonly GRAY=$'\e[38;5;247m'
     readonly LOG_GRAY=$'\e[38;5;241m'
     readonly INTERNAL_GRAY=$'\e[38;5;244m'
+
 
     # Generate a UUID
     readonly CLIENT_ID=$(cat /proc/sys/kernel/random/uuid)
@@ -100,7 +103,6 @@ function _init_logging()
   # Only variables necessary for logging & start logging
   # Script related variables are defined in _init_script_variables
   readonly log_file="$dir"/logs/after-effects.log
-  printf "${GRAY}${_debug} Creating Logs folder $dir/logs/${NC}\n"
   {
     mkdir -p "$dir"/logs
   } ||
@@ -194,7 +196,9 @@ function set_default()
 
 function _goodbye_msg ()
 {
-  printf "\nShow your support by starring the repo on GitHub.\n Link - ${BLUE}https://git.io/Jv08V${MAGENTA}\nHave a great time with this Linux Machine.${NC}"
+  printf "\n✰  ${BOLD_ORANGE}Show your support by starring this repo on GitHub.${NC}"
+  printf "\n🔗 ${BOLD_GREEN}Link ${NC}- ${BLUE}https://git.io/Jv08V${MAGENTA}"
+  printf "\n⟿  Have a great time with this Linux Machine.${NC}\n"
 }
 
 
@@ -206,7 +210,7 @@ function _log_and_exit()
   printf "${RED}$msg${NC}\n";
   {
     printf "[$(date)] ${msg}\n" >> "$log_file";
-    printf "\nFinished %s on $(date).\nExit code: %d\n" "$SCRIPT" "$2"
+    printf "\nFinished %s on $(date).\nExit code: $(date)\n"
   } >> "$log_file"
   report_stats
   _line_fill
@@ -226,7 +230,7 @@ function _script_exit_log()
     # Generate Exit message & log
     _goodbye_msg
     _log_debug "Exiting Script"
-    printf "\nFinished %s in %d seconds, on %s.\nLast exit code was: %d\n" "$SCRIPT" "$EXEC_TIME" "$(date)" "$?" | tee -a "$log_file"
+    _log_debug "Finished $SCRIPT in $EXEC_TIME seconds, on %s.\n"
     _line_fill >> "$log_file"
     return 0
 }
@@ -261,6 +265,13 @@ function _log_warn()
   local msg="$1"
   printf "${YELLOW}$msg ${NC}\n"
   printf "[$(date)] $msg\n" >> "$log_file"
+}
+
+function _log_dev()
+{
+  local msg="$1"
+  printf "${BOLD_ORANGE}${_dev_mode} $msg ${NC}\n"
+  printf "[$(date)] ${_dev_mode} $msg\n" >> "$log_file"
 }
 
 function _log_internal()
@@ -382,9 +393,16 @@ function _init_script_variables()
 
   bool_check_version="true"
 
-  # Define API endpoint for version and config
-  # readonly api_version_url="https://ae.prasadt.com/v2/version"
-  readonly api_version_url="https://ae.prasadt.com//config/version.yml"
+  # Internal checks
+  if [ "$AE_INTERNAL_CI_MODE" == "true" ]; then
+    _log_dev "Enforcing CI MODE"
+    # Define API endpoint for version and config
+    _log_dev "Overriding Metadata Endpoint"
+    readonly api_version_url="https://ae.prasadt.com/config/version.yml"
+  else
+    readonly api_version_url="https://ae.prasadt.com/config/version.yml"
+  fi
+
 
   # Achtung!!
   # ========================================================================================= #
@@ -618,28 +636,28 @@ function _fix_ubuntu_derivatives()
   _log_debug "Variable code_name is : $code_name"
   case ${code_name} in
       sarah | serena | sonya | sylvia )     _log_and_show "${_linuxmint} Release is Linux mint 18.X."
-                                            _log_and_show "${_notice} Setting additional repositories to follow Ubuntu 16.04."
+                                            _log_and_show "${_linuxmint} Setting additional repositories to follow Ubuntu 16.04."
                                             code_name="xenial";
                                             readonly distro_name="ubuntu";
                                             readonly enable_ppa="true";
                                             _log_success "${_linuxmint} Changed codename to $code_name"
                                             ;;
       tara | tessa | tina | tricia)         _log_and_show "${_linuxmint} Release is Linux mint 19.X."
-                                            _log_and_show "${_notice} Setting additional repositories to follow Ubuntu 18.04."
+                                            _log_and_show "${_linuxmint} Setting additional repositories to follow Ubuntu 18.04."
                                             code_name="bionic";
                                             readonly distro_name="ubuntu";
                                             readonly enable_ppa="true";
                                             _log_success "${_linuxmint} Changed codename to $code_name"
                                             ;;
       loki )                                _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 16.04 Xenial."
-                                            _log_and_show "${_notice} External repositories will use Ubuntu 16.04."
+                                            _log_and_show "${_elementary} External repositories will use Ubuntu 16.04."
                                             code_name="xenial";
                                             readonly distro_name="ubuntu";
                                             readonly enable_ppa="true";
                                             _log_success "${_elementary} Changed codename to $code_name"
                                             ;;
       juno | hera)                          _log_and_show "${_elementary} This release of Elementary OS is based on Ubuntu 18.04 Bionic."
-                                            _log_and_show "${_notice} External repositories will use Ubuntu 18.04."
+                                            _log_and_show "${_elementary} External repositories will use Ubuntu 18.04."
                                             code_name="bionic";
                                             readonly distro_name="ubuntu";
                                             readonly enable_ppa="true";
@@ -1459,29 +1477,29 @@ function add_repositories()
     # 64 bit Only REPOS
     # Add Google Chrome and Google Earth
     if [ "$add_google_repo" == "true" ]; then
-      _log_and_show "${_repo} Google repositories"
+      _log_and_show "${_repo}Google Chrome & Google Earth"
       _log_debug "Adding Google package signing Key"
       wget -q  https://dl.google.com/linux/linux_signing_key.pub -O /tmp/ae/google_signing_key.pub >> $"$log_file"
       _log_debug "Adding Google key to trusted keys list"
       apt-key add /tmp/ae/google_signing_key.pub |& _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_warn "${_error} Adding trusted keys for Google failed."
 
-      _log_and_show "${_repo} Google Chrome repository"
+      _log_and_show "${_repo} Google Chrome"
       echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main #Google-Chrome" > ${SOURCES_FILE_DIR}/google-chrome.list \
       || _log_warn "${_error} Adding Google Chrome Repository failed"
 
-      _log_and_show "${_repo} Google Earth repository"
+      _log_and_show "${_repo} Google Earth"
 
       echo "deb [arch=amd64] http://dl.google.com/linux/earth/deb/ stable main #Google-Earth" > ${SOURCES_FILE_DIR}/google-earth.list \
       || _log_warn "${_error} Adding Google Chrome repository failed"
     else
-      _log_and_show "${_repo} Chrome repository is set to false. Skipping."
+      _log_and_show "${_repo} Skipped Google chrome, Google Earth"
     fi
 
 
     # Spotify client
     if [ "$add_spotify_repo" == "true" ]; then
-      _log_and_show "${_repo} Spotify repository"
+      _log_and_show "${_repo} Spotify"
       _log_debug "Adding Spotify keys"
       wget -q   https://download.spotify.com/debian/pubkey.gpg -O /tmp/ae/spotify_signing_key.pub >> $"$log_file"
       apt-key add /tmp/ae/spotify_signing_key.pub  2>&1 \
@@ -1491,12 +1509,12 @@ function add_repositories()
       echo "deb [arch=$ARCH] http://repository.spotify.com stable non-free #Spotify" > ${SOURCES_FILE_DIR}/spotify.list \
       || _log_warn "${_error} Adding Spotify Repository Failed"
     else
-      _log_and_show "${_repo} Spotify repository is set to false. Skipping."
+      _log_and_show "${_repo} Skipped Spotify."
     fi
 
     # Insync
     if [ "$add_insync_repo" == "true" ] && [ "$bool_is_debian" != "true" ]; then
-      _log_and_show "${_repo} Insync repository"
+      _log_and_show "${_repo} Insync"
       _log_debug "Adding Insync keys"
       apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ACCAF35C  2>&1 \
       | _add_timestamp_to_logs "${_apt_key_logs}" \
@@ -1510,7 +1528,7 @@ function add_repositories()
       _log_warn "${_info} Please use debfile instead of repositoris."
       _log_notice "${_info} Visit https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files"
     else
-      _log_and_show "${_repo} Insync repository is set to false. Skipping."
+      _log_and_show "${_repo} Skipped InSync"
     fi
 
 
@@ -1525,25 +1543,25 @@ function add_repositories()
 
     if [ "$add_googlecloud_repo" == "true" ]; then
       CLOUD_SDK_REPO="cloud-sdk-${code_name}"
-      _log_and_show "${_repo} Google-Cloud-SDK repository"
+      _log_and_show "${_repo} Google-Cloud-SDK"
       echo "deb [arch=$ARCH] http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  \
-      || _log_warn "${_error} Adding Google Clouf SDK Repository failed"
+      || _log_warn "${_error} Adding Google Cloud SDK Repository failed"
     else
-      _log_and_show "${_repo} Google Cloud SDK repository is set to false. Skipping."
+      _log_and_show "${_repo} Skipped Google Cloud SDK."
     fi
 
     if [ "$add_gcsfuse_repo" == "true" ]; then
       GCSFUSE_REPO="gcsfuse-${code_name}"
-      _log_and_show "${_repo} GCSFUSE repository"
+      _log_and_show "${_repo} GCSFUSE"
       echo "deb http://packages.cloud.google.com/apt $GCSFUSE_REPO main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list  \
       || _log_warn "${_error} Adding GCSFUSE Repository failed"
     else
-      _log_and_show "${_repo} GCSFUSE repository is set to false. Skipping."
+      _log_and_show "${_repo} Skipped GCSFUSE"
     fi
 
     # Skype
     if [ "$add_skype_repo" == "true" ]; then
-      _log_and_show "${_repo} Skype for Linux repository"
+      _log_and_show "${_repo} Skype for Linux"
       _log_debug "Getting Skype repository key"
       wget -q https://repo.skype.com/data/SKYPE-GPG-KEY -O /tmp/ae/skype-linux-key.gpg >> "$log_file"
       _log_debug "Adding Skype keys to trusted list"
@@ -1552,45 +1570,45 @@ function add_repositories()
       echo "deb [arch=$ARCH] https://repo.skype.com/deb stable main #Skype" > $SOURCES_FILE_DIR/skype-stable.list \
       || _log_warn "${_error} Adding Skype for linux repository failed"
     else
-      _log_and_show "${_repo} Skype repository is set to false. Skipping."
+      _log_and_show "${_repo} Skipped Skype for Linux."
     fi
 
     # Visual Studio Code
     if [ "$add_vscode_repo" == "true" ]; then
-      _log_and_show "${_repo} Visual Studio Code repository"
+      _log_and_show "${_repo} Visual Studio Code"
       _log_debug "Getting GPG keys for repository"
       wget -q https://packages.microsoft.com/keys/microsoft.asc -O /tmp/ae/microsoft.asc
       _log_debug "Adding Key to trusted GPG keys directory"
       apt-key add /tmp/ae/microsoft.asc |& _add_timestamp_to_logs "${_apt_key_logs}" || _log_warn "${_error} Adding Visual Studio Code key failed"
       echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list
     else
-      _log_and_show "${_repo} Visual Studio repository is set to false. Skipping."
+      _log_and_show "${_repo} Skipped Visual Studio Code."
     fi
 
     # Signal App
     if [ "$add_signal_repo" == "true" ]; then
-      _log_and_show "${_repo} Signal repository"
+      _log_and_show "${_repo} Signal Desktop"
       wget -q https://updates.signal.org/desktop/apt/keys.asc -O /tmp/ae/signal.asc >> "$log_file"
       apt-key add /tmp/ae/signal.asc  |& _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_warn "${_error} Adding Signal Key Failed"
       echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/signal-xenial.list
     else
-      _log_and_show "${_repo} Signal repository is set to false. Skipping."
+      _log_and_show "${_repo} Skipped Signal Desktop."
     fi
 
     # Mendeley Desktop App
     if [ "$add_mendeley_repo" == "true" ]; then
-      _log_and_show "${_repo} Mendeley repository"
+      _log_and_show "${_repo} Mendeley Desktop"
       apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 |& _add_timestamp_to_logs "${_apt_key_logs}" \
       || _log_warn "${_error} Adding Mendeley Desktop Key Failed"
       echo "deb [arch=$ARCH] https://desktop-download.mendeley.com/download/apt stable main #Mendeley-Desktop"  > ${SOURCES_FILE_DIR}/mendeleydesktop.list
     else
-      _log_and_show "${_repo} Mendeley Desktop is set to false."
+      _log_and_show "${_repo} Skipped Mendeley Desktop"
     fi
 
     # Duo Unix
     if [ "$add_duo_repo" == "true" ]; then
-      _log_and_show "${_repo} Adding Duo Security for Unix"
+      _log_and_show "${_repo} Duo Security for Unix"
       case "$code_name" in
         bionic)     duo_repo_url="http://pkg.duosecurity.com/Ubuntu bionic main";
                     duo_supported="true"
@@ -1630,7 +1648,7 @@ function add_repositories()
 
   #Wine HQ
   if [ "$add_winehq_repo" == "true" ]; then
-    _log_and_show "${_repo} WineHQ repository"
+    _log_and_show "${_repo} WineHQ"
     _log_debug "Getting WineHQ repository Key"
     wget -q https://dl.winehq.org/wine-builds/winehq.key -O /tmp/ae/wine-hq-sigining-key.key >> "$log_file"  2>&1
     _log_debug "Adding WineHQ key"
@@ -1640,13 +1658,13 @@ function add_repositories()
     echo "deb https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list \
     || _log_warn "${_error} Adding WineHQ repository failed"
   else
-    _log_and_show "${_repo} WineHQ repository is set to false. Skipping."
+    _log_and_show "${_repo} Skipped WineHQ."
   fi
 
   # Docker CE
   if [ "$add_docker_repo" == "true" ]; then
     if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "armhf" ]; then
-      _log_and_show "${_repo} Docker-CE repository"
+      _log_and_show "${_repo} Docker-CE"
       _log_debug "Getting Docker-CE repository Key"
       wget -q https://download.docker.com/linux/"${distro_name}"/gpg -O /tmp/ae/docker-key.gpg >> "$log_file"  2>&1
       _log_debug "Adding Docker repository key"
@@ -1659,7 +1677,7 @@ function add_repositories()
       _log_warn "${_error} Architecture not supported!. Please use docker.io package from your distro."
     fi
   else
-    _log_debug "Adding Docker-CE repository is set to false. Skipping."
+    _log_debug "Skipped Docker-CE"
   fi
 
 
@@ -1675,15 +1693,6 @@ function add_repositories()
 
 
   if [ "$add_ros_repo" == "true" ]; then
-
-    # Unstable/RC repos
-    if [[ $ros_rc_repo == "true" ]]; then
-      _log_warn "${_repo} Using ROS Release candidate [ROS Shadow Fixed] repositories"
-      ros_repo_path="ros-shadow-fixed"
-    else
-      _log_and_show "${_repo} Using stable version of ROS"
-      ros_repo_path="ros"
-    fi
 
     # Distro/Version/Arch checks
     if [[ $distro_name == "ubuntu" ]]; then
@@ -1723,10 +1732,10 @@ function add_repositories()
        if [[ $bool_use_uni_freiburg_mirror == "true" ]] && [[ $distro_name == "ubuntu" ]]; then
          _log_warn "Using Uni-Freiburg Mirror! This mirror might not be upto date with primary ROS repository!."
          _log_warn "You may need authentication or have to be inside Uni-Freiburg network!"
-         echo "deb http://packages.ros.org.ros.informatik.uni-freiburg.de/${ros_repo_path}/ubuntu ${code_name} main #ROS-Repo-Uni-Freiburg" > $SOURCES_FILE_DIR/ros-latest.list \
+         echo "deb http://packages.ros.org.ros.informatik.uni-freiburg.de/ros/ubuntu ${code_name} main #ROS-Repo-Uni-Freiburg" > $SOURCES_FILE_DIR/ros-latest.list \
          || _log_warn "${_error} Adding ROS [Uni-Freiburg] repository failed!"
       else
-        echo "deb http://packages.ros.org/${ros_repo_path}/ubuntu ${code_name} main #ROS-Repo" > $SOURCES_FILE_DIR/ros-latest.list \
+        echo "deb http://packages.ros.org/ros/ubuntu ${code_name} main #ROS-Repo" > $SOURCES_FILE_DIR/ros-latest.list \
         || _log_warn "${_error} Adding ROS repository failed!"
        fi
 
@@ -2131,7 +2140,7 @@ function _install_pip_python()
         # shellcheck disable=SC2086
         apt-get -q -y -s --no-install-recommends install "${dependency_packages[@]}" |& _add_timestamp_to_logs "${_apt_logs}"
       elif [ "$simulate_apt_install" == "true" ] && [ "$AE_INTERNAL_CI_MODE" == "true" ]; then
-        _log_warn "${_simulate} This is CI disregarding --simulate flag for installing pip dependencies"
+        _log_dev "This is CI disregarding --simulate flag for installing pip dependencies"
         apt-get -q -y --no-install-recommends install "${dependency_packages[@]}" |& _add_timestamp_to_logs "${_apt_logs}"
       else
         # shellcheck disable=SC2086
@@ -2172,7 +2181,7 @@ function _install_pip_python()
     if [ "$simulate_apt_install" == "true" ] && [ "$AE_INTERNAL_CI_MODE" != "true" ]; then
       _log_warn "${_whoops} PIP does not support simulated installs. Not performing install."
     elif  [ "$simulate_apt_install" == "true" ] && [ "$AE_INTERNAL_CI_MODE" == "true" ]; then
-      _log_warn "${_simulate} This is CI disregarding simulate for pip action"
+      _log_dev "This is CI disregarding simulate for pip action"
       $pip_command install -r "${requirements_file}" |& _add_timestamp_to_logs "${_pip_logs}"
     else
       _log_debug "Installing requirements file ${requirements_file}"
@@ -2570,9 +2579,9 @@ function _ci_cloud_and_container_checks()
 
     # Internal checks
     if [ "$AE_INTERNAL_CI_MODE" == "true" ]; then
-      _log_warn "${_ci} Enforcing CI MODE"
-      _log_warn "${_warn} This is to be used only white testing the script."
-      _log_warn "${_warn} This will ignore Simulate flag in some cases!!"
+      _log_dev "Enforcing CI MODE"
+      _log_dev "This is to be used only while testing the script."
+      _log_dev "This will ignore --simulate flag in some cases!!"
     fi
 
     if [ "$(uname -r | cut -f3 -d '-')" == "Microsoft" ]; then
@@ -2734,12 +2743,9 @@ function main()
   printf "${_checking} Permissions...\n"
 
   if [[ $AE_INTERNAL_NO_EXECUTE == "true" ]]; then
-    set_log_gray
-    printf "${_internal} No Execute ignoring UID checks!\n"
-    set_default
     # Actual logging starts
     _init_logging
-    _log_success "${_success} Running as no Execute mode"
+    _log_dev "Running in no Execute mode"
   elif [[ $EUID -ne 0 ]]; then
     set_red;
     printf "${_whoops} Insufficient privileges!!\n"
@@ -2802,7 +2808,7 @@ function main()
     -c | -C | --config-file)  shift;
                               readonly custom_config_file="${1}";
                               readonly bool_custom_config_file="true";
-                              _log_and_show "${_info} Using custom config file"
+                              _log_and_show "${_info} Using local config file"
                               ;;
       -V | --version-file)    shift;
                               readonly custom_version_file="${1}";
@@ -2888,7 +2894,9 @@ function main()
   fi
 
   if [[ $AE_INTERNAL_NO_EXECUTE == "true" ]]; then
-    _log_and_exit "${_internal} No Execute is Active" "255"
+    _log_dev "No Execute is Active"
+    _script_exit_log;
+    exit 255
   fi
 
   # Autopilot
