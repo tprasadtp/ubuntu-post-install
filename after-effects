@@ -26,9 +26,9 @@ readonly REL_NAME="5.6.0 Beta"
 readonly REL_NUM=560
 
 # YQ CHECKSUMS
-readonly YQ_AMD64_SHA512="5d315287d04b7689eb9061980db5c8a1e093b7561c769478c348e2ae38b5ea7524fd822f63bab3606864ba6b1a9df83377fa530c293369aa91c51c30dc2a8d5f"
-readonly YQ_ARM64_SHA512="5d315287d04b7689eb9061980db5c8a1e093b7561c769478c348e2ae38b5ea7524fd822f63bab3606864ba6b1a9df83377fa530c293369aa91c51c30dc2a8d5f"
-readonly YQ_ARM_SHA512="5d315287d04b7689eb9061980db5c8a1e093b7561c769478c348e2ae38b5ea7524fd822f63bab3606864ba6b1a9df83377fa530c293369aa91c51c30dc2a8d5f"
+readonly YQ_AMD64_SA256="5d315287d04b7689eb9061980db5c8a1e093b7561c769478c348e2ae38b5ea7524fd822f63bab3606864ba6b1a9df83377fa530c293369aa91c51c30dc2a8d5f"
+readonly YQ_ARM64_SHA256="5d315287d04b7689eb9061980db5c8a1e093b7561c769478c348e2ae38b5ea7524fd822f63bab3606864ba6b1a9df83377fa530c293369aa91c51c30dc2a8d5f"
+readonly YQ_ARM_SHA256="5d315287d04b7689eb9061980db5c8a1e093b7561c769478c348e2ae38b5ea7524fd822f63bab3606864ba6b1a9df83377fa530c293369aa91c51c30dc2a8d5f"
 readonly YQ_BASE_URL="https://github.com/tprasadtp/yq-bin-for-ae/releases/latest/download/"
 
 function _init_printf_variables()
@@ -41,7 +41,6 @@ function _init_printf_variables()
     readonly          _oh_no="[     Oh No!    ]"
     readonly     _installing="[   Installing  ]"
     readonly      _installed="[   Installed   ]"
-    # readonly       _removing="[    Removing   ]"
     readonly        _removed="[    Removed    ]"
     readonly       _deleting="[    Deleting   ]"
     readonly      _linuxmint="[  Linux - Mint ]"
@@ -178,6 +177,11 @@ function set_green()
   printf "${GREEN}"
 }
 
+function set_bold_orange()
+{
+  printf "${BOLD_ORANGE}"
+}
+
 
 function set_magenta()
 {
@@ -311,6 +315,13 @@ function _log_error()
 {
   local msg="$1"
   printf "${RED}$msg ${NC}\n"
+  printf "[$(date)] $msg\n" >> "$log_file"
+}
+
+function _log_info()
+{
+  local msg="$1"
+  printf "$msg ${NC}\n"
   printf "[$(date)] $msg\n" >> "$log_file"
 }
 
@@ -858,6 +869,33 @@ function _get_remote_file()
 
 }
 
+function _verify_yq()
+{
+  local expected_shasum="${1}"
+  local shasum
+
+  __file_shasum = "$(sha256sum "${dir}/yq")"
+
+  _log_info "${_parser} Verifying..."
+  _log_debug "Verifying checksums for ${dir}/yq"
+
+  if echo "${shasum} ${dir}/yq" | sha256sum -c -; then
+    _log_success "${_parser} checksums match!"
+  else
+    _log_internal "Got ${__file_shasum} instead of ${expected_shasum}"
+    set_bold_orange
+    _log_info "${_report} Please report this error! https://git.io/Jv08"
+    set_default
+    _log_and_exit "${_parser} Error! Parser binary verification failed!" "62"
+  fi
+
+}
+
+function __download_yq()
+{
+  _get_remote_file "yq" "${YQ_DOWNLOAD_URL}"
+  _verify_yq "${YQ_CHECKSUM}"
+}
 
 function _version_checks ()
 {

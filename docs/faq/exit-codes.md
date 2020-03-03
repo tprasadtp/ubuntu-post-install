@@ -37,4 +37,5 @@
 | 53 | List mode is no longer supported. |
 | 54 | not running with autopilot when terminal is non interactive. |
 | 61 | apt-get update failed with some warnings or errors |
+| 62 | Yq checksum verification failed |
 | 255 | Test Exit code |
