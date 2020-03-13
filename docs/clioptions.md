@@ -193,25 +193,6 @@ Default behavior is to clean apt cache and delete downloaded DEB packages.
 
 Hides displaying configuration data in the output.
 
-
-## Use Custom Version information file
-
-Script always checks if its running the latest version available. If not it throws an error and exits. If you wish to skip that, please use `--no-version-check`. This is always recommended over using a custom version information file. However it is possible to provide a custom version info file, a YAML file which holds version information.
-
-!!! snippet "Usage"
-
-    ```console
-    ./after-effects --version-file <filename>
-    ```
-
-    OR
-
-    ```console
-    ./after-effects -V <filename>
-    ```
-
-Example version file is in `config` directory. All the fields are mandatory.
-
 ## Remote YAML configuration file
 
 !!! snippet "Usage"
@@ -255,11 +236,8 @@ Following might be reported. (Nothing more than that)
 - Last exit code.
 - System Architecture (x64/x86/ARM/ARM64).
 - Total execution time.
-- Masked hostname
 - Distribution name (Ubuntu, Linux Mint etc.)
 - Distribution code name (bionic, artful etc)
-- Feature/Task selected
-- Flags used
 - Timezone and system language
 
 ??? question "Privacy Concerns?"
@@ -270,19 +248,6 @@ Following might be reported. (Nothing more than that)
     to it. If you run a search query on google, it probably collects more data than me. API endpoints/PaaS/IaaS provider may log your IP addresses, but script does not and WILL not collect IP addresses(local or otherwise).
     - Script will not collect your full config file either. Just flags used (like simulate, fix etc)
     - If you flood the reporting endpoints, you might get HTTP 429 errors as reporting endpoints have rate limits.
-
-
-## Uni-Freiburg Mirror
-
-!!! warning
-    Enabling this option will use mirrors from Uni-Freiburg if they are available. You may have to be within Uni-Freiburg network
-    to access it. The mirror may not work or be up-to date with upstream. Use this option only if you are inside Uni-Freiburg network and know what versions/libs are hosted on the mirror.
-
-- Uses mirrors from `University of Freiburg`. Only available for limited number of repositories. **DO NOT** use this option if you are not a faculty or student of Uni-Freiburg, as it may have un-intended side effects.
-- Arguments: `--use-uf-mirror`. This option is not tested on Travis builds.
-
-!!! warning
-    **This script/github-repository/or this website is not affiliated in with University of Freiburg.**
 
 ## Version
 
@@ -321,7 +286,7 @@ Non-Action options (can be run as non-root user)
 
 Configuration Options
 -------------------------------------------------
-[-C | --config-file]   Local yaml config file
+[-c | --config-file]   Local yaml config file
 [-n | --name]          Name of the configuration file to use
                        as a query parameter when -R / --remote-yaml is used
 [-R | --remote-yaml]   Use config yaml hosted somewhere else

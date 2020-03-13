@@ -874,7 +874,7 @@ function _verify_yq()
   local expected_shasum="${1}"
   local shasum
 
-  __file_shasum = "$(sha256sum "${dir}/yq")"
+  __file_shasum="$(sha256sum "${dir}/yq")"
 
   _log_info "${_parser} Verifying..."
   _log_debug "Verifying checksums for ${dir}/yq"
@@ -2788,7 +2788,7 @@ function main()
   _line_fill;
   printf "${_checking} Permissions...\n"
 
-  if [[ $AE_INTERNAL_NO_EXECUTE == "true" ]]; then
+  if [[ $AE_INTERNAL_NO_EXECUTE -eq 1 ]]; then
     # Actual logging starts
     _init_logging
     _log_dev "Running in no Execute mode"
@@ -2939,7 +2939,7 @@ function main()
     _log_and_exit "Non Interactive Terminal requires --autopilot" "54"
   fi
 
-  if [[ $AE_INTERNAL_NO_EXECUTE == "true" ]]; then
+  if [[ $AE_INTERNAL_NO_EXECUTE -eq 1 ]]; then
     _log_dev "No Execute is Active"
     _script_exit_log;
     exit 255

@@ -19,7 +19,25 @@ start fresh. Beauty of Linux is almost everything is scriptable. Re-installing i
 
 ## How to
 
-See [Getting Started](/getting-started).
+
+## Step 1: Get the script
+
+```console
+wget -q https://ae.prasadt.com/get -O after-effects
+```
+
+## Step 2: Update the config to suit your needs
+
+Update the config files to suit your needs. Please see [Configuration](/configuration/) & [Tasks](/tasks/) for more details. Some example configs can be found [here](https://github.com/tprasadtp/ubuntu-post-install/tree/master/config).
+
+## Step 3: Run it
+
+Run the script as **root**. You will get an error if you do not run the script as root.
+
+```console
+chmod +x after-effects
+sudo ./after-effects -C <your config.yml>
+```
 
 ## Supported Distros
 
@@ -48,17 +66,12 @@ It should work fine. But no promises.
 
 ## Features
 
-[![APT-Packages](https://img.shields.io/badge/Install_Packages-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-apt-packages)
-[![Add-Repo](https://img.shields.io/badge/Add_Repositories-Limited-yellow.svg)](https://ae.prasadt.com/tasks/#add-repositories)
-[![Remove-Pre-installed](https://img.shields.io/badge/Purge_Pre_Installed-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#purge-unwanted-packages)
-[![PIP](https://img.shields.io/badge/PIP_Packages-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-python-packages-via-pip)
-[![Add-PPA](https://img.shields.io/badge/Add_PPAs-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#add-personal-package-archives-ppa)
-[![Purge-PPA](https://img.shields.io/badge/Purge_PPA-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#what-can-it-do)
-[![Install-Debs](https://img.shields.io/badge/Install_.DEB_Packages-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files)
-[![Install-CSnaps](https://img.shields.io/badge/Install_Classic_Snaps-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#installing-snap-packages)
-[![Install-NSnaps](https://img.shields.io/badge/Install_Snaps-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#installing-snap-packages)
-[![Install-EDebs](https://img.shields.io/badge/Install_Edge_snaps-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#installing-snap-packages)
-
+- Adding Repositories (Limited set of curated repositories only at the moment)
+- Remove Preinstalled packages
+- Install Python2/3 system packages. (Its highly recommended to use `virtualenv` for your projects, **ONLY** install pip packages which are absolutely essential.)
+- Add PPAs (Ubuntu & Ubuntu derivatives only)
+- `deb` packages
+- Classic, Edge and Stable snap packages.
 
 ## Screenshots
 

@@ -1,12 +1,15 @@
 version: "2.4"
 services:
   site:
-    image: tprasadtp/mkdocs-material:latest-user
-    # userns_mode: host
-    command: serve --dev-addr=0.0.0.0:8000
+    image: tprasadtp/mkdocs-material:5.0.0rc2
+    # its importatnt to specify dev address as 0.0.0.0 otherwise server
+    # wont listen on required interfaces.
+    runtime: ${DOCKER_DEFAULT_RUNTIME:-runc}
+    command: -v serve --dev-addr=0.0.0.0:8000
+    working_dir: /docs
     volumes:
-      - ./.git:/home/user/docs/.git:ro
-      - ./docs:/home/user/docs/docs:ro
-      - ./mkdocs.yml:/home/user/docs/mkdocs.yml:ro
+      - ./.git:/docs/.git:ro
+      - ./docs:/docs/docs:ro
+      - ./mkdocs.yml:/docs/mkdocs.yml:ro
     ports:
       - 127.0.0.1:8000:8000
