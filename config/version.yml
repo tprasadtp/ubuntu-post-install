@@ -4,8 +4,4 @@ api: 2
 version:
   number: 560
   name: 5.6.0-Beta
-  changelog: 20.04
-# Stats reporting
-stats:
-  report: false
-  node: https://stats.ae.prasadt.com/report
+  changelog: Support 20.04

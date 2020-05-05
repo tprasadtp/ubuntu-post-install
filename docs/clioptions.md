@@ -213,42 +213,6 @@ You can specify YAML file to use. Script will fetch it and parse it.The file sho
     - If using GitHub gists, please provide raw gist URL.
     - You should only use trusted remote configurations. As its a bash script a malicious remote configuration can cause remote code to execute on your system.
 
-
-## Do not report statistics
-
-!!! snippet "Usage"
-
-    ```console
-    ./after-effects --no-stats
-    ```
-
-    OR
-
-    ```console
-    ./after-effects -S
-    ```
-
-Disables reporting statistics back to server.
-
-Following might be reported. (Nothing more than that)
-
-- A UUID generated for each execution, (its random and is not persistent across runs),
-- Last exit code.
-- System Architecture (x64/x86/ARM/ARM64).
-- Total execution time.
-- Distribution name (Ubuntu, Linux Mint etc.)
-- Distribution code name (bionic, artful etc)
-- Timezone and system language
-
-??? question "Privacy Concerns?"
-
-    - If you are freaking out, its a shell script !! You can literally look into it and check what's collected. Why if you ask? I mostly use it on a bunch of machines/VMs and would like to keep an eye on how it did.
-    - Data will be stored in AWS DynamoDB and Google Firebase Real-time Database.
-    Data will not be shared with any third party. Period. Only me or my team members will have access
-    to it. If you run a search query on google, it probably collects more data than me. API endpoints/PaaS/IaaS provider may log your IP addresses, but script does not and WILL not collect IP addresses(local or otherwise).
-    - Script will not collect your full config file either. Just flags used (like simulate, fix etc)
-    - If you flood the reporting endpoints, you might get HTTP 429 errors as reporting endpoints have rate limits.
-
 ## Version
 
 !!! snippet "Usage"
@@ -273,59 +237,53 @@ Autopilot mode is designed to run the script in a non interactive manner. Please
 
 Displays this help option.
 
-```console
-➜ ./after-effects --help
+<pre><font color="#A6E22E">./after-effects</font> -h
 
-A Post Installation Script for Ubuntu/Debian/Linux Mint
-Usage: after-effects   [options]
+<font color="#A6E22E">A Post Installation Script for Ubuntu/Debian/Linux Mint</font>
+Usage: <font color="#A6E22E"> [sudo] ./after-effects </font><font color="#F4BF75">  [options]</font>
 
-Non-Action options (can be run as non-root user)
--------------------------------------------------
+<font color="#F4BF75">Non-Action options (can be run as non-root user)</font>
+<font color="#F4BF75">-------------------------------------------------</font>
 [-v --version]     Display version info
 [-h --help]        Display this help message
 
-Configuration Options
--------------------------------------------------
-[-c | --config-file]   Local yaml config file
+<font color="#F4BF75">Configuration Options</font>
+<font color="#F4BF75">-------------------------------------------------</font>
+[-C | --config-file]   Local yaml config file
 [-n | --name]          Name of the configuration file to use
                        as a query parameter when -R / --remote-yaml is used
 [-R | --remote-yaml]   Use config yaml hosted somewhere else
 [-V | --version-file]  Specify a local file from which version info will be read
 
-The following options are "action" options and
-these will make changes to your system depending on
-tasks chosen.
--------------------------------------------------
+<font color="#66D9EF">The following options are &quot;action&quot; options and</font>
+<font color="#66D9EF">will make changes to your system depending on tasks chosen.</font>
+<font color="#66D9EF">-------------------------------------------------</font>
 [-d | --purge]         Enable Purging packages
 [-f | --fix]           Fix codenames for new releases
 [-p | --pre-release]   Same as --fix but for beta/alpha releases
 [--fix-mode-lts]       Similar to --fix but fallback to last LTS
                         Should be used with --fix
-[-k | --keep-debs]     Do not invoke apt-clean & do not delete
+[-k | --keep-debs]     Do not invoke apt-clean &amp; do not delete
                        downloaded deb packages
 [-l | --delete-log]    Delete logfile (./log/after-effects.log)
 [-s | --simulate]      Try not make changes to system and use --dry-run
-                       whenever possible. Please read the documentation
-                       at http://ae.prasadt.com/clioptions to know its limits
-                       Not everything can be simulated.
+  Please read the documentation at http://ae.prasadt.com/clioptions
+  to know its limits as not everything can be simulated.
 
-Other Options
--------------------------------------------------
+<font color="#F4BF75">Other Options</font>
+<font color="#F4BF75">-------------------------------------------------</font>
 [-E | --skip-env-checks]  Skip some env checks
 [-N --no-version-checks]  Skip checking for latest version
 [-H --hide-config]        Hide configuration table
-[-S | --no-stats]         Do not report usage statistics
 [--use-uf-mirror | -u]    Use University of Freiburg mirrors
 [-A --autopilot]          Enables AUTOPILOT mode(No Prompts)
 
-GitHub & Documentation:
-* https://github.com/tprasadtp/ubuntu-post-install
-* https://ae.prasadt.com
+<font color="#A6E22E">Links &amp; License:</font>
+<font color="#A6E22E">-------------------------------------------------</font>
+GitHub        : <font color="#66D9EF">https://git.io/Jv08V</font>
+Documentation : <font color="#66D9EF">https://ae.prasadt.com</font>
+* This script is licensed under GPLv3.
+* Show your support by starring the repo on GitHub
+-------------------------------------------------
 
-Contributions & Issues:
--------------------------------------------------
-* You are welcome to contribute
-* Feel free to create a PullRequest/Issue on Github.
-* If it helped go and star the repo
--------------------------------------------------
-```
+</pre>

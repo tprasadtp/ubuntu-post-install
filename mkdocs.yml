@@ -93,9 +93,7 @@ nav:
   - Testing: testing.md
   - Changelog:
     - changelog.md
-  - Other:
-    - License: license.md
-    - Privacy: privacy.md
+  - License: license.md
 
 # Google Analytics
 google_analytics:

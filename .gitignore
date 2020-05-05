@@ -47,6 +47,7 @@ Release*
 *.AppImage
 *.bundle
 *.run
+.RHASH
 
 
 # Project specific #

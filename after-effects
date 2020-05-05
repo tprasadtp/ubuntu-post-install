@@ -22,14 +22,11 @@ esac
 
 # SCRIPT METADATA
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="5.6.0 Beta"
-readonly REL_NUM=560
+readonly REL_NAME="6.0.0 Alpha"
+readonly REL_NUM=600
 
-# YQ CHECKSUMS
-readonly YQ_AMD64_SA256="5d315287d04b7689eb9061980db5c8a1e093b7561c769478c348e2ae38b5ea7524fd822f63bab3606864ba6b1a9df83377fa530c293369aa91c51c30dc2a8d5f"
-readonly YQ_ARM64_SHA256="5d315287d04b7689eb9061980db5c8a1e093b7561c769478c348e2ae38b5ea7524fd822f63bab3606864ba6b1a9df83377fa530c293369aa91c51c30dc2a8d5f"
-readonly YQ_ARM_SHA256="5d315287d04b7689eb9061980db5c8a1e093b7561c769478c348e2ae38b5ea7524fd822f63bab3606864ba6b1a9df83377fa530c293369aa91c51c30dc2a8d5f"
-readonly YQ_BASE_URL="https://github.com/tprasadtp/yq-bin-for-ae/releases/latest/download/"
+# YQ Version to use
+readonly YQ_VERSION="3.3.0"
 
 function _init_printf_variables()
 {
@@ -88,7 +85,7 @@ function _init_printf_variables()
     readonly YELLOW=$'\e[33m'
     readonly GREEN=$'\e[32m'
     readonly BOLD_GREEN=$'\e[1;32m'
-    readonly BOLD_ORANGE=$'\e[1;38;5;209m'
+    readonly ORANGE=$'\e[38;5;209m'
     readonly RED=$'\e[31m'
     readonly BLUE=$'\e[34m'
     readonly NC=$'\e[0m'
@@ -177,9 +174,9 @@ function set_green()
   printf "${GREEN}"
 }
 
-function set_bold_orange()
+function set_orange()
 {
-  printf "${BOLD_ORANGE}"
+  printf "${ORANGE}"
 }
 
 
@@ -208,7 +205,7 @@ function set_default()
 
 function _goodbye_msg ()
 {
-  printf "\n✰  ${BOLD_ORANGE}Show your support by starring this repo on GitHub.${NC}"
+  printf "\n✰  ${ORANGE}Show your support by starring this repo on GitHub.${NC}"
   printf "\n🔗 ${BOLD_GREEN}Link ${NC}- ${BLUE}https://git.io/Jv08V${MAGENTA}"
   printf "\n⟿  Have a great time with this Linux Machine.${NC}\n"
 }
@@ -222,9 +219,8 @@ function _log_and_exit()
   printf "${RED}$msg${NC}\n";
   {
     printf "[$(date)] ${msg}\n" >> "$log_file";
-    printf "\nFinished %s on $(date).\nExit code: $(date)\n"
+    printf "\nFinished ${SCRIPT} on $(date).\nExit code: $(date)\n"
   } >> "$log_file"
-  report_stats
   _line_fill
   _line_fill >> "$log_file"
   exit "$2";
@@ -237,8 +233,6 @@ function _script_exit_log()
     readonly AE_EXEC_END=$(date +%s)
     readonly AE_EXEC_TIME=$(( AE_EXEC_END - AE_EXEC_START ))
 
-    # Report Stats
-    report_stats
     # Generate Exit message & log
     _goodbye_msg
     _log_debug "Exiting Script"
@@ -282,7 +276,7 @@ function _log_warn()
 function _log_dev()
 {
   local msg="$1"
-  printf "${BOLD_ORANGE}${_dev_mode} $msg ${NC}\n"
+  printf "${ORANGE}${_dev_mode} $msg ${NC}\n"
   printf "[$(date)] ${_dev_mode} $msg\n" >> "$log_file"
 }
 
@@ -390,10 +384,10 @@ function _init_script_variables()
 
 
   #-------------------------- Release codenames --------------------------------------
-  readonly code_name_latest_release="eoan"
-  readonly codename_previous_release="disco"
-  readonly codename_upcoming_release="focal"
-  readonly codename_lts_fallback="bionic"
+  readonly code_name_latest_release="focal"
+  readonly codename_previous_release="eoan"
+  readonly codename_upcoming_release="groovy"
+  readonly codename_lts_fallback="focal"
   readonly code_name_latest_debian_release="buster"
   readonly codename_upcoming_debian_release="bullseye"
 
@@ -412,15 +406,7 @@ function _init_script_variables()
 
   bool_check_version="true"
 
-  # Internal checks
-  if [ "$AE_INTERNAL_CI_MODE" == "true" ]; then
-    _log_dev "Enforcing CI MODE"
-    # Define API endpoint for version and config
-    _log_dev "Overriding Metadata Endpoint"
-    readonly api_version_url="https://ae.prasadt.com/config/version.yml"
-  else
-    readonly api_version_url="https://ae.prasadt.com/config/version.yml"
-  fi
+  readonly api_version_url="https://ae.prasadt.com/config/version.yml"
 
 
   # Achtung!!
@@ -440,10 +426,6 @@ function _init_script_variables()
 
   # Keep Downloaded DEB packages
   bool_preserve_debs="false"
-
-  # Default Stats Server name & Stats reporting flag
-  #shellcheck disable=SC2034
-  stats_node="https://stats.ae.prasadt.com/report"
 
   #
   # ================================================================================== #
@@ -607,24 +589,6 @@ function verify_gpg_signature()
 }
 
 
-function report_stats()
-{
-  # Report anonymous stats about the script.
-  # Following things are reported.
-  # A UUID generated for each execution, (its random and is not persistent across runs)
-  # Total execution time, system architecture, Distro name
-  # If you are freaking out, its a shellscript, You can literally look into it
-  # and check what's collected. Why if you ask? Just for fun and improvement of course!.
-  # Data will be stored in AWS DynamoDB and/or Google Firebase.
-  # Data will not be shared with any third party. Period. Only me or my team members will have access
-  # to it. If you run a search query on google, it probably collects more data than me.
-  # API endpoints may log public IP addresses (GitHub, Google and AWS). But they are not saved in the
-  # database.
-  # But I really don't want to report stats, just pass --no-stats as an argument.
-  true
-}
-
-
 function _eol_message()
 {
   # Display EOL Message and upgrade instruction URLs.
@@ -682,7 +646,7 @@ function _fix_ubuntu_derivatives()
                                             readonly enable_ppa="true";
                                             _log_success "${_elementary} Changed codename to $code_name"
                                             ;;
-      xenial | bionic )                     readonly bool_config_partner_repo="true";
+      xenial | bionic | focal )             readonly bool_config_partner_repo="true";
                                             readonly enable_ppa="true";
                                             readonly distro_name="ubuntu";
                                             _log_and_show "${_info} This is a LTS release of Ubuntu"
@@ -695,13 +659,13 @@ function _fix_ubuntu_derivatives()
                                             if [[ $bool_fix_repo_not_available_for_latest != "true" ]] && [[ $bool_fix_lts != "true"  ]] ; then _log_notice "${_notice} If your repos are not yet supported, use --fix option"; fi
                                             _log_success "${_derivatives} Keeping the codename as: $code_name."
                                             ;;
-      focal )                               readonly bool_config_partner_repo="true";
+      groovy )                              readonly bool_config_partner_repo="true";
                                             readonly enable_ppa="false";
                                             readonly distro_name="ubuntu";
                                             set_magenta;
-                                            _log_and_show "${_pre_release} This is Ubuntu 20.04 Focal"
+                                            _log_and_show "${_pre_release} This is Ubuntu 20.10 Groovy"
                                             set_default
-                                            _log_warn "${_warn} Because this is Debian, PPAs are disabled!"
+                                            _log_warn "${_warn} PPAs are disabled!"
                                             _log_warn "${_warn} This is pre-release version of Ubuntu, Use with caution!"
                                             ;;
       stretch | jessie | buster )           bool_is_debian="true";
@@ -715,14 +679,6 @@ function _fix_ubuntu_derivatives()
                                             _log_warn "${_warn} You are running Debian Testing!"
                                             _log_warn "${_pre_release} This is pre release version of Debian. Use with caution!"
                                             _log_notice "${_notice} PPAs are disabled."
-                                            ;;
-      trusty)                               _eol_message "April 30th, 2019"
-                                            ;;
-      qiana | rebecca | rafaela | rosa )    _log_error "${_linuxmint} Release is Linux mint 17.X."
-                                            _eol_message "April 30th, 2019"
-                                            ;;
-      freya )                               _log_error "${_elementary} This release of Elementary OS is based on Ubuntu 14.04 Trusty."
-                                            _eol_message "April 30th, 2019"
                                             ;;
       disco )                               _eol_message "January 23rd, 2020"
                                             ;;
@@ -858,7 +814,7 @@ function _get_remote_file()
 
     _log_debug "Exit code from wget is : $exit_status"
     if [[ $exit_status -eq 0 ]]; then
-      _log_debug "Successfully retrieved config file."
+      _log_debug "Successfully retrieved file."
     else
       _log_warn "${_error} Something went wrong while retrieving ${file_name}."
       _log_and_exit "${_error} Error Getting file." "28"
@@ -883,7 +839,7 @@ function _verify_yq()
     _log_success "${_parser} checksums match!"
   else
     _log_internal "Got ${__file_shasum} instead of ${expected_shasum}"
-    set_bold_orange
+    set_orange
     _log_info "${_report} Please report this error! https://git.io/Jv08"
     set_default
     _log_and_exit "${_parser} Error! Parser binary verification failed!" "62"
@@ -925,13 +881,8 @@ function _version_checks ()
       local api_rel_num="${version__number[0]}"
 
       # Assign Statistics reporting flag and endpoint to Global variables.
-      readonly api_report_endpoint="${stats__node[0]}"
-      readonly api_report_usage="${stats__report[0]}"
-
       # Debug Info
       _log_debug "Version from API: ${api_rel_num}"
-      _log_debug "Stats reporting is : ${api_report_usage}"
-      _log_debug "Reporting endpoint is: ${api_report_endpoint}"
 
       # If release number is higher than one in the script throw error & ask to update.
       if [[ $api_rel_num -gt $REL_NUM ]]; then
@@ -950,13 +901,6 @@ function _version_checks ()
   # If version checks have been disabled
   else
     _log_warn "${_info} Version checks have been disabled."
-
-    if [[ $bool_report_stats == "false" ]]; then
-      _log_debug "Report stats is already disabled"
-    else
-      readonly bool_report_stats="false"
-      _log_notice "${_notice} Stats reporting will be disabled"
-    fi
   fi
   #sleep 5
 
@@ -971,21 +915,13 @@ function _check_bool()
   # Accepts global var and bool to check as arguments
   local g_var param_bool default_val
   if [[ $# -eq 2 ]]; then
-  _log_internal "Two args provided for validation, default is false"
-  default_val="false"
-  elif [[ $# -eq 3 ]]; then
-    _log_debug "Two args provided for validation, default is ${3}"
-    if [[ ${3} == "true" ]] || [[ ${3} == "false" ]]; then
-      default_val="${3}"
-    else
-      _log_warn "Internal error! fallback value is not bool! Report it!"
-      default_val="false"
-    fi
+    default_val="false"
+  else
+    _log_and_exit "Internal error! bool validator takes only two arguments!" "19"
   fi
 
   g_var="${1}"
   param_bool="${2}"
-  _log_internal "Globar var is : $g_var, Param from cfg is $param_bool"
   case "${param_bool}" in
     true | True | TRUE | Yes | yes | YES | 1 )  declare -g ${g_var}="true"
                                                 _log_internal "$g_var is set to true"
@@ -994,8 +930,6 @@ function _check_bool()
                                                 _log_internal "$g_var is set to false"
                                                 ;;
     *)                                          declare -g ${g_var}="${default_val}"
-                                                _log_internal "Invalid or empty value for param : $g_var."
-                                                _log_internal "It can either be t[T]rue or f[F]alse."
                                                 _log_internal "$g_var will default to ${default_val}"
                                                 ;;
   esac
@@ -1004,32 +938,6 @@ function _check_bool()
 
 function _set_yaml_config()
 {
-
-
-  # Report usage flag
-  if [ "$bool_report_stats" != "false" ]; then
-    # If --no-stats is not used, bool_report_stats is not set. Lets set its value
-    # from config.
-    if [ "$api_report_usage" == "false" ]; then
-      # Config file has disabled reporting set bool_report_stats to false.
-      # Use readonly to prevent being overwritten.
-      readonly bool_report_stats=false;
-      _log_and_show "${_cfg} Usage reporting is disabled by server side flag."
-    elif [ "$api_report_usage" == "true" ]; then
-      # Config gile has set report stats to true. enable it.
-      # Display endpoint for User info.
-      # Use readonly to prevent being overwritten.
-      readonly bool_report_stats="true";
-      _log_and_show "${_cfg} Usage reporting is enabled."
-      _log_and_show "${_cfg} Reporting endpoint is set as below\n${_api} ${api_report_endpoint}"
-    else
-      # If value is neither true or false, there is error in version config, exit the script.
-      _log_and_exit "${_cfg} Configuration error. Expects boolean for stats.report key." "37"
-    fi
-  else
-    # --no-stats option is used while running, which sets bool_report_stats to false
-    _log_and_show "${_info} Usage reporting is disabled."
-  fi
 
   # Get and parse the file
   _log_and_show "${_info} Processing config..."
@@ -2726,7 +2634,6 @@ Other Options
 [-E | --skip-env-checks]  Skip some env checks
 [-N --no-version-checks]  Skip checking for latest version
 [-H --hide-config]        Hide configuration table
-[-S | --no-stats]         Do not report usage statistics
 [--use-uf-mirror | -u]    Use University of Freiburg mirrors
 [-A --autopilot]          Enables AUTOPILOT mode(No Prompts)
 ${GREEN}
@@ -2846,11 +2753,6 @@ function main()
                               ;;
    -N | --no-version-checks)  bool_check_version="false";
                               ;;
-      -S |  --no-stats)       # As version check skip would set this to readonly, just if its enabled
-                              [[ $bool_check_version != "false" ]] && readonly bool_report_stats="false";
-                              _log_and_show "${_info} Statistics will not be reported."
-                              set_default;
-                              ;;
     -c | -C | --config-file)  shift;
                               readonly custom_config_file="${1}";
                               readonly bool_custom_config_file="true";
@@ -2940,7 +2842,7 @@ function main()
   fi
 
   if [[ $AE_INTERNAL_NO_EXECUTE -eq 1 ]]; then
-    _log_dev "No Execute is Active"
+    _log_dev "Will not Execute any Tasks!"
     _script_exit_log;
     exit 255
   fi
