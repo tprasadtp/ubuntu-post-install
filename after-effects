@@ -409,7 +409,7 @@ function _init_script_variables()
 
   bool_check_version="true"
 
-  readonly api_version_url="https://ae.prasadt.com/config/version.yml"
+  readonly api_version_url="https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml"
 
 
   # Achtung!!

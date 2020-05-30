@@ -41,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: [ "bionic", "eoan", "xenial", "host"]
+        release: ["focal", "eoan", "bionic", "xenial"]
     steps:
       - uses: actions/checkout@v2
       - name: Ubuntu ${{ matrix.release }}
@@ -68,13 +68,13 @@ jobs:
       - uses: actions/checkout@v2
       - name: Elementary ${{ matrix.release }}
         run: ./tests/distro.sh "elementary/docker" ${{ matrix.release }}
-  ubuntu-upcoming:
+  upcoming:
     needs: [ "shellcheck", "dockerlint"]
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-      - name: Test on Ubuntu Upcoming
-        run: ./tests/distro.sh "ubuntu" "focal"
+      - name: Test on Upcoming
+        run: ./tests/distro.sh "ubuntu" "groovy"
   arm:
     needs: [ "shellcheck", "dockerlint"]
     runs-on: ubuntu-18.04

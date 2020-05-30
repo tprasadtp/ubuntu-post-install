@@ -8,7 +8,7 @@
 - Fix Google Cloud SDK on focal
 - Way to handle Python2 unsupported on focal and other upcoming distros.
 - Changes to some flags. Please see flags documentation. Some flags are now dropped or reassigned
-- Migrate to GitHub.
+- Migrate to GitHub Actions.
 
 
 ## 5.5.2
