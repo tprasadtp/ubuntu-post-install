@@ -3,10 +3,16 @@
 <small>An Effortless & Simple post-installation script for Ubuntu, Linux Mint and Debian </small>
 
 
-![build](https://github.com/tprasadtp/ubuntu-post-install/workflows/build/badge.svg)[![Netlify Status](https://api.netlify.com/api/v1/badges/887c3d5c-5203-46b9-a31d-67cada282f36/deploy-status)](https://app.netlify.com/sites/ubuntu-post-install/deploys)
-[![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=flat&url=https://ae.prasadt.com/config/version.json&query=version.name&prefix=V-)](https://github.com/tprasadtp/ubuntu-post-install/)
-[![What's new?](https://img.shields.io/badge/dynamic/json.svg?label=Whats%20New&style=flat&url=https://ae.prasadt.com/config/version.json&query=version.changelog)](https://ae.prasadt.com/changelogs/)
-[![license](https://img.shields.io/github/license/tprasadtp/ubuntu-post-install.svg?style=flat)](https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE)
+[![build][build-badge]][build-link]
+[![release][release-ci-badge]][release-ci-link]
+[![docs][docs-ci-badge]][docs-ci-link]
+[![netlify][netlify-badge]][netlify]
+[![version][version]][changelog]
+[![license][gpl-badge]][license]
+
+![Bash](https://static.prasadt.com/logo64/bash.png)
+
+
 
 ## Why
 
@@ -18,10 +24,12 @@ This script is built for one purpose only. Automating Post Installation tasks on
 ## How to
 
 
-## Step 1: Get the script
+## Step 1: Get the script and Verify its integrity
 
 ```console
-wget -q https://ae.prasadt.com/get -O after-effects
+wget -q https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O after-effects
+wget -q https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O sha256sum.txt
+sha256sum -c sha256sums.txt --strict
 ```
 
 ## Step 2: Update the config to suit your needs
@@ -75,3 +83,23 @@ It should work fine. But no promises.
 
 [![Details](assets/images/details.png)](assets/images/details.png)
 [![Details](assets/images/whiptail.png)](assets/images/whiptail.png)
+
+
+[build-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/build/badge.svg
+[build-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Abuild
+
+[release-ci-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/release/badge.svg
+[release-ci-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Arelease
+
+[docs-ci-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/docs/badge.svg
+[docs-ci-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Adocs
+
+[netlify-badge]: https://api.netlify.com/api/v1/badges/887c3d5c-5203-46b9-a31d-67cada282f36/deploy-status
+[netlify]: https://app.netlify.com/sites/ubuntu-post-install/deploys
+
+
+[version]: https://img.shields.io/github/v/release/tprasadtp/ubuntu-post-install?label=version
+[gpl-badge]: https://img.shields.io/badge/License-GPLv3-ff69b4
+[license]: https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE
+
+[changelog]: https://ae.prasadt.com/changelog/

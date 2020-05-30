@@ -1,4 +1,3 @@
-
 ["Ubuntu"]
 color = "E95420"
 name = "Ubuntu"
@@ -34,31 +33,26 @@ color = "181717"
 name = "Stats"
 description = "Stats"
 
-["Area: APT"]
+["APT"]
 color = "fcc7f0"
-name = "Area: APT"
+name = "APT"
 description = "APT/Repo related issues and PRs"
 
-["Area: Snaps"]
+["Snaps"]
 color = "fcc7f0"
-name = "Area: Snaps"
+name = "Snaps"
 description = "Snaps related issues and PRs"
 
-["Area: PIP"]
+["PIP"]
 color = "fcc7f0"
-name = "Area: PIP"
+name = "PIP"
 description = "PIP related issues and PRs"
 
-["Area: Config"]
+["Config"]
 color = "fcc7f0"
-name = "Area: Config"
+name = "Config"
 description = "Config Issue"
 
-
-["Actor: Dependabot"]
-color = "025E8C"
-name = "Actor: Dependabot"
-description = "Action by Dependabot"
 
 ["Priority: Critical"]
 color = "FF0000"
@@ -80,152 +74,97 @@ color = "fbca04"
 name = "Priority: Medium"
 description = "Medium priority PR/issues"
 
-["Status: Awaiting-Response"]
+["Awaiting-Response"]
 color = "00b1ed"
-name = "Status: Awaiting-Response"
+name = "Awaiting-Response"
 description = ""
 
-["Status: Keep-Open"]
+["Keep-Open"]
 color = "00b1ed"
-name = "Status: Keep-Open"
+name = "Keep-Open"
 description = ""
 
-["Status: Abandoned"]
+["Abandoned"]
 color = "000000"
-name = "Status: Abandoned"
+name = "Abandoned"
 description = "Issue/feature has been abandoned."
 
-["Status: Done"]
+["Done"]
 color = "00FF9F"
-name = "Status: Done"
+name = "Done"
 description = "Completed and closed tasks/pr/issues"
 
-["Status: In-Progress"]
+["In-Progress"]
 color = "FFD649"
-name = "Status: In-Progress"
+name = "In-Progress"
 description = "PR/Bug-fix WIP"
 
-["Status: Invalid"]
+["Invalid"]
 color = "cccccc"
-name = "Status: Invalid"
+name = "Invalid"
 description = "Invalid"
 
-["Status: Pending"]
+["Pending"]
 color = "fef2c0"
-name = "Status: Pending"
+name = "Pending"
 description = "Pending Tests and some more work"
 
-["Status: Resolved"]
+["Resolved"]
 color = "00D100"
-name = "Status: Resolved"
+name = "Resolved"
 description = "Issue/PR has been resolved"
 
-["Status: Stale"]
-color = "c2c2c2"
-name = "Status: Stale"
+["Review-Required"]
+color = "C4FF36"
+name = "Review-Required"
+description = "Further review required"
+
+["Stale"]
+color = "ffffff"
+name = "Stale"
 description = ""
 
-["Status: Wont-Fix"]
+["WontFix"]
 color = "AFAFED"
-name = "Status: Wont-Fix"
+name = "WontFix"
 description = "Works as intended/beyond scope"
 
-["Type: Bug"]
+["Bug"]
 color = "e11d21"
-name = "Type: Bug"
-description = "Issue is a bug, Add Type: BugFix for PR"
+name = "Bug"
+description = "Issue is a bug, Add BugFix for PR"
 
-["Type: Documentation"]
+["Documentation"]
 color = "fca6da"
-name = "Type: Documentation"
+name = "Documentation"
 description = "Docs"
 
-["Type: Duplicate"]
+["Duplicate"]
 color = "C8A2C8"
-name = "Type: Duplicate"
+name = "Duplicate"
 description = "Issue or PR is duplicate"
 
-["Type: Enhancement"]
+["Enhancement"]
 color = "84b6eb"
-name = "Type: Enhancement"
+name = "Enhancement"
 description = "Improve existing feature"
 
-["Type: Feature"]
+["Feature"]
 color = "7eed76"
-name = "Type: Feature"
+name = "Feature"
 description = "Feature request/new feature"
 
-["Type: Maintenance"]
+["Maintenance"]
 color = "f4aea1"
-name = "Type: Maintenance"
+name = "Maintenance"
 description = "Maintenance tasks/package updates/prettify etc"
 
-["Type: Question"]
+["Question"]
 color = "cc317c"
-name = "Type: Question"
+name = "Question"
 description = "Questions"
 
-["Type: Security"]
+["Security"]
 color = "f75d68"
-name = "Type: Security"
+name = "Security"
 description = "Security fixes"
-
-["Dependencies"]
-color = "0366d6"
-name = "Dependencies"
-description = ""
-
-["Docker"]
-color = "21ceff"
-name = "Docker"
-description = ""
-
-["Go"]
-color = "00ADD8"
-name = "Go"
-description = ""
-
-["Python"]
-color = "3776AB"
-name = "Python"
-description = "Python Deps"
-
-["Rust"]
-color = "ceef86"
-name = "Rust"
-description = ""
-
-["Submodule"]
-color = "F05032"
-name = "Submodule"
-description = ""
-
-["Matlab"]
-color = "0076A8"
-name = "Matlab"
-description = "Matlab"
-
-["Terraform"]
-color = "623CE4"
-name = "Terraform"
-description = "Terraform"
-
-["Helm"]
-color = "277A9F"
-name = "Helm"
-description = "Helm"
-
-["Kubernetes"]
-color = "326CE5"
-name = "Kubernetes"
-description = "Kubernetes"
-
-["Ansible"]
-color = "EE0000"
-name = "Ansible"
-description = "Ansible"
-
-["Status: Locked"]
-color = "4e5154"
-name = "Status: Locked"
-description = "Issue is locked"

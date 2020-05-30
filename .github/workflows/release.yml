@@ -48,6 +48,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+      with:
+        persist-credentials: true
 
     - name: Get the version
       id: get_version
@@ -71,7 +73,7 @@ jobs:
         tag_name: ${{ steps.get_version.outputs.VERSION }}
         release_name: Release ${{ steps.get_version.outputs.VERSION }}
         body: |
-          Please check the changelog at https://ae.prasadt.com/changelogs/.
+          Please check the changelog at https://ae.prasadt.com/changelog/.
         draft: false
         prerelease: true
 
@@ -152,4 +154,6 @@ jobs:
       run: |
         cd artifacts/pages/
         ls -al
+        git remote -v
+        git checkout gh-pages
         git push -u origin gh-pages

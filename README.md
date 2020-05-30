@@ -6,7 +6,7 @@ Effortless way to setup your fresh Ubuntu, Linux Mint and Debian installation.
 [![release][release-ci-badge]][release-ci-link]
 [![docs][docs-ci-badge]][docs-ci-link]
 [![netlify][netlify-badge]][netlify]
-[![version][version]][changelogs]
+[![version][version]][changelog]
 [![license][gpl-badge]][license]
 
 ![Bash](https://static.prasadt.com/logo64/bash.png)
@@ -19,6 +19,8 @@ Effortless way to setup your fresh Ubuntu, Linux Mint and Debian installation.
 
 ```console
 wget -q https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O after-effects
+wget -q https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O sha256sum.txt
+sha256sum -c sha256sums.txt --strict
 ```
 
 ### 2. Setup your YAML configuration file
@@ -127,7 +129,7 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [FAQ]: https://ae.prasadt.com/faq/dependencies/
 [docs]: https://ae.prasadt.com/getting-started/
 [known-issues]: https://ae.prasadt.com/faq/errors/
-[changelogs]: https://ae.prasadt.com/changelogs/
+[changelog]: https://ae.prasadt.com/changelog/
 
 [build-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/build/badge.svg
 [build-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Abuild
@@ -135,7 +137,7 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [release-ci-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Arelease
 
 [docs-ci-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/docs/badge.svg
-[docs-ci-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%docs
+[docs-ci-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Adocs
 
 [netlify-badge]: https://api.netlify.com/api/v1/badges/887c3d5c-5203-46b9-a31d-67cada282f36/deploy-status
 [netlify]: https://app.netlify.com/sites/ubuntu-post-install/deploys

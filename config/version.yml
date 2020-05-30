@@ -1,7 +1,6 @@
 # Version Config
-api: 2
+api: 3
 # Configuration
 version:
-  number: 560
-  name: 5.6.0-Beta
-  changelog: Support 20.04
+  number: 600
+  name: 6.0.0-Alpha

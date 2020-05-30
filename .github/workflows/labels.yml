@@ -1,21 +1,18 @@
-# yamllint disable-line rule:document-start
 on:
   push:
     branches:
       - master
     paths:
-      - '.github/labels.toml'
-      - '.github/workflows/**.yml'
-name: Labels Sync
+      # Labels Only
+      - ".github/labels.toml"
+      - ".github/workflows/labels.yml"
+name: labels
 jobs:
   labels:
-    name: Sync Labels with .github/labels.toml
+    name: labels
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - name: sync labels
-        uses: tprasadtp/labels@master
-        with:
-          owner: "tprasadtp"
-          repo: "ubuntu-post-install"
-          token: ${{ secrets.GITHUB_TOKEN }}
+    - name: sync labels
+      uses: tprasadtp/labels@master
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
