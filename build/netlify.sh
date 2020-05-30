@@ -6,36 +6,12 @@
 # Version:1.0
 # Author: Prasad Tengse
 
-# gh-pages is built on travis. and deploy it on netlify to production.
+# gh-pages is built on gh. and deploy it on netlify to production.
 # Remove .toml and scripts. & deploy the entire branch. No need to build anything as its already built.
 # If something else is pushed to any branches, deploy it as branch deploy.
 set -e # halt script on error
-DEPLOY_PARAM_JSON=./_site/deploy.json
 
 echo "---> Building Website "
-
-function gen_metadata()
-{
-echo "---> Generating Deploy Params "
-cat <<EOT > "${DEPLOY_PARAM_JSON}"
-{
-  "commit": {
-    "id": "${COMMIT_REF:0:7}",
-    "branch": "${BRANCH:-NA}",
-    "pr": "${PULL_REQUEST:-false}"
-  },
-  "build": {
-    "builder": "netlify",
-    "context": "${CONTEXT:-NA}",
-    "delploy_url": "${DEPLOY_URL:-NA}",
-    "deploy_prime_url": "${DEPLOY_PRIME_URL:-NA}",
-    "number": "${TRAVIS_BUILD_NUMBER:-NA}",
-    "tag": "${BRANCH:-none}"
-  },
-  "ts": "$(date)"
-}
-EOT
-}
 
 function build_production()
 {
@@ -56,7 +32,6 @@ function build_production()
   --exclude 'dockerfiles' \
   --exclude 'tests' \
   ./ ./_site && echo "---> Copied gh-pages"
-  gen_metadata;
 
 }
 
@@ -66,7 +41,6 @@ function build_branch()
 
   echo "---> Building Website with Branch"
   mkdocs build;
-  gen_metadata;
 }
 
 
@@ -83,10 +57,11 @@ EOF
 
 function install_dependencies()
 {
-  curl -sSfLO https://raw.githubusercontent.com/tprasadtp/mkdocs-material-docker/master/requirements.txt
+  curl -sSfLO https://raw.githubusercontent.com/tprasadtp/mkdocs-material-docker/master/requirements.in
+  pip install pip-tools
+  pip-compile
   pip install -r requirements.txt
   mkdocs --version
-  #bundle install
 }
 
 
