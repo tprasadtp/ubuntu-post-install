@@ -72,37 +72,7 @@ It should work fine. But no promises.
 [![Peppermint-OS](https://static.prasadt.com/logo64/peppermint-os.png)](https://peppermintos.com/)
 [![Elementary-OS](https://static.prasadt.com/logo64/elementary-os.png)](https://elementary.io/)
 
-A Complete  list of supported distributions is given below.
-
-| Distribution      | Code name/Version     | Supported      | Notes                         |
-| :---------------- | :-------------------- | :------------- | :---------------------------- |
-| Ubuntu 20.04      | Focal Fossa           | Yes            |
-| Ubuntu 19.10      | Eoan Ermine           | Yes            |
-| Ubuntu 18.04      | Bionic Beaver         | Yes            |
-| Ubuntu 16.04      | Xenial Xerus          | Yes            |
-| Linux Mint 18     | Sarah                 | Yes            |
-| Linux-Mint 18.1   | Serena                | Yes            |
-| Linux-Mint 18.2   | Sonya                 | Yes            |
-| Linux-Mint 18.3   | Sylvia                | Yes            |
-| Linux Mint 19     | Tara                  | Yes            |
-| Linux Mint 19.1   | Tessa                 | Yes            | Not tested
-| Linux Mint 19.2   | Tina                  | Yes            | Not tested
-| Linux Mint 19.3   | Tricia                | Yes            | Not tested
-| Debian 8          | Jessie                | Yes            | Not tested
-| Debian 9          | Stretch               | Yes            |
-| Debian 10         | Buster                | Yes            |
-| MX Linux 19       | Buster                | Yes            | Not tested
-| Elementary-OS 0.4 | Loki                  | Yes            | Not tested                    |
-| Elementary-OS 5.0 | Juno                  | Yes            | Not tested                    |
-| Elementary-OS 5.1 | Hera                  | Yes            | Tested                        |
-| Budgie Remix      | Ubuntu 16.04          | Yes            |
-| PoP! OS           | *Ubuntu releases      | Yes            | Not tested                    |
-| Linux-Lite        | 3.X                   | Yes            | (Based on Ubuntu 16.04)       |
-| Bodhi Linux       | 4                     | Yes            | (Based on Ubuntu 16.04)       |
-| Bodhi Linux       | 5                     | Yes            | (Based on Ubuntu 18.04)       |
-| KDE Neon          | Based on Ubuntu LTS   | Might be buggy | Not Tested                    |
-| Peppermint 9,10   | Based on Ubuntu 18.04 | Yes            | Not Tested                    |
-| Peppermint 8      | Based on Ubuntu 16.04 | Yes            | Not tested                    |
+For a complete  list of supported distributions [click here](https://ae.prasadt.com/faq/distros/).
 
 ## Features
 

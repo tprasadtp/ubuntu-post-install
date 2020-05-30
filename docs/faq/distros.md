@@ -22,11 +22,6 @@ It should work fine. But no promises.
 [![Peppermint-OS](https://static.prasadt.com/logo64/peppermint-os.png)](https://peppermintos.com/)
 [![Elementary-OS](https://static.prasadt.com/logo64/elementary-os.png)](https://elementary.io/)
 
-??? info "About 32 bit & ARM Support"
-
-    - Though 32 bit & ARM is supported, Testing in Travis CI, containers and locally all are done using 64 bit machine and containers. If something breaks please report it and use it with caution on 32 bit machines.
-    - Some repositories are not available for ARM and 32 bit architecture.
-    - Since 17.10 Ubuntu no longer provides 32 bit ISO images. You have to use Ubuntu flavors like Lubuntu. Xubuntu or use minimal ISO.
 
 !!! warning "Warning!"
     **Script will exit, if it cannot recognize the distribution.**
@@ -35,6 +30,7 @@ A Complete  list of supported distributions is given below.
 
 | Distribution      | Code name/Version     | Supported      | Notes                         |
 | :---------------- | :-------------------- | -------------- | :---------------------------- |
+| Ubuntu 20.04      | Focal Fossa           | Yes            |
 | Ubuntu 19.10      | Eoan Ermine           | Yes            |
 | Ubuntu 18.04      | Bionic Beaver         | Yes            |
 | Ubuntu 16.04      | Xenial Xerus          | Yes            |

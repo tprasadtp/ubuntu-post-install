@@ -187,7 +187,7 @@ config:
 ```
 
 !!! warning
-    Don't mix Python 3 packages with Python 2 packages.
+    Don't mix Python 3 packages with Python 2 packages. Also, some recent distributions do not support Python2.
 
 ## Purge Unwanted Packages
 
