@@ -1,25 +1,38 @@
 
-["New: Ubuntu"]
-color = "2bb5c4"
-name = "New: Ubuntu"
-description = "New Version of ubuntu support"
+["Ubuntu"]
+color = "E95420"
+name = "Ubuntu"
+description = "Ubuntu support"
 
-["New: Debian"]
-color = "2bb5c4"
-name = "New: Debian"
-description = "New Version of Debian support"
+["Debian"]
+color = "A81D33"
+name = "Debian"
+description = "Debian support"
 
-["New: Mint"]
-color = "2bb5c4"
-name = "New: Mint"
-description = "New Version of Mint support"
+["Linux-Mint"]
+color = "87CF3E"
+name = "Linux-Mint"
+description = "Mint support"
 
+["ElementaryOS"]
+color = "64BAFF"
+name = "ElementaryOS"
+description = "ElementaryOS support"
 
-["New: Other"]
-color = "2bb5c4"
-name = "New: Other"
-description = "New Version of Derivative support"
+["Shell"]
+color = "E95420"
+name = "Shell"
+description = "Shell support"
 
+["Actions"]
+color = "181717"
+name = "Actions"
+description = "Actions support"
+
+["Stats"]
+color = "181717"
+name = "Stats"
+description = "Stats"
 
 ["Area: APT"]
 color = "fcc7f0"
@@ -107,11 +120,6 @@ color = "00D100"
 name = "Status: Resolved"
 description = "Issue/PR has been resolved"
 
-["Status: Review Required"]
-color = "C4FF36"
-name = "Status: Review Required"
-description = "Further review required"
-
 ["Status: Stale"]
 color = "c2c2c2"
 name = "Status: Stale"
@@ -162,35 +170,60 @@ color = "f75d68"
 name = "Type: Security"
 description = "Security fixes"
 
-["Deps: Docker"]
-color = "ceef86"
-name = "Deps: Docker"
+["Dependencies"]
+color = "0366d6"
+name = "Dependencies"
 description = ""
 
-["Deps: Go"]
-color = "ceef86"
-name = "Deps: Go"
+["Docker"]
+color = "21ceff"
+name = "Docker"
 description = ""
 
-["Deps: Python"]
-color = "ceef86"
-name = "Deps: Python"
+["Go"]
+color = "00ADD8"
+name = "Go"
+description = ""
+
+["Python"]
+color = "3776AB"
+name = "Python"
 description = "Python Deps"
 
-["Deps: Rust"]
+["Rust"]
 color = "ceef86"
-name = "Deps: Rust"
+name = "Rust"
 description = ""
 
-["Deps: Submodule"]
-color = "ceef86"
-name = "Deps: Submodule"
+["Submodule"]
+color = "F05032"
+name = "Submodule"
 description = ""
 
-["Deps: Terraform"]
-color = "ceef86"
-name = "Deps: Terraform"
-description = "Terraform Module updates"
+["Matlab"]
+color = "0076A8"
+name = "Matlab"
+description = "Matlab"
+
+["Terraform"]
+color = "623CE4"
+name = "Terraform"
+description = "Terraform"
+
+["Helm"]
+color = "277A9F"
+name = "Helm"
+description = "Helm"
+
+["Kubernetes"]
+color = "326CE5"
+name = "Kubernetes"
+description = "Kubernetes"
+
+["Ansible"]
+color = "EE0000"
+name = "Ansible"
+description = "Ansible"
 
 ["Status: Locked"]
 color = "4e5154"

@@ -5,7 +5,8 @@
 | 1- 10 | Script cannot run on the system |
 |  1 | Dependencies are not met |
 |  2 | Script not running as root |
-|  8 | remote get operation failed. |
+|  8 | Remote get operation failed. |
+|  5 | Failed to determine version of release. is /etc/os-release file missing? |
 | 10-19 | Not Running with right configuration or internal flags |
 | 11 | Unsupported Architecture |
 | 12 | End of Life release |
@@ -30,8 +31,11 @@
 | 38 | Failed to delete a file |
 | 39 | Custom remote config name cannot be empty |
 | 40 | Failed to unset an array |
-| 41 | Failed to truncate clist file |
+| 41 | DEPRECATED_EXIT_CODE |
 | 51 | GPG signature checks failed |
 | 52 | SHA checksums did not match |
+| 53 | List mode is no longer supported. |
+| 54 | not running with autopilot when terminal is non interactive. |
 | 61 | apt-get update failed with some warnings or errors |
+| 62 | Yq checksum verification failed |
 | 255 | Test Exit code |

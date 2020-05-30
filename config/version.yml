@@ -2,10 +2,6 @@
 api: 2
 # Configuration
 version:
-  number: 553
-  name: 5.5.3-Beta
-  changelog: BugFixes
-# Stats reporting
-stats:
-  report: false
-  node: https://stats.ae.prasadt.com/report
+  number: 560
+  name: 5.6.0-Beta
+  changelog: Support 20.04

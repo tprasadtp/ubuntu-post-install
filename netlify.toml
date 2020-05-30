@@ -8,34 +8,18 @@
 # Production context: All deploys to the main
 # repository branch will inherit these settings.
 [context.production]
-  command = "chmod +x ./build/*.sh && ./build/netlify-build.sh --production"
+  command = "chmod +x ./build/*.sh && ./build/netlify.sh --production"
 
 # Deploy Preview context: All Deploy Previews
 # will inherit these settings.
 [context.deploy-preview]
   publish = "_site/"
-  command = "chmod +x ./build/*.sh && ./build/netlify-build.sh --pull-request"
+  command = "chmod +x ./build/*.sh && ./build/netlify.sh --pull-request"
 
 # Branch Deploy context: All deploys that are not in
 # an active Deploy Preview will inherit these settings.
 [context.branch-deploy]
-  command = "chmod +x ./build/*.sh && ./build/netlify-build.sh --branch"
-
-# Redirects
-# SEO
-[[redirects]]
-  from = "http://after-effects.prasadt.com/*"
-  to = "http://ae.prasadt.com/:splat"
-  status = 301
-  force = true
-
-
-[[redirects]]
-  from = "https://after-effects.prasadt.com/*"
-  to = "https://ae.prasadt.com/:splat"
-  status = 301
-  force = true
-
+  command = "chmod +x ./build/*.sh && ./build/netlify.sh --branch"
 
 # Country specific rules
 #[[redirects]]
@@ -48,12 +32,6 @@
 # GH URLs
 [[redirects]]
   from = "/git"
-  to = "https://github.com/tprasadtp/ubuntu-post-install"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "/g"
   to = "https://github.com/tprasadtp/ubuntu-post-install"
   status = 301
   force = true
@@ -94,16 +72,8 @@
   status = 301
   force = true
 
-# Deploy Data
 [[redirects]]
   from = "/dp"
-  to = "/deploy-params.txt"
-  status = 301
-  force = true
-
-
-[[redirects]]
-  from = "/build"
   to = "/deploy.json"
   status = 301
   force = true
@@ -114,34 +84,62 @@
   status = 301
   force = true
 
-# Version  to version.yml
+# Version to old version.yml
+# Avoid breaking old version checks
+[[redirects]]
+  from = "/config/version.yml"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml"
+  status = 301
+  force = true
+
+# /version stuff
 [[redirects]]
   from = "/version"
-  to = "/config/version.yml"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml"
+  status = 301
+  force = true
+
+
+[[redirects]]
+  from = "/sig/version"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml.asc"
+  status = 301
+  force = true
+
+# /v2/version stuff
+[[redirects]]
+  from = "/v2/version"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/v2/sig/version"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml.asc"
   status = 301
   force = true
 
 # Scripts
 [[redirects]]
   from = "/get"
-  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/PLACEHOLDER_REDIRECT/get-after-effects.sh"
-  status = 200
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects"
+  status = 301
   force = true
 
 [[redirects]]
-  from = "/dl/*"
-  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/PLACEHOLDER_REDIRECT/:splat"
-  status = 200
+  from = "/sig/get"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects.asc"
+  status = 301
   force = true
 
 [[redirects]]
-  from = "/dl"
-  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/PLACEHOLDER_REDIRECT/after-effects"
-  status = 200
+  from = "/sha256"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha256sum.txt"
+  status = 301
   force = true
 
 [[redirects]]
-  from = "/gpg"
-  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/PLACEHOLDER_REDIRECT/after-effects.asc"
-  status = 200
+  from = "/sha512"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha512.txt"
+  status = 301
   force = true

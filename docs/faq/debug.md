@@ -21,7 +21,7 @@ $ export release="bionic"
 $ docker build -t ae:"${distro}-${release}" \
     --build-arg DISTRO="${distro}" \
     --build-arg CODE_NAME="${release}"  \
-    ./dockerfiles/tests
+          ./tests/docker
 $ docker run -it -v $(pwd)/after-effects:/shared/after-effects:ro \
     -v $(pwd)/config/:/shared/config:ro \
     ae:ubuntu-bionic

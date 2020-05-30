@@ -53,7 +53,7 @@ config:
   # APT Packages, Python Modules, Debian packages
   install:
     # Debian packages.deb files
-    # CSV format similar to lists
+    # CSV format
     # Static Binaries which will be placed in /usr/local/bin
     # minikube, docker-compose, etc.
     # Follows same pattern as Debian packages

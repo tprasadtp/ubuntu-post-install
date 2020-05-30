@@ -1,18 +1,19 @@
 # Command line options
 
-## Configuration type
+## YAML Configuration file
 
-You have two options of configuring this script.
+!!! snippet "Usage"
 
-- Using .list files in `data`
+    ```console
+    ./after-effects --config-file <filename>
+    ```
 
-  ```console
-    ./after-effects --lists
-  ```
+    OR
 
-- Using YAML files [they can be local or remote]
+    ```console
+    ./after-effects -C <filename>
+    ```
 
-You can specify local config file to use with -C / --config-file option. To use remote config file see -R/--remote-yaml
 
 ## Simulating package installation
 
@@ -39,9 +40,9 @@ You can specify local config file to use with -C / --config-file option. To use 
 Following details should explain the behavior of this flag. Please do have a look at exceptions, as all tasks cannot be simulated.
 
 - This option will simulate installing packages mentioned in the config, using the apt-get in-built dry-run option `apt-get install -s` to simulate the installation of packages.
-- This option can be used to check if the files in the lists are compatible/available in the repository.
+- This option can be used to check if the config is compatible/available in the repository.
 - Installation of DEB files also behaves similarly. It uses `dpkg -i --dry-run` to simulate installation.
-- Its a very good idea to simulate installation when you have reconfigured the apps and packages in the list to check what might be error prone.
+- Its a very good idea to simulate installation when you have reconfigured the apps and packages in the config to check what might be error prone.
 - DEB package files, binaries **will** be downloaded unlike apt-get package installs.
 
 ??? bug "Exceptions - Not everything can be simulated"
@@ -50,16 +51,15 @@ Following details should explain the behavior of this flag. Please do have a loo
      - If you want to revert the changes please use **Reset Repositories** option.
      - PPAs and repositories **will** be added regardless of the flag.
      - Python package installation cannot be simulated. (pip lacks support for it) The script will skip installing apt dependencies and python packages, if simulate option is used.
-     - APT package upgrades and apt repository metadata updates cannot be simulated. Only a list of packages will be shown inn the logs.
+     - APT package upgrades and apt repository metadata updates cannot be simulated. Only a list of packages will be shown in the logs.
      - Simulate flag will **NOT** simulate installing dependencies for adding or deleting repositories and PPAs.
-     - Please do not set `CI="true"`` and `TRAVIS="true"` in environment variables as they are reserved for testing and CI. They do not abide by the rules mentioned above.
 
 ## Skip Version Checks
 
 !!! snippet "Usage"
 
     ```console
-    ./after-effects --no-version-check
+    ./after-effects --skip-version-check
     ```
     OR
 
@@ -193,57 +193,6 @@ Default behavior is to clean apt cache and delete downloaded DEB packages.
 
 Hides displaying configuration data in the output.
 
-## Prefer Local lists
-
-!!! snippet "Usage"
-
-    ```console
-    ./after-effects -L
-    ```
-
-    OR
-
-    ```console
-    ./after-effects --lists
-    ```
-
-Using this option, you can chose to use the lists file which you have locally and not worry about YAML.
-It is advised that you switch to YAML though. Not all options are supported with lists.
-
-## Use Custom Configuration file
-
-!!! snippet "Usage"
-
-    ```console
-    ./after-effects --config-file <filename>
-    ```
-
-    OR
-
-    ```console
-    ./after-effects -C <filename>
-    ```
-
-You can prefer using custom configuration file you have stored locally [It should be available via local paths or network share. not via ftp or http].
-
-## Use Custom Version information file
-
-Script always checks if its running the latest version available. If not it throws an error and exits. If you wish to skip that, please use `--no-version-check`. This is always recommended over using a custom version information file. However it is possible to provide a custom version info file, a YAML file which holds version information.
-
-!!! snippet "Usage"
-
-    ```console
-    ./after-effects --version-file <filename>
-    ```
-
-    OR
-
-    ```console
-    ./after-effects -V <filename>
-    ```
-
-Example version file is in `config` directory. All the fields are mandatory.
-
 ## Remote YAML configuration file
 
 !!! snippet "Usage"
@@ -263,59 +212,6 @@ You can specify YAML file to use. Script will fetch it and parse it.The file sho
 !!! warning
     - If using GitHub gists, please provide raw gist URL.
     - You should only use trusted remote configurations. As its a bash script a malicious remote configuration can cause remote code to execute on your system.
-    - Please use `https`
-
-
-## Do not report statistics
-
-!!! snippet "Usage"
-
-    ```console
-    ./after-effects --no-stats
-    ```
-
-    OR
-
-    ```console
-    ./after-effects -S
-    ```
-
-Disables reporting statistics back to server.
-
-Following might be reported. (Nothing more than that)
-
-- A UUID generated for each execution, (its random and is not persistent across runs),
-- Last exit code.
-- System Architecture (x64/x86/ARM/ARM64).
-- Total execution time.
-- Masked hostname
-- Distribution name (Ubuntu, Linux Mint etc.)
-- Distribution code name (bionic, artful etc)
-- Feature/Task selected
-- Flags used
-- Timezone and system language
-
-??? question "Privacy Concerns?"
-
-    - If you are freaking out, its a shell script !! You can literally look into it and check what's collected. Why if you ask? I mostly use it on a bunch of machines/VMs and would like to keep an eye on how it did.
-    - Data will be stored in AWS DynamoDB and Google Firebase Real-time Database.
-    Data will not be shared with any third party. Period. Only me or my team members will have access
-    to it. If you run a search query on google, it probably collects more data than me. API endpoints/PaaS/IaaS provider may log your IP addresses, but script does not and WILL not collect IP addresses(local or otherwise).
-    - Script will not collect your full config file either. Just flags used (like simulate, fix etc)
-    - If you flood the reporting endpoints, you might get HTTP 429 errors as reporting endpoints have rate limits.
-
-
-## Uni-Freiburg Mirror
-
-!!! warning
-    Enabling this option will use mirrors from Uni-Freiburg if they are available. You may have to be within Uni-Freiburg network
-    to access it. The mirror may not work or be up-to date with upstream. Use this option only if you are inside Uni-Freiburg network and know what versions/libs are hosted on the mirror.
-
-- Uses mirrors from `University of Freiburg`. Only available for limited number of repositories. **DO NOT** use this option if you are not a faculty or student of Uni-Freiburg, as it may have un-intended side effects.
-- Arguments: `--use-uf-mirror`. This option is not tested on Travis builds.
-
-!!! warning
-    **This script/github-repository/or this website is not affiliated in with University of Freiburg.**
 
 ## Version
 
@@ -335,67 +231,55 @@ This will display version info. You do **not** have to be root to run this. For 
 
 ## Autopilot Mode
 
-Autopilot mode is designed to run the script in a non interactive mannaer. Please see Autopilot in tasks for more info.
+Autopilot mode is designed to run the script in a non interactive manner. Please see Autopilot in tasks for more info.
 
 ## Help
 
 Displays this help option.
 
-```console
-➜ ./after-effects --help
+<pre><font color="#A6E22E"><b>➜ </b></font> <font color="#A6E22E">./after-effects</font> -h
 
-A Post Installation Script for Ubuntu/Debian/Linux Mint
-Usage: after-effects   [options]
+<font color="#A6E22E">A Post Installation Script for Ubuntu/Debian/Linux Mint</font>
+Usage: <font color="#A6E22E"> [sudo] ./after-effects </font><font color="#F4BF75">  [options]</font>
 
-Non-Action options (can be run as non-root user)
--------------------------------------------------
+<font color="#F4BF75">Non-Action options (can be run as non-root user)</font>
+<font color="#F4BF75">-------------------------------------------------</font>
 [-v --version]     Display version info
 [-h --help]        Display this help message
 
-Configuration Options
--------------------------------------------------
-[-C | --config-file]   Local yaml config file
-[-L | --lists]         Read Configuration from .list files
-                       in data folder.
-[-n | --name]          Name of the configuration file to use
-                       as a query parameter when -R / --remote-yaml is used
+<font color="#F4BF75">Configuration Options</font>
+<font color="#F4BF75">-------------------------------------------------</font>
+[-c | --config-file]   Local yaml config file
 [-R | --remote-yaml]   Use config yaml hosted somewhere else
-[-V | --version-file]  Specify a local file from which version info will be read
 
-The following options are "action" options and
-these will make changes to your system depending on
-tasks chosen.
--------------------------------------------------
+<font color="#66D9EF">The following options are &quot;action&quot; options and</font>
+<font color="#66D9EF">will make changes to your system depending on tasks chosen.</font>
+<font color="#66D9EF">-------------------------------------------------</font>
 [-d | --purge]         Enable Purging packages
 [-f | --fix]           Fix codenames for new releases
 [-p | --pre-release]   Same as --fix but for beta/alpha releases
 [--fix-mode-lts]       Similar to --fix but fallback to last LTS
-                        Should be used with --fix
-[-k | --keep-debs]     Do not invoke apt-clean & do not delete
+                       Should be used with --fix
+[-k | --keep-debs]     Do not invoke apt-clean &amp; do not delete
                        downloaded deb packages
 [-l | --delete-log]    Delete logfile (./log/after-effects.log)
 [-s | --simulate]      Try not make changes to system and use --dry-run
-                       whenever possible. Please read the documentation
-                       at http://ae.prasadt.com/clioptions to know its limits
-                       Not everything can be simulated.
+                       Please read the documentation, to know its limits
+                       as everything cannot be simulated.
 
-Other Options
--------------------------------------------------
-[-E | --skip-env-checks]  Skip some env checks
-[-N --no-version-checks]  Skip checking for latest version
-[-H --hide-config]        Hide configuration table
-[-S | --no-stats]         Do not report usage statistics
-[--use-uf-mirror | -u]    Use University of Freiburg mirrors
-[-A --autopilot]          Enables AUTOPILOT mode(No Prompts)
+<font color="#F4BF75">Other Options</font>
+<font color="#F4BF75">-------------------------------------------------</font>
+[-E | --skip-env-checks]     Skip some env checks
+[-V | --skip-version-check]  Skip checking for latest version
+[-H --hide-config]           Hide configuration table
+[-A --autopilot]             Enables AUTOPILOT mode(No Prompts)
 
-GitHub & Documentation:
-* https://github.com/tprasadtp/ubuntu-post-install
-* https://ae.prasadt.com
+<font color="#A6E22E">Links &amp; License</font>
+<font color="#A6E22E">-------------------------------------------------</font>
+GitHub          : <font color="#66D9EF">https://git.io/Jv08V</font>
+Documentation   : <font color="#66D9EF">https://ae.prasadt.com</font>
+* This script is licensed under GPLv3.
+* Show your support by starring the repo on GitHub
+-------------------------------------------------
 
-Contributions & Issues:
--------------------------------------------------
-* You are welcome to contribute
-* Feel free to create a PullRequest/Issue on Github.
-* If it helped go and star the repo
--------------------------------------------------
-```
+</pre>

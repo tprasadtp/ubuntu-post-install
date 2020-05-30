@@ -1,7 +1,6 @@
-
 # Project information
-site_name: Documentation for After Effects
-site_description: Effortless & Simple Ubuntu post-installation script
+site_name: After Effects
+site_description: Effortless & Simple post-installation script for Ubuntu, Linux Mint and Debian
 site_author: Prasad Tengse
 site_url: https://ae.prasadt.com/
 docs_dir: 'docs'
@@ -10,7 +9,7 @@ site_dir: '_site/'
 repo_name: ubuntu-post-install
 repo_url: https://github.com/tprasadtp/ubuntu-post-install
 edit_uri: "blob/master/docs/"
-remote_branch: gh-pages
+remote_branch: master
 remote_name: origin
 
 # Copyright
@@ -19,40 +18,35 @@ copyright: 'Copyright &copy; 2017-2020 Prasad Tengse'
 # Configuration
 theme:
   name: material
-  custom_dir: 'docs/theme-overrides/'
-
-  # 404 page
-  static_templates:
-    - 404.html
-
-  extra:
-    manifest: 'manifest.webmanifest'
-
-  include_search_page: false
-  search_index_only: true
-
-  # Default values, taken from mkdocs_theme.yml
+  icon:
+    logo: material/cloud
+    repo: fontawesome/brands/github-alt
+  features:
+    - tabs
+    - instant
+  # Language settings
   language: en
-  feature:
-    tabs: true
+  # Color Settings
   palette:
-    primary: indigo
+    primary: blue
     accent: cyan
+  # Fonts
   font:
     text: Roboto
     code: Roboto Mono
+  # Custom Favicon
   favicon: assets/images/favicon.png
-  logo:
-    icon: "book"
 
-# tasksization
-extra:
-  social:
-    - type: globe
-      link: https://ae.prasadt.com
-    - type: github-alt
-      link: https://github.com/tprasadtp
+  # Don't include MkDocs' JavaScript
+  include_search_page: false
+  search_index_only: true
 
+# extra:
+#   social:
+#     - type: fontawesome/solid/globe
+#       link: https://ae.prasadt.com
+#     - type: fontawesome/brands/github-alt
+#       link: https://github.com/tprasadtp
 # Extensions
 markdown_extensions:
   - markdown.extensions.admonition
@@ -82,31 +76,33 @@ markdown_extensions:
       repo_url_shorthand: true
       user: tprasadtp
       repo: ubuntu-post-install
-
 # Page tree
 nav:
-  - Introduction: index.md
-  - Getting Started: getting-started.md
+  - Home: index.md
   - FAQ:
     - Dependencies: faq/dependencies.md
     - Distros: faq/distros.md
-    - Errors & Issues: faq/errors.md
-    - Others: faq/others.md
+    - Errors: faq/errors.md
     - Exit Codes: faq/exit-codes.md
     - Debugging: faq/debug.md
   - Options: clioptions.md
-  - What can it do?: tasks.md
+  - Tasks: tasks.md
   - Configuration: configuration.md
-  - Example Config YAML: yaml.md
+  - Example Config: yaml.md
   - Logs: logs.md
   - Testing: testing.md
-  - News:
-    - Changelog: changelogs.md
-  - Other:
-    - License: license.md
-    - Privacy Policy: privacy.md
+  - Changelog:
+    - changelog.md
+  - License: license.md
 
 # Google Analytics
 google_analytics:
   - UA-101760811-5
   - auto
+
+plugins:
+  - search:
+  - minify:
+      minify_html: true
+  - git-revision-date-localized:
+      type: timeago

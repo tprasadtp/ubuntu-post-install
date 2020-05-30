@@ -28,49 +28,6 @@ This task can add the following repositories.
 ??? tip "Controlling which repository is added using config file"
     You can set your YML file to decide which repository is added. Some repositories may no be supported on your architecture or distribution. Take a look at [config.yml](/api/yaml) for example. If you omit a value, it defaults to false **ALWAYS**. Do note that if you are using lists default values are different, they are mentioned in below.
 
-??? note "Default Variables if using Lists"
-
-    ```bash
-    #============================ Switches/ bools ================================
-
-      # Latest wine builds
-      add_winehq_repo=false
-
-      #Docker community edition
-      add_docker_repo=true
-
-      #Mendeley Desktop
-      add_mendeley_repo=false
-
-      #Spotify
-      add_spotify_repo=true
-
-      #InSync
-      add_insync_repo=false
-
-      #Google Cloud SDK
-      add_googlecloud_repo=false
-      add_gcsfuse_Repo=false
-
-      #Signal
-      add_signal_repo=false
-
-      #Skype
-      add_skype_repo=true
-
-      #VS code
-      add_vscode_repo=true
-
-      #Google
-      add_google_repo=true
-
-      #ROS
-      add_ros_repo=false
-
-      # Define Data Directory
-      data_dir="data"
-    ```
-
 !!! warning "ROS Releases & Ubuntu/Debian versions"
     - ROS repository only support certain Ubuntu/Debian distributions. Please use appropriate packages to install depending on
     your distro/version. You can find more info at [ROS-Wiki](http://wiki.ros.org/ROS/Installation)
@@ -125,7 +82,7 @@ config:
 
 - Packages can be installed by using configuration lists in the data directory. This works similar to ppas
 
-### There are seven lists under key config.install.apt.[mentioned from 1-7]
+### There are seven list of packages under key config.install.apt.[mentioned from 1-7]
 
 1. administration - Contains Administrative packages
 2. security - Contains Security related tools and packages
@@ -148,14 +105,14 @@ This classification is only for ease of use and need not be strictly followed. Y
 while writing configs and editing them. Its advised to follow it if your configs
 tend to get to couple of hundreds of lines. Also YAML file should be a valid YAML & indented by 2 spaces.
 
-### Special list - Purge list
+### Special list of packages - Purge list
 
-There is a special package list under key, config.purge or purge.list, which contains list of apt packages to be
-purged from the system. Make sure that all the packages in the lists are available for your release. Using `-s` command line option helps. Also check for the logs for any errors or conflicts.
+There is a special package list under key, config.purge  list of apt packages to be
+purged from the system.
 
 ## Install Debian package archives (.deb files)
 
-This will install deb files specified in the list `deb.list` or YAML config under `config.install.debian_packages`.
+This will install deb files specified in the YAML config under `config.install.debian_packages`.
 
 - Logs will  show entry in the format `[<date and time>] [  PKG  ] <log>` for dpkg actions and
 - APT Logs will  show entry in the format `[<date and time>] [  APT  ] <log>` for actions performed by apt commands. (`apt-get install -f` for missing packages)
@@ -211,11 +168,11 @@ config:
 
 ## Install python packages (via pip)
 
-This will install system wide python packages using pip. There are two lists. `pip.list` and `pip3.list` for python 2 and python 3 respectively. Alternatively you can specify in YAML config under `config.install.python2` or `config.install.python3`
+This will install system wide python packages using pip. You can specify in YAML config under `config.install.python2` or `config.install.python3`
 This task requires `python-pip package` is installed, If not , will be installed anyway.
 
-- The list files follow similar configuration as package list files. One item per line. however you can specify version requirements as you would for requirements file.
-- Simulate flag will skip installing packages, unless `CI=true`.
+- These follow similar configuration as packages files. One item per line. however you can specify version requirements as you would for requirements file.
+- Simulate flag will skip installing packages, unless `--internal-ci-mode` is used.
 
 Example configuration is given below.
 
@@ -230,26 +187,27 @@ config:
 ```
 
 !!! warning
-    Don't mix Python 3 packages with Python 2 packages.
+    Don't mix Python 3 packages with Python 2 packages. Also, some recent distributions do not support Python2.
 
 ## Purge Unwanted Packages
 
 This will purge Unwanted packages from the system.
 
-- The packages mentioned in the list purge.list or under `config.purge` in yaml will be purged
+- The packages mentioned in `config.purge` in yaml.
 - The format of the purge.list is similar to that of packages, one packages per line of the file and no comments or anything else.
 
 !!! warning
-    It is necessary to pass command line argument `-d` or `--deboalt` to run this task if you are using lists mode. With YML you can set the flag  `config.flags.purge_enabled: true` in config and `-d` is not necessary.
+    It is necessary to pass command line argument `-d` or  set `config.flags.purge_enabled: true` in config.
 
 ## Reset repositories / Purge PPAs
 
-- This will reset the repositories added by this script, and purge ppas added by this script in the list ppa.list or config yaml.
+- This will reset the repositories, and purge ppas added by this script.
 - This will **NOT** reset or remove repositories added by the DEB files.
 - Simulate option has no effect on this action and ppa-purge **WILL** downgrade packages if necessary.
 
 !!! bug "Scope of this function"
     This will **NOT** remove PPAs or repositories you have added manually or those added while installing DEB files.
+    Additionally, this will not un-install packages installed from those repos and PPAs.
 
 ## Installing Snap packages
 
@@ -270,7 +228,6 @@ config:
 ```
 
 !!! warning
-    - List mode does not support installing snap packages.
     - Its responsibility of the user to separate classic snaps, edge and normal snaps.
 
 ## All In one
@@ -280,20 +237,18 @@ This will perform Following actions. (In the following order)
 - Update repository metadata
 - Upgrade packages
 - Add repositories
-- Add PPAs in the list file
+- Add PPAs
 - Install Apps
 - Install DEB files
 - Install Python 2 modules
 - Install Python 3 Modules
 - Install Static binaries
 
-This option will honor --autopilot and --simulate options as individual tasks would do if used with YAML. Lists mode does not
-support for selecting individual tasks.
+This option will honor --autopilot and --simulate options as individual tasks would do.
 
 ## AUTOPILOT Mode
 
-Setting `AUTOPILOT=true` or passing `--autopilot` will skip all UI prompts and confirmations and run ALL In One.
-
+Using `--autopilot` will skip all UI prompts and confirmations.
 This mode requires you to specify tasks to be run if using YAML config. Example snippet is given below.
 
 ```yaml

@@ -1,26 +1,41 @@
 # After-Effects
 
-<small>An effortless post install script for Ubuntu </small>
+<small>An Effortless & Simple post-installation script for Ubuntu, Linux Mint and Debian </small>
 
 
-[![Build Status](https://travis-ci.org/tprasadtp/ubuntu-post-install.svg?branch=master)](https://travis-ci.org/tprasadtp/ubuntu-post-install)
-[![Netlify Status](https://api.netlify.com/api/v1/badges/110327c5-b5f2-42e3-b5ef-5d5661c94187/deploy-status)](https://app.netlify.com/sites/ubuntu-post-install/deploys)
+![build](https://github.com/tprasadtp/ubuntu-post-install/workflows/build/badge.svg)[![Netlify Status](https://api.netlify.com/api/v1/badges/887c3d5c-5203-46b9-a31d-67cada282f36/deploy-status)](https://app.netlify.com/sites/ubuntu-post-install/deploys)
 [![Latest Version](https://img.shields.io/badge/dynamic/json.svg?label=Version&style=flat&url=https://ae.prasadt.com/config/version.json&query=version.name&prefix=V-)](https://github.com/tprasadtp/ubuntu-post-install/)
 [![What's new?](https://img.shields.io/badge/dynamic/json.svg?label=Whats%20New&style=flat&url=https://ae.prasadt.com/config/version.json&query=version.changelog)](https://ae.prasadt.com/changelogs/)
 [![license](https://img.shields.io/github/license/tprasadtp/ubuntu-post-install.svg?style=flat)](https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE)
 
 ## Why
 
-Upgrading a Linux machine comes with lot of headache. Somethings might break, somethings might not work or you might just want to
-start fresh. Beauty of Linux is almost everything is scriptable. Re-installing is just a matter of putting your favorite distribution on USB, install and configuring it. If you do it often and over a fleet of machines, then its a pain. You can run a few scripts to automate it, but they are not so flexible. A package changed its name? PPA not available for the current release? You need to edit your script, test it and run it.
-
+This script is built for one purpose only. Automating Post Installation tasks on a Fresh Ubuntu/Debian Installation.
 
 [![Bash](https://static.prasadt.com/logo64/bash.png)](https://ae.prasadt.com)
 
 
 ## How to
 
-See [Getting Started](/getting-started).
+
+## Step 1: Get the script
+
+```console
+wget -q https://ae.prasadt.com/get -O after-effects
+```
+
+## Step 2: Update the config to suit your needs
+
+Update the config file to suit your needs. Please see [Configuration](/configuration/) & [Tasks](/tasks/) for more details. Some example configs can be found [here](https://github.com/tprasadtp/ubuntu-post-install/tree/master/config).
+
+## Step 3: Run it
+
+Run the script as **root**. You will get an error if you do not run the script as root.
+
+```console
+chmod +x after-effects
+sudo ./after-effects -C <your config.yml>
+```
 
 ## Supported Distros
 
@@ -49,25 +64,14 @@ It should work fine. But no promises.
 
 ## Features
 
-[![APT-Packages](https://img.shields.io/badge/Install_Packages-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-apt-packages)
-[![Add-Repo](https://img.shields.io/badge/Add_Repositories-Limited-yellow.svg)](https://ae.prasadt.com/tasks/#add-repositories)
-[![Remove-Pre-installed](https://img.shields.io/badge/Purge_Pre_Installed-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#purge-unwanted-packages)
-[![PIP](https://img.shields.io/badge/PIP_Packages-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-python-packages-via-pip)
-[![Add-PPA](https://img.shields.io/badge/Add_PPAs-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#add-personal-package-archives-ppa)
-[![Purge-PPA](https://img.shields.io/badge/Purge_PPA-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#what-can-it-do)
-[![Install-Debs](https://img.shields.io/badge/Install_.DEB_Packages-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files)
-
-[![Install-CSnaps](https://img.shields.io/badge/Install_Classic_Snaps-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#installing-snap-packages)
-[![Install-NSnaps](https://img.shields.io/badge/Install_Snaps-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#installing-snap-packages)
-[![Install-EDebs](https://img.shields.io/badge/Install_Edge_snaps-Yes-brightgreen.svg)](https://ae.prasadt.com/tasks/#installing-snap-packages)
-
+- Adding Repositories (Limited set of curated repositories only)
+- Remove Preinstalled packages
+- Install Python2/3 system packages. (Its highly recommended to use `virtualenv` for your projects, **ONLY** install pip packages which are absolutely essential.)
+- Add PPAs (Ubuntu & Ubuntu derivatives only)
+- `deb` packages
+- Classic, Edge and Stable snap packages.
 
 ## Screenshots
 
 [![Details](assets/images/details.png)](assets/images/details.png)
 [![Details](assets/images/whiptail.png)](assets/images/whiptail.png)
-
-## Up-time
-
-![Up time Robot status](https://img.shields.io/uptimerobot/status/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
-![Up time Robot ratio (7 days)](https://img.shields.io/uptimerobot/ratio/7/m780628218-79e4106657d18a5abccd3565.svg?style=flat)

@@ -33,7 +33,7 @@ config:
     vscode: true
     skype: true
     signal: true
-    insync: true
+    insync: false
     google: true
     ros: true
     duo: false
@@ -49,14 +49,14 @@ config:
     - gnome-sudoku
     - aisleriot
     - gnome-mahjongg
-  # PPA List
+  # PPA
   ppa:
     - ppa:yubico/stable
   # Install components
   # APT Packages, Python Modules, Debian packages
   install:
     # Debian packages.deb files
-    # CSV format similar to lists
+    # CSV format
     debian_packages:
       - https://atom-installer.github.com/v1.35.1/atom-amd64.deb,Atom-Editor.deb
     # Static Binaries which will be placed in /usr/local/bin

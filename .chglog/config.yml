@@ -1,0 +1,28 @@
+style: github
+template: CHANGELOG.tpl.md
+info:
+  title: CHANGELOG
+  repository_url: https://github.com/tprasadtp/ubuntu-post-install
+options:
+  commits:
+    # filters:
+    #   Type:
+    #     - feat
+    #     - fix
+    #     - perf
+    #     - refactor
+  commit_groups:
+    title_maps:
+      feat: Features
+      fix: Bug Fixes
+      distro: Distro Support
+      internal: Internal Changes
+      refactor: Code Refactoring
+  header:
+    pattern: "^((\\w+)\\s.*)$"
+    pattern_maps:
+      - Subject
+      - Type
+  notes:
+    keywords:
+      - BREAKING CHANGE

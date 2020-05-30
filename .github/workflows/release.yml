@@ -1,0 +1,151 @@
+name: release
+on:
+  push:
+    tags:
+      - v*
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Docs
+        run: |
+          ./build/docs.sh
+          cat ./_site/commit.json
+
+      # Git Settings
+      - name: Setup Git
+        run: |
+          echo "Setting git conf user.email"
+          git config --global user.email "valarie-ci-bot@users.noreply.github.com" && echo "Done"
+          echo "Setting git conf user.name"
+          git config --global user.name "valarie-ci-bot" && echo "Done"
+
+      # Get Current gh-pages
+      - name: Clone gh-pages branch
+        uses: actions/checkout@v2
+        with:
+          ref: gh-pages
+          path: pages
+          fetch-depth: 0
+      - name: Copy _site folder to pages
+        run: |
+          rsync -avh --ignore-times --delete --exclude '**/.git/**/*' --exclude '**/.git/' ./_site/ pages/
+      - name: Commit Pages Built
+        run: |
+          cd pages
+          git add --all
+          git commit -s -m "Pages deploy ${GITHUB_SHA:0:7} BUILD-${GITHUB_RUN_NUMBER}"
+      # Upload site data and checksums to artifacts
+      - name: Artifacts _site
+        uses: actions/upload-artifact@v1
+        with:
+          name: pages
+          path: pages
+  release:
+    needs: docs
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+    - name: Version
+      run: echo $VERSION
+
+    - name: Checksums
+      run: |
+        sha256sum after-effects | tee -a sha256sums.txt
+        sha512sum after-effects | tee -a sha512sums.txt
+        sleep 50
+
+    # create a release on tag
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.get_version.outputs.VERSION }}
+        release_name: Release ${{ steps.get_version.outputs.VERSION }}
+        body: |
+          Please check the changelog at https://ae.prasadt.com/changelogs/.
+        draft: false
+        prerelease: true
+
+    # Upload Release assets
+    - name: Upload Script
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: after-effects
+        asset_name: after-effects
+        asset_content_type: text/plain
+    - name: Upload SIG
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: after-effects.asc
+        asset_name: after-effects.asc
+        asset_content_type: text/plain
+    - name: Upload Checksum SHA256
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: sha256sum.txt
+        asset_name: sha256sum.txt
+        asset_content_type: text/plain
+    - name: Upload Checksum SHA512
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: sha512sum.txt
+        asset_name: sha512sum.txt
+        asset_content_type: text/plain
+    - name: Upload Version
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: config/version.yml
+        asset_name: version.yml
+        asset_content_type: text/plain
+    - name: Upload VERSION SIG
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: config/version.yml.asc
+        asset_name: version.yml.asc
+        asset_content_type: text/plain
+
+    - name: Get Site artifacts
+      uses: actions/download-artifact@v1
+      with:
+        name: pages
+        path: artifacts/pages
+
+    - name: Lister
+      run: |
+        cd artifacts/pages/
+        ls -al
+        git push -u origin gh-pages

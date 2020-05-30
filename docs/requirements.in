@@ -1,4 +1,0 @@
-mkdocs
-mkdocs-material
-Pygments>=2.2.0
-pymdown-extensions>=4.10.1

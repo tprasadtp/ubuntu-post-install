@@ -1,7 +1,0 @@
-# List of binaries to be placed
-# In /usr/local/bin
-# Be careful not to rename existing ones
-# <URL>,<filename>
-# If you want to specify relative path you
-# can do so relative to /usr/local/bin
-https://github.com/kubernetes/kompose/releases/download/v1.15.0/kompose-linux-amd64,kompose

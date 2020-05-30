@@ -1,9 +1,9 @@
 # Ubuntu / Debian Post Installation Script
 
-Effortless way to setup your fresh Ubuntu, Linux Mint, Debian installs. Please read the [FAQ][FAQ] & the [Docs][DOCS]
-before trying out.
+Effortless way to setup your fresh Ubuntu, Linux Mint and Debian installation.
 
-[![travis][travis-badge]][travis-link]
+[![build][build-badge]][build-link]
+[![release][release-ci-badge]][release-ci-link]
 [![netlify][netlify-badge]][netlify]
 [![version][version]][changelogs]
 [![license][gpl-badge]][license]
@@ -13,58 +13,31 @@ before trying out.
 
 ## How to use this
 
-Install your choice of Ubuntu/Debian/Mint or its derivative as you would
 
-### Step 1: Get the script
-
-#### Without Git
-
-Run this in Terminal
+### 1. Get the script
 
 ```console
- wget -q https://ae.prasadt.com/get -O - | bash
+wget -q https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O after-effects
 ```
 
-> URL redirects to file with last known good commit ![commit][commit] on GitHub. It is cached & proxies to GitHub at CDN level. If you are paranoid, use git.
-If you wish to use master branch pass `--master` or `-m` as an argument. Eg: `wget -q https://ae.prasadt.com/get -O - | bash -s --master`
+### 2. Setup your YAML configuration file
 
-#### With Git
-
-If you already have git on your system, you can use,
-
-```console
-git clone https://github.com/tprasadtp/ubuntu-post-install.git && cd ubuntu-post-install
-```
-
-If you already have cloned the repo, you can use `git pull` to get the latest changes.
-
-> This will use master branch which may not be as stable as versioned releases.
-
-### Step 2: Update the lists or your YAML configuration file
-
-Update the list files or YAML file to suit your needs. Change PPAs, add or delete packages to list, tweak flags etc.
+Setup YAML file to suit your needs. Change PPAs, add or delete packages to list, tweak flags etc.
 Please see [Configuration](https://ae.prasadt.com/configuration/) & [Tasks](https://ae.prasadt.com/tasks/).
 
 [![Configuration-Page](https://img.shields.io/badge/Info-Configuration-blue.svg)](https://ae.prasadt.com/configuration/)
 [![Tasks-Page](https://img.shields.io/badge/Info-Tasks-green.svg)](https://ae.prasadt.com/tasks/)
 
-### Step 3: Run the script
+### 3. Run the script
 
 Run the script as **root**.
 
-- To use default YAML configuration, which can be found here `https://ae.prasadt.com/dl/config/default.yml`.
+Sample configuration can be found here `https://ae.prasadt.com/dl/config/default.yml`.
 
-  ```console
-    sudo ./after-effects --config-file ./config/default.yml
-  ```
-
-- To use local list files in `data`
-
-  ```console
-    sudo ./after-effects -L
-  ```
-
-> If you are running this in a docker container, you probably are root and its possible that you might be missing `sudo`. So In that case just run it as `./after-effects`. Be warned! You might be missing several dependencies of the script!!
+```console
+  chmod +x after-effects
+  sudo ./after-effects --config-file ./config/default.yml
+```
 
 ## FAQ & Documentation
 
@@ -99,36 +72,7 @@ It should work fine. But no promises.
 [![Peppermint-OS](https://static.prasadt.com/logo64/peppermint-os.png)](https://peppermintos.com/)
 [![Elementary-OS](https://static.prasadt.com/logo64/elementary-os.png)](https://elementary.io/)
 
-A Complete  list of supported distributions is given below.
-
-| Distribution      | Code name/Version     | Supported      | Notes                         |
-| :---------------- | :-------------------- | -------------- | :---------------------------- |
-| Ubuntu 19.10      | Eoan Ermine           | Yes            |
-| Ubuntu 18.04      | Bionic Beaver         | Yes            |
-| Ubuntu 16.04      | Xenial Xerus          | Yes            |
-| Linux Mint 18     | Sarah                 | Yes            |
-| Linux-Mint 18.1   | Serena                | Yes            |
-| Linux-Mint 18.2   | Sonya                 | Yes            |
-| Linux-Mint 18.3   | Sylvia                | Yes            |
-| Linux Mint 19     | Tara                  | Yes            |
-| Linux Mint 19.1   | Tessa                 | Yes            | Not tested
-| Linux Mint 19.2   | Tina                  | Yes            | Not tested
-| Linux Mint 19.3   | Tricia                | Yes            | Not tested
-| Debian 8          | Jessie                | Yes            | Not tested
-| Debian 9          | Stretch               | Yes            |
-| Debian 10         | Buster                | Yes            |
-| MX Linux 19       | Buster                | Yes            | Not tested
-| Elementary-OS 0.4 | Loki                  | Yes            | Not tested                    |
-| Elementary-OS 5.0 | Juno                  | Yes            | Not tested                    |
-| Elementary-OS 5.1 | Hera                  | Yes            | Tested                        |
-| Budgie Remix      | Ubuntu 16.04          | Yes            |
-| PoP! OS           | *Ubuntu releases      | Yes            | Not tested                    |
-| Linux-Lite        | 3.X                   | Yes            | (Based on Ubuntu 16.04)       |
-| Bodhi Linux       | 4                     | Yes            | (Based on Ubuntu 16.04)       |
-| Bodhi Linux       | 5                     | Yes            | (Based on Ubuntu 18.04)       |
-| KDE Neon          | Based on Ubuntu LTS   | Might be buggy | Not Tested                    |
-| Peppermint 9,10   | Based on Ubuntu 18.04 | Yes            | Not Tested                    |
-| Peppermint 8      | Based on Ubuntu 16.04 | Yes            | Not tested                    |
+For a complete  list of supported distributions [click here](https://ae.prasadt.com/faq/distros/).
 
 ## Features
 
@@ -172,7 +116,6 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 
 - Please check [FAQ][FAQ] & [known issues][known-issues].
 - Please include the log file and terminal output while opening an issue.
-- **Never** set environment variable `CI=true` & `TRAVIS=true` unless you are running CI tests or are sure of its effects.
 
 ## Contributing & Forks
 
@@ -185,13 +128,15 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [known-issues]: https://ae.prasadt.com/faq/errors/
 [changelogs]: https://ae.prasadt.com/changelogs/
 
-[travis-link]: https://travis-ci.org/tprasadtp/ubuntu-post-install
-[travis-badge]: https://travis-ci.org/tprasadtp/ubuntu-post-install.svg?branch=master
-[netlify-badge]: https://img.shields.io/netlify/110327c5-b5f2-42e3-b5ef-5d5661c94187
+[build-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/build/badge.svg
+[build-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Abuild
+[release-ci-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/release/badge.svg
+[release-ci-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Arelease
+[netlify-badge]: https://api.netlify.com/api/v1/badges/887c3d5c-5203-46b9-a31d-67cada282f36/deploy-status
 [netlify]: https://app.netlify.com/sites/ubuntu-post-install/deploys
 
 
-[version]: https://img.shields.io/badge/dynamic/json.svg?label=version&style=flat&url=https://ae.prasadt.com/config/version.json&query=version.name
+[version]: https://img.shields.io/badge/dynamic/yaml.svg?label=Version&style=flat&url=https://ae.prasadt.com/config/version.yml&query=version.name
 [new]: https://img.shields.io/badge/dynamic/json.svg?label=news&style=flat&url=https://ae.prasadt.com/config/version.json&query=version.changelog
 
 
@@ -199,5 +144,5 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [commit-deployed-ts]: https://img.shields.io/badge/dynamic/json.svg?label=on&style=flat&url=https://ae.prasadt.com/commit.json&query=ts
 [deployed]: https://img.shields.io/badge/dynamic/json.svg?label=deployed&color=success&style=flat&prefix=%23&url=https://ae.prasadt.com/commit.json&query=build.number
 
-[gpl-badge]: https://img.shields.io/badge/license-GPLv3-green
+[gpl-badge]: https://img.shields.io/badge/License-GPLv3-ff69b4
 [license]: https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE
