@@ -80,7 +80,7 @@ jobs:
           body: |
             Please check the changelog at https://ae.prasadt.com/changelog/.
           draft: false
-          prerelease: true
+          prerelease: false
 
       # Upload Release assets
       - name: Upload Script
