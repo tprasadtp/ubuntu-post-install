@@ -111,17 +111,6 @@ jobs:
         asset_name: version.yml
         asset_content_type: text/plain
 
-    - name: Upload VERSION SIG
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: config/version.yml.asc
-        asset_name: version.yml.asc
-        asset_content_type: text/plain
-
     - name: Upload Checksum SHA256
       uses: actions/upload-release-asset@v1
       env:

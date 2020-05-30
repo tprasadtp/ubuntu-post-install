@@ -93,7 +93,6 @@ function main()
 
   if [[ $bool_sign == "true" ]]; then
     sign_file "after-effects"
-    sign_file "config/version.yml"
   fi
 
 }

@@ -1,27 +1,3 @@
-["Ubuntu"]
-color = "E95420"
-name = "Ubuntu"
-description = "Ubuntu support"
-
-["Debian"]
-color = "A81D33"
-name = "Debian"
-description = "Debian support"
-
-["Linux-Mint"]
-color = "87CF3E"
-name = "Linux-Mint"
-description = "Mint support"
-
-["ElementaryOS"]
-color = "64BAFF"
-name = "ElementaryOS"
-description = "ElementaryOS support"
-
-["Shell"]
-color = "E95420"
-name = "Shell"
-description = "Shell support"
 
 ["Actions"]
 color = "181717"
@@ -168,3 +144,24 @@ description = "Questions"
 color = "f75d68"
 name = "Security"
 description = "Security fixes"
+
+
+["Debian"]
+color = "A81D33"
+name = "Debian"
+description = "Debian support"
+
+["Linux-Mint"]
+color = "87CF3E"
+name = "Linux-Mint"
+description = "Mint support"
+
+["ElementaryOS"]
+color = "64BAFF"
+name = "ElementaryOS"
+description = "ElementaryOS"
+
+["Ubuntu"]
+color = "E95420"
+name = "Ubuntu"
+description = "Ubuntu support"
