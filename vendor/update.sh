@@ -24,21 +24,21 @@ function download_yq()
   echo "$((++count)). Checksum (E)"
   YQ_AMD64_CHECKSUM="$(grep -w yq_linux_amd64 vendor/${yq_version}/.RHASH | cut -d ' ' -f37)"
   echo "$((++count)). Checksum (W)"
-  echo "${YQ_AMD64_CHECKSUM}" > "./vendor/${yq_version}/amd64/yq.SHA256SUM"
+  echo "${YQ_AMD64_CHECKSUM}" > "./vendor/${yq_version}/amd64/yq.sha256"
 
   echo "$((++count)). Downloading ARM YQ Binary"
   #curl -sSfL "https://github.com/mikefarah/yq/releases/download/${yq_version}/yq_linux_arm" -o "./vendor/${yq_version}/arm/yq"
   echo "$((++count)). Checksum (E)"
   YQ_ARM_CHECKSUM="$(grep -w yq_linux_arm vendor/${yq_version}/.RHASH | cut -d ' ' -f37)"
   echo "$((++count)). Checksum (W)"
-  echo "${YQ_ARM_CHECKSUM}" > "./vendor/${yq_version}/arm/yq.SHA256SUM"
+  echo "${YQ_ARM_CHECKSUM}" > "./vendor/${yq_version}/arm/yq.sha256"
 
   echo "$((++count)). Downloading ARM64 YQ Binary"
   #curl -sSfL "https://github.com/mikefarah/yq/releases/download/${yq_version}/yq_linux_arm64" -o "./vendor/${yq_version}/arm64/yq"
   echo "$((++count)). Checksum (E)"
   YQ_ARM64_CHECKSUM="$(grep -w yq_linux_arm64 vendor/${yq_version}/.RHASH | cut -d ' ' -f37)"
   echo "$((++count)). Checksum (W)"
-  echo "${YQ_ARM_CHECKSUM}" > "./vendor/${yq_version}/arm64/yq.SHA256SUM"
+  echo "${YQ_ARM_CHECKSUM}" > "./vendor/${yq_version}/arm64/yq.sha256"
 
   echo "$((++count)). Checksum (GNU)"
   cat << EOF > ./vendor/"${yq_version}"/SHA256SUMS

@@ -59,7 +59,7 @@ Following details should explain the behavior of this flag. Please do have a loo
 !!! snippet "Usage"
 
     ```console
-    ./after-effects --no-version-check
+    ./after-effects --skip-version-check
     ```
     OR
 
@@ -237,7 +237,7 @@ Autopilot mode is designed to run the script in a non interactive manner. Please
 
 Displays this help option.
 
-<pre><font color="#A6E22E">./after-effects</font> -h
+<pre><font color="#A6E22E"><b>➜ </b></font> <font color="#A6E22E">./after-effects</font> -h
 
 <font color="#A6E22E">A Post Installation Script for Ubuntu/Debian/Linux Mint</font>
 Usage: <font color="#A6E22E"> [sudo] ./after-effects </font><font color="#F4BF75">  [options]</font>
@@ -249,11 +249,8 @@ Usage: <font color="#A6E22E"> [sudo] ./after-effects </font><font color="#F4BF75
 
 <font color="#F4BF75">Configuration Options</font>
 <font color="#F4BF75">-------------------------------------------------</font>
-[-C | --config-file]   Local yaml config file
-[-n | --name]          Name of the configuration file to use
-                       as a query parameter when -R / --remote-yaml is used
+[-c | --config-file]   Local yaml config file
 [-R | --remote-yaml]   Use config yaml hosted somewhere else
-[-V | --version-file]  Specify a local file from which version info will be read
 
 <font color="#66D9EF">The following options are &quot;action&quot; options and</font>
 <font color="#66D9EF">will make changes to your system depending on tasks chosen.</font>
@@ -262,26 +259,25 @@ Usage: <font color="#A6E22E"> [sudo] ./after-effects </font><font color="#F4BF75
 [-f | --fix]           Fix codenames for new releases
 [-p | --pre-release]   Same as --fix but for beta/alpha releases
 [--fix-mode-lts]       Similar to --fix but fallback to last LTS
-                        Should be used with --fix
+                       Should be used with --fix
 [-k | --keep-debs]     Do not invoke apt-clean &amp; do not delete
                        downloaded deb packages
 [-l | --delete-log]    Delete logfile (./log/after-effects.log)
 [-s | --simulate]      Try not make changes to system and use --dry-run
-  Please read the documentation at http://ae.prasadt.com/clioptions
-  to know its limits as not everything can be simulated.
+                       Please read the documentation, to know its limits
+                       as everything cannot be simulated.
 
 <font color="#F4BF75">Other Options</font>
 <font color="#F4BF75">-------------------------------------------------</font>
-[-E | --skip-env-checks]  Skip some env checks
-[-N --no-version-checks]  Skip checking for latest version
-[-H --hide-config]        Hide configuration table
-[--use-uf-mirror | -u]    Use University of Freiburg mirrors
-[-A --autopilot]          Enables AUTOPILOT mode(No Prompts)
+[-E | --skip-env-checks]     Skip some env checks
+[-V | --skip-version-check]  Skip checking for latest version
+[-H --hide-config]           Hide configuration table
+[-A --autopilot]             Enables AUTOPILOT mode(No Prompts)
 
-<font color="#A6E22E">Links &amp; License:</font>
+<font color="#A6E22E">Links &amp; License</font>
 <font color="#A6E22E">-------------------------------------------------</font>
-GitHub        : <font color="#66D9EF">https://git.io/Jv08V</font>
-Documentation : <font color="#66D9EF">https://ae.prasadt.com</font>
+GitHub          : <font color="#66D9EF">https://git.io/Jv08V</font>
+Documentation   : <font color="#66D9EF">https://ae.prasadt.com</font>
 * This script is licensed under GPLv3.
 * Show your support by starring the repo on GitHub
 -------------------------------------------------

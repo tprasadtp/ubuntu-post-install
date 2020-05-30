@@ -33,7 +33,7 @@ config:
     vscode: true
     skype: true
     signal: true
-    insync: true
+    insync: false
     google: true
     ros: true
     duo: false

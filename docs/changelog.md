@@ -1,9 +1,15 @@
 # Changelog
 
-## 5.6.0
+## 6.0
 
-- Internal changes
 - Remove Lists mode
+- Drop 32 bit support for x86 architecture
+- Add support focal, and Mint 20
+- Fix Google Cloud SDK on focal
+- Way to handle Python2 unsupported on focal and other upcoming distros.
+- Changes to some flags. Please see flags documentation. Some flags are now dropped or reassigned
+- Migrate to GitHub.
+
 
 ## 5.5.2
 

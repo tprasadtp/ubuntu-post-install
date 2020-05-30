@@ -31,24 +31,7 @@ function main()
 
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
-  if [[ $release == "host" ]]; then
-    echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-    echo "Testing On HOST"
-    echo "Testing with YAML"
-    sudo ./after-effects \
-      --yes \
-      --autopilot \
-      --simulate \
-      --internal-ci-mode \
-      --config-file config/"${config_yml}"
-    exit_code="$?"
-    echo "Exit code for YAML is $exit_code"
-    if [[ $exit_code -ne 0 ]]; then
-      exit "$exit_code"
-    fi
-
-  else
-    echo "Building $distro:$release Docker Image"
+  echo "Building $distro:$release Docker Image"
     docker build -t ae:"${docker_tag}" \
       --build-arg DISTRO="${distro}" \
       --build-arg CODE_NAME="${release}"  \
@@ -72,8 +55,6 @@ function main()
     if [[ $exit_code -ne 0 ]]; then
       exit "$exit_code"
     fi
-
-  fi
 }
 
 main "$@"

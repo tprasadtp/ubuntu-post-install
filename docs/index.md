@@ -10,9 +10,7 @@
 
 ## Why
 
-Upgrading a Linux machine comes with lot of headache. Somethings might break, somethings might not work or you might just want to
-start fresh. Beauty of Linux is almost everything is scriptable. Re-installing is just a matter of putting your favorite distribution on USB, install and configuring it. If you do it often and over a fleet of machines, then its a pain. You can run a few scripts to automate it, but they are not so flexible. A package changed its name? PPA not available for the current release? You need to edit your script, test it and run it.
-
+This script is built for one purpose only. Automating Post Installation tasks on a Fresh Ubuntu/Debian Installation.
 
 [![Bash](https://static.prasadt.com/logo64/bash.png)](https://ae.prasadt.com)
 
@@ -28,7 +26,7 @@ wget -q https://ae.prasadt.com/get -O after-effects
 
 ## Step 2: Update the config to suit your needs
 
-Update the config files to suit your needs. Please see [Configuration](/configuration/) & [Tasks](/tasks/) for more details. Some example configs can be found [here](https://github.com/tprasadtp/ubuntu-post-install/tree/master/config).
+Update the config file to suit your needs. Please see [Configuration](/configuration/) & [Tasks](/tasks/) for more details. Some example configs can be found [here](https://github.com/tprasadtp/ubuntu-post-install/tree/master/config).
 
 ## Step 3: Run it
 
@@ -66,7 +64,7 @@ It should work fine. But no promises.
 
 ## Features
 
-- Adding Repositories (Limited set of curated repositories only at the moment)
+- Adding Repositories (Limited set of curated repositories only)
 - Remove Preinstalled packages
 - Install Python2/3 system packages. (Its highly recommended to use `virtualenv` for your projects, **ONLY** install pip packages which are absolutely essential.)
 - Add PPAs (Ubuntu & Ubuntu derivatives only)
