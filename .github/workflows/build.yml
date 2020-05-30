@@ -94,7 +94,7 @@ jobs:
         run: ./tests/distro.sh "arm64v8/ubuntu" ${{ matrix.release }} "arm.yml"
   # Build Docs, artifacts and upload them
   docs:
-    needs: [ "debian", "ubuntu", "ubuntu-upcoming", "elementary" ]
+    needs: [ "debian", "ubuntu", "upcoming", "arm", "elementary" ]
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2

@@ -75,7 +75,8 @@ It should work fine. But no promises.
 A Complete  list of supported distributions is given below.
 
 | Distribution      | Code name/Version     | Supported      | Notes                         |
-| :---------------- | :-------------------- | -------------- | :---------------------------- |
+| :---------------- | :-------------------- | :------------- | :---------------------------- |
+| Ubuntu 20.04      | Focal Fossa           | Yes            |
 | Ubuntu 19.10      | Eoan Ermine           | Yes            |
 | Ubuntu 18.04      | Bionic Beaver         | Yes            |
 | Ubuntu 16.04      | Xenial Xerus          | Yes            |
