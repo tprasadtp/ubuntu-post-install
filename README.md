@@ -18,8 +18,8 @@ Effortless way to setup your fresh Ubuntu, Linux Mint and Debian installation.
 ### 1. Get the script
 
 ```console
-wget -q https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O after-effects
-wget -q https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O sha256sum.txt
+wget https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O after-effects
+wget https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha256sum.txt -O sha256sums.txt
 sha256sum -c sha256sums.txt --strict
 ```
 

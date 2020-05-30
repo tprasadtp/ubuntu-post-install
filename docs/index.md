@@ -27,8 +27,8 @@ This script is built for one purpose only. Automating Post Installation tasks on
 ## Step 1: Get the script and Verify its integrity
 
 ```console
-wget -q https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O after-effects
-wget -q https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O sha256sum.txt
+wget https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O after-effects
+wget https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha256sum.txt -O sha256sums.txt
 sha256sum -c sha256sums.txt --strict
 ```
 
