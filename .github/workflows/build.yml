@@ -6,14 +6,34 @@ on:
       - ".gitignore"
       - ".envrc"
       - ".vscode/**"
+      # Lets face it! Everyone needs more coffee to avoid typos!
       - "README.md"
       - "CONTRIBUTING.md"
       - ".github/workflows/labels.yml"
       - ".github/labels.toml"
       - ".github/**/*.md"
+      # Lets ignore release workflow, because we do not really build any
+      # binaries we are fine.
+      - ".github/workflows/release.yml"
+      # Also ignore docs workflow
+      - ".github/workflows/docs.yml"
+      - "docs/**"
+      - "netlify.toml"
+      - "mkdocs.yml"
+      - "runtime.txt"
+      - "docker-compose.yml"
     tags-ignore:
       - "**"
   pull_request:
+    # Lets ignore docs in PR.
+    # as we have docs workflow taking care of it.
+    paths-ignore:
+      - ".github/workflows/docs.yml"
+      - "docs/**"
+      - "netlify.toml"
+      - "mkdocs.yml"
+      - "runtime.txt"
+      - "docker-compose.yml"
 name: build
 env:
   DEBUG: ci
@@ -92,43 +112,3 @@ jobs:
 
       - name: Test on ARM64 ${{ matrix.release }}
         run: ./tests/distro.sh "arm64v8/ubuntu" ${{ matrix.release }} "arm.yml"
-  # Build Docs, artifacts and upload them
-  docs:
-    needs: [ "debian", "ubuntu", "arm", "elementary" ]
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build Docs
-        run: |
-          ./build/docs.sh
-          cat ./_site/commit.json
-
-      # Git Settings
-      - name: Setup Git
-        run: |
-          echo "Setting git conf user.email"
-          git config --global user.email "valarie-ci-bot@users.noreply.github.com" && echo "Done"
-          echo "Setting git conf user.name"
-          git config --global user.name "valarie-ci-bot" && echo "Done"
-
-      # Get Current gh-pages
-      - name: Clone gh-pages branch
-        uses: actions/checkout@v2
-        with:
-          ref: gh-pages
-          path: pages
-          fetch-depth: 0
-      - name: Copy _site folder to pages
-        run: |
-          rsync -avh --ignore-times --delete --exclude '**/.git/**/*' --exclude '**/.git/' ./_site/ pages/
-      - name: Commit Pages Built
-        run: |
-          cd pages
-          git add --all
-          git commit -s -m "Pages deploy ${GITHUB_SHA:0:7} BUILD-${GITHUB_RUN_NUMBER}"
-      # Upload site data and checksums to artifacts
-      - name: Artifacts _site
-        uses: actions/upload-artifact@v1
-        with:
-          name: pages
-          path: pages

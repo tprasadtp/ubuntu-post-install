@@ -4,6 +4,7 @@ Effortless way to setup your fresh Ubuntu, Linux Mint and Debian installation.
 
 [![build][build-badge]][build-link]
 [![release][release-ci-badge]][release-ci-link]
+[![docs][docs-ci-badge]][docs-ci-link]
 [![netlify][netlify-badge]][netlify]
 [![version][version]][changelogs]
 [![license][gpl-badge]][license]
@@ -132,13 +133,15 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [build-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Abuild
 [release-ci-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/release/badge.svg
 [release-ci-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Arelease
+
+[docs-ci-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/docs/badge.svg
+[docs-ci-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%docs
+
 [netlify-badge]: https://api.netlify.com/api/v1/badges/887c3d5c-5203-46b9-a31d-67cada282f36/deploy-status
 [netlify]: https://app.netlify.com/sites/ubuntu-post-install/deploys
 
 
-[version]: https://img.shields.io/badge/dynamic/yaml.svg?label=Version&style=flat&url=https://ae.prasadt.com/config/version.yml&query=version.name
-[new]: https://img.shields.io/badge/dynamic/json.svg?label=news&style=flat&url=https://ae.prasadt.com/config/version.json&query=version.changelog
-
+[version]: https://img.shields.io/github/v/release/tprasadtp/ubuntu-post-install?label=version
 
 [commit]: https://img.shields.io/badge/dynamic/json.svg?label=sha&style=flat&url=https://ae.prasadt.com/commit.json&query=commit.id
 [commit-deployed-ts]: https://img.shields.io/badge/dynamic/json.svg?label=on&style=flat&url=https://ae.prasadt.com/commit.json&query=ts
