@@ -68,13 +68,13 @@ jobs:
       - uses: actions/checkout@v2
       - name: Elementary ${{ matrix.release }}
         run: ./tests/distro.sh "elementary/docker" ${{ matrix.release }}
-  upcoming:
-    needs: [ "shellcheck", "dockerlint"]
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v2
-      - name: Test on Upcoming
-        run: ./tests/distro.sh "ubuntu" "groovy"
+  # upcoming:
+  #   needs: [ "shellcheck", "dockerlint"]
+  #   runs-on: ubuntu-18.04
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Test on Upcoming
+  #       run: ./tests/distro.sh "ubuntu" "groovy"
   arm:
     needs: [ "shellcheck", "dockerlint"]
     runs-on: ubuntu-18.04
@@ -94,7 +94,7 @@ jobs:
         run: ./tests/distro.sh "arm64v8/ubuntu" ${{ matrix.release }} "arm.yml"
   # Build Docs, artifacts and upload them
   docs:
-    needs: [ "debian", "ubuntu", "upcoming", "arm", "elementary" ]
+    needs: [ "debian", "ubuntu", "arm", "elementary" ]
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
