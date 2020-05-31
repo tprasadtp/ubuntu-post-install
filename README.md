@@ -44,9 +44,7 @@ Sample configuration can be found here `https://ae.prasadt.com/dl/config/default
 
 See /docs or visit [docs][docs]
 
-![deployed][deployed]
 ![commit][commit]
-![commit][commit-deployed-ts]
 
 ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
 ![Uptime Robot ratio (30 days)](https://img.shields.io/uptimerobot/ratio/30/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
