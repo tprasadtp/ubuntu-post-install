@@ -33,13 +33,13 @@
 [[redirects]]
   from = "/git"
   to = "https://github.com/tprasadtp/ubuntu-post-install"
-  status = 301
+  status = 302
   force = true
 
 [[redirects]]
   from = "/github"
   to = "https://github.com/tprasadtp/ubuntu-post-install"
-  status = 301
+  status = 302
   force = true
 
 # Issues
@@ -47,14 +47,14 @@
   from = "/issue"
   query = {id = ":id"}
   to = "https://github.com/tprasadtp/ubuntu-post-install/issues/:id"
-  status = 301
+  status = 302
   force = true
 
 
 [[redirects]]
   from = "/issues"
   to = "https://github.com/tprasadtp/ubuntu-post-install/issues"
-  status = 301
+  status = 302
   force = true
 
 # Pulls
@@ -62,7 +62,7 @@
   from = "/pr"
   query = {id = ":id"}
   to = "https://github.com/tprasadtp/ubuntu-post-install/pull/:id"
-  status = 301
+  status = 302
   force = true
 
 
@@ -74,14 +74,8 @@
 
 [[redirects]]
   from = "/dp"
-  to = "/deploy.json"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "/commit"
   to = "/commit.json"
-  status = 301
+  status = 200
   force = true
 
 # Version to old version.yml
@@ -89,57 +83,44 @@
 [[redirects]]
   from = "/config/version.yml"
   to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml"
-  status = 301
+  status = 302
   force = true
 
 # /version stuff
 [[redirects]]
-  from = "/version"
+  from = "/get/version"
   to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml"
-  status = 301
+  status = 302
   force = true
 
-
+# /v3/version stuff
 [[redirects]]
-  from = "/sig/version"
-  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml.asc"
-  status = 301
-  force = true
-
-# /v2/version stuff
-[[redirects]]
-  from = "/v2/version"
+  from = "/get/v3/version"
   to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "/v2/sig/version"
-  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml.asc"
-  status = 301
+  status = 302
   force = true
 
 # Scripts
 [[redirects]]
   from = "/get"
   to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects"
-  status = 301
+  status = 302
   force = true
 
 [[redirects]]
-  from = "/sig/get"
+  from = "/get/sig"
   to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects.asc"
-  status = 301
+  status = 302
   force = true
 
 [[redirects]]
-  from = "/sha256"
+  from = "/get/sha256"
   to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha256sum.txt"
-  status = 301
+  status = 302
   force = true
 
 [[redirects]]
-  from = "/sha512"
+  from = "/get/sha512"
   to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha512.txt"
-  status = 301
+  status = 302
   force = true

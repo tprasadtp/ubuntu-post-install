@@ -1,9 +1,10 @@
 # Errors
 
-## GCSFUSE on 18.10+
+## GCSFUSE, ROS and Duo Security Repositories
 
-Google 's GCSFuse is not yet available for cosmic/disco. Please see this
-[Github issue](https://github.com/GoogleCloudPlatform/gcsfuse/issues/319) for a fix.
+- Note for 18.10+ users: GCSFuse is not available. Please see this [Github issue](https://github.com/GoogleCloudPlatform/gcsfuse/issues/319) for a fix.
+- Duo Security for unix is only supported on some LTS releases.
+- ROS is only supported on select releases.
 
 ## What if I get an error saying Unknown Distribution/Release?
 

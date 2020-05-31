@@ -11,9 +11,7 @@ Effortless way to setup your fresh Ubuntu, Linux Mint and Debian installation.
 
 ![Bash](https://static.prasadt.com/logo64/bash.png)
 
-
 ## How to use this
-
 
 ### 1. Get the script
 
@@ -99,7 +97,6 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 |Duo Security Unix | duo
 |Google Chrome & Google Earth | google
 |Google Cloud SDK | googlecloud
-|GCSFUSE | gcsfuse
 |Insync | insync
 |Mendeley desktop | mendeley
 |ROS | ros
@@ -109,11 +106,6 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 |Visual Studio code | vscode
 | Wine HQ | winehq
 
-> Note for 18.10+ users: GCSFuse is not yet available for `cosmic`/`disco`. Please see this
-[Github issue](https://github.com/GoogleCloudPlatform/gcsfuse/issues/319) for a fix.
-
-> Duo Security for unix is only supported on LTS releases
-> ROS is only supported on select releases
 
 ## Issues & Help
 
