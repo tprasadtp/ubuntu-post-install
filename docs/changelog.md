@@ -6,10 +6,10 @@
 - Drop 32 bit support for x86 architecture
 - Add support focal, and Mint 20
 - Fix Google Cloud SDK on focal
-- Way to handle Python2 unsupported on focal and other upcoming distros.
-- Changes to some flags. Please see flags documentation. Some flags are now dropped or reassigned
-- Migrate to GitHub Actions.
-
+- Way to handle Python2 being unsupported on focal and other upcoming distros.
+- Changes to some flags. Some flags are now dropped or reassigned.
+- Migrate to GitHub Actions :octicons-octoface:
+- Dark Mode
 
 ## 5.5.2
 

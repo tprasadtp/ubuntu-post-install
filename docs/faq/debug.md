@@ -4,14 +4,13 @@ You can chose from multiple debug modes. by setting DEBUG variable to one of the
 
 - `DEBUG=1` Print debug messages
 - `DEBUG=internal` display some internal debug messages
-- `DEBUG=trace` Print debug, internal and also apt logs.
-This can generate a lot of output.
+- `DEBUG=trace` Print debug, internal and also apt logs. Please note that This can generate a lot of output.
 
 ## Local testing
 
-You can use `./tests/test-distro.sh` to test the scripts locally. It uses docker to build and test the script in simulate mode inside
+You can use `./tests/distro-local.sh` to test the scripts locally. It uses docker to build and test the script in simulate mode inside
 containers. This script requires two arguments __distro name__ and __release name__. They are used as parameters to build the Docker image from dockerfile in `dockerfiles/tests`.eg.to test the script on Ubuntu 18.04 bionic, run it as
-`./tests/test-distro.sh ubuntu bionic`. It will fetch and build the docker image and run the script in simulate mode using the config files at `https://{branch-name}--ubuntu-post-install.netlify.net/config/default.yml`
+`./tests/distro-local.sh ubuntu bionic`.
 
 Alternatively you can build the docker image yourself.
 

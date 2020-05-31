@@ -28,7 +28,6 @@ function main()
 
   docker_tag="${distro//[\/]/-}-${release}"
 
-
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
   echo "Building $distro:$release Docker Image"

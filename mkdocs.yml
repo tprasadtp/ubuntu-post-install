@@ -23,7 +23,6 @@ theme:
     repo: fontawesome/brands/github-alt
   features:
     - tabs
-    - instant
   # Language settings
   language: en
   # Color Settings
@@ -64,14 +63,17 @@ markdown_extensions:
   - pymdownx.caret
   - pymdownx.critic
   - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
   - pymdownx.inlinehilite
-  - pymdownx.keys
   - pymdownx.magiclink
   - pymdownx.mark
   - pymdownx.smartsymbols
   - pymdownx.superfences
   - pymdownx.tasklist:
       custom_checkbox: true
+  - pymdownx.tabbed
   - pymdownx.tilde
   - pymdownx.magiclink:
       repo_url_shorthand: true
