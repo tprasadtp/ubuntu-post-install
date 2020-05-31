@@ -19,7 +19,7 @@ copyright: 'Copyright &copy; 2017-2020 Prasad Tengse'
 theme:
   name: material
   icon:
-    logo: material/cloud
+    logo: material/book
     repo: fontawesome/brands/github-alt
   features:
     - tabs
@@ -28,12 +28,13 @@ theme:
   language: en
   # Color Settings
   palette:
-    primary: blue
+    scheme: slate
+    primary: orange
     accent: cyan
   # Fonts
   font:
-    text: Roboto
-    code: Roboto Mono
+    text: Ubuntu
+    code: Ubuntu Mono
   # Custom Favicon
   favicon: assets/images/favicon.png
 

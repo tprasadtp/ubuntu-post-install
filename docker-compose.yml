@@ -1,8 +1,8 @@
 version: "2.4"
 services:
   site:
-    image: tprasadtp/mkdocs-material:5.0.0rc2
-    # its importatnt to specify dev address as 0.0.0.0 otherwise server
+    image: tprasadtp/mkdocs-material:latest
+    # it is important to specify dev address as 0.0.0.0 otherwise server
     # wont listen on required interfaces.
     runtime: ${DOCKER_DEFAULT_RUNTIME:-runc}
     command: -v serve --dev-addr=0.0.0.0:8000

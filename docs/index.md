@@ -1,6 +1,6 @@
 # After-Effects
 
-<small>An Effortless & Simple post-installation script for Ubuntu, Linux Mint and Debian </small>
+An Effortless & Simple post-installation script for Ubuntu, Linux Mint, Elementary, Debian and their derivatives.
 
 
 [![build][build-badge]][build-link]
@@ -9,19 +9,13 @@
 [![netlify][netlify-badge]][netlify]
 [![version][version]][changelog]
 [![license][gpl-badge]][license]
-
-![Bash](https://static.prasadt.com/logo64/bash.png)
-
-
-
-## Why
-
-This script is built for one purpose only. Automating Post Installation tasks on a Fresh Ubuntu/Debian Installation.
-
 [![Bash](https://static.prasadt.com/logo64/bash.png)](https://ae.prasadt.com)
 
 
-## How to
+This script is built for one purpose only. Automating Post Installation tasks on a Fresh Ubuntu/Debian Installation.
+
+
+## How
 
 
 ## Step 1: Get the script and Verify its integrity
@@ -73,11 +67,13 @@ It should work fine. But no promises.
 ## Features
 
 - Adding Repositories (Limited set of curated repositories only)
+- Installing packages from system repositories
+- Installing statically linked binaries
 - Remove Preinstalled packages
-- Install Python2/3 system packages. (Its highly recommended to use `virtualenv` for your projects, **ONLY** install pip packages which are absolutely essential.)
+- Install PIP packages. (Its highly recommended to use `virtualenv` for your projects, **ONLY** install pip packages which are absolutely essential.)
 - Add PPAs (Ubuntu & Ubuntu derivatives only)
-- `deb` packages
-- Classic, Edge and Stable snap packages.
+- Debian [DEB] packages
+- Snap packages
 
 ## Screenshots
 
