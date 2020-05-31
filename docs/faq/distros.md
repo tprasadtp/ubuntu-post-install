@@ -1,4 +1,4 @@
-# Supported Distros
+# Supported Distributions
 
 In short? Ubuntu, its official flavors (Kubuntu,Ubuntu Mate etc), Linux Mint and Elementary.
 

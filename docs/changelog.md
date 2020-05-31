@@ -3,48 +3,47 @@
 ## 6.0
 
 - Remove Lists mode
-- Drop 32 bit support for x86 architecture
-- Add support focal, and Mint 20
-- Fix Google Cloud SDK on focal
-- Way to handle Python2 being unsupported on focal and other upcoming distros.
+- Drop 32 bit support for x86
 - Changes to some flags. Some flags are now dropped or reassigned.
+- Drop Python 2 support from focal and other recent distros
+- Add support for Ubuntu Focal Fossa, and Mint 20.x
+- Fix Google Cloud SDK
 - Migrate to GitHub Actions :octicons-octoface:
 - Dark Mode
 
 ## 5.5.2
 
-- Add support for Mint 19.3 Tricia
+- Support Mint 19.3 Tricia
 
 ## 5.5.1
 
-- Support for ElementaryOS 5.1 Thanks, [IslamAlam](https://github.com/IslamAlam)
-- Fix JSON errors while fetching commit data in README
+- Support ElementaryOS 5.1 Thanks, [IslamAlam](https://github.com/IslamAlam)
 
 ## 5.5.0
 
 - Eoan Support
-- Remove Kubernetes repo support.
-- Option to fallback to non LTS releases if using `--fix`
+- Remove Kubernetes repo.
+- Option to fallback to LTS releases if using `--fix`
 - `--pre-release` flag now supports Debian Bullseye
 - Fix Gist URL not working(#17)
 - Introduce `--autopilot` flag
-- Introduce DEBUG modes(activated on DEBUG=1)
+- Introduce DEBUG modes (activated on DEBUG=1)
 
 ## 5.4.3
 
-- Fix repository keys and fix classic snap installs
+- Update repository gpg keys, fix classic snap installs
 
 ## 5.4.1
 
-- Add disco support, start testing on Eoan
+- Support disco
 
 ## 5.4.0
 
-- Add support for installing snap packages {edge, stable and classic}
+- Added support for installing snap packages {edge, stable and classic}
 
 ## 5.3.7
 
-- Add support for Duo Security for Unix repos
+- Support for Duo Security for Unix repos
 
 ## 5.3.6
 
@@ -92,104 +91,3 @@
 ## 5.1.0
 
 - Specify YAML config via URL. You can use config YAMLs saved as gists.
-
-## 5.0
-
-- Remove Pre and Post Hooks.
-- Configuration can be now done using YAML file. Its easier & gives more flexibility
-- Lot of improvements & bug fixes.
-- Now tagged versions are released to GitHub releases.
-- Consolidate test scripts.
-- Drop Artful support.
-- Add support for Elementary OS 5 - Juno & Mint 19 Tara.
-- checks also use YAML files.
-- ARM support for some repositories. (not all repos support ARM)
-- Move .redirects data to netlify toml
-- Groundwork to move to parser written in Go.
-- YAML provides more configuration options. Individual repos & tasks can now be controlled via YAML file.
-
-## 4.0
-
-- Pre and Post Hooks for scripts.
-- Custom list of scripts can be run Before and after all the tasks.
-- Add version checks, always run latest version
-- Brand new documentation site
-- Use `mkdocs` to generate documentation
-- Automatically push & deploy to gh-pages
-- Use Netlify to manage gh-pages site
-- Check if script is in current directory, to avoid errors on hooks
-- Improve log file format: Reduce clutter
-- Bug fixes and typo fixes
-- Simplify TS logging
-- Remote configuration for stats and stats server
-- Ability to blacklist a release
-- Prepare & add skeleton for stats reporting
-
-## 3.6
-
-- Add Option to install system wide python packages using pip
-- Promote Bionic to stable and update code-names
-- Update pre-release to cosmic, rename test script for pre release
-- Remove unused dockerfiles
-
-## 3.4
-
-- Delete cached and downloaded DEBs. (Can be changed with `-k` flag )
-- Remove Gnome Specific stuff from default list
-- Remove PPAs incompatible with bionic
-- Bionic is supported with --pre-release flag only with default list.
-
-## 3.3
-
-- Add Signal Desktop repository
-- Better way to handle EOL error messages
-- Fix: Visual Studio Code GPG key not deleted while removing repos.
-- Lint Readme Markdown
-- Nuke Sub-modules
-
-## 3.2
-
-- Allow Bionic test to fail on Travis.
-- Only print logs in Travis if there is an error or a flag is passed.
-- Switch to sub-modules for data directory
-- List files have their own repo now.
-- Zesty reaches EOL soon. Remove it.
-- Use daily images for bionic
-
-## 3.1
-
-- Added Support for Upcoming Ubuntu release bionic.
-- Added an option to use repository for last stable release on bionic.
-- Use Ubuntu Base 18.04 LTS (Bionic Beaver) daily build to build docker image.
-- Allow Bionic tests to fail on Travis CI.
-- Dockerfiles & tests for bionic.
-- Inform in script if running on Upcoming release.
-- Drop google-cloud-sdk from fix_repo_not_available. Use `--pre-release` if using beta/alpha Ubuntu release.
-- Add Visual studio to repos instead of deb files
-- Rename logging directory to after-effects
-
-## 3.0
-
-- Add Confirmation dialog using whiptail for Actions like Adding PPA, Repositories, Installing Apps, and Deb files
-- Provide an option via command line to bypass the confirmation dialog for ci and automated environments or when its too annoying
-- If the simulate option is selected then Only calculate the upgrade but do not perform upgrade.
-- Added improved Simulate options. Helpful when just want to change somethings and test scripts without really downloading and installing packages
-- Simulate option is by default false and can be toggled by passing `-s` or `--simulate` while running the script via command line
-- Do not Enable Canonical Partner repositories in Ubuntu derivatives as they are enabled in installer or are different than Ubuntu. This leaves Partner repositories as they were before
-- Add Feature: Purge Unwanted Packages
-- Improved logging . Redirecting errors and adding time-stamps works better.
-- Travis CI and Docker Testing
-
-## 2.0
-
-- Complete rewrite
-- Improvements in logging and console output
-- Reduced verbosity in terminal output
-- Flexible with packages and deb files
-- Reduced complex dependencies
-- Easy to configure
-- Add Simulate install option for installing deb files and apps. Easier to test scripts now .
-
-## 1.0
-
-- Initial upload.

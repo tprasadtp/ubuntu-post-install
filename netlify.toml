@@ -21,14 +21,6 @@
 [context.branch-deploy]
   command = "chmod +x ./build/*.sh && ./build/netlify.sh --branch"
 
-# Country specific rules
-#[[redirects]]
-#  from = "/"
-#  to = "/unavailable"
-#  status = 302
-#  force = true
-#  conditions = {Country = ["CN","HK","TW","CU","IR","PK","SD","SA","TR","RU","YE","BD"]}
-
 # GH URLs
 [[redirects]]
   from = "/git"
@@ -83,17 +75,17 @@
 [[redirects]]
   from = "/config/version.yml"
   to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml"
-  status = 302
+  status = 301
   force = true
 
 # /version stuff
 [[redirects]]
   from = "/get/version"
-  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml"
+  to = "/get/v3/version"
   status = 302
   force = true
 
-# /v3/version stuff
+# /v3/version check stuff
 [[redirects]]
   from = "/get/v3/version"
   to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml"

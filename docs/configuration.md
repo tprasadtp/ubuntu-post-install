@@ -4,15 +4,9 @@ This Script is designed to be flexible. use `--config-file FILENAME`
 
 - Check [Sample YAML](/yaml) configuration file [here.](/yaml)
 
-!!! tip "Using config file"
-
-    - If you are testing, it might be a good idea to use a local file which holds this configuration data. In that  case use `-C <filename>` option.
-    - After you customize, might want to use simulate flag. `sudo ./after-effects -s -C config.yml -Y`
-    - If both `-C` and `--remote-yaml` are used, local config file takes priority, and remote file is **completely** ignored.
-
 ## Autopilot mode
 
-Setting `"AUTOPILOT=true"` or `--autopilot` will run all the tasks specified in the YAML file. The order in which tasks are run is as follows.
+USing`--autopilot` will run all the tasks specified in the YAML file. The order in which tasks are run is as follows.
 
 - Update
 - Upgrade
@@ -20,11 +14,11 @@ Setting `"AUTOPILOT=true"` or `--autopilot` will run all the tasks specified in 
 - Add PPAs [if supported]
 - Install packages
 - Install DEB packages
-- Install Python2 Modules
+- Install Python2 Modules [If supported]
 - Install Python 3 Modules
 - Purge unwanted Packages
 - Install Snap packages
 
 ## Reserved Environment Variables
 
-Prefix `AE_` is reserved along with `GITHUB_` as they are used for configuration and testing.
+Prefix `AE_` and `GITHUB_` are reserved as they are used for configuration and testing.

@@ -25,6 +25,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch_depth: 0
+
       - name: Build Docs
         run: |
           ./build/docs.sh

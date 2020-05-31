@@ -41,22 +41,28 @@ theme:
   include_search_page: false
   search_index_only: true
 
-# extra:
-#   social:
-#     - type: fontawesome/solid/globe
-#       link: https://ae.prasadt.com
-#     - type: fontawesome/brands/github-alt
-#       link: https://github.com/tprasadtp
+extra:
+  social:
+    - icon: fontawesome/solid/globe
+      link: https://ae.prasadt.com
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/tprasadtp
 # Extensions
 markdown_extensions:
+  # Nice Admonitions
   - markdown.extensions.admonition
-  - markdown.extensions.codehilite:
-      guess_lang: true
-  - markdown.extensions.def_list
+  - pymdownx.superfences
+  # Syntax highlighting
+  - codehilite
+  # Markdown in HTML
+  - markdown.extensions.md_in_html
+  # Footnotes
   - markdown.extensions.footnotes
+  # Page Metadata
   - markdown.extensions.meta
   - markdown.extensions.toc:
       permalink: true
+  # Synmols MathJX and Emoji
   - pymdownx.arithmatex
   - pymdownx.betterem:
       smart_enable: all
@@ -92,7 +98,6 @@ nav:
   - Tasks: tasks.md
   - Configuration: configuration.md
   - Example Config: yaml.md
-  - Logs: logs.md
   - Testing: testing.md
   - Changelog:
     - changelog.md

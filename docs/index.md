@@ -12,31 +12,31 @@ An Effortless & Simple post-installation script for Ubuntu, Linux Mint, Elementa
 [![Bash](https://static.prasadt.com/logo64/bash.png)](https://ae.prasadt.com)
 
 
-This script is built for one purpose only. Automating Post Installation tasks on a Fresh Ubuntu/Debian Installation.
+This script is built for one purpose only. Automating post installation tasks on a fresh Ubuntu/Debian installation.
 
 
-## How
+## Usage
 
 
-## Step 1: Get the script and Verify its integrity
+## Step 1: Get the script and verify its integrity
 
-```console
+```bash
 wget https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O after-effects
 wget https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha256sums.txt -O sha256sums.txt
 sha256sum -c sha256sums.txt --strict
 ```
 
-## Step 2: Update the config to suit your needs
+## Step 2: Update the config
 
 Update the config file to suit your needs. Please see [Configuration](/configuration/) & [Tasks](/tasks/) for more details. Some example configs can be found [here](https://github.com/tprasadtp/ubuntu-post-install/tree/master/config).
 
 ## Step 3: Run it
 
-Run the script as **root**. You will get an error if you do not run the script as root.
+Run the script as **root**.
 
-```console
+```bash
 chmod +x after-effects
-sudo ./after-effects -C <your config.yml>
+sudo ./after-effects -c <your config.yml>
 ```
 
 ## Supported Distros
@@ -70,9 +70,9 @@ It should work fine. But no promises.
 - Installing packages from system repositories
 - Installing statically linked binaries
 - Remove Preinstalled packages
-- Install PIP packages. (Its highly recommended to use `virtualenv` for your projects, **ONLY** install pip packages which are absolutely essential.)
+- Install PIP packages. (You should use `virtualenv` for your projects, **ONLY** install pip packages which are absolutely essential.)
 - Add PPAs (Ubuntu & Ubuntu derivatives only)
-- Debian [DEB] packages
+- Debian (.deb) packages
 - Snap packages
 
 ## Screenshots

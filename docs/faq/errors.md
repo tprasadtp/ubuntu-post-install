@@ -1,10 +1,10 @@
 # Errors
 
-## GCSFUSE, ROS and Duo Security Repositories
+## GCSFUSE, ROS and Duo Security repositories
 
 - Note for 18.10+ users: GCSFuse is not available. Please see this [Github issue](https://github.com/GoogleCloudPlatform/gcsfuse/issues/319) for a fix.
 - Duo Security for unix is only supported on some LTS releases.
-- ROS is only supported on select releases.
+- ROS is only supported on select ubuntu releases.
 
 ## What if I get an error saying Unknown Distribution/Release?
 
@@ -20,8 +20,10 @@ _______________________________________________________
 Exit code is 12
 </pre>
 
-You are using a version of Ubuntu/Debian which is EOL. Please update to supported version of Ubuntu/Debian.
-> Ubuntu ESM versions are considered as EOL
+Well, thats pretty much self explanatory! Please use supported release of Ubuntu/Mint/Debian.
+
+!!! warning
+    Ubuntu ESM versions are considered as EOL
 
 ## SSL Errors
 
@@ -30,8 +32,7 @@ You are using a version of Ubuntu/Debian which is EOL. Please update to supporte
 [     Error!    ] Error Getting file.
 ```
 
-Try running `wget https://ae.prasadt.com/v2/version`. If you see SSL errors, that means that your CA bundle is out of date.
-This project uses Amazon Root CA & LetsEncrypt for SSL, make sure that your system trusts these certificate authorities..
+Try running `wget https://ae.prasadt.com/get/version`. If you see SSL errors, that means that your CA bundle is out of date.
 
 ## Something not mentioned above
 

@@ -11,7 +11,7 @@
     OR
 
     ```console
-    ./after-effects -C <filename>
+    ./after-effects -c <filename>
     ```
 
 
@@ -37,13 +37,13 @@
     - Upgrading system packages.
     - Purging unwanted packages.
 
-Following details should explain the behavior of this flag. Please do have a look at exceptions, as all tasks cannot be simulated.
+Please do have a look at exceptions, as all tasks cannot be simulated.
 
-- This option will simulate installing packages mentioned in the config, using the apt-get in-built dry-run option `apt-get install -s` to simulate the installation of packages.
-- This option can be used to check if the config is compatible/available in the repository.
-- Installation of DEB files also behaves similarly. It uses `dpkg -i --dry-run` to simulate installation.
+- This option will simulate installing packages mentioned in the config, using the apt-get's dry-run option.
+- This option can be used to check if the configuration and for testing.
+- Installation of DEB files also behaves in a similar way. It uses `dpkg -i --dry-run` to simulate installation.
 - Its a very good idea to simulate installation when you have reconfigured the apps and packages in the config to check what might be error prone.
-- DEB package files, binaries **will** be downloaded unlike apt-get package installs.
+- DEB package files and binaries **will** be downloaded unlike apt-get package installs.
 
 ??? bug "Exceptions - Not everything can be simulated"
 
@@ -51,8 +51,7 @@ Following details should explain the behavior of this flag. Please do have a loo
      - If you want to revert the changes please use **Reset Repositories** option.
      - PPAs and repositories **will** be added regardless of the flag.
      - Python package installation cannot be simulated. (pip lacks support for it) The script will skip installing apt dependencies and python packages, if simulate option is used.
-     - APT package upgrades and apt repository metadata updates cannot be simulated. Only a list of packages will be shown in the logs.
-     - Simulate flag will **NOT** simulate installing dependencies for adding or deleting repositories and PPAs.
+     - APT package upgrades and apt repository metadata updates cannot be simulated.
 
 ## Skip Version Checks
 
@@ -61,14 +60,9 @@ Following details should explain the behavior of this flag. Please do have a loo
     ```console
     ./after-effects --skip-version-check
     ```
-    OR
-
-    ```console
-    ./after-effects -N
-    ```
 
 Script will warn you and exit if you are not running latest version of the script. You can skip that by using the above option.
-This will also disable reporting usage stats.
+
 
 ## Fix for latest Ubuntu releases
 
@@ -92,12 +86,11 @@ This will also disable reporting usage stats.
      - Docker Community Edition
      - Wine HQ
 
-Usually it takes a while for additional Repositories (Docker, Google Cloud SDK etc) to add support for latest release of Ubuntu. However we can use the previous release for which packages are available. So, using packages built for previous release works fine most of the time. This is also good fix if you are running a alpha or beta release of Ubuntu. These options only work on Ubuntu or distros using ubuntu code-names and Linux Mint.
+Usually it takes a while for additional repositories (Docker,etc) to add support for latest release of Ubuntu. However we can use the previous release for which packages might be available. Using packages built for previous release works fine most of the time.
 
-- By default this option is disabled.
 - Repositories like Spotify and Google Chrome do not use code names in their repository URLs. So the above workaround is not necessary.
 - Derivatives of Ubuntu will use the code name of Ubuntu on which they are based. For example Linux mint 18.2 Serena will use code name `xenial` as it is based on Ubuntu 16.04 Xenial Xerus
-- This option applies only for the latest release mentioned in the variable `code_name_latest_release`. and will be ignored if the release is not latest.
+- This option applies only for the latest release and will be ignored if the release is not latest.
 
 ## Fix fallback to LTS
 
@@ -107,15 +100,13 @@ Usually it takes a while for additional Repositories (Docker, Google Cloud SDK e
     ./after-effects --fix-mode-lts
     ```
 
-Use LTS as fallback. This flag should be used in conjunction with `--fix` Otherwise it will be ignored. Instead of using previous Ubuntu release this will use the Last LTS release. i.e if you are on disco and use this bionic repositories will be used. Please use this with caution as it may not work.
-
+Use LTS as fallback. This flag should be used in conjunction with `--fix` Otherwise it will be ignored. Instead of using previous Ubuntu release this will use the last LTS release. i.e if you are on disco and use this bionic repositories will be used. Please use this with caution as it may not work.
 
 ??? danger "Note for Pre-Release/ development version of Ubuntu/Debian"
 
     - If you are using a pre-release version of Ubuntu, you can use `--pre-release` flag to apply the above mentioned fix to pre-release version of Ubuntu.
     - This flag can be used independent of `--fix`. If both are used together then both flags will be applied if the release is upcoming-release.
     - If the release is stable, only `--fix` flag will be valid and `--pre-release` is ignored.
-    - Eg:  If the repositories are  not available for latest stable release as well, go back a release. Ex. If the pre-release is 18.04 and the repositories is not available for 17.10 as well, we use 17.04 repositories. Usually happens in first few days of development cycle of 18.04.
 
 ## Purge not required packages
 
@@ -174,8 +165,6 @@ Just a quick way to delete logs generated by this script.
 Keeps packages cached by APT and downloaded DEB packages.
 Default behavior is to clean apt cache and delete downloaded DEB packages.
 
-!!! bug "Python packages"
-    Python package installation does not honor this flag.
 
 ## Hide configuration data
 
@@ -185,7 +174,7 @@ Default behavior is to clean apt cache and delete downloaded DEB packages.
     ./after-effects --hide-config
     ```
 
-  OR
+    OR
 
     ```console
     ./after-effects -H
@@ -210,8 +199,8 @@ Hides displaying configuration data in the output.
 You can specify YAML file to use. Script will fetch it and parse it.The file should be available without any interactive logins.
 
 !!! warning
-    - If using GitHub gists, please provide raw gist URL.
-    - You should only use trusted remote configurations. As its a bash script a malicious remote configuration can cause remote code to execute on your system.
+    - If using GitHub gists, you **MUST** use raw gist URL.
+    - You should only use trusted remote locations to save your configurations and only use trusted configurations.
 
 ## Version
 
@@ -227,7 +216,7 @@ You can specify YAML file to use. Script will fetch it and parse it.The file sho
     ./after-effects --version
     ```
 
-This will display version info. You do **not** have to be root to run this. For all the other tasks you need to be root or use sudo.
+This will display version info. You do **not** have to be root to run this.
 
 ## Autopilot Mode
 

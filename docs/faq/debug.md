@@ -1,3 +1,7 @@
+# Logs
+
+Logs are written to a file `<current-dir>/logs/after-effects.log`.
+
 # Debugging the script
 
 You can chose from multiple debug modes. by setting DEBUG variable to one of the following
@@ -14,7 +18,7 @@ containers. This script requires two arguments __distro name__ and __release nam
 
 Alternatively you can build the docker image yourself.
 
-```console
+```bash
 $ export distro="ubuntu"
 $ export release="bionic"
 $ docker build -t ae:"${distro}-${release}" \
@@ -49,7 +53,7 @@ root@a9f6bf377494:/shared# DEBUG=1 ./after-effects -c config/default.yml -s -H
 Docs are built using mkdocs. If you spot a mistake or a typo, you can submit a Pull request to fix it.
 You can test the docs locally with provided docker-compose file.
 
-```console
+```bash
 docker-compose build
 docker-compose up
 ```

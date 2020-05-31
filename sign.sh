@@ -3,7 +3,6 @@
 set -eo pipefail
 readonly SCRIPT=$(basename "$0")
 readonly DIR="$(pwd)"
-readonly AE_SCRIPT="${DIR}/after-effects"
 
 
 function display_usage()
@@ -59,7 +58,7 @@ function sign_file()
     if gpg --armor --detach-sign \
       --output "${SIGNER}.asc" \
       --yes --no-tty \
-      "${AE_SCRIPT}"; then
+      "${SIGNER}"; then
       print_success "Signed $SIGNER"
     else
       print_error "Failed to sign $SIGNER"

@@ -2,5 +2,5 @@
 api: 3
 # Configuration
 version:
-  number: 600
-  name: 6.0.0-Alpha
+  number: 601
+  name: 6.0 RC3

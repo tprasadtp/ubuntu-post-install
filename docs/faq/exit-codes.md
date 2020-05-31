@@ -6,7 +6,7 @@
 |  1 | Dependencies are not met |
 |  2 | Script not running as root |
 |  8 | Remote get operation failed. |
-|  5 | Failed to determine version of release. is /etc/os-release file missing? |
+|  5 | Failed to determine distribution. Is /etc/os-release file missing? |
 | 10-19 | Not Running with right configuration or internal flags |
 | 11 | Unsupported Architecture |
 | 12 | End of Life release |

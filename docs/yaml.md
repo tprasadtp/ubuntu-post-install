@@ -40,7 +40,6 @@ config:
     google: true
   # Flags
   flags:
-  # Simulate flag will never be overridden by remote config.
     purge_enabled: true
     preserve_debs: true
 
@@ -53,7 +52,6 @@ config:
     - gnome-mahjongg
   # PPA List
   ppa:
-    - ppa:dawidd0811/neofetch
     - ppa:yubico/stable
     - ppa:teejee2008/ppa
   # Install components
@@ -75,7 +73,6 @@ config:
     # Follows same pattern as Debian packages
     # Name to be saved is second field
     binaries:
-      - https://github.com/docker/compose/releases/download/1.20.0/docker-compose-linux-x86_64,docker-compose
       - https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64,minikube
       - https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-amd64,kompose
     apt:
@@ -114,7 +111,7 @@ config:
         - texlive-font-utils
         - texlive-publishers
         - gummi
-      # Multimedia Tools. Photo Editors Converting tools, plex etc.
+      # Multimedia Tools. Photo Editors Converting tools etc.
       multimedia:
         - audacity
         - vlc
@@ -148,12 +145,9 @@ config:
         - python-pip-whl
         - python-pip
       # Everything Else
-      # Which is conditional
       other:
         - gnome-online-miners
       # Packages supplied by external repositories & PPAs
-      # Dont Mix packages provided by distribution and PPAs
-      # Sometimes external repos and ppas fail, so better isolate it.
       external:
         - google-chrome-stable
         - spotify-client
