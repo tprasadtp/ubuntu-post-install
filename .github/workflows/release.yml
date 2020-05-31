@@ -11,7 +11,7 @@ jobs:
         with:
           persist-credentials: true
           # Avoid breaking git rev date plugin
-          fetch_depth: 0
+          fetch-depth: 0
 
       - name: Build Docs
         run: |
