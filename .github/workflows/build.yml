@@ -106,7 +106,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Setup binfmt and register arm binaries
         run: |
-          sudo apt-get update
+          sudo apt-get update || true
           sudo apt-get install -y qemu binfmt-support qemu-user-static
           sudo docker run --rm --privileged docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
 
