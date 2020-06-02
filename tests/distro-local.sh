@@ -19,15 +19,9 @@ function main()
   distro="$1"
   release="$2"
 
-  # Use Default config YML if not specified
-  if [[ $3 == "" ]] || [[ $3 == " " ]]; then
-    config_yml="default.yml"
-  else
-    config_yml="$3"
-  fi
 
   docker_tag="${distro//[\/]/-}-${release}"
-
+  shift 2
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
   echo "Building $distro:$release Docker Image"
@@ -47,13 +41,12 @@ function main()
     ae:"${docker_tag}" \
     ./after-effects \
     --simulate \
-    --fix \
-    --autopilot \
-    --internal-ci-mode \
-    --config-file config/"${config_yml}"
+    "$@"
     exit_code="$?"
 
-   echo "Exit code is $exit_code"
+  echo ""
+  echo ""
+  echo "Exit code is $exit_code"
   if [[ $exit_code -ne 0 ]]; then
     exit "$exit_code"
   fi

@@ -10,6 +10,8 @@
 - Fix Google Cloud SDK
 - Migrate to GitHub Actions :octicons-octoface:
 - Dark Mode
+- Fixed Remote YAML (in RC4)
+- Fixed whiptail prompts
 
 ## 5.5.2
 
