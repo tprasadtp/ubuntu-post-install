@@ -58,11 +58,12 @@ config:
   # APT Packages, Python Modules, Debian packages
   install:
     # Python 2 Modules
+    # Not all distros support python 2
     python2:
       - docker-compose
     # Python 3 Modules
     python3:
-      - awscli
+      - virtualenv
     # Debian packages:  .deb files
     # CSV format similar to lists
     debian_packages:

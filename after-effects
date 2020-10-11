@@ -22,8 +22,8 @@ esac
 
 # SCRIPT METADATA
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="6.0-RC4"
-readonly REL_NUM=602
+readonly REL_NAME="6.0.5-RC.1"
+readonly REL_NUM=605
 
 # YQ Version to use
 readonly YQ_VERSION="3.3.0"
@@ -81,6 +81,7 @@ function _init_printf_variables()
     readonly           _snap="[    Snap PKG   ]"
     readonly             _ok="[       OK      ]"
     readonly       _dev_mode="[    Testing    ]"
+    readonly        _pre_rel="[   ALPHA-REL   ]"
 
     #colors for display
     readonly YELLOW=$'\e[33m'
@@ -268,6 +269,13 @@ function _log_dev()
   local msg="$1"
   printf "${ORANGE}${_dev_mode} $msg ${NC}\n"
   printf "[$(date)] ${_dev_mode} $msg\n" >> "$log_file"
+}
+
+function _log_unreleased()
+{
+  local msg="$1"
+  printf "${ORANGE}${_pre_rel} $msg ${NC}\n"
+  printf "[$(date)] ${_pre_rel} $msg\n" >> "$log_file"
 }
 
 function _log_internal()
@@ -849,7 +857,6 @@ function _version_checks ()
       _log_debug "Version Checks are enabled."
       _log_and_show "${_version} Checking for Updates..."
       if [ "$bool_custom_version_file" != "true" ]; then
-        _log_debug "Using version config file."
         _log_debug "Deleting old Version YAMLS"
         rm -f "/tmp/ae/api-version.yml" || _log_debug "Deleting old version YAML failed."
         readonly version_yaml_file="/tmp/ae/api-version.yml"
@@ -879,8 +886,8 @@ function _version_checks ()
       elif [[ $api_rel_num -eq $REL_NUM ]]; then
         _log_success "${_version} All Good!"
       elif [[ $api_rel_num -lt $REL_NUM ]]; then
-        _log_dev "You are running version ${REL_NAME} - ${REL_NUM}."
-        _log_dev "Latest stable version is ${version__name[0]}-${api_rel_num}."
+        _log_unreleased "You are running version ${REL_NAME} - ${REL_NUM}."
+        _log_unreleased "Latest stable version is ${version__name[0]}-${api_rel_num}."
       fi
 
   # If version checks have been disabled
@@ -1402,8 +1409,7 @@ function add_repositories()
     if [ "$add_spotify_repo" == "true" ]; then
       _log_and_show "${_repo} Spotify"
       _log_debug "Adding Spotify keys"
-      wget -q   https://download.spotify.com/debian/pubkey.gpg -O /tmp/ae/spotify_signing_key.pub >> $"$log_file"
-      apt-key add /tmp/ae/spotify_signing_key.pub  2>&1 \
+      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8FD3D9A8D3800305A9FFF259D1742AD60D811D58 2>&1 \
       |_add_timestamp_to_logs "${_apt_key_logs}"  \
       || _log_error "Adding Spotify repository failed"
 
@@ -1411,25 +1417,6 @@ function add_repositories()
       || _log_error "Adding Spotify Repository Failed"
     else
       _log_info "${_repo} Skipped Spotify."
-    fi
-
-    # Insync
-    if [ "$add_insync_repo" == "true" ] && [ "$bool_is_debian" != "true" ]; then
-      _log_and_show "${_repo} Insync"
-      _log_debug "Adding Insync keys"
-      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ACCAF35C  2>&1 \
-      | _add_timestamp_to_logs "${_apt_key_logs}" \
-      || _log_error "Adding Insync Repository failed"
-
-      echo "deb [arch=$ARCH] http://apt.insynchq.com/${distro_name} $code_name non-free contrib #Insync-Client" > ${SOURCES_FILE_DIR}/insync.list \
-      || _log_error "Adding Insync Repository failed"
-
-    elif [ "$add_insync_repo" == "true" ] && [ "$bool_is_debian" == "true" ]; then
-      _log_warn "${_whoops} InSync repositoris are not supported on Debian."
-      _log_warn "${_info} Please use debfile instead of repositoris."
-      _log_notice "${_info} Visit https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files"
-    else
-      _log_info "${_repo} Skipped InSync"
     fi
 
 
@@ -1511,20 +1498,17 @@ function add_repositories()
     if [ "$add_duo_repo" == "true" ]; then
       _log_and_show "${_repo} Duo Security for Unix"
       case "$code_name" in
+        focal)      duo_repo_url="https://pkg.duosecurity.com/Ubuntu focal main";
+                    duo_supported="true";
+                    ;;
         bionic)     duo_repo_url="http://pkg.duosecurity.com/Ubuntu bionic main";
-                    duo_supported="true"
+                    duo_supported="true";
                     ;;
         xenial)     duo_repo_url="http://pkg.duosecurity.com/Ubuntu xenial main"
-                    duo_supported="true"
-                    ;;
-        trusty)     duo_repo_url="http://pkg.duosecurity.com/Ubuntu trusty main";
-                    duo_supported="true"
+                    duo_supported="true";
                     ;;
         stretch)    duo_repo_url="http://pkg.duosecurity.com/Debian stretch main";
-                    duo_supported="true"
-                    ;;
-        jessie)     duo_repo_url="http://pkg.duosecurity.com/Debian stretch main";
-                    duo_supported="true"
+                    duo_supported="true";
                     ;;
         *)          _log_warn "Only LTS/Stable versions of Ubuntu/Debian are suported."
                     _log_warn "You are running Unsupported version : ${code_name}"
@@ -1539,6 +1523,8 @@ function add_repositories()
 
         # Add repo
         echo "deb [arch=$ARCH] ${duo_repo_url} #Duo Unix"  > ${SOURCES_FILE_DIR}/duounix.list
+      else
+        _log_error "Duo for Unix is not supported on this distribution!"
       fi
     else
       _log_and_show "${_repo} Duo Unix is set to false."
@@ -1632,7 +1618,7 @@ function add_repositories()
 
        if [[ $bool_use_uni_freiburg_mirror == "true" ]] && [[ $distro_name == "ubuntu" ]]; then
          _log_warn "Using Uni-Freiburg Mirror! This mirror might not be upto date with primary ROS repository!."
-         _log_warn "You may need authentication or have to be inside Uni-Freiburg network!"
+         _log_warn "You may need have to be inside Uni-Freiburg network!"
          echo "deb http://packages.ros.org.ros.informatik.uni-freiburg.de/ros/ubuntu ${code_name} main #ROS-Repo-Uni-Freiburg" > $SOURCES_FILE_DIR/ros-latest.list \
          || _log_error "Adding ROS [Uni-Freiburg] repository failed!"
       else
@@ -1686,10 +1672,10 @@ function update_repos()
   if [[ $exit_status -eq 0 ]]; then
     _log_success "${_update} Success!"
   else
-    _log_error "Something went wrong in updating repo data. Please see the log file for more details."
-    _log_error "Your system might end up completely broken and apt-get isn't reliable in this state."
-    _log_error "The script cannot proceed with this."
-    _log_and_exit "Command apt-get update failed and exited with ${exit_status}" "61"
+    _log_error "Command apt-get update failed and exited with ${exit_status}"
+    _log_error "In most cases its either missing repo keys or wrongly configured repositories."
+    _log_error "Fix then and re run the script."
+    _log_and_exit "The script cannot proceed with this error." "61"
   fi
 }
 
@@ -2802,7 +2788,7 @@ function main()
   _line_fill;
   printf "${_checking} Permissions...\n"
 
-  if [[ $AE_INTERNAL_NO_EXECUTE -eq 1 ]]; then
+  if [[ $AE_INTERNAL_NO_EXECUTE -eq 1 ]] || [[ $AE_INTERNAL_NO_EXECUTE == "true" ]]; then
     # Actual logging starts
     _init_logging
     _log_dev "Running in no Execute mode"
@@ -2940,7 +2926,7 @@ function main()
     _log_and_exit "Non Interactive Terminal requires --autopilot" "54"
   fi
 
-  if [[ $AE_INTERNAL_NO_EXECUTE -eq 1 ]]; then
+  if [[ $AE_INTERNAL_NO_EXECUTE -eq 1 ]] || [[ $AE_INTERNAL_NO_EXECUTE == "true" ]]; then
     _log_dev "Will not execute any tasks!"
     _script_exit_log;
     exit 255

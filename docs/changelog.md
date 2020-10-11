@@ -1,5 +1,10 @@
 # Changelog
 
+## 6.0.5 - [Bug Fixes]
+
+- Fix Spotify repo keys
+- Enable `focal` for Duo Linux.
+
 ## 6.0
 
 - Remove Lists mode

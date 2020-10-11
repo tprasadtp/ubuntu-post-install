@@ -94,25 +94,25 @@
 
 # Scripts
 [[redirects]]
-  from = "/get"
+  from = "/get/after-effects"
   to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects"
   status = 302
   force = true
 
 [[redirects]]
-  from = "/get/sig"
+  from = "/get/after-effects.asc"
   to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects.asc"
   status = 302
   force = true
 
 [[redirects]]
-  from = "/get/sha256"
+  from = "/get/sha256sum"
   to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha256sum.txt"
   status = 302
   force = true
 
 [[redirects]]
-  from = "/get/sha512"
-  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha512.txt"
+  from = "/get/sha512sum"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha512sum.txt"
   status = 302
   force = true
