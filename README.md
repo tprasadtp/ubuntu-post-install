@@ -37,8 +37,12 @@ Sample configuration can be found in `config` directory.
 
 ```console
   chmod +x after-effects
-  sudo ./after-effects --config-file ./config/default.yml
+  sudo ./after-effects --config-file <path-to-your-config>
 ```
+
+## See in Action
+
+[![inaction](docs/assets/images/in-action.gif)](docs/assets/images/in-action.gif)
 
 ## FAQ & Documentation
 
@@ -86,7 +90,6 @@ For a complete  list of supported distributions [click here](https://ae.prasadt.
 
 Also handles adding several tweaks and fixes necessary to add repositories and PPAs, supports completely non-interactive mode, so that you can let it run while you have moaar ☕
 
-
 ## Supported External repositories
 
 | Name                 | Key |
@@ -102,8 +105,8 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 |Skype | skype
 |Spotify Desktop | spotify
 |Visual Studio code | vscode
-| Wine HQ | winehq
-
+|Wine HQ | winehq
+|Github CLI | github
 
 ## Issues & Help
 
@@ -131,7 +134,6 @@ See [Contributing and forks](/CONTRIBUTING.md)
 
 [netlify-badge]: https://api.netlify.com/api/v1/badges/887c3d5c-5203-46b9-a31d-67cada282f36/deploy-status
 [netlify]: https://app.netlify.com/sites/ubuntu-post-install/deploys
-
 
 [version]: https://img.shields.io/github/v/release/tprasadtp/ubuntu-post-install?label=version
 

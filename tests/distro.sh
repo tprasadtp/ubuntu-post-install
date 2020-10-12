@@ -21,7 +21,7 @@ function main()
 
   # Use Default config YML if not specified
   if [[ $3 == "" ]] || [[ $3 == " " ]]; then
-    config_yml="default.yml"
+    config_yml="test-suite.yml"
   else
     config_yml="$3"
   fi
@@ -44,7 +44,6 @@ function main()
       ae:"${docker_tag}" \
       ./after-effects \
       --simulate \
-      --fix \
       --autopilot \
       --internal-ci-mode \
       --config-file config/"${config_yml}"

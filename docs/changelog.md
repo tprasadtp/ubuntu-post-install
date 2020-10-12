@@ -1,9 +1,13 @@
 # Changelog
 
-## 6.0.5 - [Bug Fixes]
+## 6.1
 
-- Fix Spotify repo keys
+- Fix Spotify,Duo repo keys
 - Enable `focal` for Duo Linux.
+- Enable ROS repo for `focal`
+- Internal changes: Logging
+- Fancier terminal output
+- Removed `-H /--hide-config` flag, debugging can be done by setting `DEBUG=1`
 
 ## 6.0
 

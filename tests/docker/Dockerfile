@@ -14,5 +14,10 @@ RUN apt-get -qq update \
       iputils-ping \
       procps \
       ca-certificates \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+      apt-transport-https \
+      ca-certificates \
+      curl \
+      apt-utils \
+      gnupg2 \
+      software-properties-common \
+    && apt-get clean

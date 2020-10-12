@@ -19,8 +19,8 @@ This task can add the following repositories.
 |Skype | skype
 |Spotify Desktop | spotify
 |Visual Studio code | vscode
-| Wine HQ | winehq
-
+|Wine HQ | winehq
+|Github CLI | github
 
 ??? tip "Using `--fix` flag"
     Please note that the above repositories are sometimes not updated for latest Ubuntu release and most certainly will not be available for upcoming release of Ubuntu(Alpha/Beta). It might take some time till the repositories are available for the latest release. Use -f or --fix command line option or --pre-release in case you are using a development version of Ubuntu to revert using latest available version of repositories (usually previous Ubuntu release or in case of Beta/Alpha latest stable release of Ubuntu). [For more info see command line options.](/clioptions/#fix-for-latest-ubuntu-releases)
@@ -53,6 +53,7 @@ config:
     skype: true
     signal: false
     insync: true
+    github: true
     google: true
 ```
 
@@ -244,7 +245,6 @@ config:
     pip3: true
     binaries: true
 ```
-
 
 ## Delete logs
 

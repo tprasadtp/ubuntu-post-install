@@ -11,12 +11,9 @@ An Effortless & Simple post-installation script for Ubuntu, Linux Mint, Elementa
 [![license][gpl-badge]][license]
 [![Bash](https://static.prasadt.com/logo64/bash.png)](https://ae.prasadt.com)
 
-
 This script is built for one purpose only. Automating post installation tasks on a fresh Ubuntu/Debian installation.
 
-
 ## Usage
-
 
 ## Step 1: Get the script and verify its integrity
 
@@ -38,6 +35,10 @@ Run the script as **root**.
 chmod +x after-effects
 sudo ./after-effects -c <your config.yml>
 ```
+
+## See in Action
+
+[![inaction](assets/images/in-action.gif)](assets/images/in-action.gif)
 
 ## Supported Distros
 
@@ -75,12 +76,6 @@ It should work fine. But no promises.
 - Debian (.deb) packages
 - Snap packages
 
-## Screenshots
-
-[![Details](assets/images/details.png)](assets/images/details.png)
-[![Details](assets/images/whiptail.png)](assets/images/whiptail.png)
-
-
 [build-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/build/badge.svg
 [build-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Abuild
 
@@ -92,7 +87,6 @@ It should work fine. But no promises.
 
 [netlify-badge]: https://api.netlify.com/api/v1/badges/887c3d5c-5203-46b9-a31d-67cada282f36/deploy-status
 [netlify]: https://app.netlify.com/sites/ubuntu-post-install/deploys
-
 
 [version]: https://img.shields.io/github/v/release/tprasadtp/ubuntu-post-install?label=version
 [gpl-badge]: https://img.shields.io/badge/License-GPLv3-ff69b4

@@ -99,6 +99,7 @@ nav:
   - Configuration: configuration.md
   - Example Config: yaml.md
   - Testing: testing.md
+  - Screenshots: screenshots.md
   - Changelog:
     - changelog.md
   - License: license.md
