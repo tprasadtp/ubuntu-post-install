@@ -33,6 +33,7 @@ function main()
   fi
 
   declare -a EXTRA_ARGS
+  declare -a DOCKER_RUN_ARGS
 
   while [[ ${1} != "" ]]; do
     case ${1} in
@@ -59,6 +60,12 @@ function main()
   else
     docker_tag="${distro_name//[\/]/-}-${release_name}"
 
+    if [[ -t 1 ]] && [[ ${AE_NON_INTERACTIVE} != "true" ]]; then
+      echo "Terminal is interactive, using -it for docker runs"
+      DOCKER_RUN_ARGS+=("-it")
+    else
+      echo "Terminal is NON interactive"
+    fi
 
     # If Image needs to be built?
     if [[ $build_image == "true" ]]; then
@@ -88,7 +95,7 @@ function main()
       set -x
       docker run --rm \
         --userns=host \
-        -it \
+        "${DOCKER_RUN_ARGS[@]}" \
         -e CI \
         -e DEBUG \
         -e GITHUB_ACTIONS \

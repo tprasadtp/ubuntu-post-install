@@ -37,6 +37,7 @@ on:
 name: build
 env:
   DEBUG: ci
+  AE_NON_INTERACTIVE: "true"
 jobs:
   shellcheck:
     runs-on: ubuntu-18.04
