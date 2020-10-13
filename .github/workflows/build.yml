@@ -54,7 +54,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: ["focal", "eoan", "bionic", "xenial"]
+        release: ["focal", "bionic"]
     steps:
       - uses: actions/checkout@v2
       - name: Ubuntu ${{ matrix.release }}
