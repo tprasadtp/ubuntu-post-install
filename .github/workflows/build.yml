@@ -76,7 +76,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: [ "juno-stable", "stable"]
+        release: [ "juno-stable"]
     steps:
       - uses: actions/checkout@v2
       - name: Elementary ${{ matrix.release }}
