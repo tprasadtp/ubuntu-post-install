@@ -14,9 +14,8 @@ readonly SCRIPT=$(basename "$0")
 
 case "${DEBUG}" in
   1 | "yes" | "true" | "TRUE")     AE_DEBUG=1;set -o pipefail;;
-  "internal")                      AE_DEBUG=2;set -o pipefail;;
   "ci" | "CI")                     AE_DEBUG=2;set -eo pipefail;;
-  "trace")                         AE_DEBUG=3;set -o pipefail;;
+  2 | "trace")                     AE_DEBUG=2;set -o pipefail;;
   *)                               AE_DEBUG=0;set -o pipefail;;
 esac
 
@@ -204,7 +203,6 @@ function _log_dev()
 function _log_inform()
 {
   local msg="$1"
-# ✱ ✤ ✦ ✻ ✬ ✬ ★ ☆	⭑ ⭒	⚐ ⚑ ⚒ ♺ ◇ ◌ ▲ ▹ ▾ ▿ ⚙ ⚝ ⧗
   printf "  ✦ $msg\n"
   printf "$(date) ${_info} $msg\n" >> "$log_file"
 }
@@ -214,8 +212,8 @@ function _log_var()
   local var_name var_value
   var_name="$1"
   var_value="$2"
-  if [[ $AE_DEBUG -gt 1 ]]; then
-    printf "${LIGHT_GRAY}  ▿ %-23s - %-10s${NC}\n" "${var_name}" "${var_value}"
+  if [[ $AE_DEBUG -gt 0 ]]; then
+    printf "${GRAY}  ▿ %-20s - %-10s${NC}\n" "${var_name}" "${var_value}"
   fi
   printf "$(date) ${_variable} ${var_name} is set to ${var_value}\n" >> "$log_file"
 }
@@ -230,10 +228,9 @@ function  _log_trace()
   # Usage command | _add_timestamp_to_logs "$1"
   while IFS= read -r line;
   do
-    printf "$(date) [RAW] ${1} %s\n" "$line" &>> "$log_file"
-    if [[ $AE_DEBUG -gt 2 ]]; then
+    printf "$(date) [EXT] ${1} %s\n" "$line" &>> "$log_file"
+    if [[ $AE_DEBUG -gt 1 ]]; then
       printf "${LOG_GRAY}  #›%s %s${NC}\n" "$1" "$line"
-      # printf "${LOG_GRAY}${1} %s${NC}\n" "$line"
     fi
   done
 
@@ -310,7 +307,11 @@ function _init_script_variables()
   #-------------------------- Release codenames --------------------------------------
   readonly codename_latest_release="groovy"
   readonly codename_previous_release="focal"
-  readonly codename_upcoming_release="unknown"
+
+  # 404 is a placeholder which is  set when there are
+  # no suitable releases which can use this feature or
+  # the release is unknown or too early in developement.
+  readonly codename_upcoming_release="404"
 
   readonly codename_current_lts="focal"
   readonly codename_previous_lts="bionic"
@@ -335,6 +336,8 @@ function _init_script_variables()
 
   readonly api_version_url="https://ae.prasadt.com/get/v3/version"
 
+  # Azure
+  readonly AZURE_METADATA_URL="http://169.254.169.254/metadata/instance/compute/location?api-version=2017-08-01&format=text"
 
   # Achtung!!
   # ========================================================================================= #
@@ -358,16 +361,13 @@ function _init_script_variables()
   # ================================================================================== #
   # Achtung!
   # Do not change any of the variables below this if you don't know what they do.
-  # They are essential for correct working of the script or use unstable builds/repos.
+  # They are essential for correct working of the script.
 
   # Check Debian Flags
   bool_is_debian="false"
 
-  # Check Signature
-  #readonly bool_verify_gpg_signatures="true"
-
-  # Azure
-  readonly AZURE_METADATA_URL="http://169.254.169.254/metadata/instance/compute/location?api-version=2017-08-01&format=text"
+  # Boolean to hold if --fix or --fix-mode-lts or --pre-release was applied
+  bool_codename_fix_appied="false"
 
 }
 
@@ -465,7 +465,7 @@ function verify_gpg_signature()
   # Check for signature files
   printf "⧗ Verifying GPG signature of file..\n"
   printf "⧗ Signature File : ${sig_file}\n"
-  printf "⧗ Data File      : $(basename $SCRIPT)\n"
+  printf "⧗ Data File      : ${SCRIPT}\n"
   # Checks for commands
   if command -v gpg > /dev/null; then
     if gpg --verify "${sig_file}" "${SCRIPT}" >/dev/null  2>&1; then
@@ -597,7 +597,7 @@ function _fix_ubuntu_derivatives()
                                             ;;
   esac
 
-  _log_debug "Performed codename changes necessary for Mint/Elementary/Debian"
+  _log_success "Applied release specific settings and fixes."
   _log_var "code_name" "${code_name}"
 
 }
@@ -609,7 +609,7 @@ function _test_internet_connection ()
   _log_info "Checking connectivity"
   if wget --tries=5 --timeout=2 "$PING_URL" -O /tmp/ae/testinternet &>/dev/null 2>&1; then
     rm -f /tmp/ae/testinternet
-    _log_success "Success!"
+    _log_success "Connected!"
   else
     _log_error "You are not connected to the Internet!. "
     _log_error "Please check your Internet connection and try again."
@@ -723,9 +723,8 @@ function _version_checks ()
   # Allows to deprecate old version as it can be suggested.
   # Check if Version Checks is enabled. (Default is enabled)
   if [ "$bool_check_version" == "true" ]; then
-      _log_debug "Version Checks are enabled."
+      _log_stage "Checking for updates"
       _log_debug "Version metadata URL : ${api_version_url}"
-      _log_info "Checking for Updates"
       if [ "$bool_custom_version_file" != "true" ]; then
         _log_debug "Deleting old Version YAMLS"
         rm -f "/tmp/ae/api-version.yml" || _log_debug "Deleting old version YAML failed."
@@ -803,7 +802,7 @@ function _set_yaml_config()
 
   # Get and parse the file
   _log_stage "Processing configuration..."
-  if [ "$bool_custom_config_file" != "true" ]; then
+  if [ "$bool_local_config_file" != "true" ]; then
     _log_inform "Configuration URL : ${url_remote_yaml}."
     _log_debug "Deleting old YAMLs"
     rm -f "/tmp/ae/api-config.yml" || _log_debug "Deleting old version YAML failed."
@@ -811,8 +810,8 @@ function _set_yaml_config()
     # Get response/file
     _get_remote_file "$config_yaml_file" "$url_remote_yaml"
   else
-    _log_inform "Config file - $custom_config_file"
-    readonly config_yaml_file="$custom_config_file"
+    _log_inform "Config file - $local_config_file_path"
+    readonly config_yaml_file="$local_config_file_path"
   fi
 
   # Parse YAML to variables
@@ -1096,23 +1095,30 @@ function _fix_repo_not_available()
   if [ "$bool_fix_repo_not_available_for_latest" == "true" ]; then
     # Check LTS fallback flag is being used
     # if running on current LTS, and fix mode is LTS fallback to last LTS.
-    if [[ $bool_fix_repo_lts == "true" ]] && [[ $code_name == ${codename_current_lts} ]] ; then
+    if [[ $bool_fix_repo_lts == "true" ]] && [[ $code_name == "${codename_current_lts}" ]] ; then
       _log_warn "Using Previous LTS release ::${codename_previous_lts}::"
       code_name="$codename_previous_lts"
-    elif [[ $bool_fix_repo_lts != "true" ]] && [[ $code_name == ${codename_latest_release} ]] ; then
+      # note applied fix
+      bool_codename_fix_appied="true"
+
+    elif [[ $bool_fix_repo_lts != "true" ]] && [[ $code_name == "${codename_latest_release}" ]] ; then
       _log_warn "Using previous release ${codename_previous_release} as fallback"
 
       # fallback is non LTS so it might disapper/become unsupported! warn
-      if [[ $codename_previous_release != $codename_current_lts  ]]; then
+      if [[ $codename_previous_release != "$codename_current_lts"  ]]; then
         _log_warn "Fallback Ubuntu (${codename_latest_release}) is a non LTS release!"
       fi
       code_name="$codename_previous_release"
+      bool_codename_fix_appied="true"
 
     else
       _log_warn "Not applicable."
-    fi
+      bool_codename_fix_appied="false"
+    fi # lts
+  else
+    bool_codename_fix_appied="false"
     _log_debug "Feature --fix/--fix-mode-lts is not available or disabled."
-  fi
+  fi # fix
 }
 
 function _warn_about_fix_codename()
@@ -1133,23 +1139,32 @@ function _fix_repo_not_available_upcoming_release()
   # check for fix-pre-release flag
   if [ "$bool_fix_repo_not_available_for_upcoming_release" == "true" ]; then
 
-    if [[ $bool_fix_repo_lts == "true" ]] && [[ $code_name == ${codename_upcoming_release} ]]; then
+    if [[ $bool_fix_repo_lts == "true" ]] && [[ $code_name == "${codename_upcoming_release}" ]]; then
       _log_warn "Using lastest Ubuntu LTS (${codename_current_lts}) as fallback!"
       code_name="${codename_current_lts}"
-    elif [[ $bool_fix_repo_lts != "true" ]] && [[ $code_name == ${codename_upcoming_release} ]]; then
+      bool_codename_fix_appied="true"
+
+    elif [[ $bool_fix_repo_lts != "true" ]] && [[ $code_name == "${codename_upcoming_release}" ]]; then
       _log_warn "Using lastest Ubuntu (${codename_latest_release}) as fallback!"
       code_name="${codename_latest_release}"
-    elif [[ $code_name == $codename_upcoming_debian_release ]]; then
+      bool_codename_fix_appied="true"
+
+    elif [[ $code_name == "$codename_upcoming_debian_release" ]]; then
       _log_dev "Pre-Release-Fix-Codename is experimental on Debian"
       _log_warn "Using lastest Debian Stable (${codename_latest_debian_release}) as fallback!"
 
       code_name="${codename_latest_debian_release}"
+      bool_codename_fix_appied="true"
+
     else
       _log_warn "Not applicable."
+      bool_codename_fix_appied="false"
     fi # check codenames
 
   else
     _log_debug "Feature fix_repo_not_available_upcoming_release is disabled."
+    bool_codename_fix_appied="false"
+
   fi
 }
 
@@ -1210,7 +1225,7 @@ function add_repositories()
 
 
   if [ "$ARCH" != "amd64" ]; then
-    _log_error "Chrome, Spotify, Insync, VSCode, Mendeley, signal and Duo Unix are only supported on 64 Bit"
+    _log_error "Google Chrome, Spotify, VSCode, Mendeley, Signal and Duo for Unix are only supported on 64 Bit"
   else
     _log_debug "Arch is 64 Bit Enable adding 64 bit repos."
     # 64 bit Only REPOS
@@ -1417,17 +1432,17 @@ function add_repositories()
 
   # ROS
   # Arch support varies on distro so lot of ugly elifs.
-  # Packages share same name across RC and Stable. so its not possible to
-  # use both RC(ros-shadow-fixed and ros) repos at the same time.
-  # rusty will reach EOL soon, ITs not supported and its complicated due to
-  # http://wiki.ros.org/indigo/Installation/Ubuntu
-  # Dependency issues which might pop up.
   ros_arch_supported="false"
 
+  if [[ $add_ros_repo == "true" ]] && [[ ${bool_codename_fix_appied} == "true" ]]; then
+    _log_info "Checking compatibility for ROS"
+    _log_error "You have enabled --fix or --pre-release option."
+    _log_error "ROS depends heavily on packages included in the distribution."
+    _log_error "ROS repositories will not be added for sanity of your system!"
 
-  if [ "$add_ros_repo" == "true" ]; then
+  elif [[ $add_ros_repo == "true" ]] && [[ ${bool_codename_fix_appied} == "false" ]]; then
 
-    _log_info "Checking distro compatibility"
+    _log_info "Checking compatibility for ROS"
 
     # Distro/Version/Arch checks
     if [[ $distro_name == "ubuntu" ]]; then
@@ -1445,7 +1460,6 @@ function add_repositories()
 
     if [ "$distro_name" == "debian" ]; then
       # Check architectures
-      # stretch | jessie
       if [[ $code_name == "stretch" ]] || [[ $code_name == "buster" ]]; then
         ros_arch_supported="true"
         _log_success "ROS is available on Debian ${code_name}/$ARCH"
@@ -1458,9 +1472,9 @@ function add_repositories()
        || _log_error "Adding ROS repository key failed!"
 
       if [[ $bool_use_uf_mirror == "true" ]]; then
-        _log_dev "UF ROS Repo is no loger syncing with upstream."
-        _log_dev "This feature will be enabled once the mirror is back in sync!"
-        _log_dev "Till then, upstream is being used!"
+        _log_warn "UF ROS Repo is no loger syncing with upstream."
+        _log_warn "This feature will be enabled once the mirror is back in sync!"
+        _log_warn "Till then, upstream is being used!"
       fi
 
       echo "deb http://packages.ros.org/ros/ubuntu ${code_name} main #ROS-Repo" > $SOURCES_FILE_DIR/ros-latest.list \
@@ -1482,7 +1496,7 @@ function add_repositories()
   # Ubuntu and its flavors are used.
   if [ "$bool_config_partner_repo" == "true" ] && [ "$bool_is_debian" != "true" ]; then
     _log_info "Canonical partner repositoris"
-    echo "deb http://archive.canonical.com/ubuntu $code_name partner # Canonical Partner Repository"  > ${SOURCES_FILE_DIR}/canonical-partner.list \
+    echo "deb http://archive.canonical.com/ubuntu $code_name partner #Canonical Partner Repository"  > ${SOURCES_FILE_DIR}/canonical-partner.list \
     || _log_error "Failed to add Canocial Parner Repos."
   else
     _log_warn "Canonical Partner repositories may not be supported on this platform."
@@ -1517,6 +1531,11 @@ function update_repos()
   fi
 }
 
+function update_repos_as_task()
+{
+  _log_stage "Update repository metadata"
+  update_repos
+}
 
 function upgrade_apps()
 {
@@ -1547,7 +1566,7 @@ function upgrade_apps()
   else
     _log_error "Something went wrong while upgrading packages."
     _log_error "Please see the log file for more details."
-    _log_error "Most of the times its either missing or wrongly configured repositories."
+    _log_error "Most of the times its either missing keys or wrongly configured repositories."
   fi
   # Cleanup APT cache (-k)
   _clean_apt_cache;
@@ -1711,7 +1730,7 @@ function purge_not_required()
       return;
     else
       if [ "$simulate_apt_install" == "true" ]; then
-        _log_warn "Purging will be simulated!!"
+        _log_warn "Purging packages will be simulated!!"
       apt-get -q -o=Dpkg::Use-Pty=0 -y remove --purge --dry-run "${parsed_purge_packages[@]}" |& _log_trace "${_phase_apt}"
       else
         apt-get -q -o=Dpkg::Use-Pty=0 -y purge "${parsed_purge_packages[@]}" |& _log_trace "${_phase_apt}"
@@ -1950,7 +1969,6 @@ function install_debs ()
   local exit_status
   _log_debug "Option: Install DEB Files, Function name: install_debs"
   for index in "${parsed_deb_files_list[@]}"; do
-    _log_debug "$index"
     deb_url=$(echo "$index" | cut -d ',' -f1 )
     deb_file_name=$(echo "$index" | cut -d ',' -f2 )
     _log_var "deb_url" "$deb_url"
@@ -1970,7 +1988,7 @@ function install_debs ()
       continue
     }
 
-   _log_info "Installing - $deb_file_name..."
+   _log_info "Installing  - $deb_file_name..."
    # Check if simulate is true
    if [ "$simulate_apt_install" == "true" ]; then
      _log_warn "Simulating $deb_file_name Installation!!"
@@ -2025,7 +2043,6 @@ function install_binaries ()
   _log_debug "Option: Install Bin Files, Function name: install_binaries"
   # Check if simulate is true
   for index in "${parsed_bin_packages[@]}"; do
-    _log_debug "$index"
     bin_url=$(echo "$index" | cut -d ',' -f1 )
     bin_name=$(echo "$index" | cut -d ',' -f2 )
     _log_var "bin_url" "$bin_url"
@@ -2039,7 +2056,7 @@ function install_binaries ()
     wget -q "$bin_url" -O "/tmp/ae/${bin_name}" >> "$log_file"
     exit_status="$?"
     if [ $exit_status -eq 0 ]; then
-      _log_info "Installing $bin_name..."
+      _log_info "Installing  - $bin_name"
        if [ "$simulate_apt_install" == "true" ]; then
          _log_warn "Skipping install"
        else
@@ -2145,7 +2162,7 @@ function all_in_one()
 {
   #Wrapper for all options
   _log_debug "Option: ALL IN ONE, function name: all_in_one"
-  update_repos;
+  update_repos_as_task;
   upgrade_apps;
   add_ppas;
   add_repositories;
@@ -2401,7 +2418,7 @@ function _process_menu()
   if [ $whiptail_exitstatus = 0 ]; then
       _log_debug "Whiptail Task is: $task"
       case $task in
-      update)     _prompt_confirmation "$__menu_info_update" "update_repos"
+      update)     _prompt_confirmation "$__menu_info_update" "update_repos_as_task"
                   ;;
       upgrade)    _prompt_confirmation "${__menu_info_upgrade}" "upgrade_apps"
                   ;;
@@ -2661,7 +2678,7 @@ function main()
                               _log_warn "No checks are being made on the packages in the list."
                               _log_warn "Use carefully!. Purging system packages is stupid idea!"
                               ;;
-      -y | --yes)             _log_warn "-y | --yes is no longer availanle, Use Autopilot instead";
+      -y | --yes)             _log_warn "-y | --yes is no longer available, Use Autopilot instead";
                               ;;
       -k | --keep-debs)       bool_preserve_debs="true";
                               _log_inform "Will keep downloaded DEB packages."
@@ -2673,14 +2690,15 @@ function main()
                               readonly bool_custom_version_file="true"
                               _log_dev "Using custom version yml file"
                               ;;
-      -R | --remote-yaml)     _log_warn "Using Remote YAML";
+      -r | --remote-yaml)     _log_warn "Using Remote YAML config!";
+                              _log_warn "USe only from trusted remote sources!"
                               readonly bool_remote_yaml="true";
                               shift;
                               readonly url_remote_yaml="${1}";
                               ;;
-      -c | --config-file)     shift;
-                              readonly custom_config_file="${1}";
-                              readonly bool_custom_config_file="true";
+      -c | --config-file | --config)  shift;
+                              readonly local_config_file_path="${1}";
+                              readonly bool_local_config_file="true";
                               _log_inform "Using local config file"
                               ;;
       -H | --hide-config)     _log_warn "-H/--hide-config is no longer supported."
@@ -2728,24 +2746,28 @@ function main()
 
   _log_stage "Check if config is defined"
 
-  if [ "$bool_custom_config_file" == "true" ] && [ "$bool_remote_yaml" == "true" ]; then
-    _log_and_exit "Cannot use local config (-c) with remote YAML (-R) Use one of them." "25"
+  # Handle Remote YAML
+  _log_var "bool_local_config_file" "${bool_local_config_file}"
+  _log_var "local_config_file_path" "${local_config_file_path}"
+  _log_var "bool_custom_version_file" "${bool_custom_version_file}"
+  _log_var "custom_version_file" "${custom_version_file}"
+  _log_var "bool_remote_yaml" "${bool_remote_yaml}"
+  _log_var "url_remote_yaml" "${url_remote_yaml}"
+
+  if [[ -z ${local_config_file_path} ]] && [[ -z ${url_remote_yaml} ]]; then
+    _log_and_exit "Undefined configuration!" "63"
   fi
 
-  if [ "$bool_custom_config_file" == "true" ] && [ ! -f "$custom_config_file" ]; then
+  if [ "$bool_local_config_file" == "true" ] && [ "$bool_remote_yaml" == "true" ]; then
+    _log_and_exit "Cannot use local config (-c) with remote YAML (-r) Use one of them." "25"
+  fi
+
+  if [ "$bool_local_config_file" == "true" ] && [ ! -f "$local_config_file_path" ]; then
     _log_and_exit "Config file you have specified is not found or not accessible" "36"
   fi
 
   if [ "$bool_custom_version_file" == "true" ] && [ ! -f "$custom_version_file" ]; then
     _log_and_exit "Custom version info file you have specified is not found or not accessible" "36"
-  fi
-
-  # Handle Remote YAML
-
-  if [ "$bool_remote_yaml" == "true" ]; then
-    _log_debug "Remote config URL : ${url_remote_yaml}"
-  elif [ "$bool_custom_config_file" == "true" ]; then
-    _log_debug "Local config file : ${custom_config_file}"
   fi
 
   # Get Remote Config File/s, check version & configure
@@ -2771,7 +2793,7 @@ function main()
     _log_success "Autopilot is ENABLED"
     sleep 3;
     #_log_and_exit "Because I can" "255"
-    _autopilot_check_task_flag_and_run "$ae_task_update" "update_repos"
+    _autopilot_check_task_flag_and_run "$ae_task_update" "update_repos_as_task"
     _autopilot_check_task_flag_and_run "$ae_task_upgrade" "upgrade_apps"
     _autopilot_check_task_flag_and_run "$ae_task_repo" "add_repositories"
     _autopilot_check_task_flag_and_run "$ae_task_ppa" "add_ppas"

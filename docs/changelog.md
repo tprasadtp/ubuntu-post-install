@@ -2,12 +2,15 @@
 
 ## 6.1
 
-- Fix Spotify,Duo repo keys
+- Update Spotify,Duo repo keys
 - Enable `focal` for Duo Linux.
 - Enable ROS repo for `focal`
+- Enable support for Ubuntu 19.10 `groovy`
 - Internal changes: Logging
 - Fancier terminal output
 - Removed `-H /--hide-config` flag, debugging can be done by setting `DEBUG=1`
+- From this version onwards, if `--fix` or `--pre-release` is used ROS repos will not be added,
+regardless of your config.
 
 ## 6.0
 

@@ -32,6 +32,8 @@ function main()
     exit 1
   fi
 
+  declare -a EXTRA_ARGS
+
   while [[ ${1} != "" ]]; do
     case ${1} in
       -h | --help )         display_usage;exit 0;;
@@ -39,7 +41,10 @@ function main()
       -r | --release)       shift;release_name=${1};;
       -s | --shell)         give_shell="true";;
       -b | --build)         build_image="true";;
-      --fixer)              pre_rel="true";;
+      --fix)                EXTRA_ARGS+=('--fix');;
+      --fix-lts)            EXTRA_ARGS+=('--fix-mode-lts');;
+      --pre)                EXTRA_ARGS+=('--pre-release');;
+      --sv)                 EXTRA_ARGS+=('--skip-version-check');;
       * )                   echo -e "\e[91mInvalid argument(s). See usage below. \e[39m";
                             display_usage;
                             exit 1;;
@@ -79,26 +84,8 @@ function main()
         bash -c "echo \"alias c='clear';alias e='exit';export PS1='\\e[31m\u@\h\\e[0m on \\e[32m\W\[\033[0;35m\] \[\033[1;36m\]\n🐳\\e[0m ➜ '\" >> ~/.bashrc && bash"
     else
       echo "# Running in docker ${docker_tag}"
-      if [[ $pre_rel == "true" ]]; then
-        docker run --rm \
-          --userns=host \
-          -it \
-          -e CI \
-          -e DEBUG \
-          -e GITHUB_ACTIONS \
-          --hostname="${docker_tag}" \
-          -v "$(pwd)":/shared \
-          ae:"${docker_tag}" \
-          ./after-effects \
-          --simulate \
-          --autopilot \
-          --internal-ci-mode \
-          --fix \
-          --pre-release \
-          --config-file config/test-beta.yml \
-          --hide-config
-          exit_code="$?"
-      else
+      # turn on trace
+      set -x
       docker run --rm \
         --userns=host \
         -it \
@@ -113,17 +100,18 @@ function main()
         --autopilot \
         --internal-ci-mode \
         --config-file config/test-suite.yml \
-        --hide-config
+        "${EXTRA_ARGS[@]}"
         exit_code="$?"
-      fi
+      # turn of trace
+      set +x
 
       echo ""
       echo "Script Exit code is $exit_code"
       if [[ $exit_code -ne 0 ]]; then
         exit "$exit_code"
-      fi
-    fi
-  fi
+      fi # exit code
+    fi # shell
+  fi # args
 }
 
 main "$@"

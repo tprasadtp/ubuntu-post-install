@@ -7,13 +7,13 @@ Logs are written to a file `<current-dir>/logs/after-effects.log`.
 You can chose from multiple debug modes. by setting DEBUG variable to one of the following
 
 - `DEBUG=1` Print debug messages
-- `DEBUG=internal` display some internal debug messages
-- `DEBUG=trace` Print debug, internal and also apt logs. Please note that This can generate a lot of output.
+- `DEBUG=trace` Print debug messages and apt/dpkg/snap/ppa/pip logs.
+Please note that This can generate a lot of output.
 
 ## Local testing
 
 You can use `./tests/local.sh --help` to test the scripts locally. It uses docker to build and test the script in simulate mode inside
-containers. This script requires two arguments __--distro__ and __--release__. They are used as parameters to build the Docker image from dockerfile in `dockerfiles/tests`.eg.to test the script on Ubuntu 18.04 bionic, run it as
+containers. This script requires two arguments __--distro__ and __--release__. They are used as parameters to build the Docker image from dockerfile in `dockerfiles/tests`.eg. to test the script on Ubuntu 18.04 bionic, run it as
 `./tests/local.sh --distro ubuntu --release bionic`.
 
 !!! tip
