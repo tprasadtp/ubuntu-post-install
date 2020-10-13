@@ -59,7 +59,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Ubuntu ${{ matrix.release }}
-        run: ./tests/local.sh --fix --distro ubuntu --release "${{ matrix.release }}"
+        run: ./tests/local.sh --build --fix --distro ubuntu --release "${{ matrix.release }}"
   debian:
     needs: [ "shellcheck"]
     runs-on: ubuntu-18.04
@@ -70,7 +70,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Debian ${{ matrix.release }}
-        run: ./tests/local.sh --distro debian --release "${{ matrix.release }}"
+        run: ./tests/local.sh --build --distro debian --release "${{ matrix.release }}"
   elementary:
     needs: [ "shellcheck"]
     runs-on: ubuntu-18.04
@@ -81,7 +81,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Elementary ${{ matrix.release }}
-        run:  ./tests/local.sh --distro elementary/docker --release "${{ matrix.release }}"
+        run:  ./tests/local.sh --build --distro elementary/docker --release "${{ matrix.release }}"
   arm:
     needs: [ "shellcheck"]
     runs-on: ubuntu-18.04
