@@ -45,6 +45,7 @@ function main()
       ./after-effects \
       --simulate \
       --autopilot \
+      --fix \
       --internal-ci-mode \
       --config-file config/"${config_yml}"
       exit_code="$?"

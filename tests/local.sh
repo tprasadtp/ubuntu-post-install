@@ -39,6 +39,7 @@ function main()
       -r | --release)       shift;release_name=${1};;
       -s | --shell)         give_shell="true";;
       -b | --build)         build_image="true";;
+      --fixer)              pre_rel="true";;
       * )                   echo -e "\e[91mInvalid argument(s). See usage below. \e[39m";
                             display_usage;
                             exit 1;;
@@ -78,6 +79,26 @@ function main()
         bash -c "echo \"alias c='clear';alias e='exit';export PS1='\\e[31m\u@\h\\e[0m on \\e[32m\W\[\033[0;35m\] \[\033[1;36m\]\n🐳\\e[0m ➜ '\" >> ~/.bashrc && bash"
     else
       echo "# Running in docker ${docker_tag}"
+      if [[ $pre_rel == "true" ]]; then
+        docker run --rm \
+          --userns=host \
+          -it \
+          -e CI \
+          -e DEBUG \
+          -e GITHUB_ACTIONS \
+          --hostname="${docker_tag}" \
+          -v "$(pwd)":/shared \
+          ae:"${docker_tag}" \
+          ./after-effects \
+          --simulate \
+          --autopilot \
+          --internal-ci-mode \
+          --fix \
+          --pre-release \
+          --config-file config/test-beta.yml \
+          --hide-config
+          exit_code="$?"
+      else
       docker run --rm \
         --userns=host \
         -it \
@@ -94,8 +115,8 @@ function main()
         --config-file config/test-suite.yml \
         --hide-config
         exit_code="$?"
+      fi
 
-      echo ""
       echo ""
       echo "Script Exit code is $exit_code"
       if [[ $exit_code -ne 0 ]]; then

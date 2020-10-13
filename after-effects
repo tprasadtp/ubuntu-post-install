@@ -308,11 +308,14 @@ function _init_script_variables()
 
 
   #-------------------------- Release codenames --------------------------------------
-  readonly code_name_latest_release="focal"
-  readonly codename_previous_release="eoan"
-  readonly codename_upcoming_release="groovy"
-  readonly codename_lts_fallback="focal"
-  readonly code_name_latest_debian_release="buster"
+  readonly codename_latest_release="groovy"
+  readonly codename_previous_release="focal"
+  readonly codename_upcoming_release="unknown"
+
+  readonly codename_current_lts="focal"
+  readonly codename_previous_lts="bionic"
+
+  readonly codename_latest_debian_release="buster"
   readonly codename_upcoming_debian_release="bullseye"
 
   #============================ Switches/ booleans & Vars ================================
@@ -566,11 +569,10 @@ function _fix_ubuntu_derivatives()
                                             _log_success "Changed codename to $code_name"
                                             ;;
       groovy )                              readonly bool_config_partner_repo="true";
-                                            readonly enable_ppa="false";
+                                            readonly enable_ppa="true";
+                                            readonly python2_disabled="true";
                                             readonly distro_name="ubuntu";
-                                            _log_dev "This is Ubuntu 20.10 Groovy"
-                                            _log_warn "PPAs are disabled!"
-                                            _log_warn "This is pre-release version of Ubuntu, Use with caution!"
+                                            _log_warn "This is Ubuntu 20.10 Groovy Gorilla"
                                             ;;
       stretch | jessie | buster )           bool_is_debian="true";
                                             readonly distro_name="debian";
@@ -1092,24 +1094,33 @@ function _fix_repo_not_available()
 
   _log_dev "Check and apply codename fixes"
   if [ "$bool_fix_repo_not_available_for_latest" == "true" ]; then
-    # Only do this on latest releases
-    if [ "$code_name" == "$code_name_latest_release" ]; then
-      # check LTS fallback flag is being used
-      if [ "$bool_fix_repo_lts" == "true" ]; then
-        _log_warn "Using LTS release ::${codename_lts_fallback}:: as fallback for --fix"
-        code_name="$codename_lts_fallback"
-      else
-        _log_warn "Using previous release ${codename_previous_release} as fallback"
-        code_name="$codename_previous_release"
+    # Check LTS fallback flag is being used
+    # if running on current LTS, and fix mode is LTS fallback to last LTS.
+    if [[ $bool_fix_repo_lts == "true" ]] && [[ $code_name == ${codename_current_lts} ]] ; then
+      _log_warn "Using Previous LTS release ::${codename_previous_lts}::"
+      code_name="$codename_previous_lts"
+    elif [[ $bool_fix_repo_lts != "true" ]] && [[ $code_name == ${codename_latest_release} ]] ; then
+      _log_warn "Using previous release ${codename_previous_release} as fallback"
+
+      # fallback is non LTS so it might disapper/become unsupported! warn
+      if [[ $codename_previous_release != $codename_current_lts  ]]; then
+        _log_warn "Fallback Ubuntu (${codename_latest_release}) is a non LTS release!"
       fi
+      code_name="$codename_previous_release"
+
     else
-      _log_warn "This Release/Distro does not support this flag. --fix will be ignored."
+      _log_warn "Not applicable."
     fi
-  else
     _log_debug "Feature --fix/--fix-mode-lts is not available or disabled."
   fi
 }
 
+function _warn_about_fix_codename()
+{
+  _log_warn "Repositories from older Ubuntu release are being used."
+  _log_warn "You need to modify this in Software and Updates,\n"
+  _log_warn "when they become available for ${codename_upcoming_release}${NC}\n"
+}
 
 function _fix_repo_not_available_upcoming_release()
 {
@@ -1122,30 +1133,21 @@ function _fix_repo_not_available_upcoming_release()
   # check for fix-pre-release flag
   if [ "$bool_fix_repo_not_available_for_upcoming_release" == "true" ]; then
 
-    # Only do this on upcoming-release
-    if [ "$code_name" == "$codename_upcoming_release" ] && [ "$bool_is_debian" != "true" ]; then
-      _log_warn "Repositories from older Ubuntu release are being used."
-      _log_warn "You need to modify this in Software and Updates,\n"
-      _log_warn "when they become available for ${codename_upcoming_release}${NC}\n"
-        # If the repositories are  not available for latest stable release as well, go back a release.
-        # Eg. If the pre-release is 18.04 and the repo is not available for 17.10 as well, we use 17.04 repositories.
-        # Usually happens in first few days of development cycle of 18.04.
-        if [ "$bool_fix_repo_not_available_for_latest" == "true" ]; then
-          # We need to use repositories for previous stable release.
-          _log_dev "Both falgs for --pre-release and -fix are set. Using codename: $codename_previous_release"
-          code_name="$codename_previous_release"
-        else
-          # No need to apply fix for latest release, We can use latest stable release repositories
-          _log_dev "Using repositories for current stable release: $code_name_latest_release"
-          code_name="$code_name_latest_release"
-        fi
-    elif [ "$code_name" == "$codename_upcoming_debian_release" ] && [ "$bool_is_debian" == "true" ]; then
-        _log_dev "Using repositories for current stable Debian release: $code_name_latest_debian_release"
-        code_name="$code_name_latest_release"
+    if [[ $bool_fix_repo_lts == "true" ]] && [[ $code_name == ${codename_upcoming_release} ]]; then
+      _log_warn "Using lastest Ubuntu LTS (${codename_current_lts}) as fallback!"
+      code_name="${codename_current_lts}"
+    elif [[ $bool_fix_repo_lts != "true" ]] && [[ $code_name == ${codename_upcoming_release} ]]; then
+      _log_warn "Using lastest Ubuntu (${codename_latest_release}) as fallback!"
+      code_name="${codename_latest_release}"
+    elif [[ $code_name == $codename_upcoming_debian_release ]]; then
+      _log_dev "Pre-Release-Fix-Codename is experimental on Debian"
+      _log_warn "Using lastest Debian Stable (${codename_latest_debian_release}) as fallback!"
+
+      code_name="${codename_latest_debian_release}"
     else
-        _log_warn "This release/distribution does not support this option."
-        _log_warn "Flag --pre-release will be ignored."
-    fi
+      _log_warn "Not applicable."
+    fi # check codenames
+
   else
     _log_debug "Feature fix_repo_not_available_upcoming_release is disabled."
   fi
@@ -1993,12 +1995,12 @@ function install_debs ()
     fi
     # Delete DEBs
     if [ "$bool_preserve_debs" == "false" ];then
-      _log_cleanup "Clean up ownloaded DEB Packages"
+      _log_cleanup "Clean up downloaded packages"
       (
         rm -f "${dir}/${deb_file_name}" >> "$log_file"
       )
     else
-      _log_cleanup "Keeping downloaded DEB packages"
+      _log_cleanup "Keeping downloaded packages"
     fi
   done
 
@@ -2649,7 +2651,7 @@ function main()
                               _log_warn "Fix codename is set to true.";
                               ;;
       --fix-mode-lts)         bool_fix_repo_lts="true";
-                              _log_inform "Fix mode is set to LTS: $codename_lts_fallback.";
+                              _log_inform "Fix mode is set to LTS: $codename_previous_lts.";
                               ;;
       -p | --pre-release)     bool_fix_repo_not_available_for_upcoming_release="true";
                               _log_dev "Fix codename for upcoming release is set to true.";

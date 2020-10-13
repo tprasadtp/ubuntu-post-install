@@ -1,0 +1,88 @@
+# Install Config
+api: 2
+name: Minimal
+author: Prasad T
+# Configuration
+config:
+  # Enabled Tasks
+  tasks:
+    update: true
+    upgrade: false
+    # Add Repos
+    # individual repos flags are mentioned under config.add_repo key
+    repo: true
+    # Add PPAs
+    ppa: false
+    # APT Packages
+    apt: true
+    # Whether to purge packages mentioned in config.purge key
+    purge: true
+    debs: true
+    pip2: true
+    pip3: true
+    binaries: true
+    snaps: true
+  # Repository Flags
+  add_repo:
+
+    spotify: true
+    vscode: true
+    skype: true
+    signal: false
+    github: true
+    google: true
+    duo: true
+    winehq: true
+    docker: true
+
+    mendeley: false
+    ros: false
+    googlecloud: false
+    gcsfuse: false
+  # Flags
+  flags:
+    purge_enabled: true
+    preserve_debs: false
+
+  # Packages to purge
+  purge:
+    - gnome-mines
+  # PPA
+  ppa:
+    - ppa:yubico/stable
+  # Install components
+  # APT Packages, Python Modules, Debian packages
+  install:
+    # Debian packages.deb files
+    # CSV format
+    debian_packages:
+      - https://github.com/sharkdp/bat/releases/download/v0.16.0/bat-musl_0.16.0_amd64.deb,bat.deb
+    binaries:
+      - https://github.com/mikefarah/yq/releases/download/3.4.0/yq_linux_amd64,yq
+    snaps:
+      normal:
+        - htop
+      classic:
+        - hugo
+    python2:
+      - future
+    python3:
+      - coloredlogs
+    apt:
+      # Admin related Stuff
+      administration:
+        - curl
+      # Security Related Stuff
+      security:
+        - gnupg2
+      # Productivity & Office Tools.
+      productivity:
+        - curl
+      # Tools related to development.
+      development:
+        - iputils-ping
+      # Everything Else
+      other:
+        - less
+      external:
+        - gh
