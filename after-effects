@@ -21,8 +21,8 @@ esac
 
 # SCRIPT METADATA
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="6.1.0-RC1"
-readonly REL_NUM=610
+readonly REL_NAME="6.1.1-RC1"
+readonly REL_NUM=611
 
 function _init_printf_variables()
 {
@@ -865,11 +865,19 @@ function _set_yaml_config()
   #################################################################################
 
   # Purge Packages
-  _check_bool "bool_purge_pkgs" "${config__flags__purge_enabled[0]}"
+  if [[ $bool_purge_pkgs == "true" ]]; then
+    _log_debug "Ignoring config.flags.purge_enabled because of cli flag"
+  else
+    _check_bool "bool_purge_pkgs" "${config__flags__purge_enabled[0]}"
+  fi
   #bool_purge_pkgs="${config__flags__purge_enabled[0]}"
 
   # Keep Debs
-  _check_bool "bool_preserve_debs" "${config__flags__preserve_debs[0]}"
+  if [[ $bool_preserve_debs == "true" ]]; then
+    _log_debug "Ignoring config.flags.preserve_debs because of cli flag"
+  else
+    _check_bool "bool_preserve_debs" "${config__flags__preserve_debs[0]}"
+  fi
   #bool_preserve_debs="${config__flags__preserve_debs[0]}"
 
   # Uni-Mirror
@@ -2676,7 +2684,7 @@ function main()
       -d | --purge)           bool_purge_pkgs="true";
                               _log_inform "Purge packages is set to true."
                               _log_warn "No checks are being made on the packages in the list."
-                              _log_warn "Use carefully!. Purging system packages is stupid idea!"
+                              _log_warn "Use carefully!. Purging system packages is a stupid idea!"
                               ;;
       -y | --yes)             _log_warn "-y | --yes is no longer available, Use Autopilot instead";
                               ;;

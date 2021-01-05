@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.1.1
+
+- Fix `-d` and `-k` flags not working properly. [#45](https://github.com/tprasadtp/ubuntu-post-install/issues/45)
+
 ## 6.1
 
 - Update Spotify,Duo repo keys

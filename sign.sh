@@ -83,7 +83,7 @@ function main()
     case ${1} in
       -h | --help )           display_usage;exit 0;;
       -s | --sign)            bool_sign="true";;
-      * )                    echo -e "\e[91mInvalid argument(s). See usage below. \e[39m";display_usage;;
+      * )                     echo -e "\e[91mInvalid argument(s). See usage below. \e[39m";display_usage;;
     esac
     shift
   done
