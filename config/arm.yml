@@ -30,6 +30,7 @@ config:
     googlecloud: true
     gcsfuse: false
     spotify: true
+    hashicorp: true
     vscode: true
     skype: true
     signal: true
@@ -59,7 +60,7 @@ config:
     # Follows same pattern as Debian packages
     # Name to be saved is second field
     binaries:
-      - https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-arm,kompose
+      - https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/arm64/kubectl,kubectl
     snaps:
       normal:
         # No Beta, No classic

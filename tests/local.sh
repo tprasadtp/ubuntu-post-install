@@ -18,6 +18,7 @@ Usage: ${YELLOW}${SCRIPT}   [options]${NC}
 [-d --distro]          [Distribution Base (ubuntu/debian)]
 [-r --release]         [Distribution Release (focal/buster etc..)]
 [-s --shell]           [Drop into a bash shell]
+[--cfg]                [Specify custom config]
 [-h --help]            [Display this help message]
 
 EOF
@@ -34,7 +35,6 @@ function main()
 
   declare -a EXTRA_ARGS
   declare -a DOCKER_RUN_ARGS
-
   while [[ ${1} != "" ]]; do
     case ${1} in
       -h | --help )         display_usage;exit 0;;
@@ -46,12 +46,30 @@ function main()
       --fix-lts)            EXTRA_ARGS+=('--fix-mode-lts');;
       --pre)                EXTRA_ARGS+=('--pre-release');;
       --sv)                 EXTRA_ARGS+=('--skip-version-check');;
+      --cfg)                shift;
+                            readonly bool_custom_config_file="true";
+                            cfg_file="${1}";;
       * )                   echo -e "\e[91mInvalid argument(s). See usage below. \e[39m";
                             display_usage;
                             exit 1;;
     esac
-    shift
+    if [[ $# -ne 0 ]]; then
+      shift
+    fi
   done
+
+  # check if cfg override is present
+  if [[ $bool_custom_config_file == "true" ]]; then
+    if [[ -z $cfg_file ]] || [[ $cfg_file == "" ]]; then
+      echo -e "\e[91m- Custom config file is not readable/not specified! \e[39m";
+      exit 10
+    else
+      echo -e "\e[93mOverriding default test config ($cfg_file) \e[39m";
+    fi
+  else
+    cfg_file="config/test-suite.yml"
+  fi
+
 
   if [[ -z $distro_name ]] || [[ -z $release_name ]]; then
     echo -e "\e[91m--distro or --release not specified. See usage below. \e[39m";
@@ -64,6 +82,10 @@ function main()
       echo "Terminal is interactive, using -it for docker runs"
       DOCKER_RUN_ARGS+=("-it")
     else
+      if [[ $give_shell == "true" ]]; then
+        echo -e "\e[91mCannot give shell in a non-interactive terminal! \e[39m"
+        exit 10
+      fi
       echo "Terminal is NON interactive"
     fi
 
@@ -106,7 +128,7 @@ function main()
         --simulate \
         --autopilot \
         --internal-ci-mode \
-        --config-file config/test-suite.yml \
+        --config-file "${cfg_file}" \
         "${EXTRA_ARGS[@]}"
         exit_code="$?"
       # turn of trace

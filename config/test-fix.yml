@@ -58,7 +58,7 @@ config:
     debian_packages:
       - https://github.com/sharkdp/bat/releases/download/v0.16.0/bat-musl_0.16.0_amd64.deb,bat.deb
     binaries:
-      - https://github.com/mikefarah/yq/releases/download/3.4.0/yq_linux_amd64,yq
+      - https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/amd64/kubectl,kubectl
     snaps:
       normal:
         - htop

@@ -21,8 +21,8 @@ esac
 
 # SCRIPT METADATA
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="6.1.1-RC1"
-readonly REL_NUM=611
+readonly REL_NAME="6.2.0-RC1"
+readonly REL_NUM=620
 
 function _init_printf_variables()
 {
@@ -301,7 +301,7 @@ function _init_script_variables()
   readonly SOURCES_FILE_DIR=/etc/apt/sources.list.d
 
   # Ping URL
-  readonly PING_URL="www.google.com"
+  readonly PING_URL="http://connectivitycheck.gstatic.com/generate_204"
 
 
   #-------------------------- Release codenames --------------------------------------
@@ -311,7 +311,7 @@ function _init_script_variables()
   # 404 is a placeholder which is  set when there are
   # no suitable releases which can use this feature or
   # the release is unknown or too early in developement.
-  readonly codename_upcoming_release="404"
+  readonly codename_upcoming_release="hirsute"
 
   readonly codename_current_lts="focal"
   readonly codename_previous_lts="bionic"
@@ -572,7 +572,13 @@ function _fix_ubuntu_derivatives()
                                             readonly enable_ppa="true";
                                             readonly python2_disabled="true";
                                             readonly distro_name="ubuntu";
-                                            _log_warn "This is Ubuntu 20.10 Groovy Gorilla"
+                                            _log_inform "Release is Ubuntu 20.10 Groovy Gorilla"
+                                            ;;
+      hirsute )                             readonly bool_config_partner_repo="true";
+                                            readonly enable_ppa="true";
+                                            readonly python2_disabled="true";
+                                            readonly distro_name="ubuntu";
+                                            _log_warn "Release is Ubuntu 21.04 Hirsute Hippo (Unstable!!)"
                                             ;;
       stretch | jessie | buster )           bool_is_debian="true";
                                             readonly distro_name="debian";
@@ -607,7 +613,7 @@ function _test_internet_connection ()
 {
   # Function to check internet connection
   _log_info "Checking connectivity"
-  if wget --tries=5 --timeout=2 "$PING_URL" -O /tmp/ae/testinternet &>/dev/null 2>&1; then
+  if wget --tries=2 --timeout=10 "$PING_URL" -O /tmp/ae/testinternet &>/dev/null 2>&1; then
     rm -f /tmp/ae/testinternet
     _log_success "Connected!"
   else
@@ -859,6 +865,8 @@ function _set_yaml_config()
   _check_bool "add_duo_repo" "${config__add_repo__duo[0]}"
 
   _check_bool "add_gh_repo" "${config__add_repo__github[0]}"
+
+  _check_bool "add_hashicorp_repo" "${config__add_repo__hashicorp[0]}"
 
 
   # Other Script Flags
@@ -1427,15 +1435,30 @@ function add_repositories()
   # Github CLI
   #gh
 
-    if [ "$add_gh_repo" == "true" ]; then
-      _log_info "GitHub CLI(gh)"
+  if [ "$add_gh_repo" == "true" ]; then
+    _log_info "GitHub CLI(gh)"
+    _log_debug "Adding Key to trusted GPG keys directory"
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C99B11DEB97541F0 |& _log_trace "${_phase_apt_key}" \
+   || _log_error "Adding Github CLI keys failed"
+    echo "deb https://cli.github.com/packages  ${code_name}  main #GitHub-CLI" > ${SOURCES_FILE_DIR}/github-cli.list
+  else
+    _log_debug "Skipped GitHub CLI(gh)."
+  fi
+
+  # Hashicorp
+  if [ "$add_hashicorp_repo" == "true" ]; then
+    if [ "$ARCH" == "amd64" ]; then
+      _log_info "Hashicorp APT repository"
       _log_debug "Adding Key to trusted GPG keys directory"
-      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C99B11DEB97541F0 |& _log_trace "${_phase_apt_key}" \
-     || _log_error "Adding Github CLI keys failed"
-      echo "deb https://cli.github.com/packages  ${code_name}  main #GitHub-CLI" > ${SOURCES_FILE_DIR}/github-cli.list
+      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys DA418C88A3219F7B |& _log_trace "${_phase_apt_key}" \
+    || _log_error "Adding Hashicorp GPG keys failed"
+      echo "deb [arch=amd64] https://apt.releases.hashicorp.com ${code_name} main#Hashicorp-Packages" > ${SOURCES_FILE_DIR}/hashicorp.list
     else
-      _log_debug "Skipped GitHub CLI(gh)."
+      _log_error "Hashicorp repositories are not supported on this architecture[$ARCH]!"
     fi
+  else
+    _log_debug "Skipped adding Hashicorp repos"
+  fi
 
 
   # ROS
@@ -2255,17 +2278,19 @@ function _process_menu()
   __menu_info_add_repo="
   Settings for additional repositories is set as follows.
   -------------------------------------------------------
-  Google Chrome, Google Earth : $add_google_repo
-  Google Cloud SDK            : $add_googlecloud_repo
-  GCS-Fuse                    : $add_gcsfuse_repo
-  VS Code                     : $add_vscode_repo
-  Docker Community Edition    : $add_docker_repo
-  Insync                      : $add_insync_repo
-  Skype                       : $add_skype_repo
-  Signal Desktop              : $add_signal_repo
-  Mendeley                    : $add_mendeley_repo
-  ROS                         : $add_ros_repo
-  Duo Security for Unix       : $add_duo_repo
+  Google Chrome & Google Earth : $add_google_repo
+  Google Cloud SDK             : $add_googlecloud_repo
+  GCS-Fuse                     : $add_gcsfuse_repo
+  Visual Studio Code           : $add_vscode_repo
+  Docker Community Edition     : $add_docker_repo
+  Insync                       : $add_insync_repo
+  Skype for Linux              : $add_skype_repo
+  Signal for Desktop           : $add_signal_repo
+  Mendeley                     : $add_mendeley_repo
+  ROS (Robot Operating System) : $add_ros_repo
+  Duo Security for Unix        : $add_duo_repo
+  GitHub CLI (gh)              : $add_gh_repo
+  Hashicorp Packages           : $add_hashicorp_repo
 
   Proceed with this action?
   "
@@ -2554,8 +2579,8 @@ Usage: ${GREEN} [sudo] ./${SCRIPT} ${YELLOW}  [options]${NC}
 ${YELLOW}
 Non-Action options (can be run as non-root user)
 -------------------------------------------------${NC}
-[-v --version]     Display version info
-[-h --help]        Display this help message
+[-v --version]         Display version info
+[-h --help]            Display this help message
 ${YELLOW}
 Configuration Options
 -------------------------------------------------${NC}
@@ -2582,13 +2607,14 @@ Other Options
 -------------------------------------------------${NC}
 [-E | --skip-env-checks]     Skip some env checks
 [-V | --skip-version-check]  Skip checking for latest version
-[-A --autopilot]             Enables AUTOPILOT mode(No Prompts)
+[-A | --autopilot]           Enables AUTOPILOT mode(No Prompts)
 ${GREEN}
-Links & License
+Documentation, License and Version Info
 -------------------------------------------------${NC}
+Version         : ${ORANGE}${REL_NAME}${NC}
 GitHub          : ${BLUE}https://git.io/Jv08V${NC}
 Documentation   : ${BLUE}https://ae.prasadt.com${NC}
-* This script is licensed under GPLv3.
+License         : ${ORANGE}GPLv3${NC}
 -------------------------------------------------
 EOF
 }
@@ -2745,20 +2771,11 @@ function main()
   # Did I tell you that I need to call My friends over internet?
   _test_internet_connection;
 
-  # Checks CI & Containers If running on EC2/GCP/Azure/DO
-  _ci_cloud_and_container_checks;
-
-  # Take care of Mint and other distros
-  _fix_ubuntu_derivatives;
-
-
   _log_stage "Check if config is defined"
 
   # Handle Remote YAML
   _log_var "bool_local_config_file" "${bool_local_config_file}"
   _log_var "local_config_file_path" "${local_config_file_path}"
-  _log_var "bool_custom_version_file" "${bool_custom_version_file}"
-  _log_var "custom_version_file" "${custom_version_file}"
   _log_var "bool_remote_yaml" "${bool_remote_yaml}"
   _log_var "url_remote_yaml" "${url_remote_yaml}"
 
@@ -2778,7 +2795,15 @@ function main()
     _log_and_exit "Custom version info file you have specified is not found or not accessible" "36"
   fi
 
+  # Checks CI & Containers If running on EC2/GCP/Azure/DO
+  _ci_cloud_and_container_checks;
+
+  # Take care of Mint and other distros
+  _fix_ubuntu_derivatives;
+
   # Get Remote Config File/s, check version & configure
+  _log_var "bool_custom_version_file" "${bool_custom_version_file}"
+  _log_var "custom_version_file" "${custom_version_file}"
   _version_checks;
 
   _set_yaml_config;

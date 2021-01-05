@@ -107,6 +107,7 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 |Visual Studio code | vscode
 |Wine HQ | winehq
 |Github CLI | github
+|Hashicorp Tools(terraform, consul etc) | hashicorp
 
 ## Issues & Help
 

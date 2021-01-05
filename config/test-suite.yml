@@ -24,19 +24,20 @@ config:
     snaps: true
   # Repository Flags
   add_repo:
-    googlecloud: true
+    docker: true
+    duo: true
     gcsfuse: true
-    spotify: true
-    vscode: true
-    skype: true
-    signal: true
     github: true
     google: true
-    ros: true
-    duo: true
-    winehq: true
-    docker: true
+    googlecloud: true
+    hashicorp: true
     mendeley: false
+    ros: true
+    signal: true
+    skype: true
+    spotify: true
+    vscode: true
+    winehq: true
 
   # Flags
   flags:
@@ -57,14 +58,14 @@ config:
     debian_packages:
       - https://github.com/sharkdp/bat/releases/download/v0.16.0/bat-musl_0.16.0_amd64.deb,bat.deb
     binaries:
-      - https://github.com/mikefarah/yq/releases/download/3.4.0/yq_linux_amd64,yq
+      - https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/amd64/kubectl,kubectl
     snaps:
       normal:
         - htop
       classic:
         - hugo
     python2:
-      - future
+      - aws
     python3:
       - coloredlogs
     apt:
@@ -85,3 +86,4 @@ config:
         - less
       external:
         - gh
+        - terraform

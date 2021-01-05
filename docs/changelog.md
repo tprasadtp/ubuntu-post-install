@@ -1,8 +1,10 @@
 # Changelog
 
-## 6.1.1
+## 6.2.0
 
+- **New-Repository** Hashicorp Repository (Terraform, Vault Consul etc)
 - Fix `-d` and `-k` flags not working properly. [#45](https://github.com/tprasadtp/ubuntu-post-install/issues/45)
+- Enable Hirsute Hippo
 
 ## 6.1
 
