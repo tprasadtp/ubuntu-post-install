@@ -1707,6 +1707,14 @@ function disable_external_repos()
     apt-key del 421C365BD9FF1F717815A3895523BAEEB01FA116  |& _log_trace "${_phase_apt_key}"  \
     || _log_warn "Deleting ROS keys failed."
 
+    _log_info "Deleting GitHub-CLI Repo signing key C99B11DEB97541F0"
+    apt-key del C99B11DEB97541F0  |& _log_trace "${_phase_apt_key}"  \
+    || _log_warn "Deleting GitHub-CLI Repo keys failed."
+
+    _log_info "Deleting Hashicorp signing key DA418C88A3219F7B"
+    apt-key del DA418C88A3219F7B  |& _log_trace "${_phase_apt_key}"  \
+    || _log_warn "Deleting Hashicorp key failed."
+
     _log_info "Removing external repositoris"
     _log_debug "Deleting *.list and *.save files from ${SOURCES_FILE_DIR}"
     (
@@ -1724,7 +1732,8 @@ function disable_external_repos()
         signal-xenial.* \
         mendeleydesktop.* \
         gh-cli.* \
-        ros-latest.*
+        ros-latest.* \
+        hashicorp.*
     )
     exit_status=$?
 
