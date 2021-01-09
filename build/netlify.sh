@@ -57,11 +57,11 @@ EOF
 
 function install_dependencies()
 {
-  curl -sSfLO https://raw.githubusercontent.com/tprasadtp/mkdocs-material-docker/master/requirements.in
   pip3 install --upgrade pip
-  pip3 install pip-tools
-  pip-compile
-  pip3 install -r requirements.txt
+  pip3 install mkdocs-material
+  pip3 install \
+      mkdocs-minify-plugin>=0.3 \
+      mkdocs-redirects>=1.0
   mkdocs --version
 }
 

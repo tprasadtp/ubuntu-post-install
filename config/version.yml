@@ -2,5 +2,5 @@
 api: 3
 # Configuration
 version:
-  number: 620
-  name: 6.2.0-RC1
+  number: 630
+  name: 6.3.0

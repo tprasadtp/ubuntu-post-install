@@ -1,14 +1,12 @@
 version: "2.4"
 services:
   site:
-    image: tprasadtp/mkdocs-material:latest
+    image: squidfunk/mkdocs-material:6.2.4
     # it is important to specify dev address as 0.0.0.0 otherwise server
     # wont listen on required interfaces.
-    runtime: ${DOCKER_DEFAULT_RUNTIME:-runc}
+    runtime: runsc
     command: -v serve --dev-addr=0.0.0.0:8000
-    working_dir: /docs
     volumes:
-      - ./.git:/docs/.git:ro
       - ./docs:/docs/docs:ro
       - ./mkdocs.yml:/docs/mkdocs.yml:ro
     ports:

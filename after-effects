@@ -21,8 +21,8 @@ esac
 
 # SCRIPT METADATA
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="6.2.0-RC1"
-readonly REL_NUM=620
+readonly REL_NAME="6.3.0"
+readonly REL_NUM=630
 
 function _init_printf_variables()
 {
@@ -52,11 +52,14 @@ function _init_printf_variables()
   #colors for display
   readonly YELLOW=$'\e[38;5;220m'
   readonly GREEN=$'\e[32m'
-  readonly ORANGE=$'\e[38;5;209m'
   readonly RED=$'\e[31m'
   readonly BLUE=$'\e[34m'
   readonly NC=$'\e[0m'
   readonly STAGE_COLOR=$'\e[38;5;51m'
+  readonly ORANGE=$'\e[38;5;208m'
+  readonly TEAL=$'\e[38;5;192m'
+  readonly VIOLET=$'\e[38;5;219m'
+  readonly PINK=$'\e[38;5;212m'
   readonly GRAY=$'\e[38;5;248m'
   readonly LOG_GRAY=$'\e[38;5;242m'
   readonly LIGHT_GRAY=$'\e[38;5;246m'
@@ -121,7 +124,7 @@ function _log_and_exit()
   # ARG-1 log msg
   # ARG-2 exit code int
   local msg="$1"
-  printf "${RED}✖ $msg ${NC}\n"
+  printf "${RED}✖  $msg ${NC}\n"
   printf "$(date) ${_crit} $msg\n" >> "$log_file"
   exit "$2"
 }
@@ -140,7 +143,7 @@ function _script_exit_log()
 function _log_info()
 {
   local msg="$1"
-  printf "  ➜ $msg\n"
+  printf "  • $msg\n"
   printf "$(date) ${_info} $msg\n" >> "$log_file"
 }
 
@@ -149,7 +152,7 @@ function _log_debug()
 {
   local msg="$1"
   if [[ ${AE_DEBUG} -gt 0 ]]; then
-    printf "${GRAY}  » $msg${NC}\n"
+    printf "${GRAY}  »  $msg ${NC}\n"
   fi
   printf "$(date) ${_debug} $msg\n" >> "$log_file"
 }
@@ -158,14 +161,14 @@ function _log_debug()
 function _log_success()
 {
   local msg="$1"
-  printf "${GREEN}  ✔ $msg ${NC}\n"
+  printf "${TEAL}  • $msg ${NC}\n"
   printf "$(date) ${_success} $msg\n" >> "$log_file"
 }
 
 function _log_warn()
 {
   local msg="$1"
-  printf "${YELLOW}  ⚠ $msg ${NC}\n"
+  printf "${YELLOW}  • $msg ${NC}\n"
   printf "$(date) ${_warn} $msg\n" >> "$log_file"
 }
 
@@ -173,14 +176,14 @@ function _log_warn()
 function _log_stage()
 {
   local msg="$1"
-  printf "${STAGE_COLOR}✈ $msg ${NC}\n"
+  printf "${STAGE_COLOR}• $msg ${NC}\n"
   printf "$(date) ${_info} $msg\n" >> "$log_file"
 }
 
 function _log_cleanup()
 {
   local msg="$1"
-  printf "${CLEANUP_COLOR}  ♺ $msg ${NC}\n"
+  printf "${CLEANUP_COLOR}  • $msg ${NC}\n"
   printf "$(date) ${_cleanup} $msg\n" >> "$log_file"
 }
 
@@ -188,7 +191,7 @@ function _log_cleanup()
 function _log_error()
 {
   local msg="$1"
-  printf "${RED}  ✘ $msg ${NC}\n"
+  printf "${RED}  • $msg ${NC}\n"
   printf "$(date) ${_error} $msg\n" >> "$log_file"
 }
 
@@ -196,14 +199,14 @@ function _log_error()
 function _log_dev()
 {
   local msg="$1"
-  printf "${ORANGE}  ⚒ $msg ${NC}\n"
+  printf "${ORANGE}  • $msg ${NC}\n"
   printf "$(date) ${_dev} $msg\n" >> "$log_file"
 }
 
-function _log_inform()
+function _log_notice()
 {
   local msg="$1"
-  printf "  ✦ $msg\n"
+  printf "  • $msg\n"
   printf "$(date) ${_info} $msg\n" >> "$log_file"
 }
 
@@ -377,12 +380,12 @@ function _init_print_basic_info()
 {
   # This function logs and displays the Necessary details which helps in debugging.
   # Should be used after _init_script_variables function.
-  _log_inform "Hostname      : ${CLIENT_NAME}"
-  _log_inform "OS            : ${AE_DISTRO_PRETTY_NAME}"
-  _log_inform "Distro        : ${AE_DISTRO_NAME}"
-  _log_inform "Code Name     : ${AE_DISTRO_CODENAME}"
-  _log_inform "Arch          : ${ARCH}"
-  _log_inform "Version/Number: ${REL_NAME}/${REL_NUM}"
+  _log_notice "Hostname      : ${CLIENT_NAME}"
+  _log_notice "OS            : ${AE_DISTRO_PRETTY_NAME}"
+  _log_notice "Distro        : ${AE_DISTRO_NAME}"
+  _log_notice "Code Name     : ${AE_DISTRO_CODENAME}"
+  _log_notice "Arch          : ${ARCH}"
+  _log_notice "Version/Number: ${REL_NAME}/${REL_NUM}"
 
   _log_debug  "Path for sources.list.d: ${SOURCES_FILE_DIR}"
 
@@ -497,7 +500,7 @@ function _eol_message()
   # ARG 1: EOL Date
 
   _log_error "This version of ${AE_DISTRO_NAME} is no longer supported."
-  _log_and_exit "${AE_DISTRO_PRETTY_NAME} reached EOL on $1." "12"
+  _log_and_exit "${AE_DISTRO_PRETTY_NAME} will reach EOL pretty soon ($1)." "12"
 }
 
 
@@ -506,11 +509,8 @@ function _fix_ubuntu_derivatives()
   # Some Ubuntu based distributions use their own codename (Linux mint, Elementary)
   # Some repositories require that ubuntu codename is used.
   # This function fixes that for
-  # Linux mint 17.X : Ubuntu 14.04 Trusty,
-  # Linux mint 18.x : Ubuntu 16.04 Xenial,
-  # Linux mint 19.x : Ubuntu 18.04 Xenial,
-  # Elementary OS Loki : Ubuntu 14.04 Trusty,
-  # Elementary OS Freya: Ubuntu 16.04 Xenial
+  # Linux Mint 20.x : Ubuntu 20.04 Xenial,
+  # Linux Mint 19.x : Ubuntu 18.04 Xenial,
   # Elementary OS Juno,Hera: Ubuntu 18.04 Xenial
   # Pop!_OS uses Ubuntu codenames (No need to apply fix)
   # KDE Neon, Bodhi, Peppermint use Ubuntu codenames
@@ -519,23 +519,16 @@ function _fix_ubuntu_derivatives()
   _log_stage "Checking for Ubuntu derivates/Debian"
   _log_var "code_name" "$code_name"
   case ${code_name} in
-      sarah | serena | sonya | sylvia )     _log_info "This is Linux-Mint 18.X."
-                                            _log_info "Setting additional repositories to follow Ubuntu 16.04."
-                                            code_name="xenial";
-                                            readonly distro_name="ubuntu";
+      # Ubuntu 18.04 and its derivatives
+      bionic )                              readonly bool_config_partner_repo="true";
                                             readonly enable_ppa="true";
-                                            _log_success "Changed codename to $code_name"
+                                            readonly distro_name="ubuntu";
+                                            _log_info "This is a LTS release of Ubuntu (18.04)"
+                                            _log_success "Keeping the codename as: $code_name."
                                             ;;
-      tara | tessa | tina | tricia)         _log_info "This is Linux-Mint 19.X."
+      tara | tessa | tina | tricia )        _log_info "This is Linux-Mint 19.X."
                                             _log_info "Setting additional repositories to follow Ubuntu 18.04."
                                             code_name="bionic";
-                                            readonly distro_name="ubuntu";
-                                            readonly enable_ppa="true";
-                                            _log_success "Changed codename to $code_name"
-                                            ;;
-      loki )                                _log_info "This release of Elementary OS is based on Ubuntu 16.04 Xenial."
-                                            _log_info "External repositories will use Ubuntu 16.04."
-                                            code_name="xenial";
                                             readonly distro_name="ubuntu";
                                             readonly enable_ppa="true";
                                             _log_success "Changed codename to $code_name"
@@ -547,12 +540,7 @@ function _fix_ubuntu_derivatives()
                                             readonly enable_ppa="true";
                                             _log_success "Changed codename to $code_name"
                                             ;;
-      xenial | bionic )                     readonly bool_config_partner_repo="true";
-                                            readonly enable_ppa="true";
-                                            readonly distro_name="ubuntu";
-                                            _log_info "This is a LTS release of Ubuntu"
-                                            _log_success "Keeping the codename as: $code_name."
-                                            ;;
+      # Ubuntu 20.04 and its derivatives
       focal )                               readonly bool_config_partner_repo="true";
                                             readonly python2_disabled="true";
                                             readonly enable_ppa="true";
@@ -560,7 +548,7 @@ function _fix_ubuntu_derivatives()
                                             _log_info "This is latest LTS release of Ubuntu"
                                             _log_success "Keeping the codename as: $code_name."
                                             ;;
-      ulyana)                               _log_info "Release is Linux mint 20.X."
+      ulyana | ulyssa )                     _log_info "Release is Linux mint 20.X."
                                             _log_info "Setting additional repositories to follow Ubuntu 20.04."
                                             code_name="focal";
                                             readonly python2_disabled="true";
@@ -568,36 +556,41 @@ function _fix_ubuntu_derivatives()
                                             readonly enable_ppa="true";
                                             _log_success "Changed codename to $code_name"
                                             ;;
-      groovy )                              readonly bool_config_partner_repo="true";
+      # Current Ubuntu release (Can be non LTS)
+      groovy)                               readonly bool_config_partner_repo="true";
                                             readonly enable_ppa="true";
                                             readonly python2_disabled="true";
                                             readonly distro_name="ubuntu";
-                                            _log_inform "Release is Ubuntu 20.10 Groovy Gorilla"
+                                            _log_notice "Release is Ubuntu 20.10 Groovy Gorilla"
                                             ;;
-      hirsute )                             readonly bool_config_partner_repo="true";
+      # Upcoming Ubuntu release
+      hirsute)                              readonly bool_config_partner_repo="true";
                                             readonly enable_ppa="true";
                                             readonly python2_disabled="true";
                                             readonly distro_name="ubuntu";
                                             _log_warn "Release is Ubuntu 21.04 Hirsute Hippo (Unstable!!)"
                                             ;;
-      stretch | jessie | buster )           bool_is_debian="true";
+      # Current Debian releases
+      stretch | buster )                    bool_is_debian="true";
                                             readonly distro_name="debian";
                                             readonly enable_ppa="false";
-                                            _log_inform "This is Debian. PPAs are disabled."
+                                            _log_notice "This is Debian. PPAs are disabled."
                                             ;;
-      bullseye)                             bool_is_debian="true";
+      # Upcoming Debian release
+      bullseye )                            bool_is_debian="true";
                                             readonly enable_ppa="false";
                                             readonly distro_name="debian";
                                             _log_dev "You are running Debian Testing!"
                                             _log_warn "This is pre release version of Debian. Use with caution!"
-                                            _log_inform "PPAs are disabled."
+                                            _log_notice "PPAs are disabled."
                                             ;;
-      disco )                               _eol_message "January 23rd, 2020"
-                                            ;;
-      eoan)                                 _eol_message "July 2020";
-                                            ;;
-      *)                                    _log_error "Unknown Distribution/Release."
-                                            _log_error "This Script is not designed to run on this ($code_name) distro/release."
+      # Unsupported releases
+      jessie)                               _eol_message "June  2020";;
+      xenial)                               _eol_message "April 2021";;
+      sarah | serena | sonya | sylvia)      _eol_message "April 2021";;
+      tara | tessa | tina | tricia)         _eol_message "April 2021";;
+      loki)                                 _eol_message "April 2021";;
+      *)                                    _log_error "Unknown or unsupported release($code_name) !!"
                                             _script_exit_log;
                                             exit 16;
                                             ;;
@@ -756,7 +749,7 @@ function _version_checks ()
       if [[ $api_rel_num -gt $REL_NUM ]]; then
         _log_error "A newer version is available."
         _log_error "Please download latest version and try again."
-        _log_inform "Latest available version is ${version__name[0]}-${api_rel_num}."
+        _log_notice "Latest available version is ${version__name[0]}-${api_rel_num}."
         _log_and_exit "You can disable version checks by passing --skip-version-check" "24"
       elif [[ $api_rel_num -eq $REL_NUM ]]; then
         _log_success "Running the latest and greatest!"
@@ -809,14 +802,14 @@ function _set_yaml_config()
   # Get and parse the file
   _log_stage "Processing configuration..."
   if [ "$bool_local_config_file" != "true" ]; then
-    _log_inform "Configuration URL : ${url_remote_yaml}."
+    _log_notice "Configuration URL : ${url_remote_yaml}."
     _log_debug "Deleting old YAMLs"
     rm -f "/tmp/ae/api-config.yml" || _log_debug "Deleting old version YAML failed."
     readonly config_yaml_file="/tmp/ae/api-config.yml"
     # Get response/file
     _get_remote_file "$config_yaml_file" "$url_remote_yaml"
   else
-    _log_inform "Config file - $local_config_file_path"
+    _log_notice "Config file - $local_config_file_path"
     readonly config_yaml_file="$local_config_file_path"
   fi
 
@@ -1657,7 +1650,7 @@ function disable_external_repos()
 
     # Remove keys and list files.
     _log_stage "Deleting Keys and external repositories"
-    _log_inform "You can igore failed messages if those were not added in first place."
+    _log_notice "You can igore failed messages if those were not added in first place."
 
     _log_info "Deleting Google signing key   7FAC5991"
     apt-key del 7FAC5991  |& _log_trace "${_phase_apt_key}"  \
@@ -1738,13 +1731,13 @@ function disable_external_repos()
     exit_status=$?
 
     if [[ $exit_status -eq 0 ]]; then
-      _log_inform "Removed additional APT keys and repositories."
-      _log_inform "Canonical partner repository was left unchanged."
+      _log_notice "Removed additional APT keys and repositories."
+      _log_notice "Canonical partner repository was left unchanged."
     else
       _log_warn "Failed to remove all or some of the list files or keys in Sources directory."
       _log_warn "Please see the log file for more details."
     fi
-    _log_inform "Removed repositories. Please check the logs for errors."
+    _log_notice "Removed repositories. Please check the logs for errors."
 
 
 
@@ -2678,10 +2671,10 @@ function main()
   # Display Version Info and Verify signature options
   _process_non_root_options "$@"
 
-  printf "${STAGE_COLOR}✈ Initialize & run checks${NC}\n"
+  printf "${STAGE_COLOR}• Initialize & run checks${NC}\n"
   process_no_exec_option "$@"
 
-  printf "  ➜ Permission checks\n"
+  printf "  • Permission checks\n"
 
   if [[ $AE_INTERNAL_NO_EXECUTE == "true" ]]; then
     # Actual logging starts
@@ -2711,20 +2704,20 @@ function main()
                               _log_warn "Fix codename is set to true.";
                               ;;
       --fix-mode-lts)         bool_fix_repo_lts="true";
-                              _log_inform "Fix mode is set to LTS: $codename_previous_lts.";
+                              _log_notice "Fix mode is set to LTS: $codename_previous_lts.";
                               ;;
       -p | --pre-release)     bool_fix_repo_not_available_for_upcoming_release="true";
                               _log_dev "Fix codename for upcoming release is set to true.";
                               ;;
       -d | --purge)           bool_purge_pkgs="true";
-                              _log_inform "Purge packages is set to true."
+                              _log_notice "Purge packages is set to true."
                               _log_warn "No checks are being made on the packages in the list."
                               _log_warn "Use carefully!. Purging system packages is a stupid idea!"
                               ;;
       -y | --yes)             _log_warn "-y | --yes is no longer available, Use Autopilot instead";
                               ;;
       -k | --keep-debs)       bool_preserve_debs="true";
-                              _log_inform "Will keep downloaded DEB packages."
+                              _log_notice "Will keep downloaded DEB packages."
                               ;;
       -V | --skip-version-check)  bool_check_version="false";
                               ;;
@@ -2742,7 +2735,7 @@ function main()
       -c | --config-file | --config)  shift;
                               readonly local_config_file_path="${1}";
                               readonly bool_local_config_file="true";
-                              _log_inform "Using local config file"
+                              _log_notice "Using local config file"
                               ;;
       -H | --hide-config)     _log_warn "-H/--hide-config is no longer supported."
                               _log_warn "Set DEBUG=1, to debug your config."
@@ -2848,7 +2841,7 @@ function main()
     _autopilot_check_task_flag_and_run "$ae_task_snaps" "install_snaps"
   else
     sleep 2
-    _log_inform "Autopilot is Inactive"
+    _log_notice "Autopilot is Inactive"
     _process_menu;
   fi
 

@@ -1,10 +1,15 @@
 # Changelog
 
+## 6.3.0
+
+- Added support for Linux Mint 20.1 (Ulyssa).
+- Dropped support for Ubuntu 16.04, Elementary OS Linux Mint 18 and Debian 8(stretch).
+
 ## 6.2.0
 
-- **New-Repository** Hashicorp Repository (Terraform, Vault Consul etc)
-- Fix `-d` and `-k` flags not working properly. [#45](https://github.com/tprasadtp/ubuntu-post-install/issues/45)
-- Enable Hirsute Hippo
+- **New-Repository** Hashicorp Repository (Terraform, Vault Consul etc).
+- Fix `-d` and `-k` flags not working properly. [#45](https://github.com/tprasadtp/ubuntu-post-install/issues/45).
+- Enable Hirsute Hippo.
 
 ## 6.1
 

@@ -9,10 +9,11 @@ set -e pipefail
 
 # Build Static
 echo "Building Docs"
-# mkdocs build -v -s
-#docker run -v "$(pwd)"/docs:/docs/docs -v "$(pwd)"/mkdocs.yml:/docs/mkdocs.yml -v "$(pwd)"/.git:/docs/.git:ro tprasadtp/mkdocs-material build -v -s --config-file /docs/mkdocs.yml
-
-docker run --userns=host --workdir=/docs -v "$(pwd)":/docs tprasadtp/mkdocs-material build -v -s --config-file /docs/mkdocs.yml
+docker run \
+  --userns=host \
+  --workdir=/docs \
+  -v "$(pwd)":/docs squidfunk/mkdocs-material:6.2.4 \
+  build -v -s --config-file /docs/mkdocs.yml
 
 sudo chown -R "$USER" _site/
 
