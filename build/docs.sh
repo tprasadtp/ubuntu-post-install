@@ -31,7 +31,7 @@ cat <<EOT > ./_site/commit.json
     "ref": "${GITHUB_REF:-NA}"
   },
   "build": {
-    "number": "${GITHUB_RUN_ID:-NA}",
+    "number": "${GITHUB_RUN_NUMBER:-NA}",
     "actor": "${GITHUB_ACTOR:-NA}",
     "workflow": "${GITHUB_WORKFLOW:-NA}",
     "event": "${GITHUB_EVENT_NAME:-NA}"

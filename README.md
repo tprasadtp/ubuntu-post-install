@@ -49,7 +49,6 @@ Sample configuration can be found in `config` directory.
 See /docs or visit [docs][docs]
 
 ![commit][commit]
-
 ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
 ![Uptime Robot ratio (30 days)](https://img.shields.io/uptimerobot/ratio/30/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
 
@@ -138,7 +137,7 @@ See [Contributing and forks](/CONTRIBUTING.md)
 
 [version]: https://img.shields.io/github/v/release/tprasadtp/ubuntu-post-install?label=version
 
-[commit]: https://img.shields.io/badge/dynamic/json.svg?label=sha&style=flat&url=https://ae.prasadt.com/commit.json&query=commit.id
+[commit]: https://img.shields.io/badge/dynamic/json.svg?label=commit&style=flat&url=https://ae.prasadt.com/commit.json&query=commit.id
 [commit-deployed-ts]: https://img.shields.io/badge/dynamic/json.svg?label=on&style=flat&url=https://ae.prasadt.com/commit.json&query=ts
 [deployed]: https://img.shields.io/badge/dynamic/json.svg?label=deployed&color=success&style=flat&prefix=%23&url=https://ae.prasadt.com/commit.json&query=build.number
 
