@@ -124,7 +124,7 @@ function _log_and_exit()
   # ARG-1 log msg
   # ARG-2 exit code int
   local msg="$1"
-  printf "${RED}✖  $msg ${NC}\n"
+  printf "${RED}✖ $msg ${NC}\n"
   printf "$(date) ${_crit} $msg\n" >> "$log_file"
   exit "$2"
 }
@@ -152,7 +152,7 @@ function _log_debug()
 {
   local msg="$1"
   if [[ ${AE_DEBUG} -gt 0 ]]; then
-    printf "${GRAY}  »  $msg ${NC}\n"
+    printf "${GRAY}  • $msg ${NC}\n"
   fi
   printf "$(date) ${_debug} $msg\n" >> "$log_file"
 }
@@ -176,7 +176,7 @@ function _log_warn()
 function _log_stage()
 {
   local msg="$1"
-  printf "${STAGE_COLOR}• $msg ${NC}\n"
+  printf "${STAGE_COLOR}➜ $msg ${NC}\n"
   printf "$(date) ${_info} $msg\n" >> "$log_file"
 }
 
@@ -752,7 +752,7 @@ function _version_checks ()
         _log_notice "Latest available version is ${version__name[0]}-${api_rel_num}."
         _log_and_exit "You can disable version checks by passing --skip-version-check" "24"
       elif [[ $api_rel_num -eq $REL_NUM ]]; then
-        _log_success "Running the latest and greatest!"
+        _log_success "Running the latest version!"
       elif [[ $api_rel_num -lt $REL_NUM ]]; then
         _log_dev "You are running version ${REL_NAME}(${REL_NUM})."
         _log_dev "Latest stable version is ${version__name[0]}(${api_rel_num})."
@@ -2773,7 +2773,7 @@ function main()
   # Did I tell you that I need to call My friends over internet?
   _test_internet_connection;
 
-  _log_stage "Check if config is defined"
+  _log_info "Check if config is defined"
 
   # Handle Remote YAML
   _log_var "bool_local_config_file" "${bool_local_config_file}"
