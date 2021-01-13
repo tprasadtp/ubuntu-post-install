@@ -14,8 +14,8 @@ readonly SCRIPT=$(basename "$0")
 
 # SCRIPT METADATA
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="6.3.0"
-readonly REL_NUM=630
+readonly REL_NAME="6.4.0"
+readonly REL_NUM=640
 
 # Handle Use interrupt
 # trap ctrl-c and call ctrl_c()

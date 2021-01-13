@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.4.0
+
+- **New-Repository** Hashicorp Repository (Terraform, Vault Consul etc).
+- _(Internal)_ Rework adding apt-keys as `apt-key` is deprecated.
+
+
 ## 6.3.0
 
 - Added support for Linux Mint 20.1 (Ulyssa).
