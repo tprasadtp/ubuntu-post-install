@@ -19,6 +19,7 @@ Usage: ${YELLOW}${SCRIPT}   [options]${NC}
 [-r --release]         [Distribution Release (focal/buster etc..)]
 [-s --shell]           [Drop into a bash shell]
 [--cfg]                [Specify custom config]
+[--debug --debug-trace][Debug Modes]
 [-h --help]            [Display this help message]
 
 EOF
@@ -45,7 +46,9 @@ function main()
       --fix)                EXTRA_ARGS+=('--fix');;
       --fix-lts)            EXTRA_ARGS+=('--fix-mode-lts');;
       --pre)                EXTRA_ARGS+=('--pre-release');;
-      --sv)                 EXTRA_ARGS+=('--skip-version-check');;
+      --sv)                 EXTRA_ARGS+=('--no-version-check');;
+      --debug)              EXTRA_ARGS+=('--debug');;
+      --debug-trace)        EXTRA_ARGS+=('--debug-trace');;
       --cfg)                shift;
                             readonly bool_custom_config_file="true";
                             cfg_file="${1}";;
@@ -107,6 +110,7 @@ function main()
         -e CI \
         -e DEBUG \
         -e GITHUB_ACTIONS \
+        --name="${docker_tag}" \
         --hostname="${docker_tag}" \
         -v "$(pwd)":/shared \
         ae:"${docker_tag}" \
@@ -127,7 +131,7 @@ function main()
         ./after-effects \
         --simulate \
         --autopilot \
-        --internal-ci-mode \
+        --debug-ci-mode \
         --config-file "${cfg_file}" \
         "${EXTRA_ARGS[@]}"
         exit_code="$?"
