@@ -10,17 +10,17 @@ In short? Ubuntu, its official flavors (Kubuntu,Ubuntu Mate etc), Linux Mint, De
 [![Ubuntu-Budgie](https://static.prasadt.com/logo64/ubuntu-budgie.png)](https://ubuntubudgie.org/)
 [![Ubuntu-Studio](https://static.prasadt.com/logo64/ubuntu-studio.png)](https://ubuntustudio.org/)
 [![Ubuntu-Gnome](https://static.prasadt.com/logo64/ubuntu-gnome.png)](https://ubuntugnome.org/)
-[![Pop-OS](https://static.prasadt.com/logo64/pop-os.png)](https://system76.com/pop)
 [![Linux-Mint](https://static.prasadt.com/logo64/linux-mint.png)](https://www.linuxmint.com/)
 [![Debian](https://static.prasadt.com/logo64/debian.png)](https://www.debian.org/)
+[![Elementary-OS](https://static.prasadt.com/logo64/elementary-os.png)](https://elementary.io/)
 
-I have not tested the script on following distros, but since they use ubuntu as their base,
+I have not tested the script on the distros listed below. Because they use Ubuntu as their base,
 It should work fine. But no promises.
 
 [![Kde-Neon](https://static.prasadt.com/logo64/kde-neon.png)](https://neon.kde.org/)
+[![Pop-OS](https://static.prasadt.com/logo64/pop-os.png)](https://system76.com/pop)
 [![Bodhi-Linux](https://static.prasadt.com/logo64/bodhi-linux.png)](https://www.bodhilinux.com/)
 [![Peppermint-OS](https://static.prasadt.com/logo64/peppermint-os.png)](https://peppermintos.com/)
-[![Elementary-OS](https://static.prasadt.com/logo64/elementary-os.png)](https://elementary.io/)
 
 !!! warning "Warning!"
     **Script will exit, if it cannot recognize the distribution.**
