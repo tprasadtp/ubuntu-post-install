@@ -1218,7 +1218,6 @@ function add_repositories()
 
 
   #local CLOUD_SDK_REPO
-  local GCSFUSE_REPO
   local exit_status
   # install dependencies required
   _install_pre_requisites;
@@ -1621,7 +1620,6 @@ function __add_repo_keys()
 
   local exit_code
   local key_url key_file_prefix key_format key_repo_name
-  local curl_output_file
 
   while [ "${1}" != "" ]; do
     case ${1} in
