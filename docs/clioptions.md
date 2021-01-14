@@ -208,14 +208,16 @@ Autopilot mode is designed to run the script in a non interactive manner. Please
 ## Help
 
 Displays this help option.
-<pre>
+
+<pre>./after-effects <font color="#A1EFE4">-h</font>
+
 A Post Installation Script for Ubuntu, Debian,
 Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.
 
 Usage: <font color="#D7FF87"> [sudo] ./after-effects </font><font color="#FF8700">  [options]</font>
 
 <font color="#FFD700">Non-Action options (can be run as non-root user)</font>
-<font color="#FFD700">-----------------------------------------------------------</font>
+<font color="#FFD700">---------------------------------------------------------</font>
 [-v | --version]      Display version info.
 [-h | --help]         Display this help message.
 
@@ -224,19 +226,20 @@ Usage: <font color="#D7FF87"> [sudo] ./after-effects </font><font color="#FF8700
 [-c | --config-file]  Local yaml config file.
 [-r | --remote-yaml]  Use config yaml from a URL.
 
-<font color="#AFFFFF">The following options are &quot;action&quot; options and</font>
-<font color="#AFFFFF">will make changes to your system depending on tasks chosen.</font>
+<font color="#AFFFFF">The following options are &quot;action&quot; options and will</font>
+<font color="#AFFFFF">make changes to your system depending on tasks selcted.</font>
 <font color="#AFFFFF">---------------------------------------------------------</font>
 [-d | --purge]        Enable Purging packages
 [-f | --fix]          Fix codenames for new releases
 [-p | --pre-release]  Same as --fix but for beta/alpha
                       releases of Ubuntu and Debian.
 [--fix-mode-lts]      Similar to --fix but fallback to
-                      last LTS. Should be used with --fix.
+                      last LTS. MUST be used with --fix.
                       Only works on Ubuntu and Debian.
 [-k | --keep-debs]    Do not invoke apt-clean &amp; do not
                       delete downloaded deb packages.
-[-l | --delete-log]   Delete logfile. (log/after-effects.log)
+[-l | --delete-log]   Deletes the logfile.
+                      (log/after-effects.log)
 [-s | --simulate]     Try not to make changes to system
                       and use --dry-run Please read the
                       documentation, to know its limits
@@ -253,15 +256,14 @@ Usage: <font color="#D7FF87"> [sudo] ./after-effects </font><font color="#FF8700
 <font color="#949494">[-nx | --nx]          Just process config but do not</font>
 <font color="#949494">                      make any changes to the system.</font>
 <font color="#949494">[--debug]             Prints debug logs.</font>
-<font color="#949494">[--debug-trace]       Prints trace level logs which includes</font>
-<font color="#949494">                      output from apt-get and other commands.</font>
+<font color="#949494">[--debug-trace]       Prints trace level logs which</font>
+<font color="#949494">                      includes output from apt-get</font>
+<font color="#949494">                      and other commands.</font>
 
 <font color="#D7FF87">Documentation, License and Version Information</font>
 <font color="#D7FF87">---------------------------------------------------------</font>
 Version : <font color="#FF8700">6.4.0</font>
-GitHub  : <font color="#AFFFFF">https://git.io/Jv08V</font>
+GitHub  : <font color="#AFFFFF">https://git.io/ubuntu-post-install</font>
 Docs    : <font color="#AFFFFF">https://ae.prasadt.com</font>
 License : <font color="#FF8700">GPLv3</font>
----------------------------------------------------------
-
-</pre>
+---------------------------------------------------------</pre>

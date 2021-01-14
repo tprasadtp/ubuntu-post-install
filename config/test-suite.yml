@@ -21,7 +21,7 @@ config:
     pip2: true
     pip3: true
     binaries: true
-    snaps: false
+    snaps: true
   # Repository Flags
   add_repo:
     azurecli: true
@@ -58,7 +58,7 @@ config:
     # Debian packages.deb files
     # CSV format
     debian_packages:
-      - https://github.com/sharkdp/bat/releases/download/v0.16.0/bat-musl_0.16.0_amd64.deb,bat.deb
+      - https://github.com/sharkdp/bat/releases/download/v0.17.1/bat_0.17.1_amd64.deb,bat.deb
     binaries:
       - https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/amd64/kubectl,kubectl
     snaps:
@@ -69,7 +69,7 @@ config:
     python2:
       - aws
     python3:
-      - coloredlogs
+      - rich
     apt:
       # Admin related Stuff
       administration:

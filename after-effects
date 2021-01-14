@@ -1272,17 +1272,16 @@ function add_repositories()
 
 
     # Google Cloud SDK and GCS-FUSE
-    if [ "$add_gcp_repo" == "true" ] || [ "$add_gcsfuse_repo" == "true" ]; then
+    if [[ $add_gcp_repo == "true" ]] || ( [[ $add_gcsfuse_repo == "true" ]] && [[ $ARCH == "amd64" ]] ) ; then
       _log_debug "Google cloud keys"
       __add_repo_keys --format "gpg" \
         --file-prefix "google-cloud" \
         --key-url https://packages.cloud.google.com/apt/doc/apt-key.gpg
     else
-      _log_debug "GCSFUSE or Google cloud SDK install enabled. Not adding Google cloud APT keys"
+      _log_debug "Not adding Google cloud APT keys"
     fi
 
     if [ "$add_gcp_repo" == "true" ]; then
-      #CLOUD_SDK_REPO="cloud-sdk-${code_name}"
       _log_info "Google-Cloud-SDK"
 
       if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/google-cloud.gpg] http://packages.cloud.google.com/apt cloud-sdk main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list; then
@@ -1296,11 +1295,15 @@ function add_repositories()
 
     if [ "$add_gcsfuse_repo" == "true" ]; then
 
-      _log_info "GCSFUSE"
-      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/google-cloud.gpg] http://packages.cloud.google.com/apt gcsfuse-${code_name} main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list; then
-        _log_success "OK"
+      if [[ $ARCH == "amd64" ]]; then
+        _log_info "GCSFUSE"
+        if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/google-cloud.gpg] http://packages.cloud.google.com/apt gcsfuse-${code_name} main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list; then
+          _log_success "OK"
+        else
+          _log_error "Adding GCSFUSE Repository failed"
+        fi
       else
-        _log_error "Adding GCSFUSE Repository failed"
+        _log_error "GCSFUSE is not supported on this architecture!($ARCH)"
       fi
 
     else
@@ -2702,7 +2705,7 @@ Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.${NC}
 Usage: ${TEAL} [sudo] ./${SCRIPT} ${ORANGE}  [options]${NC}
 ${YELLOW}
 Non-Action options (can be run as non-root user)
------------------------------------------------------------${NC}
+---------------------------------------------------------${NC}
 [-v | --version]      Display version info.
 [-h | --help]         Display this help message.
 ${YELLOW}
@@ -2711,19 +2714,20 @@ Configuration Options
 [-c | --config-file]  Local yaml config file.
 [-r | --remote-yaml]  Use config yaml from a URL.
 ${LIGHT_BLUE}
-The following options are "action" options and
-will make changes to your system depending on tasks chosen.
+The following options are "action" options and will
+make changes to your system depending on tasks selcted.
 ---------------------------------------------------------${NC}
 [-d | --purge]        Enable Purging packages
 [-f | --fix]          Fix codenames for new releases
 [-p | --pre-release]  Same as --fix but for beta/alpha
                       releases of Ubuntu and Debian.
 [--fix-mode-lts]      Similar to --fix but fallback to
-                      last LTS. Should be used with --fix.
+                      last LTS. MUST be used with --fix.
                       Only works on Ubuntu and Debian.
 [-k | --keep-debs]    Do not invoke apt-clean & do not
                       delete downloaded deb packages.
-[-l | --delete-log]   Delete logfile. (log/after-effects.log)
+[-l | --delete-log]   Deletes the logfile.
+                      (log/after-effects.log)
 [-s | --simulate]     Try not to make changes to system
                       and use --dry-run Please read the
                       documentation, to know its limits
@@ -2740,13 +2744,14 @@ Debugging Options
 [-nx | --nx]          Just process config but do not
                       make any changes to the system.
 [--debug]             Prints debug logs.
-[--debug-trace]       Prints trace level logs which includes
-                      output from apt-get and other commands.
+[--debug-trace]       Prints trace level logs which
+                      includes output from apt-get
+                      and other commands.
 ${TEAL}
 Documentation, License and Version Information
 ---------------------------------------------------------${NC}
 Version : ${ORANGE}${REL_NAME}${NC}
-GitHub  : ${LIGHT_BLUE}https://git.io/Jv08V${NC}
+GitHub  : ${LIGHT_BLUE}https://git.io/ubuntu-post-install${NC}
 Docs    : ${LIGHT_BLUE}https://ae.prasadt.com${NC}
 License : ${ORANGE}GPLv3${NC}
 ---------------------------------------------------------${NC}
