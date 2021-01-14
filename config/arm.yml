@@ -81,7 +81,5 @@ config:
         - less
       external:
         - gh
-        - runsc
-        - terraform
         - azure-cli
         - google-cloud-sdk

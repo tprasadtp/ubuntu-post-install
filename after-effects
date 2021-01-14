@@ -1520,7 +1520,7 @@ function add_repositories()
   # Gvisor container Runtime
   if [[ $add_gvisor_repo == "true" ]]; then
 
-    if [[ $ARCH == "amd64" ]] ||  [[ $ARCH == "arm64" ]]; then
+    if [[ $ARCH == "amd64" ]]; then
       _log_info "gvisor"
 
       # Adding Gvisor Keys
