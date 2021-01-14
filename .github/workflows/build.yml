@@ -98,4 +98,4 @@ jobs:
           sudo docker run --rm --privileged docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
 
       - name: Test on ARM64 ${{ matrix.release }}
-        run: ./tests/local.sh --build --distro ubuntu --release "${{ matrix.release }}" --cfg config/arm.yml
+        run: ./tests/local.sh --build --distro arm64v8/ubuntu --release "${{ matrix.release }}" --cfg config/arm.yml

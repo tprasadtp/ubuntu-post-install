@@ -69,7 +69,7 @@ config:
     python2:
       - aws
     python3:
-      - rich
+      - coloredlogs
     apt:
       # Admin related Stuff
       administration:
