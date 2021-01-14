@@ -176,7 +176,7 @@ Default behavior is to clean apt cache and delete downloaded DEB packages.
     OR
 
     ```console
-    ./after-effects -R <URL to YAML file>
+    ./after-effects -r <URL to YAML file>
     ```
 
 You can specify YAML file to use. Script will fetch it and parse it.The file should be available without any interactive logins.
@@ -208,10 +208,10 @@ Autopilot mode is designed to run the script in a non interactive manner. Please
 ## Help
 
 Displays this help option.
-
-<pre>./after-effects <font color="#A1EFE4">-h</font>
+<pre>
 A Post Installation Script for Ubuntu, Debian,
-Linux Mint, elementary OS, Pop!_OS, MX Linux etc.
+Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.
+
 Usage: <font color="#D7FF87"> [sudo] ./after-effects </font><font color="#FF8700">  [options]</font>
 
 <font color="#FFD700">Non-Action options (can be run as non-root user)</font>
@@ -222,7 +222,7 @@ Usage: <font color="#D7FF87"> [sudo] ./after-effects </font><font color="#FF8700
 <font color="#FFD700">Configuration Options</font>
 <font color="#FFD700">---------------------------------------------------------</font>
 [-c | --config-file]  Local yaml config file.
-[-R | --remote-yaml]  Use config yaml from a URL.
+[-r | --remote-yaml]  Use config yaml from a URL.
 
 <font color="#AFFFFF">The following options are &quot;action&quot; options and</font>
 <font color="#AFFFFF">will make changes to your system depending on tasks chosen.</font>
@@ -258,7 +258,7 @@ Usage: <font color="#D7FF87"> [sudo] ./after-effects </font><font color="#FF8700
 
 <font color="#D7FF87">Documentation, License and Version Information</font>
 <font color="#D7FF87">---------------------------------------------------------</font>
-Version : <font color="#FF8700">6.3.0</font>
+Version : <font color="#FF8700">6.4.0</font>
 GitHub  : <font color="#AFFFFF">https://git.io/Jv08V</font>
 Docs    : <font color="#AFFFFF">https://ae.prasadt.com</font>
 License : <font color="#FF8700">GPLv3</font>

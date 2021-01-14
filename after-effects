@@ -217,7 +217,7 @@ function _log_var()
   if [[ $AE_DEBUG -gt 0 ]]; then
     printf "${GRAY}  » %-18s - %-10s${NC}\n" "${var}" "${!var}"
   fi
-  printf "$(date) ${_variable} ${var} is set to ${!var}\n" >> "$log_file"
+  printf "$(date) ${_variable} %-18s - %-10s\n" "${var}" "${!var}" >> "$log_file"
 }
 
 function  _log_trace()
@@ -441,15 +441,15 @@ function _check_dependencies()
   #Checks if commands in array are available.
   # Accepts one argument as array.
   local dependencies=("$@")
-  local dependency_check_failed_count dep_res dependency
+  local dependency_check_failed_count dependency
   dependency_check_failed_count=0;
-  _log_info "Checking dependencies..."
+  _log_notice "Checking dependencies"
   for dependency in "${dependencies[@]}"; do
-   command -v "$dependency" > /dev/null
-   dep_res=$?
-   if [ "$dep_res" -eq 1 ]; then
-     _log_error "$dependency is not installed!${NC}"
-     dependency_check_failed_count=$((dependency_check_failed_count+1))
+    if command -v "$dependency" > /dev/null; then
+      _log_property "${dependency}" "INSTALLED"
+    else
+      _log_property "$dependency" "NOT INSTALLED"
+      dependency_check_failed_count=$((dependency_check_failed_count+1))
    fi
   done
 
@@ -779,7 +779,7 @@ function _version_checks ()
       elif [[ $api_rel_num -eq $REL_NUM ]]; then
         _log_success "Running the latest version!"
       elif [[ $api_rel_num -lt $REL_NUM ]]; then
-        _log_dev "You are running version ${REL_NAME}(${REL_NUM})."
+        _log_dev "You running development version ${REL_NAME}(${REL_NUM})."
         _log_dev "Latest stable version is ${version__name[0]}(${api_rel_num})."
       fi
 
@@ -874,8 +874,8 @@ function _set_yaml_config()
   _check_bool "add_signal_repo" "${config__add_repo__signal[0]}"
   #add_signal_repo="${config__add_repo__signal[0]}"
 
-  _check_bool "add_google_repo" "${config__add_repo__google[0]}"
-  #add_google_repo="${config__add_repo__google[0]}"
+  _check_bool "add_chrome_repo" "${config__add_repo__google[0]}"
+  #add_chrome_repo="${config__add_repo__google[0]}"
 
   # ROS
   _check_bool "add_ros_repo" "${config__add_repo__ros[0]}"
@@ -883,11 +883,15 @@ function _set_yaml_config()
   # DUO
   _check_bool "add_duo_repo" "${config__add_repo__duo[0]}"
 
+  # Dev and cloud
   _check_bool "add_gh_repo" "${config__add_repo__github[0]}"
 
   _check_bool "add_hashicorp_repo" "${config__add_repo__hashicorp[0]}"
 
   _check_bool "add_gvisor_repo" "${config__add_repo__gvisor[0]}"
+
+  _check_bool "add_azurecli_repo" "${config__add_repo__azurecli[0]}"
+
 
   # Other Script Flags
   #################################################################################
@@ -1184,7 +1188,6 @@ function add_ppas()
   # Function Reads the file ${dir}/data/ppa.index and adds the ppa one by one.
   # Install dependencies required
   if [ "$bool_is_debian" != "true" ]; then
-    _install_pre_requisites;
     _install_dependencies "${_ppa_dependencies[@]}"
 
       for index in "${parsed_ppa_list[@]}"; do
@@ -1211,7 +1214,7 @@ function add_repositories()
 {
   # This function adds repositories for several apps like
   # Google Chrome, Spotify, Google Cloud SDK, GCSFUSE(Part of google cloud),
-  # Skype, Docker, Skype, Microsoft Visual Studio Code, Google Earth, Insync client, Wine-HQ etc
+  # Skype, Docker, Skype, Microsoft Visual Studio Code, Insync client, Wine-HQ etc
   # WARNING: Some repositories might not support latest version of Ubuntu.
 
   _log_stage "Setting up repositories"
@@ -1228,51 +1231,50 @@ function add_repositories()
 
 
   if [ "$ARCH" != "amd64" ]; then
-    _log_error "Google Chrome, Spotify, VSCode, Mendeley, Signal and Duo for Unix are only supported on 64 Bit"
+    _log_warn "Google Chrome, Spotify, Mendeley, Signal and Duo for Unix are only supported on 64 Bit"
   else
+
     _log_debug "Arch is 64 Bit Enable adding 64 bit repos."
     # 64 bit Only REPOS
-    # Add Google Chrome and Google Earth
-    if [ "$add_google_repo" == "true" ]; then
-      _log_info "Google Chrome & Google Earth"
+    # Add Google Chrome
+    if [ "$add_chrome_repo" == "true" ]; then
+      _log_info "Google Chrome"
       _log_debug "Adding Google package signing Key"
       wget -q  https://dl.google.com/linux/linux_signing_key.pub -O /tmp/ae/google_signing_key.pub >> $"$log_file"
-      _log_debug "Adding Google key to trusted keys list"
       apt-key add /tmp/ae/google_signing_key.pub |& _log_trace "${_phase_apt_key}" \
       || _log_error "Adding trusted keys for Google failed."
-
-      _log_info "Google Chrome"
-      echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main #Google-Chrome" > ${SOURCES_FILE_DIR}/google-chrome.list \
-      || _log_error "Adding Google Chrome Repository failed"
-
-      _log_info "Google Earth"
-
-      echo "deb [arch=amd64] http://dl.google.com/linux/earth/deb/ stable main #Google-Earth" > ${SOURCES_FILE_DIR}/google-earth.list \
-      || _log_error "Adding Google Chrome repository failed"
+      if echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main #Google-Chrome" > ${SOURCES_FILE_DIR}/google-chrome.list; then
+        _log_success "OK" \
+      else
+        _log_error "Adding Google Chrome Repository failed"
+      fi
     else
-      _log_debug "Skipped Google chrome, Google Earth"
+      _log_debug "Skipped Google chrome repository"
     fi
 
 
     # Spotify client
     if [ "$add_spotify_repo" == "true" ]; then
       _log_info "Spotify"
-      _log_debug "Adding Spotify keys"
-      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8FD3D9A8D3800305A9FFF259D1742AD60D811D58 2>&1 \
-      |_log_trace "${_phase_apt_key}"  \
-      || _log_error "Adding Spotify repository failed"
+      __add_repo_keys --format "asc" \
+        --file-prefix "spotify" \
+        --key-url https://download.spotify.com/debian/pubkey_0D811D58.gpg
 
-      echo "deb [arch=$ARCH] http://repository.spotify.com stable non-free #Spotify" > ${SOURCES_FILE_DIR}/spotify.list \
-      || _log_error "Adding Spotify Repository Failed"
+      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/spotify.gpg] http://repository.spotify.com stable non-free #Spotify" > ${SOURCES_FILE_DIR}/spotify.list; then
+        _log_success "OK"
+      else
+        _log_error "Adding Spotify Repository Failed"
+      fi
+
     else
-      _log_debug "Skipped Spotify."
+      _log_debug "Skipped adding Spotify repository"
     fi
 
 
     # Google Cloud SDK and GCS-FUSE
     if [ "$add_gcp_repo" == "true" ] || [ "$add_gcsfuse_repo" == "true" ]; then
-      __add_repo_keys --name "Google Cloud Platform Repository" \
-        --format "gpg" \
+      _log_debug "Google cloud keys"
+      __add_repo_keys --format "gpg" \
         --file-prefix "google-cloud" \
         --key-url https://packages.cloud.google.com/apt/doc/apt-key.gpg
     else
@@ -1282,82 +1284,87 @@ function add_repositories()
     if [ "$add_gcp_repo" == "true" ]; then
       #CLOUD_SDK_REPO="cloud-sdk-${code_name}"
       _log_info "Google-Cloud-SDK"
-      echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/google-cloud.gpg] http://packages.cloud.google.com/apt cloud-sdk main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list  \
-      || _log_error "Adding Google Cloud SDK Repository failed"
+
+      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/google-cloud.gpg] http://packages.cloud.google.com/apt cloud-sdk main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list; then
+        _log_success "OK"
+      else
+        _log_error "Adding Google Cloud SDK Repository failed"
+      fi
     else
-      _log_debug "Skipped Google Cloud SDK."
+      _log_debug "Skipped adding Google Cloud SDK."
     fi
 
     if [ "$add_gcsfuse_repo" == "true" ]; then
+
       _log_info "GCSFUSE"
-      if [[ $ARCH == "amd64" ]]; then
-        echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/google-cloud.gpg] http://packages.cloud.google.com/apt gcsfuse-${code_name} main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list  \
-        || _log_error "Adding GCSFUSE Repository failed"
+      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/google-cloud.gpg] http://packages.cloud.google.com/apt gcsfuse-${code_name} main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list; then
+        _log_success "OK"
       else
-        _log_error "This architecture($ARCH) is not supported for GCSFUSE."
+        _log_error "Adding GCSFUSE Repository failed"
       fi
+
     else
-      _log_debug "Skipped GCSFUSE"
+      _log_debug "Skipped adding GCSFUSE"
     fi
 
     # Skype
     if [ "$add_skype_repo" == "true" ]; then
-      _log_info "Skype for Linux"
-      _log_debug "Getting Skype repository key"
-      wget -q https://repo.skype.com/data/SKYPE-GPG-KEY -O /tmp/ae/skype-linux-key.gpg >> "$log_file"
-      _log_debug "Adding Skype keys to trusted list"
-      apt-key add /tmp/ae/skype-linux-key.gpg |& _log_trace "${_phase_apt_key}" \
-      || _log_error "Adding Skype for linux key failed"
-      echo "deb [arch=$ARCH] https://repo.skype.com/deb stable main #Skype" > $SOURCES_FILE_DIR/skype-stable.list \
-      || _log_error "Adding Skype for linux repository failed"
+      _log_info "Skype"
+      __add_repo_keys --format "asc" \
+        --file-prefix "skype" \
+        --key-url https://repo.skype.com/data/SKYPE-GPG-KEY
+
+      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/skype.gpg] https://repo.skype.com/deb stable main #Skype" > $SOURCES_FILE_DIR/skype-stable.list; then
+        _log_success "OK"
+      else
+        _log_error "Adding Skype for linux repository failed"
+      fi
+
     else
       _log_debug "Skipped Skype for Linux."
     fi
 
-    # Visual Studio Code
-    if [ "$add_vscode_repo" == "true" ]; then
-      _log_info "Visual Studio Code"
-      _log_debug "Getting GPG keys for repository"
-      wget -q https://packages.microsoft.com/keys/microsoft.asc -O /tmp/ae/microsoft.asc
-      _log_debug "Adding Key to trusted GPG keys directory"
-      apt-key add /tmp/ae/microsoft.asc |& _log_trace "${_phase_apt_key}" || _log_error "Adding Visual Studio Code key failed"
-      echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list
-    else
-      _log_debug "Skipped Visual Studio Code."
-    fi
-
     # Signal App
     if [ "$add_signal_repo" == "true" ]; then
-      _log_info "Signal Desktop"
-      wget -q https://updates.signal.org/desktop/apt/keys.asc -O /tmp/ae/signal.asc >> "$log_file"
-      apt-key add /tmp/ae/signal.asc  |& _log_trace "${_phase_apt_key}" \
-      || _log_error "Adding Signal Key Failed"
-      echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/signal-xenial.list
+      _log_info "Signal for Desktop"
+      __add_repo_keys --format "asc" \
+        --file-prefix "signal-desktop" \
+        --key-url https://updates.signal.org/desktop/apt/keys.asc
+
+      if echo "deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop.gpg] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/signal-desktop.list; then
+        _log_success "OK"
+      else
+        _log_error "Failed to addd Signal for desktop repository!"
+      fi
+
     else
-      _log_debug "Skipped Signal Desktop."
+      _log_debug "Skipped adding Signal for desktop repository"
     fi
 
     # Mendeley Desktop App
     if [ "$add_mendeley_repo" == "true" ]; then
-      _log_info "Mendeley Desktop"
+      _log_info "Mendeley desktop"
       apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 |& _log_trace "${_phase_apt_key}" \
       || _log_error "Adding Mendeley Desktop Key Failed"
-      echo "deb [arch=$ARCH] https://desktop-download.mendeley.com/download/apt stable main #Mendeley-Desktop"  > ${SOURCES_FILE_DIR}/mendeleydesktop.list
+
+      if echo "deb [arch=$ARCH] https://desktop-download.mendeley.com/download/apt stable main #Mendeley-Desktop"  > ${SOURCES_FILE_DIR}/mendeley-desktop.list; then
+        _log_success "OK"
+      else
+        _log_error "Failed to add mendeley repository!"
+      fi
+
     else
-      _log_debug "Skipped Mendeley Desktop"
+      _log_debug "Skipped adding Mendeley repository"
     fi
 
     # Duo Unix
     if [ "$add_duo_repo" == "true" ]; then
-      _log_info "Duo Security for Unix"
+      _log_info "Duo Security"
       case "$code_name" in
         focal)      duo_repo_url="https://pkg.duosecurity.com/Ubuntu focal main";
                     duo_supported="true";
                     ;;
         bionic)     duo_repo_url="http://pkg.duosecurity.com/Ubuntu bionic main";
-                    duo_supported="true";
-                    ;;
-        xenial)     duo_repo_url="http://pkg.duosecurity.com/Ubuntu xenial main"
                     duo_supported="true";
                     ;;
         stretch)    duo_repo_url="http://pkg.duosecurity.com/Debian stretch main";
@@ -1372,13 +1379,18 @@ function add_repositories()
       esac
       if [[ $duo_supported == "true" ]]; then
         # Repo keys for duosecurity
-        _log_debug "Downloading GPG key..."
+        _log_debug "Downloading GPG key"
         wget -q https://duo.com/DUO-GPG-PUBLIC-KEY.asc  -O /tmp/ae/duosecurity.gpg >> "$log_file"
         apt-key add /tmp/ae/duosecurity.gpg |& _log_trace "${_phase_apt_key}" \
         || _log_error "Adding Duo Key Failed"
 
         # Add repo
-        echo "deb [arch=$ARCH] ${duo_repo_url} #Duo Unix"  > ${SOURCES_FILE_DIR}/duounix.list
+        if echo "deb [arch=$ARCH] ${duo_repo_url} #Duo Security"  > ${SOURCES_FILE_DIR}/duo-security.list; then
+          _log_success "OK"
+        else
+          _log_error "Adding Duo Key Failed"
+        fi
+
       else
         _log_error "Duo for Unix is not supported on this distribution!"
       fi
@@ -1389,35 +1401,75 @@ function add_repositories()
   # End if ARCH==64 Check
   fi
 
+  # Microsoft Keys
+  if [[ $add_azurecli_repo == "true" ]] || [[ ${add_vscode_repo} == "true"  ]] ; then
+    _log_debug "Adding Microsoft keys."
+    __add_repo_keys --format "asc" \
+      --file-prefix "microsoft" \
+      --key-url https://packages.microsoft.com/keys/microsoft.asc
+  else
+    _log_debug "Both azurecli and vscode will not be added. So no need to add microsoft keys."
+  fi
+
+  # VSCode
+  if [[ ${add_vscode_repo} == "true"  ]]; then
+
+    _log_info "VSCode"
+    if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list; then
+      _log_success "OK"
+    else
+      _log_error "Failed to addd VSCode repository!"
+    fi
+
+  else
+    _log_debug "Skipped adding VSCode repository"
+  fi
+
+  # Azure cli
+  if [[ ${add_azurecli_repo} == "true"  ]] ; then
+
+    _log_info "Azure CLI"
+    if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ ${code_name} main #Azure CLI" > ${SOURCES_FILE_DIR}/azure-cli.list; then
+      _log_success "OK"
+    else
+      _log_error "Failed to addd Azure CLI repository!"
+    fi
+
+  else
+    _log_debug "Skipped adding Azure CLI repositort"
+  fi
+
   #Wine HQ
   if [ "$add_winehq_repo" == "true" ]; then
     _log_info "WineHQ"
-    _log_debug "Getting WineHQ repository Key"
-    wget -q https://dl.winehq.org/wine-builds/winehq.key -O /tmp/ae/wine-hq-sigining-key.key >> "$log_file"  2>&1
-    _log_debug "Adding WineHQ key"
-    apt-key add /tmp/ae/wine-hq-sigining-key.key |& _log_trace "${_phase_apt_key}" \
-    || _log_error "Adding WineHQ keys failed"
-    _log_debug "Adding WineHQ repository"
-    echo "deb https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list \
-    || _log_error "Adding WineHQ repository failed"
+    __add_repo_keys --format "asc" \
+      --file-prefix "wine-hq" \
+      --key-url https://dl.winehq.org/wine-builds/winehq.key
+
+    if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/wine-hq.gpg] https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list; then
+      _log_success "OK"
+    else
+      _log_error "Adding WineHQ repository failed"
+    fi
+
   else
-    _log_info "Skipped WineHQ."
+    _log_info "Skipped adding WineHQ."
   fi
 
   # Docker CE
   if [ "$add_docker_repo" == "true" ]; then
-    if [ "$ARCH" == "amd64" ] || [ "$ARCH" == "armhf" ]; then
-      _log_info "Adding Docker-CE"
-      __add_repo_keys --name "Docker-CE" \
-        --format "asc" \
-        --file-prefix "docker-ce" \
-        --key-url https://download.docker.com/linux/"${distro_name}"/gpg
-      _log_debug "Adding Docker-CE sources .list"
-      echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/docker-ce.gpg] https://download.docker.com/linux/${distro_name}  ${code_name} stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list \
-      || _log_error "Adding Docker-CE repository failed"
+    _log_info "Docker-CE"
+    __add_repo_keys --format "asc" \
+      --file-prefix "docker-ce" \
+      --key-url https://download.docker.com/linux/"${distro_name}"/gpg
+    _log_debug "Adding Docker-CE sources .list"
+
+    if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/docker-ce.gpg] https://download.docker.com/linux/${distro_name}  ${code_name} stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list; then
+      _log_success "OK"
     else
-      _log_error "Architecture not supported!. Please use docker.io package from your distro."
+      _log_error "Adding Docker-CE repository failed"
     fi
+
   else
     _log_debug "Skipped Docker-CE"
   fi
@@ -1426,11 +1478,16 @@ function add_repositories()
   #gh
 
   if [ "$add_gh_repo" == "true" ]; then
-    _log_info "GitHub CLI(gh)"
-    _log_debug "Adding Key to trusted GPG keys directory"
+    _log_info "GitHub CLI"
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C99B11DEB97541F0 |& _log_trace "${_phase_apt_key}" \
    || _log_error "Adding Github CLI keys failed"
-    echo "deb https://cli.github.com/packages  ${code_name}  main #GitHub-CLI" > ${SOURCES_FILE_DIR}/github-cli.list
+
+    if echo "deb https://cli.github.com/packages  ${code_name}  main #GitHub-CLI" > ${SOURCES_FILE_DIR}/github-cli.list; then
+      _log_success "OK"
+    else
+      _log_error "Adding GH CLi repository failed"
+    fi
+
   else
     _log_debug "Skipped GitHub CLI(gh)."
   fi
@@ -1438,17 +1495,22 @@ function add_repositories()
   # Hashicorp
   if [ "$add_hashicorp_repo" == "true" ]; then
     if [ "$ARCH" == "amd64" ]; then
-      _log_info "Hashicorp APT repository"
-      __add_repo_keys --name "Hashicorp" \
-        --format "asc" \
+      _log_info "Hashicorp"
+      __add_repo_keys --format "asc" \
         --file-prefix "hashicorp" \
         --key-url https://apt.releases.hashicorp.com/gpg
-      echo "deb [arch=amd64 signed-by=/usr/share/keyrings/hashicorp.gpg] https://apt.releases.hashicorp.com ${code_name} main#Hashicorp-Packages" > ${SOURCES_FILE_DIR}/hashicorp.list
+
+      if echo "deb [arch=amd64 signed-by=/usr/share/keyrings/hashicorp.gpg] https://apt.releases.hashicorp.com ${code_name} main#Hashicorp-Packages" > ${SOURCES_FILE_DIR}/hashicorp.list; then
+        _log_success "OK"
+      else
+        _log_error "Failed to add hashicorp repository"
+      fi
+
     else
-      _log_error "Hashicorp repositories are not supported on this architecture[$ARCH]!"
+      _log_error "Hashicorp repository is not supported on this architecture[$ARCH]!"
     fi
   else
-    _log_debug "Skipped adding Hashicorp repos"
+    _log_debug "Skipped adding Hashicorp repository"
   fi
 
 
@@ -1456,18 +1518,22 @@ function add_repositories()
   if [[ $add_gvisor_repo == "true" ]]; then
 
     if [[ $ARCH == "amd64" ]] ||  [[ $ARCH == "arm64" ]]; then
-      _log_info "Adding Gvisor Reposiory"
+      _log_info "gvisor"
 
       # Adding Gvisor Keys
-      __add_repo_keys --name "Gvisor Container Runtime" \
-        --format "asc" \
+      __add_repo_keys --format "asc" \
         --file-prefix "gvisor" \
         --key-url https://gvisor.dev/archive.key
-      echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/gvisor.gpg] https://storage.googleapis.com/gvisor/releases release main #Gvisor-Container-Runtime"  > ${SOURCES_FILE_DIR}/gvisor.list \
-      || _log_error "Adding Gvisor repository failed!"
+
+      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/gvisor.gpg] https://storage.googleapis.com/gvisor/releases release main #Gvisor-Container-Runtime"  > ${SOURCES_FILE_DIR}/gvisor.list; then
+        _log_success "OK"
+      else
+        _log_error "Adding gvisor repository failed!"
+      fi
+
     else
-      _log_error "Gvisor runtime is not supported on this architecture(${ARCH})"
-      _log_dev "See https://gvisor.dev/ for more info"
+      _log_error "Gvisor is not supported on this architecture(${ARCH})"
+      _log_dev "Visit https://gvisor.dev/ for more info"
     fi
 
   else
@@ -1524,8 +1590,12 @@ function add_repositories()
         _log_warn "Till then, upstream is being used!"
       fi
 
-      echo "deb http://packages.ros.org/ros/ubuntu ${code_name} main #ROS-Repo" > $SOURCES_FILE_DIR/ros-latest.list \
-        || _log_error "Adding ROS repository failed!"
+      if echo "deb http://packages.ros.org/ros/ubuntu ${code_name} main #ROS-Repo" > $SOURCES_FILE_DIR/ros-latest.list; then
+        _log_success "OK"
+      else
+        _log_error "Adding ROS repository failed!"
+      fi
+
     else
       _log_error "ROS is not supported on this distro!"
     fi # ros_arch_supported
@@ -1543,20 +1613,16 @@ function add_repositories()
   # Ubuntu and its flavors are used.
   if [ "$bool_config_partner_repo" == "true" ] && [ "$bool_is_debian" != "true" ]; then
     _log_info "Canonical partner repositoris"
-    echo "deb http://archive.canonical.com/ubuntu $code_name partner #Canonical Partner Repository"  > ${SOURCES_FILE_DIR}/canonical-partner.list \
-    || _log_error "Failed to add Canocial Parner Repos."
+
+    if echo "deb http://archive.canonical.com/ubuntu $code_name partner #Canonical Partner Repository" > ${SOURCES_FILE_DIR}/canonical-partner.list; then
+      _log_success "OK"
+    else
+      _log_error "Failed to add Canocial Parner Repos."
+    fi
+
   else
     _log_warn "Canonical Partner repositories may not be supported on this platform."
   fi
-
-
-  # Remove artifacts and keys
-  _log_debug "Removing keys and converted files from current directory"
-  (
-    rm  -f /tmp/ae/*.gpg /tmp/ae/*.asc /tmp/ae/*.pub /tmp/ae/Release \
-        /tmp/ae/*.Release /tmp/ae/*.key /tmp/ae/*.pub.* /tmp/ae/*.asc.* \
-        /tmp/ae/*.key.* /tmp/ae/*.gpg.* >> "$log_file"
-  )
 
   update_repos
 
@@ -1614,8 +1680,8 @@ function __fix_permissions()
 
 function __add_repo_keys()
 {
-  if [[ $# -ne 8 ]]; then
-    _log_and_exit "Internal Error! Expected 8 args (got $#) for ${FUNCNAME[0]}!" "19"
+  if [[ $# -ne 6 ]]; then
+    _log_and_exit "Internal Error! Expected 6 args (got $#) for ${FUNCNAME[0]}!" "19"
   fi
 
   local exit_code
@@ -1623,8 +1689,6 @@ function __add_repo_keys()
 
   while [ "${1}" != "" ]; do
     case ${1} in
-      -n | --name)          shift;key_repo_name="${1}"
-                            ;;
       -k | --key-url)       shift;key_url="${1}"
                             ;;
       -p | --file-prefix)   shift;key_file_prefix="${1}"
@@ -1637,7 +1701,6 @@ function __add_repo_keys()
     shift
   done
 
-  _log_property "Repository Name" "${key_repo_name}"
   _log_property "Key file URL"    "${key_url}"
   _log_property "Key file Format" "${key_format}"
   _log_property "Key file name"   "${key_file_prefix}.${key_format}"
@@ -1646,13 +1709,6 @@ function __add_repo_keys()
   if [[ ! ${key_format} =~ ^(gpg|asc)$ ]]; then
     _log_and_exit "Internal Error in ${FUNCNAME[0]} -f/--format can only accept gpg or asc[${key_format}]/" "19"
   fi
-
-  # check if --name is empty
-  if [[ -z ${key_repo_name} ]]; then
-    _log_warn "Internal Error in ${FUNCNAME[0]} --name (apt-key) is empty!"
-    key_repo_name="${key_file_prefix}"
-  fi
-
 
   # check if file prefix is valid
   # shellcheck disable=SC1001
@@ -1678,12 +1734,12 @@ function __add_repo_keys()
     _log_warn "GPG Key file ${key_file_prefix}.${key_format} already exists!"
     _log_warn "Script will *NOT* overwrite it to avoid deleting keys!"
   else
-    _log_info "Fetching ${key_repo_name} keys"
+    _log_debug "Fetching key"
 
     curl -sSfL -m 20 -o "/usr/share/keyrings/${key_file_prefix}.${key_format}" "${key_url}" |& _log_trace "${_phase_apt_key}"
     exit_code="$?"
     if [[ $exit_code -eq 0 ]]; then
-      _log_success "OK"
+      _log_debug "OK"
     else
       _log_error "Failed to fetch ${key_repo_name}!"
     fi
@@ -1821,109 +1877,6 @@ function purge_ppa()
 }
 
 
-function disable_external_repos()
-{
-  # Function to disable external repositories added by this script.
-  # PPAs added or repositories added by actions other than this script are not removed.
-  # Repositories added by dpkg post install scripts and deb files will not be removed!!
-  # Simulate option has no effect on this function. PPAs will be purged irrespective of its value.
-
-    # Remove keys and list files.
-    _log_stage "Deleting Keys and external repositories"
-    _log_notice "You can igore failed messages if those were not added in first place."
-
-    _log_info "Deleting Google signing key   7FAC5991"
-    apt-key del 7FAC5991  |& _log_trace "${_phase_apt_key}"  \
-    || _log_warn "Deleting Google signing key -1 failed."
-
-    _log_info "Deleting Google signing key   D38B4796"
-    apt-key del D38B4796  |& _log_trace "${_phase_apt_key}"  \
-    || _log_warn "Deleting Google signing key -2 failed."
-
-    _log_info "Deleting GCP signing key -2   BA07F4FB"
-    apt-key del BA07F4FB  |& _log_trace "${_phase_apt_key}"  \
-    || _log_warn "Deleting Google cloud key -1 failed."
-
-    _log_info "Deleting GCP signing key -2   A7317B0F"
-    apt-key del A7317B0F  |& _log_trace "${_phase_apt_key}"  \
-    || _log_warn "Deleting GCP signing key -2  failed."
-
-    _log_info "Deleting Spotify signing key  E130D1D45"
-    apt-key del E130D1D45  |& _log_trace "${_phase_apt_key}"  \
-    || _log_warn "Deleting Spotify signing key failed."
-
-    _log_info "Deleting WineHQ key [latest]  F987672F"
-    apt-key del F987672F  |& _log_trace "${_phase_apt_key}"  \
-    || _log_warn "Deleting WineHQ keys [latest] failed."
-
-    _log_info "Deleting InSync signing key   ACCAF35C"
-    apt-key del ACCAF35C  |& _log_trace "${_phase_apt_key}"  \
-    || _log_warn "Deleting InSync keys failed."
-
-    _log_info "Deleting Docker signing key   0EBFCD88"
-    apt-key del 0EBFCD88  |& _log_trace "${_phase_apt_key}"  \
-    || _log_warn "Deleting Docker-CE keys failed."
-
-    _log_info "Deleting VS-Code signing key  BE1229CF"
-    apt-key del BE1229CF  |& _log_trace "${_phase_apt_key}"  \
-    || _log_warn "Deleting Visual Studio Code keys failed."
-
-    _log_info "Deleting Signal signing key   57F6FB06"
-    apt-key del 57F6FB06  |& _log_trace "${_phase_apt_key}"  \
-    || _log_warn "Deleting Signal keys failed."
-
-    _log_info "Deleting Mendeley signing key 6F036044"
-    apt-key del 57F6FB06  |& _log_trace "${_phase_apt_key}"  \
-    || _log_warn "Deleting Mendeley Desktop keys failed."
-
-    _log_info "Deleting ROS signing key B01FA116"
-    apt-key del 421C365BD9FF1F717815A3895523BAEEB01FA116  |& _log_trace "${_phase_apt_key}"  \
-    || _log_warn "Deleting ROS keys failed."
-
-    _log_info "Deleting GitHub-CLI Repo signing key C99B11DEB97541F0"
-    apt-key del C99B11DEB97541F0  |& _log_trace "${_phase_apt_key}"  \
-    || _log_warn "Deleting GitHub-CLI Repo keys failed."
-
-    _log_info "Deleting Hashicorp signing key DA418C88A3219F7B"
-    apt-key del DA418C88A3219F7B  |& _log_trace "${_phase_apt_key}"  \
-    || _log_warn "Deleting Hashicorp key failed."
-
-    _log_info "Removing external repositoris"
-    _log_debug "Deleting *.list and *.save files from ${SOURCES_FILE_DIR}"
-    (
-      cd /etc/apt/sources.list.d &&
-        rm  -f google-chrome.* \
-        google-earth.* \
-        skype-stable.* \
-        spotify.* \
-        insync.* \
-        google-cloud-sdk.* \
-        gcsfuse.* \
-        docker.* \
-        winehq.* \
-        vscode.* \
-        signal-xenial.* \
-        mendeleydesktop.* \
-        gh-cli.* \
-        ros-latest.* \
-        hashicorp.* \
-        gvisor.*
-    )
-    exit_status=$?
-
-    if [[ $exit_status -eq 0 ]]; then
-      _log_notice "Removed additional APT keys and repositories."
-      _log_notice "Canonical partner repository was left unchanged."
-    else
-      _log_warn "Failed to remove all or some of the list files or keys in Sources directory."
-      _log_warn "Please see the log file for more details."
-    fi
-    _log_notice "Removed repositories. Please check the logs for errors."
-
-
-
-}
-
 function purge_not_required()
 {
   # This function purges not required packages from the list ${dir}/data/purge.list
@@ -1937,7 +1890,7 @@ function purge_not_required()
 
   local exit_status
   if [ "$bool_purge_pkgs" == "true" ]; then
-    _log_stage "Purge packages..."
+    _log_stage "Purging packages"
 
     if [[ ${#parsed_purge_packages[@]} -eq 0 ]]; then
       _log_error "Packages to purge is empty!";
@@ -2111,7 +2064,7 @@ function _install_pip_python()
   else
     _log_success "dependencies already satisfied."
   fi
-  # reset exit status & color
+  # reset exit status
   exit_status=0
 
 
@@ -2193,7 +2146,7 @@ function install_debs ()
       continue
     fi
 
-    _log_info "Downloading - $deb_file_name"
+    _log_property "Downloading DEB package" "$deb_file_name" "1"
     {
       wget -q "$deb_url" -O "${deb_file_name}" >> "$log_file"
     } ||
@@ -2202,7 +2155,7 @@ function install_debs ()
       continue
     }
 
-   _log_info "Installing  - $deb_file_name..."
+    _log_property "Installing DEB package" "$deb_file_name" "1"
    # Check if simulate is true
    if [ "$simulate_apt_install" == "true" ]; then
      _log_warn "Simulating $deb_file_name Installation!!"
@@ -2445,21 +2398,20 @@ function _process_menu()
       repo       'Add Repositories' \
       ppas       'Add PPAs' \
       purge      'Purge not required packages' \
-      apps       'Install Packages' \
+      apps       'Install APT Packages' \
       debs       'Install DEB packages' \
       pip2       'Install Python 2 packages via pip' \
       pip3       'Install Python 3 packages via pip3' \
       bin        'Download & Install Static Binaries' \
       snaps      'Install snap packages' \
       all        'All the tasks mentioned above' \
-      repo_rst   'Reset Repositories for cleanup' \
       ppa_rst    'Purge PPAs' \
       3>&1 1>&2 2>&3)
 
   __menu_info_add_repo="
   Settings for additional repositories is set as follows.
   -------------------------------------------------------
-  Google Chrome & Google Earth : $add_google_repo
+  Google Chrome                : $add_chrome_repo
   Google Cloud SDK             : $add_gcp_repo
   GCS-Fuse                     : $add_gcsfuse_repo
   Visual Studio Code           : $add_vscode_repo
@@ -2473,6 +2425,7 @@ function _process_menu()
   GitHub CLI (gh)              : $add_gh_repo
   Gvisor container runtime     : $add_gvisor_repo
   Hashicorp Packages           : $add_hashicorp_repo
+  Azure CLI                    : $add_azurecli_repo
 
   Proceed with this action?
   "
@@ -2510,15 +2463,6 @@ function _process_menu()
   here. Please ensure that packages are valid and are available
   on your distribution. This might take some time depending on
   your Internet connection and CPU.
-  -------------------------------------------------------
-
-  Proceed with this action?
-  "
-
-  __menu_info_repo_rst="
-  This action can remove PPAs and repositories added by
-  this script. Please do note that any changes
-  not made my this script might be ignored.
   -------------------------------------------------------
 
   Proceed with this action?
@@ -2643,8 +2587,6 @@ function _process_menu()
                   ;;
       apps)       _prompt_confirmation "$__menu_info_apps" "install_apps"
                   ;;
-      repo_rst)   _prompt_confirmation "${__menu_info_repo_rst}" "disable_external_repos"
-                  ;;
       ppa_rst)    _prompt_confirmation "${__menu_info_ppa_rst}" "purge_ppa"
                   ;;
       purge)      _prompt_confirmation "${__menu_info_purge}" "purge_not_required"
@@ -2753,8 +2695,10 @@ function display_usage()
 {
 #Prints out help menu
 cat <<EOF
+
 A Post Installation Script for Ubuntu, Debian,
-Linux Mint, elementary OS, Pop!_OS, MX Linux etc.${NC}
+Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.${NC}
+
 Usage: ${TEAL} [sudo] ./${SCRIPT} ${ORANGE}  [options]${NC}
 ${YELLOW}
 Non-Action options (can be run as non-root user)
@@ -2765,7 +2709,7 @@ ${YELLOW}
 Configuration Options
 ---------------------------------------------------------${NC}
 [-c | --config-file]  Local yaml config file.
-[-R | --remote-yaml]  Use config yaml from a URL.
+[-r | --remote-yaml]  Use config yaml from a URL.
 ${LIGHT_BLUE}
 The following options are "action" options and
 will make changes to your system depending on tasks chosen.
@@ -2858,7 +2802,7 @@ function main()
   # Display Version Info and Verify signature options
   _process_non_root_options "$@"
 
-  printf "${TEAL}• Initialize & run checks${NC}\n"
+  printf "${MAGENTA}➜  Initialize & run checks${NC}\n"
   process_no_exec_option "$@"
 
   printf "  • Permission checks\n"
@@ -2885,7 +2829,7 @@ function main()
   while [ "${1}" != "" ]; do
     case ${1} in
       -s | --simulate)        readonly simulate_apt_install="true";
-                              _log_property "Simulate" "ENABLED" "2";
+                              _log_property "Simulate" "ENABLED" "3";
                               ;;
       -f | --fix)             bool_fix_repo_not_available_for_latest="true";
                               _log_property "Fix" "ENABLED" "2";
@@ -2908,8 +2852,7 @@ function main()
                               ;;
       -V | --no-version-check) bool_check_version="false";
                               ;;
-      -r | --remote-yaml)     _log_warn "Using Remote YAML config!";
-                              _log_warn "Use only from trusted remote sources!"
+      -r | --remote-yaml)     _log_property "Config file" "REMOTE" 4
                               readonly bool_remote_yaml="true";
                               shift;
                               readonly url_remote_yaml="${1}";
@@ -2960,7 +2903,7 @@ function main()
   # Did I tell you that I need to call My friends over internet?
   _test_internet_connection;
 
-  _log_info "Checking if configuration"
+  _log_info "Checking configuration"
 
   # Handle Remote YAML
   _log_var "bool_local_config"

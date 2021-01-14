@@ -2,14 +2,18 @@
 
 ## 6.4.0
 
-- **New-Repository** Hashicorp Repository (Terraform, Vault Consul etc).
+- **New-Repository** Google gvisor container runtime.
+- **New-Repository** Azure CLI
+- **New-Repository** VSCode for ARM
 - _(Internal)_ Rework adding apt-keys as `apt-key` is deprecated.
-
+- **REMOVED** Resetting repo feature. This is because apt-key is deprecated
+and keys/sources might have been added by other tools or manually, and
+we do not want to change them.
 
 ## 6.3.0
 
 - Added support for Linux Mint 20.1 (Ulyssa).
-- Dropped support for Ubuntu 16.04, Elementary OS Linux Mint 18 and Debian 8(stretch).
+- Dropped support for Ubuntu 16.04, Elementary OS loki, Linux Mint 18 and Debian 8(stretch).
 
 ## 6.2.0
 

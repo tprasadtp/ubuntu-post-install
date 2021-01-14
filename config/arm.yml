@@ -24,20 +24,22 @@ config:
     snaps: yes
   # Repository Flags
   add_repo:
-    winehq: true
+    azurecli: true
     docker: true
-    mendeley: false
-    googlecloud: true
-    gcsfuse: false
-    spotify: true
-    hashicorp: true
-    vscode: true
-    skype: true
-    signal: true
-    insync: true
-    google: true
-    ros: true
     duo: true
+    gcsfuse: true
+    gvisor: true
+    github: true
+    google: true
+    googlecloud: true
+    hashicorp: true
+    mendeley: false
+    ros: true
+    signal: true
+    skype: true
+    spotify: true
+    vscode: true
+    winehq: true
   # Flags
   flags:
   # Simulate flag will never be overridden by remote config.

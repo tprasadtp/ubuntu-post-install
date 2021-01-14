@@ -41,7 +41,7 @@ Some tasks might install packages automatically, as required to perform certain 
     - python-pip (for python 2)
     - python3-pip (for python 3)
 
-    ### For resetting repositories
+    ### For removing PPAs
     - ppa-purge
 
     Any dependencies of these packages will also be installed.

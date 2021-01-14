@@ -24,6 +24,7 @@ config:
     snaps: false
   # Repository Flags
   add_repo:
+    azurecli: true
     docker: true
     duo: true
     gcsfuse: true
@@ -89,3 +90,5 @@ config:
         - gh
         - runsc
         - terraform
+        - azure-cli
+        - google-cloud-sdk

@@ -95,7 +95,7 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 |:---------------------|:--- |
 |Docker | docker
 |Duo Security Unix | duo
-|Google Chrome & Google Earth | google
+|Google Chrome | chrome
 |Google Cloud SDK | googlecloud
 |Insync | insync
 |Mendeley desktop | mendeley
@@ -108,6 +108,7 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 |Github CLI | github
 |Hashicorp Tools(terraform, consul etc) | hashicorp
 |[Gvisor container runtime][gvisor] | gvisor
+|[Azure CLI][azure-cli] | azurecli
 
 ## Issues & Help
 
@@ -146,3 +147,4 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [license]: https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE
 
 [gvisor]: https://gvisor.dev
+[azure-cli]: https://github.com/Azure/azure-cli
