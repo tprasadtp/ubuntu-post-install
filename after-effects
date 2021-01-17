@@ -1418,7 +1418,7 @@ function add_repositories()
   fi
 
   # Microsoft Keys
-  if [[ $add_azurecli_repo == "true" ]] || [[ ${add_vscode_repo} == "true"  ]] ; then
+  if [[ $add_azurecli_repo == "true" ]] || ( [[ ${add_vscode_repo} == "true"  ]] &&  [[ $ARCH == "amd64" ]] ); then
     _log_debug "Adding Microsoft keys."
     __add_repo_keys --format "asc" \
       --file-prefix "microsoft" \
@@ -1431,10 +1431,18 @@ function add_repositories()
   if [[ ${add_vscode_repo} == "true"  ]]; then
 
     _log_info "VSCode"
-    if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list; then
-      _log_success "OK"
+    if [[ ${ARCH} == "amd64" ]]; then
+      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list; then
+        _log_success "OK"
+      else
+        _log_error "Failed to addd VSCode repository!"
+      fi
     else
-      _log_error "Failed to addd VSCode repository!"
+      _log_error "VSCode repositories are not supported on this architecture!($ARCH)"
+      _log_error "BUT debian and snap packaages are AVAILABLE from Microsoft."
+      _log_error "Either install VSCode via snaps or deb packages, script supports BOTH."
+      _log_error "Please note that in doing so you may NOT receive updates automatically."
+      _log_error "Visit https://code.visualstudio.com/#alt-downloads"
     fi
 
   else
