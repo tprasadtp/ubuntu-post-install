@@ -35,6 +35,7 @@ config:
     hashicorp: true
     mendeley: false
     ros: true
+    ros2: true
     signal: true
     skype: true
     spotify: true

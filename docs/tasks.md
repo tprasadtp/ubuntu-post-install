@@ -64,11 +64,6 @@ config:
     google: true
 ```
 
-### Canonical partner repositories
-
-  Canonical partner repositories are not configured or enabled for derivatives of Ubuntu because thee might be some conflicts.
-
-
 ## Add personal package archives (PPA)
 
 - Only one ppa entry per line (No comments or anything else anywhere in the file) in the format ppa:{author}/{ppa} for example `ppa:mozillateam/firefox-next` The file will be read and the PPAs will be added from the list.

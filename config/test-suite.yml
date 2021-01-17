@@ -35,6 +35,7 @@ config:
     hashicorp: true
     mendeley: false
     ros: true
+    ros2: true
     signal: true
     skype: true
     spotify: true
@@ -87,8 +88,25 @@ config:
       other:
         - less
       external:
+        # Docker
+        - docker-ce
+        # spotify
+        - spotify-client
+        # Github
         - gh
+        # Gvisor
         - runsc
+        # Hashicorp
         - terraform
+        # Microsoft
+        - code
         - azure-cli
+        # Google
         - google-cloud-sdk
+        - google-chrome-stable
+        # Signal
+        - signal-desktop
+        # Skype
+        - skypeforlinux
+        # Wine
+        - wine-stable-amd64

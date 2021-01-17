@@ -5,6 +5,7 @@
 - **New-Repository** Google [gVisor](https://gvisor.dev) container runtime
 - **New-Repository** Azure CLI
 - **New-Repository** VSCode for ARM
+- **New-Repository** ROS2
 - **CONFIG** Renamed Coogle chrome repo config from `google` to `chrome`
 - **REMOVED** Resetting repo features. This is because apt-key is deprecated
 and keys/sources might have been added by other tools or manually, and

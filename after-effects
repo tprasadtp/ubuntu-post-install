@@ -549,8 +549,7 @@ function _fix_ubuntu_derivatives()
   _log_var "code_name"
   case ${code_name} in
       # Ubuntu 18.04 and its derivatives
-      bionic )                              readonly bool_config_partner_repo="true";
-                                            readonly enable_ppa="true";
+      bionic )                              readonly enable_ppa="true";
                                             readonly distro_name="ubuntu";
                                             _log_info "This is a LTS release of Ubuntu (18.04)"
                                             _log_success "Keeping the codename as $code_name."
@@ -570,8 +569,7 @@ function _fix_ubuntu_derivatives()
                                             _log_success "Changed codename to $code_name"
                                             ;;
       # Ubuntu 20.04 and its derivatives
-      focal )                               readonly bool_config_partner_repo="true";
-                                            readonly python2_disabled="true";
+      focal )                               readonly python2_disabled="true";
                                             readonly enable_ppa="true";
                                             readonly distro_name="ubuntu";
                                             _log_info "This is latest LTS release of Ubuntu"
@@ -586,15 +584,13 @@ function _fix_ubuntu_derivatives()
                                             _log_success "Changed codename to $code_name"
                                             ;;
       # Current Ubuntu release (Can be non LTS)
-      groovy)                               readonly bool_config_partner_repo="true";
-                                            readonly enable_ppa="true";
+      groovy)                               readonly enable_ppa="true";
                                             readonly python2_disabled="true";
                                             readonly distro_name="ubuntu";
                                             _log_notice "Release is Ubuntu 20.10 Groovy Gorilla"
                                             ;;
       # Upcoming Ubuntu release
-      hirsute)                              readonly bool_config_partner_repo="true";
-                                            readonly enable_ppa="true";
+      hirsute)                              readonly enable_ppa="true";
                                             readonly python2_disabled="true";
                                             readonly distro_name="ubuntu";
                                             _log_warn "Release is Ubuntu 21.04 Hirsute Hippo (Unstable!!)"
@@ -879,6 +875,8 @@ function _set_yaml_config()
 
   # ROS
   _check_bool "add_ros_repo" "${config__add_repo__ros[0]}"
+  _check_bool "add_ros2_repo" "${config__add_repo__ros2[0]}"
+
 
   # DUO
   _check_bool "add_duo_repo" "${config__add_repo__duo[0]}"
@@ -1231,7 +1229,7 @@ function add_repositories()
 
 
   if [ "$ARCH" != "amd64" ]; then
-    _log_warn "Google Chrome, Spotify, Mendeley, Signal and Duo for Unix are only supported on 64 Bit"
+    _log_warn "Google Chrome, Spotify, Mendeley, Signal, Wine and Duo for Unix are only supported on 64 Bit"
   else
 
     _log_debug "Arch is 64 Bit Enable adding 64 bit repos."
@@ -1362,6 +1360,23 @@ function add_repositories()
       _log_info "Duo Unix is set to false."
     fi
 
+    #Wine HQ
+    if [ "$add_winehq_repo" == "true" ]; then
+      _log_info "WineHQ"
+      __add_repo_keys --format "asc" \
+        --file-prefix "wine-hq" \
+        --key-url https://dl.winehq.org/wine-builds/winehq.key
+
+      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/wine-hq.gpg] https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list; then
+        _log_success "OK"
+      else
+        _log_error "Adding WineHQ repository failed"
+      fi
+
+    else
+      _log_info "Skipped adding WineHQ."
+    fi
+
   # End if ARCH==64 Check
   fi
 
@@ -1439,23 +1454,6 @@ function add_repositories()
 
   else
     _log_debug "Skipped adding Azure CLI repositort"
-  fi
-
-  #Wine HQ
-  if [ "$add_winehq_repo" == "true" ]; then
-    _log_info "WineHQ"
-    __add_repo_keys --format "asc" \
-      --file-prefix "wine-hq" \
-      --key-url https://dl.winehq.org/wine-builds/winehq.key
-
-    if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/wine-hq.gpg] https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list; then
-      _log_success "OK"
-    else
-      _log_error "Adding WineHQ repository failed"
-    fi
-
-  else
-    _log_info "Skipped adding WineHQ."
   fi
 
   # Docker CE
@@ -1544,19 +1542,63 @@ function add_repositories()
   fi
 
 
+  # ROS2
+  # Arch support varies on distro so lot of ugly elifs.
+  ros2_supported="false"
+
+  if [[ $add_ros2_repo == "true" ]] && [[ ${bool_codename_fix_appied} == "true" ]]; then
+    _log_info "ROS2"
+    _log_error "You have enabled --fix or --pre-release option."
+    _log_error "ROS2 depends heavily on packages included in the distribution."
+    _log_error "ROS2 repositories will not be added for sanity of your system!"
+
+  elif [[ $add_ros_repo == "true" ]] && [[ ${bool_codename_fix_appied} == "false" ]]; then
+
+    _log_info "ROS2"
+
+    # Distro/Version/Arch checks
+    if [[ $distro_name == "ubuntu" ]]; then
+      if [[ $code_name == "focal" ]]; then
+        ros2_supported="true"
+        _log_success "ROS2 is available on focal/$ARCH"
+      fi
+    fi #ubuntu
+
+    if [[ $ros2_supported == "true" ]]; then
+      _log_info "Adding ROS2 repositories"
+      _log_debug "Adding ROS2 repo key"
+      __add_repo_keys --format "asc" \
+        --file-prefix "ros2" \
+        --key-url https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc
+
+      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/ros2.gpg]  http://packages.ros.org/ros2/ubuntu ${code_name} main #ROS-Repository" > $SOURCES_FILE_DIR/ros2-latest.list; then
+        _log_success "OK"
+      else
+        _log_error "Adding ROS repository failed!"
+      fi
+
+    else
+      _log_error "ROS2 is not supported on this distro/release!"
+    fi # ros_arch_supported
+
+  else
+    _log_debug "Skipped ROS2"
+  fi # add_ros_repo
+
+
   # ROS
   # Arch support varies on distro so lot of ugly elifs.
   ros_arch_supported="false"
 
   if [[ $add_ros_repo == "true" ]] && [[ ${bool_codename_fix_appied} == "true" ]]; then
-    _log_debug "ROS"
+    _log_info "ROS"
     _log_error "You have enabled --fix or --pre-release option."
     _log_error "ROS depends heavily on packages included in the distribution."
     _log_error "ROS repositories will not be added for sanity of your system!"
 
   elif [[ $add_ros_repo == "true" ]] && [[ ${bool_codename_fix_appied} == "false" ]]; then
 
-    _log_de "ROS"
+    _log_info "ROS"
 
     # Distro/Version/Arch checks
     if [[ $distro_name == "ubuntu" ]]; then
@@ -1605,26 +1647,6 @@ function add_repositories()
   else
     _log_debug "Skipped ROS"
   fi # add_ros_repo
-
-
-  # Enable Canonical Partner repos
-  # Some Releases like linux mint have their own way of enabling partner repositories,
-  # Disable adding partner Repositoris when using Ubuntu Derivatives like Linux Mint.
-  # Default is true
-  # _fix_ubuntu_derivatives will take care of this and bool_config_partner_repo is set to true only if
-  # Ubuntu and its flavors are used.
-  if [ "$bool_config_partner_repo" == "true" ] && [ "$bool_is_debian" != "true" ]; then
-    _log_info "Canonical partner repositoris"
-
-    if echo "deb http://archive.canonical.com/ubuntu $code_name partner #Canonical Partner Repository" > ${SOURCES_FILE_DIR}/canonical-partner.list; then
-      _log_success "OK"
-    else
-      _log_error "Failed to add Canocial Parner Repos."
-    fi
-
-  else
-    _log_warn "Canonical Partner repositories may not be supported on this platform."
-  fi
 
   update_repos
 
@@ -2388,6 +2410,7 @@ function _process_menu()
   Signal for Desktop           : $add_signal_repo
   Mendeley                     : $add_mendeley_repo
   ROS (Robot Operating System) : $add_ros_repo
+  ROS2                         : $add_ros2_repo
   Duo Security for Unix        : $add_duo_repo
   GitHub CLI (gh)              : $add_gh_repo
   gVisor container runtime     : $add_gvisor_repo
