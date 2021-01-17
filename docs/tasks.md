@@ -65,6 +65,10 @@ config:
     winehq: true
 ```
 
+!!! warning "Wine HQ  and Multiarch support"
+    To install i386 pacakges or packages which have i386 dependencies (eg. wine-stable), you MUST
+    enable foreign architectures BEFORE running this script!
+
 ## Add personal package archives (PPA)
 
 - Only one ppa entry per line (No comments or anything else anywhere in the file) in the format ppa:{author}/{ppa} for example `ppa:mozillateam/firefox-next` The file will be read and the PPAs will be added from the list.

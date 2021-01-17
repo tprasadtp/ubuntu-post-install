@@ -20,5 +20,4 @@ RUN apt-get -qq update \
       apt-utils \
       gnupg2 \
       software-properties-common \
-    && apt-get clean \
-  && dpkg --add-architecture i386
+    && apt-get clean
