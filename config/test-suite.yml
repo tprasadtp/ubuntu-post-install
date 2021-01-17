@@ -109,4 +109,4 @@ config:
         # Skype
         - skypeforlinux
         # WineHQ
-        - winehq-stable
+        # - winehq-stable

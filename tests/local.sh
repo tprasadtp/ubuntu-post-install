@@ -108,7 +108,6 @@ function main()
         --userns=host \
         -it \
         -e CI \
-        -e DEBUG \
         -e GITHUB_ACTIONS \
         --name="${docker_tag}" \
         --hostname="${docker_tag}" \
@@ -123,7 +122,6 @@ function main()
         --userns=host \
         "${DOCKER_RUN_ARGS[@]}" \
         -e CI \
-        -e DEBUG \
         -e GITHUB_ACTIONS \
         --hostname="${docker_tag}" \
         -v "$(pwd)":/shared \

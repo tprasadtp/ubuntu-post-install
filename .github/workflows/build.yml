@@ -35,9 +35,6 @@ on:
       - "runtime.txt"
       - "docker-compose.yml"
 name: build
-env:
-  DEBUG: ci
-  AE_NON_INTERACTIVE: "true"
 jobs:
   shellcheck:
     runs-on: ubuntu-latest
@@ -59,7 +56,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Ubuntu ${{ matrix.release }}
-        run: ./tests/local.sh --build --fix --distro ubuntu --release "${{ matrix.release }}"
+        run: ./tests/local.sh --build --fix --distro ubuntu --release --debug-trace "${{ matrix.release }}"
   debian:
     needs: [ "shellcheck"]
     runs-on: ubuntu-latest
@@ -70,7 +67,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Debian ${{ matrix.release }}
-        run: ./tests/local.sh --build --distro debian --release "${{ matrix.release }}"
+        run: ./tests/local.sh --build --distro debian --release --debug-trace"${{ matrix.release }}"
   elementary:
     needs: [ "shellcheck"]
     runs-on: ubuntu-latest
@@ -81,7 +78,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Elementary ${{ matrix.release }}
-        run:  ./tests/local.sh --build --distro elementary/docker --release "${{ matrix.release }}"
+        run:  ./tests/local.sh --build --distro elementary/docker --release --debug-trace"${{ matrix.release }}"
   arm:
     needs: [ "shellcheck"]
     runs-on: ubuntu-latest
@@ -98,7 +95,7 @@ jobs:
           sudo docker run --rm --privileged docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
 
       - name: Test on ARM64 ${{ matrix.release }}
-        run: ./tests/local.sh --build --distro arm64v8/ubuntu --release "${{ matrix.release }}" --cfg config/arm.yml
+        run: ./tests/local.sh --build --distro arm64v8/ubuntu --release --debug-trace"${{ matrix.release }}" --cfg config/arm.yml
   arm-debian:
     needs: [ "shellcheck"]
     runs-on: ubuntu-latest
@@ -115,4 +112,4 @@ jobs:
           sudo docker run --rm --privileged docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
 
       - name: Test on ARM64 ${{ matrix.release }}
-        run: ./tests/local.sh --build --distro arm64v8/debian --release "${{ matrix.release }}" --cfg config/arm.yml
+        run: ./tests/local.sh --build --distro arm64v8/debian --release --debug-trace"${{ matrix.release }}" --cfg config/arm.yml

@@ -12,9 +12,9 @@ This task can add the following repositories.
 |Google Chrome | chrome
 |Google Cloud SDK | googlecloud
 |GCSFUSE | gcsfuse
-|Insync | insync
 |Mendeley desktop | mendeley
 |ROS | ros
+|ROS2 | ros2
 |Signal for desktop | signal
 |Skype | skype
 |Spotify Desktop | spotify
@@ -30,11 +30,8 @@ This task can add the following repositories.
 ??? tip "Using `--fix` flag"
     Please note that the above repositories are sometimes not updated for latest Ubuntu release and most certainly will not be available for upcoming release of Ubuntu(Alpha/Beta). It might take some time till the repositories are available for the latest release. Use -f or --fix command line option or --pre-release in case you are using a development version of Ubuntu to revert using latest available version of repositories (usually previous Ubuntu release or in case of Beta/Alpha latest stable release of Ubuntu). [For more info see command line options.](/clioptions/#fix-for-latest-ubuntu-releases)
 
-??? tip "Controlling which repository is added using config file"
-    You can set your YML file to decide which repository is added. Some repositories may no be supported on your architecture or distribution. Take a look at [config.yml](/api/yaml) for example. If you omit a value, it defaults to false **ALWAYS**. Do note that if you are using lists default values are different, they are mentioned in below.
-
 !!! warning "ROS Releases & Ubuntu/Debian versions"
-    - ROS repository only support certain Ubuntu/Debian distributions. You can find more info at [ROS-Wiki](http://wiki.ros.org/ROS/Installation)
+    - ROS repository only supports certain Ubuntu/Debian distributions. You can find more info at [ROS-Wiki](http://wiki.ros.org/ROS/Installation)
     - Though Ubuntu derivatives might work, they are not supported.
 
 Example yaml configuration snippet is given below.
@@ -68,18 +65,11 @@ config:
     winehq: true
 ```
 
-!!! warning "32-bit support & Wine HQ"
-    Please note that for installing `winehq-stable` you **MUST** enable multi-arch support. This script will not
-    do it for you. Run `sudo dpkg --add-architecture i386` **BEFORE** running this script!
-
 ## Add personal package archives (PPA)
 
 - Only one ppa entry per line (No comments or anything else anywhere in the file) in the format ppa:{author}/{ppa} for example `ppa:mozillateam/firefox-next` The file will be read and the PPAs will be added from the list.
 - Logs will  show entry in the format `[date and time] [  PPA-Logs  ] <log>`
 
-!!! warning
-
-    - PPAs are not supported on Debian.
 
 ## Install apt packages
 

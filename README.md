@@ -96,9 +96,9 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 |Duo Security for Unix | duo
 |Google Chrome | chrome
 |Google Cloud SDK | googlecloud
-|Insync | insync
 |Mendeley desktop | mendeley
 |ROS | ros
+|ROS2 | ros2
 |Signal for desktop | signal
 |Skype | skype
 |Spotify Desktop | spotify

@@ -9,6 +9,8 @@
 #              - whiptail, wget, awk, sed, grep
 #
 
+set -o pipefail
+
 readonly AE_EXEC_START=$(date +%s)
 readonly SCRIPT=$(basename "$0")
 
@@ -25,14 +27,6 @@ function ctrl_c_handler() {
   printf "${RED}• User Interrupt! CTRL-C${NC}\n"
   exit 4
 }
-
-case ${DEBUG} in
-  1 | "yes" | "true" | "TRUE")     AE_DEBUG=1;set -o pipefail;;
-  2 | "ci" | "CI")                 AE_DEBUG=2;set -eo pipefail;;
-  3 | "trace")                     AE_DEBUG=3;set -o pipefail;;
-  *)                               AE_DEBUG=0;set -o pipefail;;
-esac
-
 
 function _init_printf_variables()
 {
@@ -763,7 +757,7 @@ function _version_checks ()
 
       # Assign Statistics reporting flag and endpoint to Global variables.
       # Debug Info
-      _log_property "Version Number (API)" "${api_rel_num}"
+      _log_property "Version (API)" "${api_rel_num}"
       _log_property "Version Name(API)" "${version__name[0]}"
 
       # If release number is higher than one in the script throw error & ask to update.
@@ -1363,15 +1357,21 @@ function add_repositories()
     #Wine HQ
     if [ "$add_winehq_repo" == "true" ]; then
       _log_info "WineHQ"
-      __add_repo_keys --format "asc" \
-        --file-prefix "wine-hq" \
-        --key-url https://dl.winehq.org/wine-builds/winehq.key
-      if echo "deb [signed-by=/usr/share/keyrings/wine-hq.gpg] https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list; then
-        _log_success "OK"
+      if [[ ${code_name} == "focal" ]] || [[ ${code_name} == "groovy" ]] \
+        || [[ ${code_name} == "hirsute" ]] || [[ ${code_name} == "bullseye" ]]; then
+        __add_repo_keys --format "asc" \
+          --file-prefix "wine-hq" \
+          --key-url https://dl.winehq.org/wine-builds/winehq.key
+        if echo "deb [signed-by=/usr/share/keyrings/wine-hq.gpg] https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list; then
+          _log_success "OK"
+        else
+          _log_error "Adding WineHQ repository failed"
+        fi
       else
-        _log_error "Adding WineHQ repository failed"
+        _log_error "Latest version of WINE depends on libfaudio0 package,"
+        _log_error "which is not available on your distribution!"
+        _log_error "For more information visit https://forum.winehq.org/viewtopic.php?f=8&t=32192"
       fi
-
     else
       _log_info "Skipped adding WineHQ."
     fi
@@ -2135,16 +2135,16 @@ function install_debs ()
       continue
     fi
 
-    _log_property "Downloading DEB package" "$deb_file_name" "1"
+    _log_property "Downloading" "$deb_file_name" "1"
     {
       wget -q "$deb_url" -O "${deb_file_name}" >> "$log_file"
     } ||
     {
-      _log_error "Downloading $deb_file_name failed."
+      _log_error "Failed!"
       continue
     }
 
-    _log_property "Installing DEB package" "$deb_file_name" "1"
+    _log_property "Installing" "$deb_file_name" "1"
    # Check if simulate is true
    if [ "$simulate_apt_install" == "true" ]; then
      _log_warn "Simulating $deb_file_name Installation!!"
@@ -2859,7 +2859,10 @@ function main()
       --debug)                AE_DEBUG=1;;
       --debug-ci)             AE_DEBUG=2;;
       --debug-trace)          AE_DEBUG=3;;
-      --debug-ci-mode)        readonly AE_INTERNAL_CI_MODE="true";;
+      --debug-ci-mode)        readonly AE_INTERNAL_CI_MODE="true";
+                              # Toggle e
+                              set -eo pipefail;
+                              ;;
       -n | --nx)              :;;
       # The following arguments should always be used as the only arguments.
       -l | --delete-logfile)  _log_and_exit "-l or --delete-logfile should be the only argument." "23";;
