@@ -40,7 +40,7 @@ env:
   AE_NON_INTERACTIVE: "true"
 jobs:
   shellcheck:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Prepare
@@ -51,7 +51,7 @@ jobs:
         run: ./tests/shellcheck.sh
   ubuntu:
     needs: [ "shellcheck"]
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -62,7 +62,7 @@ jobs:
         run: ./tests/local.sh --build --fix --distro ubuntu --release "${{ matrix.release }}"
   debian:
     needs: [ "shellcheck"]
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -73,7 +73,7 @@ jobs:
         run: ./tests/local.sh --build --distro debian --release "${{ matrix.release }}"
   elementary:
     needs: [ "shellcheck"]
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -84,7 +84,7 @@ jobs:
         run:  ./tests/local.sh --build --distro elementary/docker --release "${{ matrix.release }}"
   arm:
     needs: [ "shellcheck"]
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -99,3 +99,20 @@ jobs:
 
       - name: Test on ARM64 ${{ matrix.release }}
         run: ./tests/local.sh --build --distro arm64v8/ubuntu --release "${{ matrix.release }}" --cfg config/arm.yml
+  arm-debian:
+    needs: [ "shellcheck"]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        release: ["stretch", "buster"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup binfmt and register arm binaries
+        run: |
+          sudo apt-get update || true
+          sudo apt-get install -y qemu binfmt-support qemu-user-static
+          sudo docker run --rm --privileged docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
+
+      - name: Test on ARM64 ${{ matrix.release }}
+        run: ./tests/local.sh --build --distro arm64v8/debian --release "${{ matrix.release }}" --cfg config/arm.yml

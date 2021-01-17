@@ -1170,7 +1170,7 @@ function _fix_repo_not_available_upcoming_release()
     fi # check codenames
 
   else
-    _log_debug "Feature fix_repo_not_available_upcoming_release is disabled."
+    _log_debug "Feature --pre-release is disabled."
     bool_codename_fix_appied="false"
 
   fi
@@ -1271,45 +1271,6 @@ function add_repositories()
     fi
 
 
-    # Google Cloud SDK and GCS-FUSE
-    if [[ $add_gcp_repo == "true" ]] || ( [[ $add_gcsfuse_repo == "true" ]] && [[ $ARCH == "amd64" ]] ) ; then
-      _log_debug "Google cloud keys"
-      __add_repo_keys --format "gpg" \
-        --file-prefix "google-cloud" \
-        --key-url https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    else
-      _log_debug "Not adding Google cloud APT keys"
-    fi
-
-    if [ "$add_gcp_repo" == "true" ]; then
-      _log_info "Google-Cloud-SDK"
-
-      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/google-cloud.gpg] http://packages.cloud.google.com/apt cloud-sdk main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list; then
-        _log_success "OK"
-      else
-        _log_error "Adding Google Cloud SDK Repository failed"
-      fi
-    else
-      _log_debug "Skipped adding Google Cloud SDK."
-    fi
-
-    if [ "$add_gcsfuse_repo" == "true" ]; then
-
-      if [[ $ARCH == "amd64" ]]; then
-        _log_info "GCSFUSE"
-        if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/google-cloud.gpg] http://packages.cloud.google.com/apt gcsfuse-${code_name} main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list; then
-          _log_success "OK"
-        else
-          _log_error "Adding GCSFUSE Repository failed"
-        fi
-      else
-        _log_error "GCSFUSE is not supported on this architecture!($ARCH)"
-      fi
-
-    else
-      _log_debug "Skipped adding GCSFUSE"
-    fi
-
     # Skype
     if [ "$add_skype_repo" == "true" ]; then
       _log_info "Skype"
@@ -1402,6 +1363,44 @@ function add_repositories()
     fi
 
   # End if ARCH==64 Check
+  fi
+
+  # Google Cloud SDK and GCS-FUSE
+  if [[ $add_gcp_repo == "true" ]] || ( [[ $add_gcsfuse_repo == "true" ]] && [[ $ARCH == "amd64" ]] ) ; then
+    _log_debug "Adding GCP keys"
+    __add_repo_keys --format "gpg" \
+      --file-prefix "google-cloud" \
+      --key-url https://packages.cloud.google.com/apt/doc/apt-key.gpg
+  else
+    _log_debug "Not adding Google cloud APT keys"
+  fi
+
+  if [ "$add_gcp_repo" == "true" ]; then
+    _log_info "Google-Cloud-SDK"
+    if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/google-cloud.gpg] http://packages.cloud.google.com/apt cloud-sdk main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list; then
+      _log_success "OK"
+    else
+      _log_error "Adding Google Cloud SDK Repository failed"
+    fi
+  else
+    _log_debug "Skipped adding Google Cloud SDK."
+  fi
+
+  if [ "$add_gcsfuse_repo" == "true" ]; then
+
+    if [[ $ARCH == "amd64" ]]; then
+      _log_info "GCSFUSE"
+      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/google-cloud.gpg] http://packages.cloud.google.com/apt gcsfuse-${code_name} main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list; then
+        _log_success "OK"
+      else
+        _log_error "Adding GCSFUSE Repository failed"
+      fi
+    else
+      _log_error "GCSFUSE is not supported on this architecture!($ARCH)"
+    fi
+
+  else
+    _log_debug "Skipped adding GCSFUSE"
   fi
 
   # Microsoft Keys
@@ -1510,7 +1509,7 @@ function add_repositories()
       fi
 
     else
-      _log_error "Hashicorp repository is not supported on this architecture[$ARCH]!"
+      _log_error "Hashicorp repository is not supported on this architecture($ARCH)!"
     fi
   else
     _log_debug "Skipped adding Hashicorp repository"
@@ -1550,14 +1549,14 @@ function add_repositories()
   ros_arch_supported="false"
 
   if [[ $add_ros_repo == "true" ]] && [[ ${bool_codename_fix_appied} == "true" ]]; then
-    _log_info "Checking compatibility for ROS"
+    _log_debug "ROS"
     _log_error "You have enabled --fix or --pre-release option."
     _log_error "ROS depends heavily on packages included in the distribution."
     _log_error "ROS repositories will not be added for sanity of your system!"
 
   elif [[ $add_ros_repo == "true" ]] && [[ ${bool_codename_fix_appied} == "false" ]]; then
 
-    _log_info "Checking compatibility for ROS"
+    _log_de "ROS"
 
     # Distro/Version/Arch checks
     if [[ $distro_name == "ubuntu" ]]; then
@@ -1593,7 +1592,7 @@ function add_repositories()
         _log_warn "Till then, upstream is being used!"
       fi
 
-      if echo "deb http://packages.ros.org/ros/ubuntu ${code_name} main #ROS-Repo" > $SOURCES_FILE_DIR/ros-latest.list; then
+      if echo "deb http://packages.ros.org/ros/ubuntu ${code_name} main #ROS-Repository" > $SOURCES_FILE_DIR/ros-latest.list; then
         _log_success "OK"
       else
         _log_error "Adding ROS repository failed!"
@@ -1688,7 +1687,7 @@ function __add_repo_keys()
   fi
 
   local exit_code
-  local key_url key_file_prefix key_format key_repo_name
+  local key_url key_file_prefix key_format
 
   while [ "${1}" != "" ]; do
     case ${1} in
@@ -1744,7 +1743,7 @@ function __add_repo_keys()
     if [[ $exit_code -eq 0 ]]; then
       _log_debug "OK"
     else
-      _log_error "Failed to fetch ${key_repo_name}!"
+      _log_error "Failed to fetch keys from ${key_url}!"
     fi
   fi
 
