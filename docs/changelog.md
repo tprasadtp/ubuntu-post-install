@@ -10,7 +10,7 @@
 - **REMOVED** Resetting repo features. This is because apt-key is deprecated
 and keys/sources might have been added by other tools or manually, and
 we do not want to change them.
-- **DISTRO** Drop support for Ubuntu Xenial(16.04) and other derivatices based on it.
+- **DISTRO** Drop support for Ubuntu Xenial(16.04) and other derivatives based on it.
 - _(Internal)_ Rework adding apt-keys as `apt-key` is deprecated.
 - _(Internal)_ Add arch checks for gcsfuse
 - _(Internal)_ Logging tweaks
