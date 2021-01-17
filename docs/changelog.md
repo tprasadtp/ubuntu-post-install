@@ -2,13 +2,15 @@
 
 ## 6.4.0
 
-- **New-Repository** Google gvisor container runtime.
+- **New-Repository** Google [gVisor](https://gvisor.dev) container runtime
 - **New-Repository** Azure CLI
 - **New-Repository** VSCode for ARM
-- _(Internal)_ Rework adding apt-keys as `apt-key` is deprecated.
-- **REMOVED** Resetting repo feature. This is because apt-key is deprecated
+- **CONFIG** Renamed Coogle chrome repo config from `google` to `chrome`
+- **REMOVED** Resetting repo features. This is because apt-key is deprecated
 and keys/sources might have been added by other tools or manually, and
 we do not want to change them.
+- _(Internal)_ Rework adding apt-keys as `apt-key` is deprecated.
+
 
 ## 6.3.0
 

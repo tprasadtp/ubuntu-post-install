@@ -30,7 +30,7 @@ config:
     gcsfuse: true
     gvisor: true
     github: true
-    google: true
+    chrome: true
     googlecloud: true
     hashicorp: true
     mendeley: false

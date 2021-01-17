@@ -1,0 +1,873 @@
+# The configurations that used for the recording, feel free to edit them
+config:
+
+  # Specify a command to be executed
+  # like `/bin/bash -l`, `ls`, or any other commands
+  # the default is bash for Linux
+  # or powershell.exe for Windows
+  command: bash -l
+
+  # Specify the current working directory path
+  # the default is the current working directory path
+  cwd: ~/Git/ubuntu-post-install
+
+  # Export additional ENV variables
+  env:
+    recording: true
+
+  # Explicitly set the number of columns
+  # or use `auto` to take the current
+  # number of columns of your shell
+  cols: 120
+
+  # Explicitly set the number of rows
+  # or use `auto` to take the current
+  # number of rows of your shell
+  rows: 30
+
+  # Amount of times to repeat GIF
+  # If value is -1, play once
+  # If value is 0, loop indefinitely
+  # If value is a positive number, loop n times
+  repeat: 0
+
+  # Quality
+  # 1 - 100
+  quality: 100
+
+  # Delay between frames in ms
+  # If the value is `auto` use the actual recording delays
+  frameDelay: auto
+
+  # Maximum delay between frames in ms
+  # Ignored if the `frameDelay` isn't set to `auto`
+  # Set to `auto` to prevent limiting the max idle time
+  maxIdleTime: 2000
+
+  # The surrounding frame box
+  # The `type` can be null, window, floating, or solid`
+  # To hide the title use the value null
+  # Don't forget to add a backgroundColor style with a null as type
+  frameBox:
+    type: floating
+    title: Ubuntu-Post-Install
+    style:
+      border: 0px black solid
+      boxShadow: none
+      margin: 0px
+
+  # Add a watermark image to the rendered gif
+  # You need to specify an absolute path for
+  # the image on your machine or a URL, and you can also
+  # add your own CSS styles
+  watermark:
+    imagePath: null
+    style:
+      position: absolute
+      right: 15px
+      bottom: 15px
+      width: 100px
+      opacity: 0.9
+
+  # Cursor style can be one of
+  # `block`, `underline`, or `bar`
+  cursorStyle: block
+
+  # Font family
+  # You can use any font that is installed on your machine
+  # in CSS-like syntax
+  fontFamily: "Ubuntu Mono, Monospace"
+
+  # The size of the font
+  fontSize: 14
+
+  # The height of lines
+  lineHeight: 1
+
+  # The spacing between letters
+  letterSpacing: 0
+
+  # Theme
+  theme:
+    background: "transparent"
+    foreground: "#afafaf"
+    cursor: "#c7c7c7"
+    black: "#232628"
+    red: "#fc4384"
+    green: "#b3e33b"
+    yellow: "#ffa727"
+    blue: "#75dff2"
+    magenta: "#ae89fe"
+    cyan: "#708387"
+    white: "#d5d5d0"
+    brightBlack: "#626566"
+    brightRed: "#ff7fac"
+    brightGreen: "#c8ed71"
+    brightYellow: "#ebdf86"
+    brightBlue: "#75dff2"
+    brightMagenta: "#ae89fe"
+    brightCyan: "#b1c6ca"
+    brightWhite: "#f9f9f4"
+
+# Records, feel free to edit them
+records:
+  - delay: 1068
+    content: "\e]0;user@codespaces: ~/Git/ubuntu-post-install\e[00m"
+  - delay: 287
+    content: "sudo ./after-effects --autopilot --config config/test-suite.yml"
+  - delay: 223
+    content: "\r\n"
+  - delay: 630
+    content: "\e[38;5;219m➜ Initialize & run checks\e[0m\r\n  • Permission checks\r\n"
+  - delay: 9
+    content: "\e[38;5;192m  • Running as root \e[0m\r\n"
+  - delay: 26
+    content: "\e[38;5;51m  • Autopilot          : ENABLED\e[0m\r\n"
+  - delay: 21
+    content: "\e[38;5;51m  • Config file        : LOCAL\e[0m\r\n\e[38;5;51m  • Checking dependencies\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;246m  • wget               : INSTALLED \e[0m\r\n\e[38;5;246m  • whiptail           : INSTALLED \e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;246m  • ping               : INSTALLED \e[0m\r\n\e[38;5;246m  • ps                 : INSTALLED \e[0m\r\n\e[38;5;246m  • grep               : INSTALLED \e[0m\r\n\e[38;5;246m  • cut                : INSTALLED \e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;246m  • tr                 : INSTALLED \e[0m\r\n\e[38;5;246m  • awk                : INSTALLED \e[0m\r\n"
+  - delay: 14
+    content: "  • Hostname           : ubuntu-focal\r\n"
+  - delay: 6
+    content: "  • OS                 : Ubuntu 20.04.1 LTS\r\n"
+  - delay: 6
+    content: "  • Distribution       : Ubuntu\r\n"
+  - delay: 8
+    content: "  • Release            : focal\r\n  • Architecture       : amd64\r\n"
+  - delay: 8
+    content: "  • Version(Number)    : 6.4.0(640)\r\n"
+  - delay: 6
+    content: "\e[38;5;246m  • SOURCES_FILE_DIR   : /etc/apt/sources.list.d \e[0m\r\n  • Checking connectivity\r\n"
+  - delay: 121
+    content: "\e[38;5;192m  • Connected! \e[0m\r\n  • Checking configuration\r\n\e[38;5;246m  » bool_local_config  - true      \e[0m\r\n\e[38;5;246m  » local_config_file  - config/test-suite.yml\e[0m\r\n\e[38;5;246m  » bool_remote_yaml   -           \e[0m\r\n\e[38;5;246m  » url_remote_yaml    -           \e[0m\r\n\e[38;5;192m  • OK \e[0m\r\n\e[38;5;219m➜ Running environment checks... \e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;208m  • Running in docker \e[0m\r\n"
+  - delay: 3084
+    content: "\e[38;5;246m  • Probably not running on AWS/GCP/Azure or Digital Ocean. \e[0m\r\n\e[38;5;219m➜ Checking for Ubuntu derivates/Debian \e[0m\r\n\e[38;5;246m  » code_name          - focal     \e[0m\r\n  • This is latest LTS release of Ubuntu\r\n\e[38;5;192m  • Keeping the codename as focal. \e[0m\r\n\e[38;5;192m  • Applied release specific settings and fixes. \e[0m\r\n\e[38;5;246m  » code_name          - focal     \e[0m\r\n\e[38;5;246m  » bool_custom_v_file -           \e[0m\r\n\e[38;5;246m  » custom_v_file      -           \e[0m\r\n\e[38;5;219m➜ Checking for updates \e[0m\r\n\e[38;5;246m  • Version URL        : https://ae.prasadt.com/get/v3/version \e[0m\r\n\e[38;5;246m  • URL is set to      : https://ae.prasadt.com/get/v3/version \e[0m\r\n"
+  - delay: 1369
+    content: "\e[38;5;246m  • Exit code (wget)   : 0 \e[0m\r\n"
+  - delay: 17
+    content: "\e[38;5;246m  • Version Number (API) : 630 \e[0m\r\n\e[38;5;246m  • Version Name(API)  : 6.3.0 \e[0m\r\n"
+  - delay: 11
+    content: "\e[38;5;208m  • You running development version 6.4.0(640). \e[0m\r\n"
+  - delay: 7
+    content: "\e[38;5;208m  • Latest stable version is 6.3.0(630). \e[0m\r\n\e[38;5;219m➜ Processing configuration... \e[0m\r\n"
+  - delay: 8
+    content: "\e[38;5;51m  • Config file        : config/test-suite.yml\e[0m\r\n\e[38;5;51m  • Parsing config     : config/test-suite.yml\e[0m\r\n"
+  - delay: 47
+    content: "\e[38;5;246m  » add_docker_repo    - true      \e[0m\r\n\e[38;5;246m  » add_winehq_repo    - true      \e[0m\r\n\e[38;5;246m  » add_mendeley_repo  - false     \e[0m\r\n\e[38;5;246m  » add_gcp_repo       - true      \e[0m\r\n\e[38;5;246m  » add_gcsfuse_repo   - true      \e[0m\r\n\e[38;5;246m  » add_spotify_repo   - true      \e[0m\r\n\e[38;5;246m  » add_skype_repo     - true      \e[0m\r\n\e[38;5;246m  » add_vscode_repo    - true      \e[0m\r\n\e[38;5;246m  » add_insync_repo    - false     \e[0m\r\n\e[38;5;246m  » add_signal_repo    - true      \e[0m\r\n\e[38;5;246m  » add_chrome_repo    - true      \e[0m\r\n\e[38;5;246m  » add_ros_repo       - true      \e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;246m  » add_duo_repo       - true      \e[0m\r\n\e[38;5;246m  » add_gh_repo        - true      \e[0m\r\n\e[38;5;246m  » add_hashicorp_repo - true      \e[0m\r\n\e[38;5;246m  » add_gvisor_repo    - true      \e[0m\r\n\e[38;5;246m  » add_azurecli_repo  - true      \e[0m\r\n\e[38;5;246m  » bool_purge_pkgs    - true      \e[0m\r\n\e[38;5;246m  » bool_preserve_debs - false     \e[0m\r\n\e[38;5;246m  » bool_use_uf_mirror - false     \e[0m\r\n\e[38;5;246m  » ae_task_update     - true      \e[0m\r\n\e[38;5;246m  » ae_task_upgrade    - false     \e[0m\r\n\e[38;5;246m  » ae_task_repo       - true      \e[0m\r\n\e[38;5;246m  » ae_task_ppa        - true      \e[0m\r\n\e[38;5;246m  » ae_task_apt        - true      \e[0m\r\n\e[38;5;246m  » ae_task_debs       - true      \e[0m\r\n\e[38;5;246m  » ae_task_purge      - true      \e[0m\r\n\e[38;5;246m  » ae_task_pip2       - true      \e[0m\r\n\e[38;5;246m  » ae_task_pip3       - true      \e[0m\r\n\e[38;5;246m  » ae_task_bin        - true      \e[0m\r\n\e[38;5;246m  » ae_task_snaps      - false     \e[0m\r\n\e[38;5;219m➜ Check if terminal is non interactive \e[0m\r\n\e[38;5;192m  • OK \e[0m\r\n\e[38;5;219m➜ Check for conflicting apps \e[0m\r\n"
+  - delay: 12
+    content: "\e[38;5;246m  • synaptic           : not running \e[0m\r\n"
+  - delay: 9
+    content: "\e[38;5;246m  • update-manager     : not running \e[0m\r\n"
+  - delay: 10
+    content: "\e[38;5;246m  • software-center    : not running \e[0m\r\n"
+  - delay: 9
+    content: "\e[38;5;246m  • apt-get            : not running \e[0m\r\n"
+  - delay: 13
+    content: "\e[38;5;246m  • dpkg               : not running \e[0m\r\n"
+  - delay: 13
+    content: "\e[38;5;246m  • aptitude           : not running \e[0m\r\n\e[38;5;192m  • No conflicts detected \e[0m\r\n\e[38;5;219m➜ Checking for Autopilot \e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;192m  • Autopilot is ENABLED \e[0m\r\n"
+  - delay: 3004
+    content: "\e[38;5;246m  • Executing Function update_repos_as_task \e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;219m➜ Update repository metadata \e[0m\r\n  • Running apt-get update\r\n"
+  - delay: 226
+    content: "\e[38;5;240m  » (APT) Hit:1 http://archive.ubuntu.com/ubuntu focal InRelease\e[0m\r\n\e[38;5;240m  » (APT) Get:2 http://security.ubuntu.com/ubuntu focal-security InRelease [109 kB]\e[0m\r\n"
+  - delay: 18
+    content: "\e[38;5;240m  » (APT) Get:3 http://archive.ubuntu.com/ubuntu focal-updates InRelease [114 kB]\e[0m\r\n"
+  - delay: 167
+    content: "\e[38;5;240m  » (APT) Get:4 http://archive.ubuntu.com/ubuntu focal-backports InRelease [101 kB]\e[0m\r\n"
+  - delay: 541
+    content: "\e[38;5;240m  » (APT) Fetched 324 kB in 1s (374 kB/s)\e[0m\r\n"
+  - delay: 952
+    content: "\e[38;5;240m  » (APT) Reading package lists...\e[0m\r\n"
+  - delay: 57
+    content: "\e[38;5;192m  • Success! \e[0m\r\n\e[38;5;246m  • Task : upgrade_apps is not enabled \e[0m\r\n\e[38;5;246m  • Executing Function add_repositories \e[0m\r\n\e[38;5;219m➜ Setting up repositories \e[0m\r\n  • Installing necessary dependencies...\r\n"
+  - delay: 6
+    content: "\e[38;5;246m  • Installing Packages apt-transport-https ca-certificates curl gnupg2 \e[0m\r\n"
+  - delay: 978
+    content: "\e[38;5;240m  » (APT) Reading package lists...\e[0m\r\n"
+  - delay: 220
+    content: "\e[38;5;240m  » (APT) Building dependency tree...\e[0m\r\n\e[38;5;240m  » (APT) Reading state information...\e[0m\r\n"
+  - delay: 345
+    content: "\e[38;5;240m  » (APT) gnupg2 is already the newest version (2.2.19-3ubuntu2).\e[0m\r\n\e[38;5;240m  » (APT) ca-certificates is already the newest version (20201027ubuntu0.20.04.1).\e[0m\r\n\e[38;5;240m  » (APT) curl is already the newest version (7.68.0-1ubuntu2.4).\e[0m\r\n\e[38;5;240m  » (APT) apt-transport-https is already the newest version (2.0.2ubuntu0.2).\e[0m\r\n\e[38;5;240m  » (APT) 0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.\e[0m\r\n\e[38;5;192m  • Installed \e[0m\r\n\e[38;5;246m  • Removing cached APT packages \e[0m\r\n"
+  - delay: 9
+    content: "\e[38;5;246m  • Check and apply codename fixes (--pre-release) \e[0m\r\n\e[38;5;246m  • Feature fix_repo_not_available_upcoming_release is disabled. \e[0m\r\n\e[38;5;246m  • Check and apply codename fixes \e[0m\r\n\e[38;5;246m  • Feature --fix/--fix-mode-lts is not available or disabled. \e[0m\r\n\e[38;5;246m  • Arch is 64 Bit Enable adding 64 bit repos. \e[0m\r\n  • Google Chrome\r\n\e[38;5;246m  • Adding Google package signing Key \e[0m\r\n"
+  - delay: 279
+    content: "\e[38;5;240m  » (KEYS) Warning: apt-key output should not be parsed (stdout is not a terminal)\e[0m\r\n"
+  - delay: 224
+    content: "\e[38;5;240m  » (KEYS) OK\e[0m\r\n"
+  - delay: 8
+    content: "\e[38;5;192m  • OK \e[0m\r\n  • Spotify\r\n\e[38;5;246m  • Key file URL       : https://download.spotify.com/debian/pubkey_0D811D58.gpg \e[0m\r\n\e[38;5;246m  • Key file Format    : asc \e[0m\r\n\e[38;5;246m  • Key file name      : spotify.asc \e[0m\r\n\e[38;5;246m  • Fetching key \e[0m\r\n"
+  - delay: 205
+    content: "\e[38;5;246m  • OK \e[0m\r\n\e[38;5;246m  • /usr/share/keyrings/spotify.asc has expected permissions(644). \e[0m\r\n\e[38;5;246m  • Key is in ascii armored format. Converting it. \e[0m\r\n"
+  - delay: 9
+    content: "\e[38;5;246m  • Successfully converted ascii armored GPG key file. \e[0m\r\n\e[38;5;246m  • /usr/share/keyrings/spotify.gpg has expected permissions(644). \e[0m\r\n\e[38;5;192m  • OK \e[0m\r\n\e[38;5;246m  • Google cloud keys \e[0m\r\n\e[38;5;246m  • Key file URL       : https://packages.cloud.google.com/apt/doc/apt-key.gpg \e[0m\r\n\e[38;5;246m  • Key file Format    : gpg \e[0m\r\n\e[38;5;246m  • Key file name      : google-cloud.gpg \e[0m\r\n\e[38;5;246m  • Fetching key \e[0m\r\n"
+  - delay: 175
+    content: "\e[38;5;246m  • OK \e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;246m  • /usr/share/keyrings/google-cloud.gpg has expected permissions(644). \e[0m\r\n\e[38;5;246m  • No need to convert key file. \e[0m\r\n  • Google-Cloud-SDK\r\n\e[38;5;192m  • OK \e[0m\r\n  • GCSFUSE\r\n\e[38;5;192m  • OK \e[0m\r\n  • Skype\r\n\e[38;5;246m  • Key file URL       : https://repo.skype.com/data/SKYPE-GPG-KEY \e[0m\r\n\e[38;5;246m  • Key file Format    : asc \e[0m\r\n\e[38;5;246m  • Key file name      : skype.asc \e[0m\r\n\e[38;5;246m  • Fetching key \e[0m\r\n"
+  - delay: 196
+    content: "\e[38;5;246m  • OK \e[0m\r\n"
+  - delay: 7
+    content: "\e[38;5;246m  • /usr/share/keyrings/skype.asc has expected permissions(644). \e[0m\r\n\e[38;5;246m  • Key is in ascii armored format. Converting it. \e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;246m  • Successfully converted ascii armored GPG key file. \e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;246m  • /usr/share/keyrings/skype.gpg has expected permissions(644). \e[0m\r\n\e[38;5;192m  • OK \e[0m\r\n  • Signal for Desktop\r\n\e[38;5;246m  • Key file URL       : https://updates.signal.org/desktop/apt/keys.asc \e[0m\r\n\e[38;5;246m  • Key file Format    : asc \e[0m\r\n\e[38;5;246m  • Key file name      : signal-desktop.asc \e[0m\r\n\e[38;5;246m  • Fetching key \e[0m\r\n"
+  - delay: 301
+    content: "\e[38;5;246m  • OK \e[0m\r\n\e[38;5;246m  • /usr/share/keyrings/signal-desktop.asc has expected permissions(644). \e[0m\r\n\e[38;5;246m  • Key is in ascii armored format. Converting it. \e[0m\r\n"
+  - delay: 7
+    content: "\e[38;5;246m  • Successfully converted ascii armored GPG key file. \e[0m\r\n\e[38;5;246m  • /usr/share/keyrings/signal-desktop.gpg has expected permissions(644). \e[0m\r\n\e[38;5;192m  • OK \e[0m\r\n\e[38;5;246m  • Skipped adding Mendeley repository \e[0m\r\n  • Duo Security\r\n\e[38;5;246m  • Downloading GPG key \e[0m\r\n"
+  - delay: 240
+    content: "\e[38;5;240m  » (KEYS) Warning: apt-key output should not be parsed (stdout is not a terminal)\e[0m\r\n"
+  - delay: 234
+    content: "\e[38;5;240m  » (KEYS) OK\e[0m\r\n"
+  - delay: 10
+    content: "\e[38;5;192m  • OK \e[0m\r\n\e[38;5;246m  • Adding Microsoft keys. \e[0m\r\n\e[38;5;246m  • Key file URL       : https://packages.microsoft.com/keys/microsoft.asc \e[0m\r\n\e[38;5;246m  • Key file Format    : asc \e[0m\r\n\e[38;5;246m  • Key file name      : microsoft.asc \e[0m\r\n\e[38;5;246m  • Fetching key \e[0m\r\n"
+  - delay: 240
+    content: "\e[38;5;246m  • OK \e[0m\r\n"
+  - delay: 7
+    content: "\e[38;5;246m  • /usr/share/keyrings/microsoft.asc has expected permissions(644). \e[0m\r\n\e[38;5;246m  • Key is in ascii armored format. Converting it. \e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;246m  • Successfully converted ascii armored GPG key file. \e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;246m  • /usr/share/keyrings/microsoft.gpg has expected permissions(644). \e[0m\r\n  • VSCode\r\n\e[38;5;192m  • OK \e[0m\r\n  • Azure CLI\r\n\e[38;5;192m  • OK \e[0m\r\n  • WineHQ\r\n\e[38;5;246m  • Key file URL       : https://dl.winehq.org/wine-builds/winehq.key \e[0m\r\n\e[38;5;246m  • Key file Format    : asc \e[0m\r\n"
+  - delay: 9
+    content: "\e[38;5;246m  • Key file name      : wine-hq.asc \e[0m\r\n\e[38;5;246m  • Fetching key \e[0m\r\n"
+  - delay: 192
+    content: "\e[38;5;246m  • OK \e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;246m  • /usr/share/keyrings/wine-hq.asc has expected permissions(644). \e[0m\r\n\e[38;5;246m  • Key is in ascii armored format. Converting it. \e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;246m  • Successfully converted ascii armored GPG key file. \e[0m\r\n\e[38;5;246m  • /usr/share/keyrings/wine-hq.gpg has expected permissions(644). \e[0m\r\n\e[38;5;192m  • OK \e[0m\r\n  • Docker-CE\r\n\e[38;5;246m  • Key file URL       : https://download.docker.com/linux/ubuntu/gpg \e[0m\r\n\e[38;5;246m  • Key file Format    : asc \e[0m\r\n\e[38;5;246m  • Key file name      : docker-ce.asc \e[0m\r\n\e[38;5;246m  • Fetching key \e[0m\r\n"
+  - delay: 148
+    content: "\e[38;5;246m  • OK \e[0m\r\n"
+  - delay: 8
+    content: "\e[38;5;246m  • /usr/share/keyrings/docker-ce.asc has expected permissions(644). \e[0m\r\n\e[38;5;246m  • Key is in ascii armored format. Converting it. \e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;246m  • Successfully converted ascii armored GPG key file. \e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;246m  • /usr/share/keyrings/docker-ce.gpg has expected permissions(644). \e[0m\r\n\e[38;5;246m  • Adding Docker-CE sources .list \e[0m\r\n\e[38;5;192m  • OK \e[0m\r\n  • GitHub CLI\r\n"
+  - delay: 74
+    content: "\e[38;5;240m  » (KEYS) Warning: apt-key output should not be parsed (stdout is not a terminal)\e[0m\r\n"
+  - delay: 50
+    content: "\e[38;5;240m  » (KEYS) Executing: /tmp/apt-key-gpghome.SEBlXEVwQD/gpg.1.sh --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C99B11DEB97541F0\e[0m\r\n"
+  - delay: 252
+    content: "\e[38;5;240m  » (KEYS) gpg: key C99B11DEB97541F0: public key \"Nate Smith <vilmibm@github.com>\" imported\e[0m\r\n"
+  - delay: 8
+    content: "\e[38;5;240m  » (KEYS) gpg: Total number processed: 1\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (KEYS) gpg:               imported: 1\e[0m\r\n"
+  - delay: 199
+    content: "\e[38;5;192m  • OK \e[0m\r\n  • Hashicorp\r\n\e[38;5;246m  • Key file URL       : https://apt.releases.hashicorp.com/gpg \e[0m\r\n\e[38;5;246m  • Key file Format    : asc \e[0m\r\n\e[38;5;246m  • Key file name      : hashicorp.asc \e[0m\r\n\e[38;5;246m  • Fetching key \e[0m\r\n"
+  - delay: 201
+    content: "\e[38;5;246m  • OK \e[0m\r\n\e[38;5;246m  • /usr/share/keyrings/hashicorp.asc has expected permissions(644). \e[0m\r\n\e[38;5;246m  • Key is in ascii armored format. Converting it. \e[0m\r\n"
+  - delay: 7
+    content: "\e[38;5;246m  • Successfully converted ascii armored GPG key file. \e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;246m  • /usr/share/keyrings/hashicorp.gpg has expected permissions(644). \e[0m\r\n\e[38;5;192m  • OK \e[0m\r\n  • gvisor\r\n\e[38;5;246m  • Key file URL       : https://gvisor.dev/archive.key \e[0m\r\n\e[38;5;246m  • Key file Format    : asc \e[0m\r\n\e[38;5;246m  • Key file name      : gvisor.asc \e[0m\r\n\e[38;5;246m  • Fetching key \e[0m\r\n"
+  - delay: 286
+    content: "\e[38;5;246m  • OK \e[0m\r\n\e[38;5;246m  • /usr/share/keyrings/gvisor.asc has expected permissions(644). \e[0m\r\n\e[38;5;246m  • Key is in ascii armored format. Converting it. \e[0m\r\n"
+  - delay: 7
+    content: "\e[38;5;246m  • Successfully converted ascii armored GPG key file. \e[0m\r\n\e[38;5;246m  • /usr/share/keyrings/gvisor.gpg has expected permissions(644). \e[0m\r\n\e[38;5;192m  • OK \e[0m\r\n  • Checking compatibility for ROS\r\n\e[38;5;192m  • ROS is available on Focal/amd64 \e[0m\r\n  • Adding ROS repositories\r\n\e[38;5;246m  • Adding ROS repo key (latest) \e[0m\r\n"
+  - delay: 84
+    content: "\e[38;5;240m  » (KEYS) Warning: apt-key output should not be parsed (stdout is not a terminal)\e[0m\r\n"
+  - delay: 48
+    content: "\e[38;5;240m  » (KEYS) Executing: /tmp/apt-key-gpghome.jkmDjM17Sp/gpg.1.sh --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654\e[0m\r\n"
+  - delay: 256
+    content: "\e[38;5;240m  » (KEYS) gpg: key F42ED6FBAB17C654: public key \"Open Robotics <info@osrfoundation.org>\" imported\e[0m\r\n"
+  - delay: 19
+    content: "\e[38;5;240m  » (KEYS) gpg: Total number processed: 1\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (KEYS) gpg:               imported: 1\e[0m\r\n"
+  - delay: 337
+    content: "\e[38;5;192m  • OK \e[0m\r\n"
+  - delay: 16
+    content: "  • Canonical partner repositoris\r\n"
+  - delay: 11
+    content: "\e[38;5;192m  • OK \e[0m\r\n"
+  - delay: 5
+    content: "  • Running apt-get update\r\n"
+  - delay: 377
+    content: "\e[38;5;240m  » (APT) Get:1 http://dl.google.com/linux/chrome/deb stable InRelease [1811 B]\e[0m\r\n"
+  - delay: 56
+    content: "\e[38;5;240m  » (APT) Hit:2 http://archive.ubuntu.com/ubuntu focal InRelease\e[0m\r\n\e[38;5;240m  » (APT) Hit:3 http://archive.ubuntu.com/ubuntu focal-updates InRelease\e[0m\r\n\e[38;5;240m  » (APT) Hit:4 http://security.ubuntu.com/ubuntu focal-security InRelease\e[0m\r\n"
+  - delay: 22
+    content: "\e[38;5;240m  » (APT) Get:5 https://apt.releases.hashicorp.com focal InRelease [4419 B]\e[0m\r\n"
+  - delay: 8
+    content: "\e[38;5;240m  » (APT) Get:6 http://repository.spotify.com stable InRelease [3316 B]\e[0m\r\n\e[38;5;240m  » (APT) Get:7 https://dl.winehq.org/wine-builds/ubuntu focal InRelease [6257 B]\e[0m\r\n"
+  - delay: 15
+    content: "\e[38;5;240m  » (APT) Get:8 https://packages.microsoft.com/repos/azure-cli focal InRelease [10.4 kB]\e[0m\r\n\e[38;5;240m  » (APT) Get:9 https://download.docker.com/linux/ubuntu focal InRelease [36.2 kB]\e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;240m  » (APT) Hit:10 http://archive.ubuntu.com/ubuntu focal-backports InRelease\e[0m\r\n"
+  - delay: 9
+    content: "\e[38;5;240m  » (APT) Get:11 https://repo.skype.com/deb stable InRelease [4502 B]\e[0m\r\n\e[38;5;240m  » (APT) Get:12 https://packages.microsoft.com/repos/vscode stable InRelease [3959 B]\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) Get:13 http://packages.ros.org/ros/ubuntu focal InRelease [4662 B]\e[0m\r\n"
+  - delay: 20
+    content: "\e[38;5;240m  » (APT) Get:14 http://archive.canonical.com/ubuntu focal InRelease [12.1 kB]\e[0m\r\n\e[38;5;240m  » (APT) Get:15 https://storage.googleapis.com/gvisor/releases release InRelease [2727 B]\e[0m\r\n\e[38;5;240m  » (APT) Get:16 https://updates.signal.org/desktop/apt xenial InRelease [2316 B]\e[0m\r\n"
+  - delay: 29
+    content: "\e[38;5;240m  » (APT) Get:17 https://cli.github.com/packages focal InRelease [3741 B]\e[0m\r\n"
+  - delay: 153
+    content: "\e[38;5;240m  » (APT) Get:18 http://dl.google.com/linux/chrome/deb stable/main amd64 Packages [1095 B]\e[0m\r\n"
+  - delay: 148
+    content: "\e[38;5;240m  » (APT) Get:19 http://packages.cloud.google.com/apt gcsfuse-focal InRelease [4112 B]\e[0m\r\n"
+  - delay: 183
+    content: "\e[38;5;240m  » (APT) Ign:20 https://pkg.duosecurity.com/Ubuntu focal InRelease\e[0m\r\n"
+  - delay: 45
+    content: "\e[38;5;240m  » (APT) Get:21 https://pkg.duosecurity.com/Ubuntu focal Release [1174 B]\e[0m\r\n"
+  - delay: 45
+    content: "\e[38;5;240m  » (APT) Get:22 https://pkg.duosecurity.com/Ubuntu focal Release.gpg [862 B]\e[0m\r\n"
+  - delay: 186
+    content: "\e[38;5;240m  » (APT) Get:23 https://apt.releases.hashicorp.com focal/main amd64 Packages [20.6 kB]\e[0m\r\n"
+  - delay: 55
+    content: "\e[38;5;240m  » (APT) Get:24 http://packages.cloud.google.com/apt cloud-sdk InRelease [6739 B]\e[0m\r\n"
+  - delay: 60
+    content: "\e[38;5;240m  » (APT) Get:25 http://repository.spotify.com stable/non-free amd64 Packages [1650 B]\e[0m\r\n"
+  - delay: 109
+    content: "\e[38;5;240m  » (APT) Get:26 https://packages.microsoft.com/repos/azure-cli focal/main amd64 Packages [3861 B]\e[0m\r\n"
+  - delay: 101
+    content: "\e[38;5;240m  » (APT) Get:27 https://download.docker.com/linux/ubuntu focal/stable amd64 Packages [6176 B]\e[0m\r\n"
+  - delay: 110
+    content: "\e[38;5;240m  » (APT) Get:28 https://dl.winehq.org/wine-builds/ubuntu focal/main amd64 Packages [180 kB]\e[0m\r\n"
+  - delay: 244
+    content: "\e[38;5;240m  » (APT) Get:29 https://repo.skype.com/deb stable/main amd64 Packages [1781 B]\e[0m\r\n"
+  - delay: 125
+    content: "\e[38;5;240m  » (APT) Get:30 https://packages.microsoft.com/repos/vscode stable/main amd64 Packages [236 kB]\e[0m\r\n"
+  - delay: 209
+    content: "\e[38;5;240m  » (APT) Get:31 http://packages.ros.org/ros/ubuntu focal/main amd64 Packages [425 kB]\e[0m\r\n"
+  - delay: 173
+    content: "\e[38;5;240m  » (APT) Get:32 http://archive.canonical.com/ubuntu focal/partner amd64 Packages [801 B]\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) Get:33 https://storage.googleapis.com/gvisor/releases release/main amd64 Packages [443 B]\e[0m\r\n"
+  - delay: 241
+    content: "\e[38;5;240m  » (APT) Get:34 https://cli.github.com/packages focal/main amd64 Packages [355 B]\e[0m\r\n"
+  - delay: 58
+    content: "\e[38;5;240m  » (APT) Get:35 https://updates.signal.org/desktop/apt xenial/main amd64 Packages [1437 B]\e[0m\r\n"
+  - delay: 122
+    content: "\e[38;5;240m  » (APT) Get:36 http://packages.cloud.google.com/apt gcsfuse-focal/main amd64 Packages [2197 B]\e[0m\r\n"
+  - delay: 176
+    content: "\e[38;5;240m  » (APT) Get:37 https://pkg.duosecurity.com/Ubuntu focal/main amd64 Packages [382 B]\e[0m\r\n"
+  - delay: 157
+    content: "\e[38;5;240m  » (APT) Get:38 http://packages.cloud.google.com/apt cloud-sdk/main amd64 Packages [152 kB]\e[0m\r\n"
+  - delay: 139
+    content: "\e[38;5;240m  » (APT) Fetched 1143 kB in 3s (349 kB/s)\e[0m\r\n"
+  - delay: 1204
+    content: "\e[38;5;240m  » (APT) Reading package lists...\e[0m\r\n"
+  - delay: 24
+    content: "\e[38;5;192m  • Success! \e[0m\r\n\e[38;5;246m  • Executing Function add_ppas \e[0m\r\n\e[38;5;219m➜ Adding PPAs \e[0m\r\n\e[38;5;246m  • Installing Packages apt-transport-https ca-certificates curl gnupg2 software-properties-common \e[0m\r\n"
+  - delay: 1107
+    content: "\e[38;5;240m  » (APT) Reading package lists...\e[0m\r\n"
+  - delay: 275
+    content: "\e[38;5;240m  » (APT) Building dependency tree...\e[0m\r\n\e[38;5;240m  » (APT) Reading state information...\e[0m\r\n"
+  - delay: 450
+    content: "\e[38;5;240m  » (APT) gnupg2 is already the newest version (2.2.19-3ubuntu2).\e[0m\r\n\e[38;5;240m  » (APT) ca-certificates is already the newest version (20201027ubuntu0.20.04.1).\e[0m\r\n\e[38;5;240m  » (APT) curl is already the newest version (7.68.0-1ubuntu2.4).\e[0m\r\n\e[38;5;240m  » (APT) software-properties-common is already the newest version (0.98.9.3).\e[0m\r\n\e[38;5;240m  » (APT) apt-transport-https is already the newest version (2.0.2ubuntu0.2).\e[0m\r\n\e[38;5;240m  » (APT) 0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.\e[0m\r\n\e[38;5;192m  • Installed \e[0m\r\n\e[38;5;246m  • Removing cached APT packages \e[0m\r\n"
+  - delay: 10
+    content: "  • Setting up PPA - ppa:yubico/stable\r\n"
+  - delay: 1415
+    content: "\e[38;5;240m  » (PPA) Hit:1 http://dl.google.com/linux/chrome/deb stable InRelease\e[0m\r\n\e[38;5;240m  » (PPA) Hit:2 http://archive.ubuntu.com/ubuntu focal InRelease\e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;240m  » (PPA) Hit:3 http://repository.spotify.com stable InRelease\e[0m\r\n"
+  - delay: 9
+    content: "\e[38;5;240m  » (PPA) Get:4 http://ppa.launchpad.net/yubico/stable/ubuntu focal InRelease [17.5 kB]\e[0m\r\n\e[38;5;240m  » (PPA) Hit:5 http://security.ubuntu.com/ubuntu focal-security InRelease\e[0m\r\n\e[38;5;240m  » (PPA) Hit:6 http://packages.cloud.google.com/apt gcsfuse-focal InRelease\e[0m\r\n\e[38;5;240m  » (PPA) Hit:7 http://archive.ubuntu.com/ubuntu focal-updates InRelease\e[0m\r\n"
+  - delay: 22
+    content: "\e[38;5;240m  » (PPA) Hit:8 https://packages.microsoft.com/repos/azure-cli focal InRelease\e[0m\r\n\e[38;5;240m  » (PPA) Hit:9 https://cli.github.com/packages focal InRelease\e[0m\r\n\e[38;5;240m  » (PPA) Hit:10 https://dl.winehq.org/wine-builds/ubuntu focal InRelease\e[0m\r\n\e[38;5;240m  » (PPA) Hit:11 https://download.docker.com/linux/ubuntu focal InRelease\e[0m\r\n\e[38;5;240m  » (PPA) Hit:12 https://apt.releases.hashicorp.com focal InRelease\e[0m\r\n\e[38;5;240m  » (PPA) Hit:13 http://archive.ubuntu.com/ubuntu focal-backports InRelease\e[0m\r\n\e[38;5;240m  » (PPA) Hit:14 https://updates.signal.org/desktop/apt xenial InRelease\e[0m\r\n"
+  - delay: 17
+    content: "\e[38;5;240m  » (PPA) Hit:15 https://packages.microsoft.com/repos/vscode stable InRelease\e[0m\r\n\e[38;5;240m  » (PPA) Hit:16 https://storage.googleapis.com/gvisor/releases release InRelease\e[0m\r\n\e[38;5;240m  » (PPA) Hit:17 https://repo.skype.com/deb stable InRelease\e[0m\r\n\e[38;5;240m  » (PPA) Hit:18 http://archive.canonical.com/ubuntu focal InRelease\e[0m\r\n"
+  - delay: 8
+    content: "\e[38;5;240m  » (PPA) Hit:19 http://packages.cloud.google.com/apt cloud-sdk InRelease\e[0m\r\n\e[38;5;240m  » (PPA) Hit:20 http://packages.ros.org/ros/ubuntu focal InRelease\e[0m\r\n"
+  - delay: 518
+    content: "\e[38;5;240m  » (PPA) Ign:21 https://pkg.duosecurity.com/Ubuntu focal InRelease\e[0m\r\n"
+  - delay: 30
+    content: "\e[38;5;240m  » (PPA) Hit:22 https://pkg.duosecurity.com/Ubuntu focal Release\e[0m\r\n"
+  - delay: 98
+    content: "\e[38;5;240m  » (PPA) Get:23 http://ppa.launchpad.net/yubico/stable/ubuntu focal/main amd64 Packages [2389 B]\e[0m\r\n"
+  - delay: 1168
+    content: "\e[38;5;240m  » (PPA) Fetched 19.9 kB in 2s (9315 B/s)\e[0m\r\n"
+  - delay: 1154
+    content: "\e[38;5;240m  » (PPA) Reading package lists...\e[0m\r\n"
+  - delay: 37
+    content: "\e[38;5;192m  • Success! \e[0m\r\n"
+  - delay: 7
+    content: "\e[38;5;246m  • Executing Function install_apps \e[0m\r\n  • Running apt-get update\r\n"
+  - delay: 442
+    content: "\e[38;5;240m  » (APT) Hit:1 http://security.ubuntu.com/ubuntu focal-security InRelease\e[0m\r\n\e[38;5;240m  » (APT) Hit:2 http://packages.cloud.google.com/apt gcsfuse-focal InRelease\e[0m\r\n\e[38;5;240m  » (APT) Hit:3 http://dl.google.com/linux/chrome/deb stable InRelease\e[0m\r\n\e[38;5;240m  » (APT) Hit:4 http://repository.spotify.com stable InRelease\e[0m\r\n\e[38;5;240m  » (APT) Hit:5 http://ppa.launchpad.net/yubico/stable/ubuntu focal InRelease\e[0m\r\n\e[38;5;240m  » (APT) Hit:6 http://archive.ubuntu.com/ubuntu focal InRelease\e[0m\r\n"
+  - delay: 50
+    content: "\e[38;5;240m  » (APT) Hit:7 http://archive.ubuntu.com/ubuntu focal-updates InRelease\e[0m\r\n"
+  - delay: 8
+    content: "\e[38;5;240m  » (APT) Hit:8 https://download.docker.com/linux/ubuntu focal InRelease\e[0m\r\n"
+  - delay: 13
+    content: "\e[38;5;240m  » (APT) Hit:9 http://packages.cloud.google.com/apt cloud-sdk InRelease\e[0m\r\n"
+  - delay: 14
+    content: "\e[38;5;240m  » (APT) Hit:10 http://archive.canonical.com/ubuntu focal InRelease\e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;240m  » (APT) Hit:11 https://cli.github.com/packages focal InRelease\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) Hit:12 http://packages.ros.org/ros/ubuntu focal InRelease\e[0m\r\n"
+  - delay: 11
+    content: "\e[38;5;240m  » (APT) Hit:13 https://dl.winehq.org/wine-builds/ubuntu focal InRelease\e[0m\r\n\e[38;5;240m  » (APT) Hit:14 https://storage.googleapis.com/gvisor/releases release InRelease\e[0m\r\n\e[38;5;240m  » (APT) Hit:15 https://apt.releases.hashicorp.com focal InRelease\e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;240m  » (APT) Hit:16 https://packages.microsoft.com/repos/azure-cli focal InRelease\e[0m\r\n"
+  - delay: 9
+    content: "\e[38;5;240m  » (APT) Hit:17 https://updates.signal.org/desktop/apt xenial InRelease\e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;240m  » (APT) Hit:18 http://archive.ubuntu.com/ubuntu focal-backports InRelease\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) Hit:19 https://repo.skype.com/deb stable InRelease\e[0m\r\n"
+  - delay: 9
+    content: "\e[38;5;240m  » (APT) Hit:20 https://packages.microsoft.com/repos/vscode stable InRelease\e[0m\r\n"
+  - delay: 65
+    content: "\e[38;5;240m  » (APT) Ign:21 https://pkg.duosecurity.com/Ubuntu focal InRelease\e[0m\r\n"
+  - delay: 42
+    content: "\e[38;5;240m  » (APT) Hit:22 https://pkg.duosecurity.com/Ubuntu focal Release\e[0m\r\n"
+  - delay: 2776
+    content: "\e[38;5;240m  » (APT) Reading package lists...\e[0m\r\n"
+  - delay: 47
+    content: "\e[38;5;192m  • Success! \e[0m\r\n\e[38;5;219m➜ Install packages \e[0m\r\n"
+  - delay: 220
+    content: "  • Installing administration packages\r\n"
+  - delay: 1006
+    content: "\e[38;5;240m  » (APT) Reading package lists...\e[0m\r\n"
+  - delay: 336
+    content: "\e[38;5;240m  » (APT) Building dependency tree...\e[0m\r\n\e[38;5;240m  » (APT) Reading state information...\e[0m\r\n"
+  - delay: 386
+    content: "\e[38;5;240m  » (APT) curl is already the newest version (7.68.0-1ubuntu2.4).\e[0m\r\n\e[38;5;240m  » (APT) 0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.\e[0m\r\n\e[38;5;192m  • Done! \e[0m\r\n  • Installing security packages\r\n"
+  - delay: 1022
+    content: "\e[38;5;240m  » (APT) Reading package lists...\e[0m\r\n"
+  - delay: 320
+    content: "\e[38;5;240m  » (APT) Building dependency tree...\e[0m\r\n\e[38;5;240m  » (APT) Reading state information...\e[0m\r\n"
+  - delay: 349
+    content: "\e[38;5;240m  » (APT) gnupg2 is already the newest version (2.2.19-3ubuntu2).\e[0m\r\n\e[38;5;240m  » (APT) 0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.\e[0m\r\n\e[38;5;192m  • Done! \e[0m\r\n  • Installing productivity packages\r\n"
+  - delay: 1006
+    content: "\e[38;5;240m  » (APT) Reading package lists...\e[0m\r\n"
+  - delay: 316
+    content: "\e[38;5;240m  » (APT) Building dependency tree...\e[0m\r\n\e[38;5;240m  » (APT) Reading state information...\e[0m\r\n"
+  - delay: 355
+    content: "\e[38;5;240m  » (APT) curl is already the newest version (7.68.0-1ubuntu2.4).\e[0m\r\n\e[38;5;240m  » (APT) 0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.\e[0m\r\n\e[38;5;192m  • Done! \e[0m\r\n\e[38;5;246m  • Ignoring empty list of packages in multimedia \e[0m\r\n  • Installing development packages\r\n"
+  - delay: 1035
+    content: "\e[38;5;240m  » (APT) Reading package lists...\e[0m\r\n"
+  - delay: 315
+    content: "\e[38;5;240m  » (APT) Building dependency tree...\e[0m\r\n\e[38;5;240m  » (APT) Reading state information...\e[0m\r\n"
+  - delay: 342
+    content: "\e[38;5;240m  » (APT) iputils-ping is already the newest version (3:20190709-3).\e[0m\r\n\e[38;5;240m  » (APT) 0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.\e[0m\r\n\e[38;5;192m  • Done! \e[0m\r\n  • Installing other packages\r\n"
+  - delay: 1013
+    content: "\e[38;5;240m  » (APT) Reading package lists...\e[0m\r\n"
+  - delay: 310
+    content: "\e[38;5;240m  » (APT) Building dependency tree...\e[0m\r\n\e[38;5;240m  » (APT) Reading state information...\e[0m\r\n"
+  - delay: 342
+    content: "\e[38;5;240m  » (APT) The following NEW packages will be installed:\e[0m\r\n\e[38;5;240m  » (APT)   less\e[0m\r\n"
+  - delay: 133
+    content: "\e[38;5;240m  » (APT) 0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.\e[0m\r\n\e[38;5;240m  » (APT) Need to get 123 kB of archives.\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) After this operation, 308 kB of additional disk space will be used.\e[0m\r\n\e[38;5;240m  » (APT) Get:1 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 less amd64 551-1ubuntu0.1 [123 kB]\e[0m\r\n"
+  - delay: 1270
+    content: "\e[38;5;240m  » (APT) Fetched 123 kB in 0s (515 kB/s)\e[0m\r\n"
+  - delay: 66
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package less.\e[0m\r\n"
+  - delay: 16
+    content: "\e[38;5;240m  » (APT) (Reading database ... 10498 files and directories currently installed.)\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) Preparing to unpack .../less_551-1ubuntu0.1_amd64.deb ...\e[0m\r\n"
+  - delay: 24
+    content: "\e[38;5;240m  » (APT) Unpacking less (551-1ubuntu0.1) ...\e[0m\r\n"
+  - delay: 152
+    content: "\e[38;5;240m  » (APT) Setting up less (551-1ubuntu0.1) ...\e[0m\r\n"
+  - delay: 62
+    content: "\e[38;5;240m  » (APT) Processing triggers for mime-support (3.64ubuntu1) ...\e[0m\r\n"
+  - delay: 110
+    content: "\e[38;5;192m  • Done! \e[0m\r\n  • Installing external packages\r\n"
+  - delay: 997
+    content: "\e[38;5;240m  » (APT) Reading package lists...\e[0m\r\n"
+  - delay: 313
+    content: "\e[38;5;240m  » (APT) Building dependency tree...\e[0m\r\n\e[38;5;240m  » (APT) Reading state information...\e[0m\r\n"
+  - delay: 325
+    content: "\e[38;5;240m  » (APT) The following additional packages will be installed:\e[0m\r\n\e[38;5;240m  » (APT)   git git-man libbsd0 libcbor0.6 libcurl3-gnutls libedit2 liberror-perl\e[0m\r\n\e[38;5;240m  » (APT)   libfido2-1 libgdbm-compat4 libgdbm6 libperl5.30 libx11-6 libx11-data libxau6\e[0m\r\n\e[38;5;240m  » (APT)   libxcb1 libxdmcp6 libxext6 libxmuu1 netbase openssh-client patch perl\e[0m\r\n\e[38;5;240m  » (APT)   perl-modules-5.30 xauth\e[0m\r\n\e[38;5;240m  » (APT) Suggested packages:\e[0m\r\n\e[38;5;240m  » (APT)   gettext-base git-daemon-run | git-daemon-sysvinit git-doc git-el git-email\e[0m\r\n\e[38;5;240m  » (APT)   git-gui gitk gitweb git-cvs git-mediawiki git-svn gdbm-l10n keychain\e[0m\r\n\e[38;5;240m  » (APT)   libpam-ssh monkeysphere ssh-askpass ed diffutils-doc perl-doc\e[0m\r\n\e[38;5;240m  » (APT)   libterm-readline-gnu-perl | libterm-readline-perl-perl make libb-debug-perl\e[0m\r\n\e[38;5;240m  » (APT)   liblocale-codes-perl\e[0m\r\n"
+  - delay: 95
+    content: "\e[38;5;240m  » (APT) The following NEW packages will be installed:\e[0m\r\n\e[38;5;240m  » (APT)   gh git git-man libbsd0 libcbor0.6 libcurl3-gnutls libedit2 liberror-perl\e[0m\r\n\e[38;5;240m  » (APT)   libfido2-1 libgdbm-compat4 libgdbm6 libperl5.30 libx11-6 libx11-data libxau6\e[0m\r\n\e[38;5;240m  » (APT)   libxcb1 libxdmcp6 libxext6 libxmuu1 netbase openssh-client patch perl\e[0m\r\n\e[38;5;240m  » (APT)   perl-modules-5.30 xauth\e[0m\r\n"
+  - delay: 183
+    content: "\e[38;5;240m  » (APT) 0 upgraded, 25 newly installed, 0 to remove and 2 not upgraded.\e[0m\r\n\e[38;5;240m  » (APT) Need to get 20.3 MB of archives.\e[0m\r\n\e[38;5;240m  » (APT) After this operation, 110 MB of additional disk space will be used.\e[0m\r\n\e[38;5;240m  » (APT) Get:1 http://ppa.launchpad.net/yubico/stable/ubuntu focal/main amd64 libfido2-1 amd64 1.6.0~ppa~focal1 [53.5 kB]\e[0m\r\n\e[38;5;240m  » (APT) Get:2 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 perl-modules-5.30 all 5.30.0-9ubuntu0.2 [2738 kB]\e[0m\r\n"
+  - delay: 612
+    content: "\e[38;5;240m  » (APT) Get:3 http://archive.ubuntu.com/ubuntu focal/main amd64 libgdbm6 amd64 1.18.1-5 [27.4 kB]\e[0m\r\n\e[38;5;240m  » (APT) Get:4 http://archive.ubuntu.com/ubuntu focal/main amd64 libgdbm-compat4 amd64 1.18.1-5 [6244 B]\e[0m\r\n\e[38;5;240m  » (APT) Get:5 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libperl5.30 amd64 5.30.0-9ubuntu0.2 [3952 kB]\e[0m\r\n"
+  - delay: 610
+    content: "\e[38;5;240m  » (APT) Get:6 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 perl amd64 5.30.0-9ubuntu0.2 [224 kB]\e[0m\r\n"
+  - delay: 49
+    content: "\e[38;5;240m  » (APT) Get:7 http://archive.ubuntu.com/ubuntu focal/main amd64 libbsd0 amd64 0.10.0-1 [45.4 kB]\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) Get:8 http://archive.ubuntu.com/ubuntu focal/main amd64 netbase all 6.1 [13.1 kB]\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) Get:9 http://archive.ubuntu.com/ubuntu focal/main amd64 libcbor0.6 amd64 0.6.0-0ubuntu1 [21.1 kB]\e[0m\r\n\e[38;5;240m  » (APT) Get:10 http://archive.ubuntu.com/ubuntu focal/main amd64 libedit2 amd64 3.1-20191231-1 [87.0 kB]\e[0m\r\n"
+  - delay: 8
+    content: "\e[38;5;240m  » (APT) Get:11 http://archive.ubuntu.com/ubuntu focal/main amd64 libxau6 amd64 1:1.0.9-0ubuntu1 [7488 B]\e[0m\r\n\e[38;5;240m  » (APT) Get:12 http://archive.ubuntu.com/ubuntu focal/main amd64 libxdmcp6 amd64 1:1.1.3-0ubuntu1 [10.6 kB]\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) Get:13 http://archive.ubuntu.com/ubuntu focal/main amd64 libxcb1 amd64 1.14-2 [44.7 kB]\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) Get:14 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libx11-data all 2:1.6.9-2ubuntu1.1 [113 kB]\e[0m\r\n"
+  - delay: 8
+    content: "\e[38;5;240m  » (APT) Get:15 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libx11-6 amd64 2:1.6.9-2ubuntu1.1 [574 kB]\e[0m\r\n"
+  - delay: 97
+    content: "\e[38;5;240m  » (APT) Get:16 http://archive.ubuntu.com/ubuntu focal/main amd64 libxext6 amd64 2:1.3.4-0ubuntu1 [29.1 kB]\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) Get:17 http://archive.ubuntu.com/ubuntu focal/main amd64 libxmuu1 amd64 2:1.1.3-0ubuntu1 [9728 B]\e[0m\r\n\e[38;5;240m  » (APT) Get:18 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 openssh-client amd64 1:8.2p1-4ubuntu0.1 [672 kB]\e[0m\r\n"
+  - delay: 101
+    content: "\e[38;5;240m  » (APT) Get:19 http://archive.ubuntu.com/ubuntu focal/main amd64 xauth amd64 1:1.1-0ubuntu1 [25.0 kB]\e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;240m  » (APT) Get:20 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 libcurl3-gnutls amd64 7.68.0-1ubuntu2.4 [231 kB]\e[0m\r\n"
+  - delay: 37
+    content: "\e[38;5;240m  » (APT) Get:21 http://archive.ubuntu.com/ubuntu focal/main amd64 liberror-perl all 0.17029-1 [26.5 kB]\e[0m\r\n\e[38;5;240m  » (APT) Get:22 http://archive.ubuntu.com/ubuntu focal/main amd64 git-man all 1:2.25.1-1ubuntu3 [884 kB]\e[0m\r\n"
+  - delay: 139
+    content: "\e[38;5;240m  » (APT) Get:23 http://archive.ubuntu.com/ubuntu focal/main amd64 git amd64 1:2.25.1-1ubuntu3 [4554 kB]\e[0m\r\n"
+  - delay: 729
+    content: "\e[38;5;240m  » (APT) Get:24 http://archive.ubuntu.com/ubuntu focal/main amd64 patch amd64 2.7.6-6 [105 kB]\e[0m\r\n"
+  - delay: 2591
+    content: "\e[38;5;240m  » (APT) Get:25 https://cli.github.com/packages focal/main amd64 gh amd64 1.4.0 [5885 kB]\e[0m\r\n"
+  - delay: 2477
+    content: "\e[38;5;240m  » (APT) Fetched 20.3 MB in 7s (3103 kB/s)\e[0m\r\n"
+  - delay: 69
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package perl-modules-5.30.\e[0m\r\n"
+  - delay: 18
+    content: "\e[38;5;240m  » (APT) (Reading database ... 10515 files and directories currently installed.)\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../00-perl-modules-5.30_5.30.0-9ubuntu0.2_all.deb ...\e[0m\r\n"
+  - delay: 25
+    content: "\e[38;5;240m  » (APT) Unpacking perl-modules-5.30 (5.30.0-9ubuntu0.2) ...\e[0m\r\n"
+  - delay: 583
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package libgdbm6:amd64.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../01-libgdbm6_1.18.1-5_amd64.deb ...\e[0m\r\n"
+  - delay: 27
+    content: "\e[38;5;240m  » (APT) Unpacking libgdbm6:amd64 (1.18.1-5) ...\e[0m\r\n"
+  - delay: 148
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package libgdbm-compat4:amd64.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../02-libgdbm-compat4_1.18.1-5_amd64.deb ...\e[0m\r\n"
+  - delay: 10
+    content: "\e[38;5;240m  » (APT) Unpacking libgdbm-compat4:amd64 (1.18.1-5) ...\e[0m\r\n"
+  - delay: 116
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package libperl5.30:amd64.\e[0m\r\n"
+  - delay: 7
+    content: "\e[38;5;240m  » (APT) Preparing to unpack .../03-libperl5.30_5.30.0-9ubuntu0.2_amd64.deb ...\e[0m\r\n"
+  - delay: 14
+    content: "\e[38;5;240m  » (APT) Unpacking libperl5.30:amd64 (5.30.0-9ubuntu0.2) ...\e[0m\r\n"
+  - delay: 701
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package perl.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../04-perl_5.30.0-9ubuntu0.2_amd64.deb ...\e[0m\r\n"
+  - delay: 47
+    content: "\e[38;5;240m  » (APT) Unpacking perl (5.30.0-9ubuntu0.2) ...\e[0m\r\n"
+  - delay: 188
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package libbsd0:amd64.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../05-libbsd0_0.10.0-1_amd64.deb ...\e[0m\r\n"
+  - delay: 11
+    content: "\e[38;5;240m  » (APT) Unpacking libbsd0:amd64 (0.10.0-1) ...\e[0m\r\n"
+  - delay: 134
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package netbase.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../06-netbase_6.1_all.deb ...\e[0m\r\n"
+  - delay: 13
+    content: "\e[38;5;240m  » (APT) Unpacking netbase (6.1) ...\e[0m\r\n"
+  - delay: 124
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package libcbor0.6:amd64.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../07-libcbor0.6_0.6.0-0ubuntu1_amd64.deb ...\e[0m\r\n"
+  - delay: 10
+    content: "\e[38;5;240m  » (APT) Unpacking libcbor0.6:amd64 (0.6.0-0ubuntu1) ...\e[0m\r\n"
+  - delay: 112
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package libedit2:amd64.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../08-libedit2_3.1-20191231-1_amd64.deb ...\e[0m\r\n"
+  - delay: 16
+    content: "\e[38;5;240m  » (APT) Unpacking libedit2:amd64 (3.1-20191231-1) ...\e[0m\r\n"
+  - delay: 150
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package libxau6:amd64.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../09-libxau6_1%3a1.0.9-0ubuntu1_amd64.deb ...\e[0m\r\n"
+  - delay: 10
+    content: "\e[38;5;240m  » (APT) Unpacking libxau6:amd64 (1:1.0.9-0ubuntu1) ...\e[0m\r\n"
+  - delay: 102
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package libxdmcp6:amd64.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../10-libxdmcp6_1%3a1.1.3-0ubuntu1_amd64.deb ...\e[0m\r\n"
+  - delay: 12
+    content: "\e[38;5;240m  » (APT) Unpacking libxdmcp6:amd64 (1:1.1.3-0ubuntu1) ...\e[0m\r\n"
+  - delay: 123
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package libxcb1:amd64.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../11-libxcb1_1.14-2_amd64.deb ...\e[0m\r\n"
+  - delay: 13
+    content: "\e[38;5;240m  » (APT) Unpacking libxcb1:amd64 (1.14-2) ...\e[0m\r\n"
+  - delay: 110
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package libx11-data.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../12-libx11-data_2%3a1.6.9-2ubuntu1.1_all.deb ...\e[0m\r\n"
+  - delay: 20
+    content: "\e[38;5;240m  » (APT) Unpacking libx11-data (2:1.6.9-2ubuntu1.1) ...\e[0m\r\n"
+  - delay: 200
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package libx11-6:amd64.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../13-libx11-6_2%3a1.6.9-2ubuntu1.1_amd64.deb ...\e[0m\r\n"
+  - delay: 14
+    content: "\e[38;5;240m  » (APT) Unpacking libx11-6:amd64 (2:1.6.9-2ubuntu1.1) ...\e[0m\r\n"
+  - delay: 219
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package libxext6:amd64.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../14-libxext6_2%3a1.3.4-0ubuntu1_amd64.deb ...\e[0m\r\n"
+  - delay: 10
+    content: "\e[38;5;240m  » (APT) Unpacking libxext6:amd64 (2:1.3.4-0ubuntu1) ...\e[0m\r\n"
+  - delay: 132
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package libxmuu1:amd64.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../15-libxmuu1_2%3a1.1.3-0ubuntu1_amd64.deb ...\e[0m\r\n"
+  - delay: 18
+    content: "\e[38;5;240m  » (APT) Unpacking libxmuu1:amd64 (2:1.1.3-0ubuntu1) ...\e[0m\r\n"
+  - delay: 137
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package libfido2-1:amd64.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../16-libfido2-1_1.6.0~ppa~focal1_amd64.deb ...\e[0m\r\n"
+  - delay: 17
+    content: "\e[38;5;240m  » (APT) Unpacking libfido2-1:amd64 (1.6.0~ppa~focal1) ...\e[0m\r\n"
+  - delay: 179
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package openssh-client.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../17-openssh-client_1%3a8.2p1-4ubuntu0.1_amd64.deb ...\e[0m\r\n"
+  - delay: 43
+    content: "\e[38;5;240m  » (APT) Unpacking openssh-client (1:8.2p1-4ubuntu0.1) ...\e[0m\r\n"
+  - delay: 211
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package xauth.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../18-xauth_1%3a1.1-0ubuntu1_amd64.deb ...\e[0m\r\n"
+  - delay: 11
+    content: "\e[38;5;240m  » (APT) Unpacking xauth (1:1.1-0ubuntu1) ...\e[0m\r\n"
+  - delay: 141
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package libcurl3-gnutls:amd64.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../19-libcurl3-gnutls_7.68.0-1ubuntu2.4_amd64.deb ...\e[0m\r\n"
+  - delay: 10
+    content: "\e[38;5;240m  » (APT) Unpacking libcurl3-gnutls:amd64 (7.68.0-1ubuntu2.4) ...\e[0m\r\n"
+  - delay: 127
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package liberror-perl.\e[0m\r\n"
+  - delay: 8
+    content: "\e[38;5;240m  » (APT) Preparing to unpack .../20-liberror-perl_0.17029-1_all.deb ...\e[0m\r\n"
+  - delay: 10
+    content: "\e[38;5;240m  » (APT) Unpacking liberror-perl (0.17029-1) ...\e[0m\r\n"
+  - delay: 103
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package git-man.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../21-git-man_1%3a2.25.1-1ubuntu3_all.deb ...\e[0m\r\n"
+  - delay: 10
+    content: "\e[38;5;240m  » (APT) Unpacking git-man (1:2.25.1-1ubuntu3) ...\e[0m\r\n"
+  - delay: 241
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package git.\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) Preparing to unpack .../22-git_1%3a2.25.1-1ubuntu3_amd64.deb ...\e[0m\r\n"
+  - delay: 71
+    content: "\e[38;5;240m  » (APT) Unpacking git (1:2.25.1-1ubuntu3) ...\e[0m\r\n"
+  - delay: 740
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package gh.\e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;240m  » (APT) Preparing to unpack .../23-gh_1.4.0_amd64.deb ...\e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;240m  » (APT) Unpacking gh (1.4.0) ...\e[0m\r\n"
+  - delay: 299
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package patch.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../24-patch_2.7.6-6_amd64.deb ...\e[0m\r\n"
+  - delay: 19
+    content: "\e[38;5;240m  » (APT) Unpacking patch (2.7.6-6) ...\e[0m\r\n"
+  - delay: 154
+    content: "\e[38;5;240m  » (APT) Setting up libxau6:amd64 (1:1.0.9-0ubuntu1) ...\e[0m\r\n"
+  - delay: 44
+    content: "\e[38;5;240m  » (APT) Setting up perl-modules-5.30 (5.30.0-9ubuntu0.2) ...\e[0m\r\n"
+  - delay: 65
+    content: "\e[38;5;240m  » (APT) Setting up libcurl3-gnutls:amd64 (7.68.0-1ubuntu2.4) ...\e[0m\r\n"
+  - delay: 61
+    content: "\e[38;5;240m  » (APT) Setting up libcbor0.6:amd64 (0.6.0-0ubuntu1) ...\e[0m\r\n"
+  - delay: 57
+    content: "\e[38;5;240m  » (APT) Setting up libx11-data (2:1.6.9-2ubuntu1.1) ...\e[0m\r\n"
+  - delay: 72
+    content: "\e[38;5;240m  » (APT) Setting up patch (2.7.6-6) ...\e[0m\r\n"
+  - delay: 78
+    content: "\e[38;5;240m  » (APT) Setting up git-man (1:2.25.1-1ubuntu3) ...\e[0m\r\n"
+  - delay: 58
+    content: "\e[38;5;240m  » (APT) Setting up netbase (6.1) ...\e[0m\r\n"
+  - delay: 122
+    content: "\e[38;5;240m  » (APT) Setting up libfido2-1:amd64 (1.6.0~ppa~focal1) ...\e[0m\r\n"
+  - delay: 45
+    content: "\e[38;5;240m  » (APT) Setting up libbsd0:amd64 (0.10.0-1) ...\e[0m\r\n"
+  - delay: 71
+    content: "\e[38;5;240m  » (APT) Setting up libgdbm6:amd64 (1.18.1-5) ...\e[0m\r\n"
+  - delay: 75
+    content: "\e[38;5;240m  » (APT) Setting up libxdmcp6:amd64 (1:1.1.3-0ubuntu1) ...\e[0m\r\n"
+  - delay: 57
+    content: "\e[38;5;240m  » (APT) Setting up libxcb1:amd64 (1.14-2) ...\e[0m\r\n"
+  - delay: 69
+    content: "\e[38;5;240m  » (APT) Setting up libedit2:amd64 (3.1-20191231-1) ...\e[0m\r\n"
+  - delay: 60
+    content: "\e[38;5;240m  » (APT) Setting up libgdbm-compat4:amd64 (1.18.1-5) ...\e[0m\r\n"
+  - delay: 54
+    content: "\e[38;5;240m  » (APT) Setting up libperl5.30:amd64 (5.30.0-9ubuntu0.2) ...\e[0m\r\n"
+  - delay: 71
+    content: "\e[38;5;240m  » (APT) Setting up libx11-6:amd64 (2:1.6.9-2ubuntu1.1) ...\e[0m\r\n"
+  - delay: 62
+    content: "\e[38;5;240m  » (APT) Setting up libxmuu1:amd64 (2:1.1.3-0ubuntu1) ...\e[0m\r\n"
+  - delay: 72
+    content: "\e[38;5;240m  » (APT) Setting up openssh-client (1:8.2p1-4ubuntu0.1) ...\e[0m\r\n"
+  - delay: 245
+    content: "\e[38;5;240m  » (APT) Setting up libxext6:amd64 (2:1.3.4-0ubuntu1) ...\e[0m\r\n"
+  - delay: 54
+    content: "\e[38;5;240m  » (APT) Setting up perl (5.30.0-9ubuntu0.2) ...\e[0m\r\n"
+  - delay: 93
+    content: "\e[38;5;240m  » (APT) Setting up xauth (1:1.1-0ubuntu1) ...\e[0m\r\n"
+  - delay: 55
+    content: "\e[38;5;240m  » (APT) Setting up liberror-perl (0.17029-1) ...\e[0m\r\n"
+  - delay: 69
+    content: "\e[38;5;240m  » (APT) Setting up git (1:2.25.1-1ubuntu3) ...\e[0m\r\n"
+  - delay: 96
+    content: "\e[38;5;240m  » (APT) Setting up gh (1.4.0) ...\e[0m\r\n"
+  - delay: 62
+    content: "\e[38;5;240m  » (APT) Processing triggers for libc-bin (2.31-0ubuntu9.1) ...\e[0m\r\n"
+  - delay: 117
+    content: "\e[38;5;192m  • Done! \e[0m\r\n\e[38;5;246m  • Removing cached APT packages \e[0m\r\n"
+  - delay: 11
+    content: "\e[38;5;246m  • Executing Function install_debs \e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;219m➜ Install DEB packages \e[0m\r\n\e[38;5;246m  • Option: Install DEB Files, Function name: install_debs \e[0m\r\n"
+  - delay: 31
+    content: "\e[38;5;246m  » deb_url            - https://github.com/sharkdp/bat/releases/download/v0.17.1/bat_0.17.1_amd64.deb\e[0m\r\n\e[38;5;246m  » deb_file_name      - bat.deb   \e[0m\r\n"
+  - delay: 8
+    content: "  • Downloading DEB package : bat.deb\r\n"
+  - delay: 1694
+    content: "  • Installing DEB package : bat.deb\r\n"
+  - delay: 70
+    content: "\e[38;5;240m  » (DPKG) Selecting previously unselected package bat.\e[0m\r\n"
+  - delay: 13
+    content: "\e[38;5;240m  » (DPKG) (Reading database ... 13849 files and directories currently installed.)\e[0m\r\n\e[38;5;240m  » (DPKG) Preparing to unpack bat.deb ...\e[0m\r\n"
+  - delay: 11
+    content: "\e[38;5;240m  » (DPKG) Unpacking bat (0.17.1) ...\e[0m\r\n"
+  - delay: 328
+    content: "\e[38;5;240m  » (DPKG) Setting up bat (0.17.1) ...\e[0m\r\n"
+  - delay: 72
+    content: "\e[38;5;246m  • Installing missing packages... \e[0m\r\n"
+  - delay: 1023
+    content: "\e[38;5;240m  » (APT) Reading package lists...\e[0m\r\n"
+  - delay: 307
+    content: "\e[38;5;240m  » (APT) Building dependency tree...\e[0m\r\n\e[38;5;240m  » (APT) Reading state information...\e[0m\r\n"
+  - delay: 387
+    content: "\e[38;5;240m  » (APT) 0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.\e[0m\r\n\e[38;5;192m  • Done \e[0m\r\n\e[38;5;246m  • Clean up downloaded packages \e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;246m  • Removing cached APT packages \e[0m\r\n"
+  - delay: 10
+    content: "\e[38;5;246m  • Executing Function install_pip_packages_2 \e[0m\r\n\e[38;5;219m➜ Python 2 Packages \e[0m\r\n  • Check if platform supports python2\r\n\e[31m  • Python 2 is not supported on this platform! \e[0m\r\n\e[38;5;246m  • Executing Function install_pip_packages_3 \e[0m\r\n\e[38;5;219m➜ Python 3 Packages \e[0m\r\n\e[38;5;246m  • Option: Install Python packages via PIP, Function name: _install_pip_python \e[0m\r\n\e[38;5;246m  • pip Version : 3 \e[0m\r\n  • Install dependencies for python: 3\r\n"
+  - delay: 6
+    content: "\e[38;5;246m  • pip3 is not installed!\e[0m \e[0m\r\n  • Running apt-get update\r\n"
+  - delay: 411
+    content: "\e[38;5;240m  » (APT) Hit:1 http://ppa.launchpad.net/yubico/stable/ubuntu focal InRelease\e[0m\r\n\e[38;5;240m  » (APT) Hit:2 http://archive.ubuntu.com/ubuntu focal InRelease\e[0m\r\n\e[38;5;240m  » (APT) Hit:3 http://security.ubuntu.com/ubuntu focal-security InRelease\e[0m\r\n\e[38;5;240m  » (APT) Hit:4 http://dl.google.com/linux/chrome/deb stable InRelease\e[0m\r\n\e[38;5;240m  » (APT) Hit:5 http://repository.spotify.com stable InRelease\e[0m\r\n"
+  - delay: 34
+    content: "\e[38;5;240m  » (APT) Hit:6 http://archive.ubuntu.com/ubuntu focal-updates InRelease\e[0m\r\n"
+  - delay: 15
+    content: "\e[38;5;240m  » (APT) Hit:7 http://packages.cloud.google.com/apt gcsfuse-focal InRelease\e[0m\r\n"
+  - delay: 23
+    content: "\e[38;5;240m  » (APT) Hit:8 http://archive.ubuntu.com/ubuntu focal-backports InRelease\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) Hit:9 http://archive.canonical.com/ubuntu focal InRelease\e[0m\r\n"
+  - delay: 19
+    content: "\e[38;5;240m  » (APT) Hit:10 https://download.docker.com/linux/ubuntu focal InRelease\e[0m\r\n"
+  - delay: 11
+    content: "\e[38;5;240m  » (APT) Hit:11 http://packages.ros.org/ros/ubuntu focal InRelease\e[0m\r\n"
+  - delay: 9
+    content: "\e[38;5;240m  » (APT) Hit:12 https://updates.signal.org/desktop/apt xenial InRelease\e[0m\r\n"
+  - delay: 7
+    content: "\e[38;5;240m  » (APT) Hit:13 https://storage.googleapis.com/gvisor/releases release InRelease\e[0m\r\n"
+  - delay: 11
+    content: "\e[38;5;240m  » (APT) Hit:14 https://apt.releases.hashicorp.com focal InRelease\e[0m\r\n"
+  - delay: 7
+    content: "\e[38;5;240m  » (APT) Hit:15 https://repo.skype.com/deb stable InRelease\e[0m\r\n"
+  - delay: 19
+    content: "\e[38;5;240m  » (APT) Hit:16 https://packages.microsoft.com/repos/azure-cli focal InRelease\e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;240m  » (APT) Hit:17 http://packages.cloud.google.com/apt cloud-sdk InRelease\e[0m\r\n\e[38;5;240m  » (APT) Hit:18 https://cli.github.com/packages focal InRelease\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) Hit:19 https://dl.winehq.org/wine-builds/ubuntu focal InRelease\e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;240m  » (APT) Hit:20 https://packages.microsoft.com/repos/vscode stable InRelease\e[0m\r\n"
+  - delay: 391
+    content: "\e[38;5;240m  » (APT) Ign:21 https://pkg.duosecurity.com/Ubuntu focal InRelease\e[0m\r\n"
+  - delay: 43
+    content: "\e[38;5;240m  » (APT) Hit:22 https://pkg.duosecurity.com/Ubuntu focal Release\e[0m\r\n"
+  - delay: 2502
+    content: "\e[38;5;240m  » (APT) Reading package lists...\e[0m\r\n"
+  - delay: 41
+    content: "\e[38;5;192m  • Success! \e[0m\r\n  • Install PIP dependencies\r\n"
+  - delay: 1040
+    content: "\e[38;5;240m  » (APT) Reading package lists...\e[0m\r\n"
+  - delay: 308
+    content: "\e[38;5;240m  » (APT) Building dependency tree...\e[0m\r\n\e[38;5;240m  » (APT) Reading state information...\e[0m\r\n"
+  - delay: 307
+    content: "\e[38;5;240m  » (APT) The following additional packages will be installed:\e[0m\r\n\e[38;5;240m  » (APT)   python-pip-whl python3-distutils python3-lib2to3 python3-wheel\e[0m\r\n\e[38;5;240m  » (APT) Suggested packages:\e[0m\r\n\e[38;5;240m  » (APT)   python-setuptools-doc\e[0m\r\n\e[38;5;240m  » (APT) Recommended packages:\e[0m\r\n\e[38;5;240m  » (APT)   build-essential python3-dev\e[0m\r\n"
+  - delay: 89
+    content: "\e[38;5;240m  » (APT) The following NEW packages will be installed:\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT)   python-pip-whl python3-distutils python3-lib2to3 python3-pip\e[0m\r\n\e[38;5;240m  » (APT)   python3-setuptools python3-wheel\e[0m\r\n"
+  - delay: 154
+    content: "\e[38;5;240m  » (APT) 0 upgraded, 6 newly installed, 0 to remove and 2 not upgraded.\e[0m\r\n\e[38;5;240m  » (APT) Need to get 2600 kB of archives.\e[0m\r\n\e[38;5;240m  » (APT) After this operation, 7031 kB of additional disk space will be used.\e[0m\r\n\e[38;5;240m  » (APT) Get:1 http://archive.ubuntu.com/ubuntu focal-updates/universe amd64 python-pip-whl all 20.0.2-5ubuntu1.1 [1799 kB]\e[0m\r\n"
+  - delay: 441
+    content: "\e[38;5;240m  » (APT) Get:2 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 python3-lib2to3 all 3.8.5-1~20.04.1 [75.6 kB]\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) Get:3 http://archive.ubuntu.com/ubuntu focal-updates/main amd64 python3-distutils all 3.8.5-1~20.04.1 [141 kB]\e[0m\r\n"
+  - delay: 11
+    content: "\e[38;5;240m  » (APT) Get:4 http://archive.ubuntu.com/ubuntu focal/main amd64 python3-setuptools all 45.2.0-1 [330 kB]\e[0m\r\n"
+  - delay: 56
+    content: "\e[38;5;240m  » (APT) Get:5 http://archive.ubuntu.com/ubuntu focal/universe amd64 python3-wheel all 0.34.2-1 [23.8 kB]\e[0m"
+  - delay: 9
+    content: "\r\n"
+  - delay: 12
+    content: "\e[38;5;240m  » (APT) Get:6 http://archive.ubuntu.com/ubuntu focal-updates/universe amd64 python3-pip all 20.0.2-5ubuntu1.1 [230 kB]\e[0m\r\n"
+  - delay: 1213
+    content: "\e[38;5;240m  » (APT) Fetched 2600 kB in 1s (3669 kB/s)\e[0m\r\n"
+  - delay: 50
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package python-pip-whl.\e[0m\r\n"
+  - delay: 23
+    content: "\e[38;5;240m  » (APT) (Reading database ... 13860 files and directories currently installed.)\e[0m\r\n"
+  - delay: 7
+    content: "\e[38;5;240m  » (APT) Preparing to unpack .../0-python-pip-whl_20.0.2-5ubuntu1.1_all.deb ...\e[0m\r\n"
+  - delay: 25
+    content: "\e[38;5;240m  » (APT) Unpacking python-pip-whl (20.0.2-5ubuntu1.1) ...\e[0m\r\n"
+  - delay: 281
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package python3-lib2to3.\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) Preparing to unpack .../1-python3-lib2to3_3.8.5-1~20.04.1_all.deb ...\e[0m\r\n"
+  - delay: 17
+    content: "\e[38;5;240m  » (APT) Unpacking python3-lib2to3 (3.8.5-1~20.04.1) ...\e[0m\r\n"
+  - delay: 199
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package python3-distutils.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../2-python3-distutils_3.8.5-1~20.04.1_all.deb ...\e[0m\r\n"
+  - delay: 20
+    content: "\e[38;5;240m  » (APT) Unpacking python3-distutils (3.8.5-1~20.04.1) ...\e[0m\r\n"
+  - delay: 186
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package python3-setuptools.\e[0m\r\n\e[38;5;240m  » (APT) Preparing to unpack .../3-python3-setuptools_45.2.0-1_all.deb ...\e[0m\r\n"
+  - delay: 17
+    content: "\e[38;5;240m  » (APT) Unpacking python3-setuptools (45.2.0-1) ...\e[0m\r\n"
+  - delay: 219
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package python3-wheel.\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) Preparing to unpack .../4-python3-wheel_0.34.2-1_all.deb ...\e[0m\r\n"
+  - delay: 14
+    content: "\e[38;5;240m  » (APT) Unpacking python3-wheel (0.34.2-1) ...\e[0m\r\n"
+  - delay: 123
+    content: "\e[38;5;240m  » (APT) Selecting previously unselected package python3-pip.\e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;240m  » (APT) Preparing to unpack .../5-python3-pip_20.0.2-5ubuntu1.1_all.deb ...\e[0m\r\n"
+  - delay: 13
+    content: "\e[38;5;240m  » (APT) Unpacking python3-pip (20.0.2-5ubuntu1.1) ...\e[0m\r\n"
+  - delay: 193
+    content: "\e[38;5;240m  » (APT) Setting up python3-wheel (0.34.2-1) ...\e[0m\r\n"
+  - delay: 244
+    content: "\e[38;5;240m  » (APT) Setting up python-pip-whl (20.0.2-5ubuntu1.1) ...\e[0m\r\n"
+  - delay: 58
+    content: "\e[38;5;240m  » (APT) Setting up python3-lib2to3 (3.8.5-1~20.04.1) ...\e[0m\r\n"
+  - delay: 206
+    content: "\e[38;5;240m  » (APT) Setting up python3-distutils (3.8.5-1~20.04.1) ...\e[0m\r\n"
+  - delay: 203
+    content: "\e[38;5;240m  » (APT) Setting up python3-setuptools (45.2.0-1) ...\e[0m\r\n"
+  - delay: 382
+    content: "\e[38;5;240m  » (APT) Setting up python3-pip (20.0.2-5ubuntu1.1) ...\e[0m\r\n"
+  - delay: 411
+    content: "\e[38;5;192m  • Done \e[0m\r\n\e[38;5;246m  • Removing cached APT packages \e[0m\r\n"
+  - delay: 9
+    content: "  • Installing python packages\r\n\e[38;5;246m  • Requirements file: /tmp/ae/requirements3.txt \e[0m\r\n\e[38;5;246m  • Installing requirements file /tmp/ae/requirements3.txt \e[0m\r\n"
+  - delay: 1388
+    content: "\e[38;5;240m  » (PIP) Collecting coloredlogs\e[0m\r\n"
+  - delay: 158
+    content: "\e[38;5;240m  » (PIP)   Downloading coloredlogs-15.0-py2.py3-none-any.whl (45 kB)\e[0m\r\n"
+  - delay: 168
+    content: "\e[38;5;240m  » (PIP) Collecting humanfriendly>=9.1\e[0m\r\n"
+  - delay: 33
+    content: "\e[38;5;240m  » (PIP)   Downloading humanfriendly-9.1-py2.py3-none-any.whl (86 kB)\e[0m\r\n"
+  - delay: 148
+    content: "\e[38;5;240m  » (PIP) Installing collected packages: humanfriendly, coloredlogs\e[0m\r\n"
+  - delay: 118
+    content: "\e[38;5;240m  » (PIP) Successfully installed coloredlogs-15.0 humanfriendly-9.1\e[0m\r\n"
+  - delay: 100
+    content: "\e[38;5;192m  • Done Python 3 \e[0m\r\n\e[38;5;246m  • Executing Function purge_not_required \e[0m\r\n\e[38;5;219m➜ Purging packages \e[0m\r\n"
+  - delay: 1017
+    content: "\e[38;5;240m  » (APT) Reading package lists...\e[0m\r\n"
+  - delay: 328
+    content: "\e[38;5;240m  » (APT) Building dependency tree...\e[0m\r\n\e[38;5;240m  » (APT) Reading state information...\e[0m\r\n"
+  - delay: 399
+    content: "\e[38;5;240m  » (APT) Package 'gnome-mines' is not installed, so not removed\e[0m\r\n\e[38;5;240m  » (APT) 0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.\e[0m\r\n\e[38;5;192m  • Done! \e[0m\r\n\e[38;5;246m  • Executing Function install_binaries \e[0m\r\n\e[38;5;219m➜ Install static binaries \e[0m\r\n\e[38;5;246m  • Option: Install Bin Files, Function name: install_binaries \e[0m\r\n"
+  - delay: 8
+    content: "\e[38;5;246m  » bin_url            - https://github.com/direnv/direnv/releases/download/v2.27.0/direnv.linux-amd64\e[0m\r\n\e[38;5;246m  » bin_name           - direnv    \e[0m\r\n  • Downloading - direnv\r\n"
+  - delay: 2946
+    content: "\e[38;5;192m  • OK \e[0m\r\n  • Installing  - direnv\r\n"
+  - delay: 16
+    content: "\e[38;5;246m  • Setting Permissions... \e[0m\r\n\e[38;5;246m  • Task : install_snaps is not enabled \e[0m\r\n\e[38;5;219m➜ Cleanup and Exit \e[0m\r\n"
+  - delay: 21
+    content: "\e[38;5;246m  • after-effects took 80 seconds to complete. \e[0m\r\n"

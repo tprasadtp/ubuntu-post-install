@@ -38,7 +38,7 @@ sudo ./after-effects -c <your config.yml>
 
 ## See in Action
 
-[![inaction](assets/images/in-action.gif)](assets/images/in-action.gif)
+![inaction](assets/recordings/docker-no-snaps-focal.gif)
 
 ## Supported Distros
 

@@ -22,7 +22,7 @@ This task can add the following repositories.
 |Wine HQ | winehq
 |Github CLI | github
 |Hashicorp Tools(terraform, consul etc) | hashicorp
-|[Gvisor container runtime][gvisor] | gvisor
+|[gVisor container runtime][gvisor] | gvisor
 |[Azure CLI][azure-cli] | azurecli
 
 

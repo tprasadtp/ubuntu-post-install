@@ -42,7 +42,7 @@ Sample configuration can be found in `config` directory.
 
 ## See in Action
 
-[![inaction](docs/assets/images/in-action.gif)](docs/assets/images/in-action.gif)
+[![inaction](docs/assets/recordings/docker-no-snaps-focal.gif)](docs/assets/recordings/docker-no-snaps-focal.gif)
 
 ## FAQ & Documentation
 
@@ -61,7 +61,6 @@ See /docs or visit [docs][docs]
 [![Ubuntu-Mate](https://static.prasadt.com/logo64/ubuntu-mate.png)](https://ubuntu-mate.org/)
 [![Ubuntu-Budgie](https://static.prasadt.com/logo64/ubuntu-budgie.png)](https://ubuntubudgie.org/)
 [![Ubuntu-Studio](https://static.prasadt.com/logo64/ubuntu-studio.png)](https://ubuntustudio.org/)
-[![Ubuntu-Gnome](https://static.prasadt.com/logo64/ubuntu-gnome.png)](https://ubuntugnome.org/)
 [![Linux-Mint](https://static.prasadt.com/logo64/linux-mint.png)](https://www.linuxmint.com/)
 [![Debian](https://static.prasadt.com/logo64/debian.png)](https://www.debian.org/)
 [![Elementary-OS](https://static.prasadt.com/logo64/elementary-os.png)](https://elementary.io/)
@@ -94,7 +93,7 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 | Name                 | Key |
 |:---------------------|:--- |
 |Docker | docker
-|Duo Security Unix | duo
+|Duo Security for Unix | duo
 |Google Chrome | chrome
 |Google Cloud SDK | googlecloud
 |Insync | insync
@@ -107,7 +106,7 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 |Wine HQ | winehq
 |Github CLI | github
 |Hashicorp Tools(terraform, consul etc) | hashicorp
-|[Gvisor container runtime][gvisor] | gvisor
+|[gVisor container runtime][gvisor] | gvisor
 |[Azure CLI][azure-cli] | azurecli
 
 ## Issues & Help

@@ -10,6 +10,8 @@ You can chose from multiple debug modes. by setting DEBUG variable to one of the
 - `DEBUG=trace` Print debug messages and apt/dpkg/snap/ppa/pip logs.
 Please note that This can generate a lot of output.
 
+![debug](/assets/recordings/docker-no-snaps-focal-debug.gif)
+
 ## Local testing
 
 You can use `./tests/local.sh --help` to test the scripts locally. It uses docker to build and test the script in simulate mode inside

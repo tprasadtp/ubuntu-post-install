@@ -6,7 +6,7 @@
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/ubuntu-post-install
 # Requirements - Bash v4 and above
-#              - whiptail, wget, iputils-ping, awk, sed, grep
+#              - whiptail, wget, awk, sed, grep
 #
 
 readonly AE_EXEC_START=$(date +%s)
@@ -874,8 +874,8 @@ function _set_yaml_config()
   _check_bool "add_signal_repo" "${config__add_repo__signal[0]}"
   #add_signal_repo="${config__add_repo__signal[0]}"
 
-  _check_bool "add_chrome_repo" "${config__add_repo__google[0]}"
-  #add_chrome_repo="${config__add_repo__google[0]}"
+  _check_bool "add_chrome_repo" "${config__add_repo__chrome[0]}"
+  #add_chrome_repo="${config__add_repo__chrome[0]}"
 
   # ROS
   _check_bool "add_ros_repo" "${config__add_repo__ros[0]}"
@@ -1244,7 +1244,7 @@ function add_repositories()
       apt-key add /tmp/ae/google_signing_key.pub |& _log_trace "${_phase_apt_key}" \
       || _log_error "Adding trusted keys for Google failed."
       if echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main #Google-Chrome" > ${SOURCES_FILE_DIR}/google-chrome.list; then
-        _log_success "OK" \
+        _log_success "OK"
       else
         _log_error "Adding Google Chrome Repository failed"
       fi
@@ -1517,31 +1517,31 @@ function add_repositories()
   fi
 
 
-  # Gvisor container Runtime
+  # gVisor container Runtime
   if [[ $add_gvisor_repo == "true" ]]; then
 
     if [[ $ARCH == "amd64" ]]; then
       _log_info "gvisor"
 
-      # Adding Gvisor Keys
+      # Adding gVisor Keys
       __add_repo_keys --format "asc" \
         --file-prefix "gvisor" \
         --key-url https://gvisor.dev/archive.key
 
-      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/gvisor.gpg] https://storage.googleapis.com/gvisor/releases release main #Gvisor-Container-Runtime"  > ${SOURCES_FILE_DIR}/gvisor.list; then
+      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/gvisor.gpg] https://storage.googleapis.com/gvisor/releases release main #gVisor-Container-Runtime"  > ${SOURCES_FILE_DIR}/gvisor.list; then
         _log_success "OK"
       else
         _log_error "Adding gvisor repository failed!"
       fi
 
     else
-      _log_error "Gvisor is not supported on this architecture(${ARCH})"
+      _log_error "gVisor is not supported on this architecture(${ARCH})"
       _log_dev "Visit https://gvisor.dev/ for more info"
     fi
 
   else
-    # Gvisor is not enabled
-    _log_debug "Skipped addinng Gvisor repository."
+    # gVisor is not enabled
+    _log_debug "Skipped addinng gVisor repository."
   fi
 
 
@@ -1843,40 +1843,6 @@ function  upgrade_system()
   _log_stage "Update repository index/metadata... "
   update_repos;
   upgrade_apps;
-}
-
-
-function purge_ppa()
-{
-  # PPAs added or repositories added by actions other than this script are not removed.
-  # Simulate option has no effect on this function. PPAs will be purged irrespective of its value.
-  local exit_status index dependency_packages
-  dependency_packages=(ppa-purge)
-
-  if [ "$enable_ppa" == "true" ]; then
-    _log_stage "Purge PPAs"
-    _install_dependencies "${dependency_packages[@]}"
-      for index in "${parsed_ppa_list[@]}"; do
-            _log_info "$index..."
-            _log_debug "Purging: $index"
-            if [ "$index" == "" ] || [ "$index" == " " ]; then
-              _log_warn "Found an empty entry, Ignoring"
-              continue;
-            fi
-            if ppa-purge -y "$index"  |& _log_trace "${_phase_purge}"  ; then
-              sleep 5 #wait sometimes apt lock isnt released soon.
-              _log_success "$line purged."
-            else
-              _log_error "Some Error occured while purging $line."
-            fi
-        done
-      # Clean -k flag.
-      _clean_apt_cache;
-      _log_success "Purging PPAs completed"
-
-  else
-    _log_warn "PPA's are not available for this release/distro"
-  fi
 }
 
 
@@ -2400,15 +2366,14 @@ function _process_menu()
       upgrade    'Upgrade Packages' \
       repo       'Add Repositories' \
       ppas       'Add PPAs' \
-      purge      'Purge not required packages' \
       apps       'Install APT Packages' \
       debs       'Install DEB packages' \
       pip2       'Install Python 2 packages via pip' \
       pip3       'Install Python 3 packages via pip3' \
-      bin        'Download & Install Static Binaries' \
+      bin        'Install static binaries' \
       snaps      'Install snap packages' \
+      purge      'Purge not required packages' \
       all        'All the tasks mentioned above' \
-      ppa_rst    'Purge PPAs' \
       3>&1 1>&2 2>&3)
 
   __menu_info_add_repo="
@@ -2426,7 +2391,7 @@ function _process_menu()
   ROS (Robot Operating System) : $add_ros_repo
   Duo Security for Unix        : $add_duo_repo
   GitHub CLI (gh)              : $add_gh_repo
-  Gvisor container runtime     : $add_gvisor_repo
+  gVisor container runtime     : $add_gvisor_repo
   Hashicorp Packages           : $add_hashicorp_repo
   Azure CLI                    : $add_azurecli_repo
 
@@ -2466,17 +2431,6 @@ function _process_menu()
   here. Please ensure that packages are valid and are available
   on your distribution. This might take some time depending on
   your Internet connection and CPU.
-  -------------------------------------------------------
-
-  Proceed with this action?
-  "
-
-  __menu_info_ppa_rst="
-  This action can remove PPAs  added by this script.
-  Please do note that any changes not made my this script
-  might be ignored. This task will install ppa-purge and
-  will revert packages provided by the ppas to the ones
-  provided by distriution. Use this with caution!
   -------------------------------------------------------
 
   Proceed with this action?
@@ -2589,8 +2543,6 @@ function _process_menu()
       repo)       _prompt_confirmation "$__menu_info_add_repo" "add_repositories"
                   ;;
       apps)       _prompt_confirmation "$__menu_info_apps" "install_apps"
-                  ;;
-      ppa_rst)    _prompt_confirmation "${__menu_info_ppa_rst}" "purge_ppa"
                   ;;
       purge)      _prompt_confirmation "${__menu_info_purge}" "purge_not_required"
                   ;;
@@ -2807,7 +2759,7 @@ function main()
   # Display Version Info and Verify signature options
   _process_non_root_options "$@"
 
-  printf "${MAGENTA}➜  Initialize & run checks${NC}\n"
+  printf "${MAGENTA}➜ Initialize & run checks${NC}\n"
   process_no_exec_option "$@"
 
   printf "  • Permission checks\n"
