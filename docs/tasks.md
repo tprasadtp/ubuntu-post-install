@@ -50,19 +50,27 @@ config:
   # Repository Flags
   add_repo:
     azurecli: true
-    winehq: true
     docker: true
-    mendeley: false
-    googlecloud: true
+    duo: true
+    gcsfuse: true
     gvisor: true
+    github: true
+    chrome: true
+    googlecloud: true
+    hashicorp: true
+    mendeley: false
+    ros: true
+    ros2: true
+    signal: true
+    skype: true
     spotify: true
     vscode: true
-    skype: true
-    signal: false
-    insync: true
-    github: true
-    google: true
+    winehq: true
 ```
+
+!!! warning "32-bit support & Wine HQ"
+    Please note that for installing `winehq-stable` you **MUST** enable multi-arch support. This script will not
+    do it for you. Run `sudo dpkg --add-architecture i386` **BEFORE** running this script!
 
 ## Add personal package archives (PPA)
 

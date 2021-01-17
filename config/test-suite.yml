@@ -108,5 +108,5 @@ config:
         - signal-desktop
         # Skype
         - skypeforlinux
-        # Wine
-        - wine-stable-amd64
+        # WineHQ
+        - winehq-stable

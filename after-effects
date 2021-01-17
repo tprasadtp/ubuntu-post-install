@@ -1366,8 +1366,7 @@ function add_repositories()
       __add_repo_keys --format "asc" \
         --file-prefix "wine-hq" \
         --key-url https://dl.winehq.org/wine-builds/winehq.key
-
-      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/wine-hq.gpg] https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list; then
+      if echo "deb [signed-by=/usr/share/keyrings/wine-hq.gpg] https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list; then
         _log_success "OK"
       else
         _log_error "Adding WineHQ repository failed"
