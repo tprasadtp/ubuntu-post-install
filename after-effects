@@ -1922,10 +1922,8 @@ function install_apps()
   # No checks are being made on any of the files for validity. One entry per line is recommended.
   # If a package is not available entire collection in the file *.list will not be installed!!
 
-  # Accept some EULA
-  update_repos;
-
   _log_stage "Install packages"
+  update_repos
 
   echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true |  debconf-set-selections
   #Install starts here
