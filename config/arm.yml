@@ -85,5 +85,3 @@ config:
         - docker-ce
         # Github
         - gh
-        # Microsoft
-        - azure-cli

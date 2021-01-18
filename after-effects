@@ -302,18 +302,12 @@ function _init_script_variables()
   case "${architecture}" in
     amd64)          _log_debug "Architecture is 64 bit.";
                     readonly ARCH="amd64";
-                    readonly YQ_BIN_ARCH="amd64";
-                    ;;
-    i386)           _log_debug "Architecture is 32 bit.";
-                    _log_and_exit "i386 is no longer Supported!" "11"
                     ;;
     armhf)          _log_debug "Running on ARM CPU with HW Floating point Processor";
                     readonly ARCH="armhf";
-                    readonly YQ_BIN_ARCH="arm";
                     ;;
-    arm64)           _log_debug "This is an ARM 64. Please be advised that not all repositories support this arch.";
+    arm64)           _log_debug "This is an ARM64. Please be advised that not all repositories support this arch.";
                     readonly ARCH="arm64";
-                    readonly YQ_BIN_ARCH="arm";
                     ;;
     * )             _log_error "Sorry! This architecture is not supported by this script!"
                     _log_and_exit "Unsupported Architecture. $(architecture)" "11"
@@ -325,6 +319,13 @@ function _init_script_variables()
 
   # etc sources list dir
   readonly SOURCES_FILE_DIR=/etc/apt/sources.list.d
+
+  # Trusted keys
+  if [[ -v  ${TRUSTED_KEYRINGS_DIR}  ]]; then
+    _log_and_exit "Reserved variable (TRUSTED_KEYRINGS_DIR) is set!" "66"
+  else
+    readonly TRUSTED_KEYRINGS_DIR=/etc/apt/trusted.gpg.d
+  fi
 
   # Ping URL
   readonly PING_URL="http://connectivitycheck.gstatic.com/generate_204"
@@ -437,7 +438,7 @@ function _check_dependencies()
   local dependencies=("$@")
   local dependency_check_failed_count dependency
   dependency_check_failed_count=0;
-  _log_notice "Checking dependencies"
+  _log_info "Checking dependencies"
   for dependency in "${dependencies[@]}"; do
     if command -v "$dependency" > /dev/null; then
       _log_property "${dependency}" "INSTALLED"
@@ -562,7 +563,7 @@ function _fix_ubuntu_derivatives()
                                             readonly enable_ppa="true";
                                             _log_success "Changed codename to $code_name"
                                             ;;
-      # Ubuntu 20.04 and its derivatives
+      # Ubuntu 20.04 and its derivatives (Current Ubuntu LTS release)
       focal )                               readonly python2_disabled="true";
                                             readonly enable_ppa="true";
                                             readonly distro_name="ubuntu";
@@ -625,13 +626,12 @@ function _test_internet_connection ()
 {
   # Function to check internet connection
   _log_info "Checking connectivity"
-  if wget --tries=2 --timeout=10 "$PING_URL" -O /tmp/ae/testinternet &>/dev/null 2>&1; then
+  if wget --tries=2 --timeout=10 "$PING_URL" -O /dev/null &>/dev/null 2>&1; then
     rm -f /tmp/ae/testinternet
     _log_success "Connected!"
   else
     _log_error "You are not connected to the Internet!. "
     _log_error "Please check your Internet connection and try again."
-    rm -f /tmp/ae/testinternet || _log_debug "Failed to remove temp network connectivity resp file"
     _log_and_exit "No internet connection!" "14"
   fi
 }
@@ -1252,7 +1252,7 @@ function add_repositories()
         --file-prefix "spotify" \
         --key-url https://download.spotify.com/debian/pubkey_0D811D58.gpg
 
-      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/spotify.gpg] http://repository.spotify.com stable non-free #Spotify" > ${SOURCES_FILE_DIR}/spotify.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/spotify.gpg] http://repository.spotify.com stable non-free #Spotify" > ${SOURCES_FILE_DIR}/spotify.list; then
         _log_success "OK"
       else
         _log_error "Adding Spotify Repository Failed"
@@ -1270,7 +1270,7 @@ function add_repositories()
         --file-prefix "skype" \
         --key-url https://repo.skype.com/data/SKYPE-GPG-KEY
 
-      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/skype.gpg] https://repo.skype.com/deb stable main #Skype" > $SOURCES_FILE_DIR/skype-stable.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/skype.gpg] https://repo.skype.com/deb stable main #Skype" > $SOURCES_FILE_DIR/skype-stable.list; then
         _log_success "OK"
       else
         _log_error "Adding Skype for linux repository failed"
@@ -1287,7 +1287,7 @@ function add_repositories()
         --file-prefix "signal-desktop" \
         --key-url https://updates.signal.org/desktop/apt/keys.asc
 
-      if echo "deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop.gpg] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/signal-desktop.list; then
+      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/signal-desktop.gpg] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/signal-desktop.list; then
         _log_success "OK"
       else
         _log_error "Failed to addd Signal for desktop repository!"
@@ -1362,7 +1362,7 @@ function add_repositories()
         __add_repo_keys --format "asc" \
           --file-prefix "wine-hq" \
           --key-url https://dl.winehq.org/wine-builds/winehq.key
-        if echo "deb [signed-by=/usr/share/keyrings/wine-hq.gpg] https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list; then
+        if echo "deb [signed-by=${TRUSTED_KEYRINGS_DIR}/wine-hq.gpg] https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list; then
           _log_success "OK"
         else
           _log_error "Adding WineHQ repository failed"
@@ -1391,7 +1391,7 @@ function add_repositories()
 
   if [ "$add_gcp_repo" == "true" ]; then
     _log_info "Google-Cloud-SDK"
-    if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/google-cloud.gpg] http://packages.cloud.google.com/apt cloud-sdk main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list; then
+    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/google-cloud.gpg] http://packages.cloud.google.com/apt cloud-sdk main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list; then
       _log_success "OK"
     else
       _log_error "Adding Google Cloud SDK Repository failed"
@@ -1404,7 +1404,7 @@ function add_repositories()
 
     if [[ $ARCH == "amd64" ]]; then
       _log_info "GCSFUSE"
-      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/google-cloud.gpg] http://packages.cloud.google.com/apt gcsfuse-${code_name} main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/google-cloud.gpg] http://packages.cloud.google.com/apt gcsfuse-${code_name} main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list; then
         _log_success "OK"
       else
         _log_error "Adding GCSFUSE Repository failed"
@@ -1432,7 +1432,7 @@ function add_repositories()
 
     _log_info "VSCode"
     if [[ ${ARCH} == "amd64" ]]; then
-      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list; then
         _log_success "OK"
       else
         _log_error "Failed to addd VSCode repository!"
@@ -1451,14 +1451,17 @@ function add_repositories()
 
   # Azure cli
   if [[ ${add_azurecli_repo} == "true"  ]] ; then
-
-    _log_info "Azure CLI"
-    if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ ${code_name} main #Azure CLI" > ${SOURCES_FILE_DIR}/azure-cli.list; then
-      _log_success "OK"
+    if [[ ${ARCH} == "amd64" ]]; then
+      _log_info "Azure CLI"
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ ${code_name} main #Azure CLI" > ${SOURCES_FILE_DIR}/azure-cli.list; then
+        _log_success "OK"
+      else
+        _log_error "Failed to addd Azure CLI repository!"
+      fi
     else
-      _log_error "Failed to addd Azure CLI repository!"
+      _log_error "Azure CLI cannot be installed via package manager on this architecture."
+      _log_error "For more info, visit https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=script"
     fi
-
   else
     _log_debug "Skipped adding Azure CLI repositort"
   fi
@@ -1471,7 +1474,7 @@ function add_repositories()
       --key-url https://download.docker.com/linux/"${distro_name}"/gpg
     _log_debug "Adding Docker-CE sources .list"
 
-    if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/docker-ce.gpg] https://download.docker.com/linux/${distro_name}  ${code_name} stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list; then
+    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/docker-ce.gpg] https://download.docker.com/linux/${distro_name}  ${code_name} stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list; then
       _log_success "OK"
     else
       _log_error "Adding Docker-CE repository failed"
@@ -1507,7 +1510,7 @@ function add_repositories()
         --file-prefix "hashicorp" \
         --key-url https://apt.releases.hashicorp.com/gpg
 
-      if echo "deb [arch=amd64 signed-by=/usr/share/keyrings/hashicorp.gpg] https://apt.releases.hashicorp.com ${code_name} main#Hashicorp-Packages" > ${SOURCES_FILE_DIR}/hashicorp.list; then
+      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/hashicorp.gpg] https://apt.releases.hashicorp.com ${code_name} main#Hashicorp-Packages" > ${SOURCES_FILE_DIR}/hashicorp.list; then
         _log_success "OK"
       else
         _log_error "Failed to add hashicorp repository"
@@ -1532,7 +1535,7 @@ function add_repositories()
         --file-prefix "gvisor" \
         --key-url https://gvisor.dev/archive.key
 
-      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/gvisor.gpg] https://storage.googleapis.com/gvisor/releases release main #gVisor-Container-Runtime"  > ${SOURCES_FILE_DIR}/gvisor.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/gvisor.gpg] https://storage.googleapis.com/gvisor/releases release main #gVisor-Container-Runtime"  > ${SOURCES_FILE_DIR}/gvisor.list; then
         _log_success "OK"
       else
         _log_error "Adding gvisor repository failed!"
@@ -1547,7 +1550,6 @@ function add_repositories()
     # gVisor is not enabled
     _log_debug "Skipped addinng gVisor repository."
   fi
-
 
   # ROS2
   # Arch support varies on distro so lot of ugly elifs.
@@ -1578,7 +1580,7 @@ function add_repositories()
         --file-prefix "ros2" \
         --key-url https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc
 
-      if echo "deb [arch=$ARCH signed-by=/usr/share/keyrings/ros2.gpg]  http://packages.ros.org/ros2/ubuntu ${code_name} main #ROS-Repository" > $SOURCES_FILE_DIR/ros2-latest.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/ros2.gpg]  http://packages.ros.org/ros2/ubuntu ${code_name} main #ROS-Repository" > $SOURCES_FILE_DIR/ros2-latest.list; then
         _log_success "OK"
       else
         _log_error "Adding ROS repository failed!"
@@ -1753,21 +1755,21 @@ function __add_repo_keys()
     _log_and_exit "Internal Error in ${FUNCNAME[0]} APT key URL is invalid!" "19"
   fi
 
-  # check if /usr/share/keyrings is present
-  if [[ ! -d /usr/share/keyrings ]]; then
-    _log_error "/usr/share/keyrings/ is missing!!"
+  # check if ${TRUSTED_KEYRINGS_DIR} is present
+  if [[ ! -d ${TRUSTED_KEYRINGS_DIR} ]]; then
+    _log_error "${TRUSTED_KEYRINGS_DIR} is missing!!"
     _log_and_exit "Your installation of ${AE_DISTRO_NAME} is broken!" "64"
   fi
 
 
   # fetch key
-  if [[ -e /usr/share/keyrings/${key_file_prefix}.gpg ]]; then
+  if [[ -e ${TRUSTED_KEYRINGS_DIR}/${key_file_prefix}.gpg ]]; then
     _log_warn "GPG Key file ${key_file_prefix}.${key_format} already exists!"
     _log_warn "Script will *NOT* overwrite it to avoid deleting keys!"
   else
     _log_debug "Fetching key"
 
-    curl -sSfL -m 20 -o "/usr/share/keyrings/${key_file_prefix}.${key_format}" "${key_url}" |& _log_trace "${_phase_apt_key}"
+    curl -sSfL -m 20 -o "${TRUSTED_KEYRINGS_DIR}/${key_file_prefix}.${key_format}" "${key_url}" |& _log_trace "${_phase_apt_key}"
     exit_code="$?"
     if [[ $exit_code -eq 0 ]]; then
       _log_debug "OK"
@@ -1777,17 +1779,17 @@ function __add_repo_keys()
   fi
 
   # check if file has correct permissions
-  __fix_permissions "/usr/share/keyrings/${key_file_prefix}.${key_format}" "644"
+  __fix_permissions "${TRUSTED_KEYRINGS_DIR}/${key_file_prefix}.${key_format}" "644"
 
   # check if file needs to be converted
   if [[ ${key_format} == "asc" ]]; then
 
     _log_debug "Key is in ascii armored format. Converting it."
-    if [[ -e "/usr/share/keyrings/${key_file_prefix}.gpg" ]]; then
+    if [[ -e "${TRUSTED_KEYRINGS_DIR}/${key_file_prefix}.gpg" ]]; then
       _log_warn "Dearmored file already exists!"
       _log_warn "Script will *NOT* overwrite it to avoid deleting keys."
     else
-      gpg --dearmor --output "/usr/share/keyrings/${key_file_prefix}.gpg" "/usr/share/keyrings/${key_file_prefix}.asc" |& _log_trace "${_phase_apt_key}"
+      gpg --dearmor --output "${TRUSTED_KEYRINGS_DIR}/${key_file_prefix}.gpg" "${TRUSTED_KEYRINGS_DIR}/${key_file_prefix}.asc" |& _log_trace "${_phase_apt_key}"
       exit_code="$?"
       if [[ $exit_code -eq 0 ]]; then
         _log_debug "Successfully converted ascii armored GPG key file."
@@ -1797,7 +1799,7 @@ function __add_repo_keys()
     fi
 
     # check and fix permissions
-    __fix_permissions "/usr/share/keyrings/${key_file_prefix}.gpg" "644"
+    __fix_permissions "${TRUSTED_KEYRINGS_DIR}/${key_file_prefix}.gpg" "644"
 
   else
     _log_debug "No need to convert key file."
@@ -1894,7 +1896,7 @@ function purge_not_required()
       return;
     else
       if [ "$simulate_apt_install" == "true" ]; then
-        _log_warn "Purging packages will be simulated!!"
+        _log_warn "SIM - using --dry-run"
       apt-get -q -o=Dpkg::Use-Pty=0 -y remove --purge --dry-run "${parsed_purge_packages[@]}" |& _log_trace "${_phase_apt}"
       else
         apt-get -q -o=Dpkg::Use-Pty=0 -y purge "${parsed_purge_packages[@]}" |& _log_trace "${_phase_apt}"
@@ -1962,7 +1964,7 @@ function install_apps()
       _log_info "Installing $array packages"
       # Check if simulate is true
       if [ "$simulate_apt_install" == "true" ]; then
-        _log_warn "Simulating package installation."
+        _log_warn "SIM - Using --dry-run "
         apt-get -q -o=Dpkg::Use-Pty=0 -y install -s "${packages[@]}" | _log_trace "${_phase_apt}"
       else
         apt-get -q -o=Dpkg::Use-Pty=0 -y install "${packages[@]}" | _log_trace "${_phase_apt}"
@@ -2035,11 +2037,11 @@ function _install_pip_python()
 
       # Check if simulate flag is set
       if [ "$simulate_apt_install" == "true" ] && [ "$AE_INTERNAL_CI_MODE" != "true" ]; then
-        _log_warn "Simulating! No Dependencies will be installed!!"
+        _log_warn "SIM - skipped installing dependencies!!"
         # shellcheck disable=SC2086
         apt-get -q -o=Dpkg::Use-Pty=0 -y -s --no-install-recommends install "${dependency_packages[@]}" |& _log_trace "${_phase_apt}"
       elif [ "$simulate_apt_install" == "true" ] && [ "$AE_INTERNAL_CI_MODE" == "true" ]; then
-        _log_dev "This is CI disregarding --simulate flag"
+        _log_dev "CI mode enabled, Disregarding --simulate flag"
         apt-get -q -o=Dpkg::Use-Pty=0 -y --no-install-recommends install "${dependency_packages[@]}" |& _log_trace "${_phase_apt}"
       else
         # shellcheck disable=SC2086
@@ -2077,9 +2079,9 @@ function _install_pip_python()
     # I package list isn't empty proceed to install pip packages
     # Check if simulate is true & is not running on TRAVIS/CI.
     if [ "$simulate_apt_install" == "true" ] && [ "$AE_INTERNAL_CI_MODE" != "true" ]; then
-      _log_warn "PIP does not support simulated installs. Not performing install."
+      _log_warn "SIM - Skip installation"
     elif  [ "$simulate_apt_install" == "true" ] && [ "$AE_INTERNAL_CI_MODE" == "true" ]; then
-      _log_dev "This is CI disregarding --simulate flag!"
+      _log_dev "CI mode enabled, Disregarding --simulate flag!"
       $pip_command install -r "${requirements_file}" |& _log_trace "${_phase_pip}"
     else
       _log_debug "Installing requirements file ${requirements_file}"
@@ -2155,7 +2157,7 @@ function install_debs ()
     _log_property "Installing" "$deb_file_name" "1"
    # Check if simulate is true
    if [ "$simulate_apt_install" == "true" ]; then
-     _log_warn "Simulating $deb_file_name Installation!!"
+     _log_warn "SIM - $deb_file_name Installation!!"
      dpkg -i --dry-run "$deb_file_name" |& _log_trace "${_phase_deb}"
 
      _log_debug "Installing missing packages..."
@@ -2223,7 +2225,7 @@ function install_binaries ()
       _log_success "OK"
       _log_info "Installing  - $bin_name"
        if [ "$simulate_apt_install" == "true" ]; then
-         _log_warn "Skipping install"
+         _log_warn "SIM - Skipping install"
        else
         {
           cp -rf "/tmp/ae/${bin_name}" /usr/local/bin/"${bin_name}"
@@ -2270,7 +2272,7 @@ function __install_snaps()
       fi
 
       if [ "$simulate_apt_install" == "true" ]; then
-        _log_warn "Snaps do not support --dry-run, skipping installation"
+        _log_warn "SIM - skipping installation"
       else
         _log_debug "Options are ${snapd_options[*]}"
         if snap install "${snapd_options[@]}" "$index"  |& _log_trace "${_phase_snap}"  ; then
@@ -2289,17 +2291,19 @@ function install_snaps()
   local dependency_packages
   dependency_packages=(snapd)
 
+  _log_stage "Install snap packages (default confinement)"
+
   if [ "$simulate_apt_install" == "true" ]; then
-    _log_warn "Will not install dependencies required for installing snap packages"
+    _log_warn "SIM - Skipped installing dependencies!"
   else
     _install_dependencies "${dependency_packages[@]}"
   fi
 
-  _log_stage "Install snap packages"
+  _log_stage "Install snap packages (default confinement)"
   __install_snaps "normal"
-  _log_stage "Install classic snap packages"
+  _log_stage "Install snap packages (classic confinement)"
   __install_snaps "classic"
-  _log_stage "Install beta snap packages"
+  _log_stage "Install snap packages (beta)"
   __install_snaps "edge"
 
 }
@@ -2805,7 +2809,7 @@ function main()
   else
     # We were not running in NX mode, and we are root.
     _init_logging
-    _log_success "Running as root"
+    _log_success "OK! Running as root"
   fi
 
   # Init vars
@@ -2907,7 +2911,7 @@ function main()
   fi
 
   if [ "$bool_local_config" == "true" ] && [ "$bool_remote_yaml" == "true" ]; then
-    _log_and_exit "Cannot use local config (-c) with remote YAML (-R) Use one of them." "25"
+    _log_and_exit "Cannot use local config (-c) with remote YAML (-r) Use one of them." "25"
   fi
 
   if [ "$bool_local_config" == "true" ] && [ ! -f "$local_config_file" ]; then
