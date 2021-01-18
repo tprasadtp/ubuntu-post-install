@@ -17,6 +17,7 @@ config:
     vscode: true
     googlecloud: true
     signal: true
+    bazel: true
   flags:
     purge_enabled: true
 
@@ -76,7 +77,6 @@ config:
       other:
         - gnuradio
         - opensc
-        - scdaemon
         - virt-manager
         - virt-viewer
         - libvirt-daemon-system

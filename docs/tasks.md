@@ -24,7 +24,7 @@ This task can add the following repositories.
 |Hashicorp Tools(terraform, consul etc) | hashicorp
 |[gVisor container runtime][gvisor] | gvisor
 |[Azure CLI][azure-cli] | azurecli
-
+|Bazel | bazel
 
 
 ??? tip "Using `--fix` flag"
@@ -63,6 +63,7 @@ config:
     spotify: true
     vscode: true
     winehq: true
+    bazel: true
 ```
 
 !!! warning "Wine HQ  and Multiarch support"
@@ -146,27 +147,6 @@ config:
 !!! note "Note on file names in configuration"
     Please note that file will be saved with the name mentioned in the file and will be in your path.
 
-## Install python packages (via pip)
-
-This will install system wide python packages using pip. You can specify in YAML config under `config.install.python2` or `config.install.python3`
-- These follow similar configuration as packages files. One item per line. however you can specify version requirements as you would for requirements file.
-- Simulate flag will skip installing packages, unless `--internal-ci-mode` is used.
-
-Example configuration is given below.
-
-```yaml
-config:
-  install:
-    python2:
-      - docker-compose
-    python3:
-      - awscli
-
-```
-
-!!! warning
-    Some recent distributions do not support Python2.
-
 ## Purge Unwanted Packages
 
 This will purge Unwanted packages from the system.
@@ -208,8 +188,6 @@ This will perform Following actions. (In the following order)
 - Add PPAs
 - Install Apps
 - Install DEB files
-- Install Python 2 modules
-- Install Python 3 Modules
 - Install Static binaries
 
 This option will honor --autopilot and --simulate options as individual tasks would do.
@@ -235,8 +213,6 @@ config:
     # Whether to purge packages mentioned in config.purge
     purge: true
     debs: true
-    pip2: true
-    pip3: true
     binaries: true
 ```
 

@@ -4,7 +4,7 @@ The configuration file is pretty much self explanatory so, I am going to just po
 
 ```yaml
 # Install Config
-version: 5
+version: 6
 name: Polaris
 author: Prasad T
 # Configuration
@@ -23,8 +23,6 @@ config:
     # Whether to purge packages mentioned in config.purge key
     purge: true
     debs: true
-    pip2: true
-    pip3: true
     binaries: true
   # Repository Flags
   add_repo:

@@ -16,8 +16,8 @@ readonly SCRIPT=$(basename "$0")
 
 # SCRIPT METADATA
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-readonly REL_NAME="6.4.0"
-readonly REL_NUM=640
+readonly REL_NAME="7.0.0"
+readonly REL_NUM=700
 
 # Handle Use interrupt
 # trap ctrl-c and call ctrl_c()
@@ -38,7 +38,6 @@ function _init_printf_variables()
   readonly        _phase_deb="(DPKG)"
   readonly        _phase_apt="(APT)"
   readonly    _phase_apt_key="(KEYS)"
-  readonly        _phase_pip="(PIP)"
   readonly       _phase_snap="(SNAP)"
 
   # Log Premitives
@@ -738,46 +737,40 @@ function _version_checks ()
   # Allows to deprecate old version as it can be suggested.
   # Check if Version Checks is enabled. (Default is enabled)
   if [ "$bool_check_version" == "true" ]; then
-      _log_stage "Checking for updates"
-      _log_property "Version URL" "${api_version_url}"
-      if [ "$bool_custom_v_file" != "true" ]; then
-        rm -f "/tmp/ae/api-version.yml" || _log_debug "Deleting old version YAML failed."
-        readonly version_yaml_file="/tmp/ae/api-version.yml"
-        # Get response/file
-        _get_remote_file "$version_yaml_file" "$api_version_url"
-      else
-        _log_dev "Using custom version info file $custom_v_file"
-        readonly version_yaml_file="$custom_v_file"
-      fi
+    _log_stage "Checking for updates"
+    _log_property "Version URL" "${api_version_url}"
+    rm -f "/tmp/ae/api-version.yml" || _log_debug "Deleting old version YAML failed."
 
-      # Parse YAML to variables
-      eval "$(parse_yaml "$version_yaml_file")"
-      # Assign them to local variables as sometimes bash if does not handle array elements very well.
-      local api_rel_num="${version__number[0]}"
+    # Get response/file
+    _get_remote_file /tmp/ae/api-version.yml "$api_version_url"
 
-      # Assign Statistics reporting flag and endpoint to Global variables.
-      # Debug Info
-      _log_property "Version (API)" "${api_rel_num}"
-      _log_property "Version Name(API)" "${version__name[0]}"
+    # Parse YAML to variables
+    eval "$(parse_yaml /tmp/ae/api-version.yml)"
+    # Assign them to local variables as sometimes bash if does not handle array elements very well.
+    local api_rel_num="${version__number[0]}"
 
-      # If release number is higher than one in the script throw error & ask to update.
-      if [[ $api_rel_num -gt $REL_NUM ]]; then
-        _log_error "A newer version is available."
-        _log_error "Please download latest version and try again."
-        _log_notice "Latest available version is ${version__name[0]}-${api_rel_num}."
-        _log_and_exit "You can disable version checks by passing --skip-version-check" "24"
-      elif [[ $api_rel_num -eq $REL_NUM ]]; then
-        _log_success "Running the latest version!"
-      elif [[ $api_rel_num -lt $REL_NUM ]]; then
-        _log_dev "You running development version ${REL_NAME}(${REL_NUM})."
-        _log_dev "Latest stable version is ${version__name[0]}(${api_rel_num})."
-      fi
+    # Assign Statistics reporting flag and endpoint to Global variables.
+    # Debug Info
+    _log_property "Version (API)" "${api_rel_num}"
+    _log_property "Version Name(API)" "${version__name[0]}"
+
+    # If release number is higher than one in the script throw error & ask to update.
+    if [[ $api_rel_num -gt $REL_NUM ]]; then
+      _log_error "A newer version is available."
+      _log_error "Please download latest version and try again."
+      _log_notice "Latest available version is ${version__name[0]}-${api_rel_num}."
+      _log_and_exit "You can disable version checks by passing --skip-version-check" "24"
+    elif [[ $api_rel_num -eq $REL_NUM ]]; then
+      _log_success "Running the latest version!"
+    elif [[ $api_rel_num -lt $REL_NUM ]]; then
+      _log_dev "You running development version ${REL_NAME}(${REL_NUM})."
+      _log_dev "Latest stable version is ${version__name[0]}(${api_rel_num})."
+    fi
 
   # If version checks have been disabled
   else
     _log_warn "Version checks have been disabled."
   fi
-  #sleep 5
 
 }
 
@@ -871,7 +864,6 @@ function _set_yaml_config()
   _check_bool "add_ros_repo" "${config__add_repo__ros[0]}"
   _check_bool "add_ros2_repo" "${config__add_repo__ros2[0]}"
 
-
   # DUO
   _check_bool "add_duo_repo" "${config__add_repo__duo[0]}"
 
@@ -880,7 +872,9 @@ function _set_yaml_config()
 
   _check_bool "add_hashicorp_repo" "${config__add_repo__hashicorp[0]}"
 
+  # Google Developer stuuff
   _check_bool "add_gvisor_repo" "${config__add_repo__gvisor[0]}"
+  _check_bool "add_bazel_repo" "${config__add_repo__bazel[0]}"
 
   _check_bool "add_azurecli_repo" "${config__add_repo__azurecli[0]}"
 
@@ -910,37 +904,22 @@ function _set_yaml_config()
   # Tasks Flags
   ##################################################################################
 
-  #ae_task_update="${config__tasks__update[0]}"
   _check_bool "ae_task_update" "${config__tasks__update[0]}"
 
-  #ae_task_upgrade="${config__tasks__upgrade[0]}"
   _check_bool "ae_task_upgrade" "${config__tasks__upgrade[0]}"
 
-  #ae_task_repo="${config__tasks__repo[0]}"
   _check_bool "ae_task_repo" "${config__tasks__repo[0]}"
 
-  #ae_task_ppa="${config__tasks__ppa[0]}"
   _check_bool "ae_task_ppa" "${config__tasks__ppa[0]}"
 
-  #ae_task_apt="${config__tasks__apt[0]}"
   _check_bool "ae_task_apt" "${config__tasks__apt[0]}"
 
-  #ae_task_debs="${config__tasks__debs[0]}"
   _check_bool "ae_task_debs" "${config__tasks__debs[0]}"
 
-  #ae_task_purge="${config__tasks__purge[0]}"
   _check_bool "ae_task_purge" "${config__tasks__purge[0]}"
 
-  #ae_task_pip2="${config__tasks__pip2[0]}"
-  _check_bool "ae_task_pip2" "${config__tasks__pip2[0]}"
-
-  #ae_task_pip3="${config__tasks__pip3[0]}"
-  _check_bool "ae_task_pip3" "${config__tasks__pip3[0]}"
-
-  # Binaries Install
   _check_bool "ae_task_bin" "${config__tasks__binaries[0]}"
 
-  # snap Packages
   _check_bool "ae_task_snaps" "${config__tasks__snaps[0]}"
 
 
@@ -980,7 +959,7 @@ function _set_yaml_config()
   #--------------------------------------------------------------------------------
   #                             Special list - Purge list
   #--------------------------------------------------------------------------------
-  # There is a special package list under key, config.purge or purge.list, which contains
+  # There is a special package list under key, config.purge, which contains
   # list of apt packages to be purged from the system if present.
   # Lets get em, shall we?
 
@@ -1011,13 +990,8 @@ function _set_yaml_config()
   declare -gar parsed_deb_files_list=("${config__install__debian_packages_[@]}")
 
   #--------------------------------------------------------------------------------
-  #                             Python Modules
+  #                             Static binaries
   #--------------------------------------------------------------------------------
-  # There are two keys under config.install.python(2/3) which contain Python 2 and Python 3
-  # Modules respectively. Please donot mix python 2 Modules with Python 3.
-
-  declare -gar parsed_pip2_packages=("${config__install__python2_[@]}")
-  declare -gar parsed_pip3_packages=("${config__install__python3_[@]}")
   declare -gar parsed_bin_packages=("${config__install__binaries_[@]}")
 
   #--------------------------------------------------------------------------------
@@ -1180,21 +1154,22 @@ function add_ppas()
   # Function Reads the file ${dir}/data/ppa.index and adds the ppa one by one.
   # Install dependencies required
   if [ "$bool_is_debian" != "true" ]; then
+    _log_info "Installing dependencies"
     _install_dependencies "${_ppa_dependencies[@]}"
 
-      for index in "${parsed_ppa_list[@]}"; do
-            _log_info "Setting up PPA - $index"
-            # Check for empty lines
-            if [ "$index" == "" ]; then
-              _log_debug "Found and empty entry, moving on to next..."
-              continue
-            fi
-            if add-apt-repository -y "$index" |& _log_trace "${_phase_ppa}" ; then
-              _log_success "Success!"
-            else
-              _log_error "Some error occured while adding $index.\n"
-            fi
-        done
+    for index in "${parsed_ppa_list[@]}"; do
+      _log_info "Setting up PPA - $index"
+      # Check for empty lines
+      if [ "$index" == "" ]; then
+        _log_debug "Found and empty entry, moving on to next..."
+        continue
+      fi
+      if add-apt-repository -y "$index" |& _log_trace "${_phase_ppa}" ; then
+        _log_success "Success!"
+      else
+        _log_error "Some error occured while adding $index.\n"
+      fi
+    done
   else
     _log_error "This is Debian. PPAs are not available."
   fi
@@ -1226,7 +1201,7 @@ function add_repositories()
     _log_warn "Google Chrome, Spotify, Mendeley, Signal, Wine and Duo for Unix are only supported on 64 Bit"
   else
 
-    _log_debug "Arch is 64 Bit Enable adding 64 bit repos."
+    _log_debug "Arch is 64 Bit. Enabled adding 64 bit repos."
     # 64 bit Only REPOS
     # Add Google Chrome
     if [ "$add_chrome_repo" == "true" ]; then
@@ -1521,6 +1496,27 @@ function add_repositories()
     fi
   else
     _log_debug "Skipped adding Hashicorp repository"
+  fi
+
+  # Bazel
+  if [[ ${add_bazel_repo} == "true" ]]; then
+    if [ "$ARCH" == "amd64" ]; then
+      _log_info "Bazel"
+      __add_repo_keys --format "asc" \
+        --file-prefix "bazel" \
+        --key-url https://bazel.build/bazel-release.pub.gpg
+
+      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/bazel.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8 #Bazel" > ${SOURCES_FILE_DIR}/bazel.list; then
+        _log_success "OK"
+      else
+        _log_error "Failed to add bazel repository"
+      fi
+
+    else
+      _log_error "Bazel repository is not supported on this architecture($ARCH)!"
+    fi
+  else
+    _log_debug "Skipped adding Bazel repository"
   fi
 
 
@@ -1988,140 +1984,6 @@ function install_apps()
 }
 
 
-function _install_pip_python()
-
-{
-  # Function to install python pip packages
-  # This function reads from File ${dir}/data/pip.list contains list python packages to be installed system wide.
-  # Arguments : Two
-  # ARG1 : pip package list
-  # ARG2 : 2 for python 2 and
-  #      : 3 for Python 3.
-
-  #Check args
-  if [ $# -lt 1 ] ||  [ $# -gt 1 ] ; then
-
-    _log_error "Incorrect number of arguments."
-    _log_and_exit "Internal Error. Invalid number of Arguments: $#." "19";
-  fi;
-
-
-  #Install starts here
-  local exit_status pip_command pip_loc python_packages requirements_file
-  local pip_ver="${1}"
-  _log_debug "Option: Install Python packages via PIP, Function name: _install_pip_python"
-  _log_debug "pip Version : ${pip_ver}"
-
-  # Check Python Version
-  case ${pip_ver} in
-    2 | python2 )   readonly pip_command="pip"
-                    dependency_packages=(python-pip python-setuptools)
-                    python_packages=("${parsed_pip2_packages[@]}")
-                    requirements_file="/tmp/ae/requirements2.txt"
-                    ;;
-    3 | python3 )   readonly pip_command="pip3";
-                    dependency_packages=(python3-pip python3-setuptools)
-                    python_packages=("${parsed_pip3_packages[@]}")
-                    requirements_file="/tmp/ae/requirements3.txt"
-                    ;;
-              * )   _log_and_exit "Internal Function Error. Arguments for python version." "19";;
-  esac
-
-  _log_info "Install dependencies for python: ${pip_ver}"
-
-  # Check if `python-pip` is installed, if not install it
-  if ! pip_loc="$(type -p "$pip_command")" || [[ -z $pip_loc ]]; then
-      _log_debug "$pip_command is not installed!${NC}"
-      update_repos;
-      _log_info "Install PIP dependencies"
-
-      # Check if simulate flag is set
-      if [ "$simulate_apt_install" == "true" ] && [ "$AE_INTERNAL_CI_MODE" != "true" ]; then
-        _log_warn "SIM - skipped installing dependencies!!"
-        # shellcheck disable=SC2086
-        apt-get -q -o=Dpkg::Use-Pty=0 -y -s --no-install-recommends install "${dependency_packages[@]}" |& _log_trace "${_phase_apt}"
-      elif [ "$simulate_apt_install" == "true" ] && [ "$AE_INTERNAL_CI_MODE" == "true" ]; then
-        _log_dev "CI mode enabled, Disregarding --simulate flag"
-        apt-get -q -o=Dpkg::Use-Pty=0 -y --no-install-recommends install "${dependency_packages[@]}" |& _log_trace "${_phase_apt}"
-      else
-        # shellcheck disable=SC2086
-        apt-get -q -o=Dpkg::Use-Pty=0 -y --no-install-recommends install "${dependency_packages[@]}" |& _log_trace "${_phase_apt}"
-      fi
-      exit_status=$?
-
-      if [[ $exit_status -eq 0 ]]; then
-        _log_success "Done"
-      else
-        _log_error "Something went wrong while installing dependencies."
-        _log_error "Python packages cannot be installed without dependencies."
-        _log_and_exit "Please see the log file for more details." "21"
-      fi
-
-      ## honor --keep-debs -k flags
-      _clean_apt_cache;
-
-  else
-    _log_success "dependencies already satisfied."
-  fi
-  # reset exit status
-  exit_status=0
-
-
-  _log_info "Installing python packages"
-  _log_debug "Requirements file: ${requirements_file}"
-   rm -f ${requirements_file} || _log_and_exit "Failed to remove ${requirements_file}" "38"
-   printf "%s\n" "${python_packages[@]}" > "${requirements_file}"
-  # Check if pip package list is empty
-  if [[ ${#python_packages[@]} -eq 0 ]]; then
-    _log_error "Package array is empty!";
-    return
-  else
-    # I package list isn't empty proceed to install pip packages
-    # Check if simulate is true & is not running on TRAVIS/CI.
-    if [ "$simulate_apt_install" == "true" ] && [ "$AE_INTERNAL_CI_MODE" != "true" ]; then
-      _log_warn "SIM - Skip installation"
-    elif  [ "$simulate_apt_install" == "true" ] && [ "$AE_INTERNAL_CI_MODE" == "true" ]; then
-      _log_dev "CI mode enabled, Disregarding --simulate flag!"
-      $pip_command install -r "${requirements_file}" |& _log_trace "${_phase_pip}"
-    else
-      _log_debug "Installing requirements file ${requirements_file}"
-      $pip_command install -r "${requirements_file}" |& _log_trace "${_phase_pip}"
-
-    fi
-    exit_status=$?
-    if [[ $exit_status -eq 0 ]]; then
-      _log_success "Done Python ${pip_ver}"
-    else
-      _log_error "Something went wrong while installing Python $pip_ver packages."
-      _log_error "Please see the log file for more details."
-    fi
-  fi
-
-
-}
-
-
-function install_pip_packages_2()
-{
-  _log_stage "Python 2 Packages"
-  # Install Python 2 packages
-  _log_info "Check if platform supports python2"
-  if [[ $python2_disabled == "true" ]]; then
-    _log_error "Python 2 is not supported on this platform!"
-  else
-    _log_success "Python 2 is still supported on your distro"
-    _install_pip_python "2"
-  fi
-}
-
-
-function install_pip_packages_3()
-{
-  # Install Python 2 packages
-  _log_stage "Python 3 Packages"
-  _install_pip_python "3"
-}
-
 
 function install_debs ()
 {
@@ -2291,7 +2153,7 @@ function install_snaps()
   local dependency_packages
   dependency_packages=(snapd)
 
-  _log_stage "Install snap packages (default confinement)"
+  _log_stage "Install snap packages"
 
   if [ "$simulate_apt_install" == "true" ]; then
     _log_warn "SIM - Skipped installing dependencies!"
@@ -2337,8 +2199,6 @@ function all_in_one()
   add_repositories;
   install_apps;
   install_debs;
-  install_pip_packages_2;
-  install_pip_packages_3;
   purge_not_required;
   install_binaries;
   install_snaps;
@@ -2400,8 +2260,6 @@ function _process_menu()
       ppas       'Add PPAs' \
       apps       'Install APT Packages' \
       debs       'Install DEB packages' \
-      pip2       'Install Python 2 packages via pip' \
-      pip3       'Install Python 3 packages via pip3' \
       bin        'Install static binaries' \
       snaps      'Install snap packages' \
       purge      'Purge not required packages' \
@@ -2427,6 +2285,7 @@ function _process_menu()
   gVisor container runtime     : $add_gvisor_repo
   Hashicorp Packages           : $add_hashicorp_repo
   Azure CLI                    : $add_azurecli_repo
+  Bazel                        : $add_bazel_repo
 
   Proceed with this action?
   "
@@ -2510,31 +2369,6 @@ function _process_menu()
   Proceed with this action?
   "
 
-  __menu_info_pip3="
-  This will download and install PIP3 packages. PIP packages will be
-  installed as system site packages. Its recommened NOT to use this
-  feature except for core system management packages. Either use packages
-  provided by system's package manager (It is easier to update them)
-  or use virtualenv or per user packages.
-  -------------------------------------------------------
-
-  Proceed with this action?
-  "
-
-  __menu_info_pip2="
-  This will download and install PIP2 packages. PIP packages will be
-  installed as system site packages. Its recommened NOT to use this
-  feature except for core system management packages. Either use packages
-  provided by system's package manager (It is easier to update them)
-  or use virtualenv or per user packages.
-
-  ::WARNING::
-  Python 2 may not be supported on recent distributions!
-  -------------------------------------------------------
-
-  Proceed with this action?
-  "
-
   __menu_info_snaps="
   Install snap packages. If your system did not come preinstalled with
   snapd, it will be installed. If you are running a DNS server on the
@@ -2583,10 +2417,6 @@ function _process_menu()
                   ;;
       debs)       _prompt_confirmation "${__menu_info_debs}" "install_debs"
                   ;;
-      pip2)       _prompt_confirmation "${__menu_info_pip2}" "install_pip_packages_2"
-                  ;;
-      pip3)       _prompt_confirmation "${__menu_info_pip3}" "install_pip_packages_3"
-                  ;;
       bin)        _prompt_confirmation "${__menu_info_bin}" "install_binaries"
                   ;;
       snaps)      _prompt_confirmation "${__menu_info_snaps}" "install_snaps"
@@ -2617,13 +2447,6 @@ function _ci_cloud_and_container_checks()
       _log_dev "Running on Azure Pipelines"
     elif [ "$GITHUB_ACTIONS" == "true" ]; then
       _log_dev "Running on GitHub Actions"
-    fi
-
-    # Internal checks
-    if [ "$AE_INTERNAL_CI_MODE" == "true" ]; then
-      _log_dev "Enforcing CI MODE"
-      _log_dev "This is to be used only while testing the script."
-      _log_dev "This will ignore --simulate flag in some cases!!"
     fi
 
     if grep -q Microsoft /proc/version; then
@@ -2863,17 +2686,10 @@ function main()
                               ;;
       -E | --skip-env-checks) readonly bool_skip_env_checks="true";;
       # Debug options
-      --version-file)         shift;
-                              readonly custom_v_file="${1}";
-                              readonly bool_custom_v_file="true"
-                              _log_dev "Using custom version yml file"
-                              ;;
       --debug)                AE_DEBUG=1;;
       --debug-ci)             AE_DEBUG=2;;
       --debug-trace)          AE_DEBUG=3;;
-      --debug-ci-mode)        readonly AE_INTERNAL_CI_MODE="true";
-                              # Toggle e
-                              set -eo pipefail;
+      --debug-ci-mode)        set -eo pipefail;
                               ;;
       -n | --nx)              :;;
       # The following arguments should always be used as the only arguments.
@@ -2918,10 +2734,6 @@ function main()
     _log_and_exit "Config file you have specified is not found or not accessible" "36"
   fi
 
-  if [ "$bool_custom_v_file" == "true" ] && [ ! -f "$custom_v_file" ]; then
-    _log_and_exit "Custom version info file you have specified is not found or not accessible" "36"
-  fi
-
   _log_success "OK"
 
 
@@ -2933,8 +2745,6 @@ function main()
   _fix_ubuntu_derivatives;
 
   # Get Remote Config File/s, check version & configure
-  _log_var "bool_custom_v_file"
-  _log_var "custom_v_file"
   _version_checks;
 
   _set_yaml_config;
@@ -2971,8 +2781,6 @@ function main()
     _autopilot_check_task_flag_and_run "$ae_task_ppa" "add_ppas"
     _autopilot_check_task_flag_and_run "$ae_task_apt" "install_apps"
     _autopilot_check_task_flag_and_run "$ae_task_debs" "install_debs"
-    _autopilot_check_task_flag_and_run "$ae_task_pip2" "install_pip_packages_2"
-    _autopilot_check_task_flag_and_run "$ae_task_pip3" "install_pip_packages_3"
     _autopilot_check_task_flag_and_run "$ae_task_purge" "purge_not_required"
     _autopilot_check_task_flag_and_run "$ae_task_bin" "install_binaries"
     _autopilot_check_task_flag_and_run "$ae_task_snaps" "install_snaps"

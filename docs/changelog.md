@@ -1,11 +1,14 @@
 # Changelog
 
-## 6.4.0
+## 7.0.0
 
 - **New-Repository** Google [gVisor](https://gvisor.dev) container runtime
 - **New-Repository** Azure CLI
 - **New-Repository** ROS2
+- **New Repository** [Bazel](https://bazel.build)
 - **CONFIG** Renamed Coogle chrome repo config from `google` to `chrome`
+- **REMOVED** Python packages (Due to low usage and you should not use either system package manger
+or virtual envirnments. Its almost always a not a good idea to install system level python packages via pip.
 - **REMOVED** Resetting repo features. This is because apt-key is deprecated
 and keys/sources might have been added by other tools or manually, and
 we do not want to change them.

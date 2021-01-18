@@ -2,5 +2,5 @@
 api: 3
 # Configuration
 version:
-  number: 640
-  name: 6.4.0
+  number: 700
+  name: 7.0.0

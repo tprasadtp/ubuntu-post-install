@@ -80,7 +80,6 @@ For a complete  list of supported distributions [click here](https://ae.prasadt.
 - [Install packages](https://ae.prasadt.com/tasks/#install-apt-packages)
 - [Add repositories](https://ae.prasadt.com/tasks/#add-repositories)
 - [Remove pre installed](https://ae.prasadt.com/tasks/#purge-unwanted-packages)
-- [Python 2 and Python 3 Packages](https://ae.prasadt.com/tasks/#install-python-packages-via-pip)
 - [Add PPAs](https://ae.prasadt.com/tasks/#add-personal-package-archives-ppa)
 - [Install deb packages](https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files)
 - [Install static binaries](https://ae.prasadt.com/tasks/#install-static-binaries)
@@ -106,8 +105,9 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 |Wine HQ | winehq
 |Github CLI | github
 |Hashicorp Tools(terraform, consul etc) | hashicorp
-|[gVisor container runtime][gvisor] | gvisor
-|[Azure CLI][azure-cli] | azurecli
+|[gVisor][] | gvisor
+|[Azure CLI][] | azurecli
+|[Bazel][] | bazel
 
 ## Issues & Help
 
@@ -145,5 +145,7 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [gpl-badge]: https://img.shields.io/badge/License-GPLv3-ff69b4
 [license]: https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE
 
-[gvisor]: https://gvisor.dev
-[azure-cli]: https://github.com/Azure/azure-cli
+
+[gVisor]: https://gvisor.dev
+[Azure CLI]: https://github.com/Azure/azure-cli
+[Bazel]: https://bazel.build
