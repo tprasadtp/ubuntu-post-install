@@ -23,13 +23,14 @@ config:
   # Repository Flags
   add_repo:
     azurecli: true
-    docker: true
-    duo: true
-    gcsfuse: true
-    gvisor: true
-    github: true
+    bazel: true
     chrome: true
+    docker: true
+    edge: true
+    gcsfuse: true
+    github: true
     googlecloud: true
+    gvisor: true
     hashicorp: true
     mendeley: false
     ros: true
@@ -39,7 +40,6 @@ config:
     spotify: true
     vscode: true
     winehq: true
-    bazel: true
 
   # Flags
   flags:
@@ -107,3 +107,5 @@ config:
         # - winehq-stable
         # Bazel
         - bazel
+        # Edge
+        - microsoft-edge-dev

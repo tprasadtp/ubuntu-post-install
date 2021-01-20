@@ -8,23 +8,22 @@ This task can add the following repositories.
 | Name                 | Key |
 |:---------------------|:--- |
 |Docker | docker
-|Duo Security Unix | duo
+|Github CLI | github
+|Google Bazel | bazel
 |Google Chrome | chrome
 |Google Cloud SDK | googlecloud
-|GCSFUSE | gcsfuse
+|Google gVisor | gvisor
+|Hashicorp (terraform, consul etc) | hashicorp
 |Mendeley desktop | mendeley
+|Micosoft Skype | skype
+|Micosoft Visual Studio code | vscode
+|Microsoft Azure CLI | azurecli
+|Microsoft Edge | edge
 |ROS | ros
 |ROS2 | ros2
 |Signal for desktop | signal
-|Skype | skype
 |Spotify Desktop | spotify
-|Visual Studio code | vscode
 |Wine HQ | winehq
-|Github CLI | github
-|Hashicorp Tools(terraform, consul etc) | hashicorp
-|[gVisor container runtime][gvisor] | gvisor
-|[Azure CLI][azure-cli] | azurecli
-|Bazel | bazel
 
 
 ??? tip "Using `--fix` flag"
@@ -48,11 +47,11 @@ config:
   add_repo:
     azurecli: true
     docker: true
-    duo: true
     gcsfuse: true
     gvisor: true
     github: true
     chrome: true
+    edge: true
     googlecloud: true
     hashicorp: true
     mendeley: false

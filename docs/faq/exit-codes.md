@@ -40,4 +40,5 @@
 | 62 | DEPRECATED_EXIT_CODE |
 | 63 | Undefined configuration |
 | 64 |Required basefiles/directories are missing (Your installation of Ubuntu is broken)
+| 66 |
 | 255 | Test Exit code |

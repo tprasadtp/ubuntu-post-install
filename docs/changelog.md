@@ -4,14 +4,16 @@
 
 - **New-Repository** Google [gVisor](https://gvisor.dev) container runtime
 - **New-Repository** Azure CLI
+- **New-Repository** Microsoft Edge
 - **New-Repository** ROS2
 - **New Repository** [Bazel](https://bazel.build)
 - **CONFIG** Renamed Coogle chrome repo config from `google` to `chrome`
-- **REMOVED** Python packages (Due to low usage and you should not use either system package manger
-or virtual envirnments. Its almost always a not a good idea to install system level python packages via pip.
+- **REMOVED** Python packages (Due to low usage and you should use either system package manger
+or virtual environments)
 - **REMOVED** Resetting repo features. This is because apt-key is deprecated
 and keys/sources might have been added by other tools or manually, and
-we do not want to change them.
+we do not want to change them without referring to thier key ids.
+- **REMOVED** Duo for linux repository. It requires additional configuration and is best handled via config mangemment.
 - **DISTRO** Drop support for Ubuntu Xenial(16.04) and other derivatives based on it.
 - _(Internal)_ Rework adding apt-keys as `apt-key` is deprecated.
 - _(Internal)_ Add arch checks for gcsfuse

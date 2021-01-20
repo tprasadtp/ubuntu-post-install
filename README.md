@@ -42,7 +42,7 @@ Sample configuration can be found in `config` directory.
 
 ## See in Action
 
-[![inaction](docs/assets/recordings/docker-no-snaps-focal.gif)](docs/assets/recordings/docker-no-snaps-focal.gif)
+[![inaction](docs/assets/recordings/docker-focal.gif)
 
 ## FAQ & Documentation
 
@@ -91,11 +91,16 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 
 | Name                 | Key |
 |:---------------------|:--- |
+|Azure CLI | azurecli
+|Bazel | bazel
 |Docker | docker
-|Duo Security for Unix | duo
+|Github CLI | github
 |Google Chrome | chrome
 |Google Cloud SDK | googlecloud
+|gVisor | gvisor
+|Hashicorp Tools(terraform, consul etc) | hashicorp
 |Mendeley desktop | mendeley
+|Microsoft Edge | edge
 |ROS | ros
 |ROS2 | ros2
 |Signal for desktop | signal
@@ -103,11 +108,6 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 |Spotify Desktop | spotify
 |Visual Studio code | vscode
 |Wine HQ | winehq
-|Github CLI | github
-|Hashicorp Tools(terraform, consul etc) | hashicorp
-|[gVisor][] | gvisor
-|[Azure CLI][] | azurecli
-|[Bazel][] | bazel
 
 ## Issues & Help
 

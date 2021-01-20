@@ -208,9 +208,9 @@ function _log_var()
   local var
   var="$1"
   if [[ $AE_DEBUG -gt 0 ]]; then
-    printf "${GRAY}  » %-18s - %-10s${NC}\n" "${var}" "${!var}"
+    printf "${GRAY}  » %-20s - %-10s${NC}\n" "${var}" "${!var}"
   fi
-  printf "$(date) ${_variable} %-18s - %-10s\n" "${var}" "${!var}" >> "$log_file"
+  printf "$(date) ${_variable} %-20s - %-10s\n" "${var}" "${!var}" >> "$log_file"
 }
 
 function  _log_trace()
@@ -248,7 +248,7 @@ function _log_property()
   desc="${1}"
   value="${2}"
   lvl="${3:-0}"
-  fmt="%-${4:-18}s"
+  fmt="%-${4:-20}s"
   __msg_string="$(printf "${fmt} : %s" "${desc}" "${value}")"
 
   case ${lvl} in
@@ -374,12 +374,6 @@ function _init_script_variables()
   # Set this to true if you don't want to pass -d every time
   bool_purge_pkgs="false"
 
-  # Say yes to all (No whiptail dialogs)
-  # Default is false
-  # Can be set to true and dialog boxes will be skipped if command line option -y is passed.
-  # Set this to true if you don't want to pass -y every time
-  bool_say_yes_to_all="false"
-
   # Keep Downloaded DEB packages
   bool_preserve_debs="false"
 
@@ -411,6 +405,7 @@ function _init_print_basic_info()
   _log_property "Version(Number)" "${REL_NAME}(${REL_NUM})" 1
 
   _log_property "SOURCES_FILE_DIR" "${SOURCES_FILE_DIR}"
+  _log_property "TRUSTED_KEYRINGS_DIR" "${TRUSTED_KEYRINGS_DIR}"
 
   #disable hist chars  so that I can print "!!"" properly
   histchars=
@@ -451,68 +446,6 @@ function _check_dependencies()
     _log_error "One or more dependencies not installed."
     _log_and_exit "Sorry! $SCRIPT cannot continue!" "1"
   fi
-}
-
-
-function __disp_sig_check_passed()
-{
-  # Displays message after --verify proves that the GPG signatures match
-  printf "${GREEN}✓ Signature verified!${NC}\n"
-}
-
-
-function __disp_sig_check_failed()
-{
-  # Displays failed GPG signature message
-  printf "${RED}✕ Oh No! Signature checks failed.${NC}\n"
-  printf "${RED}✕ File is either corrupt or has been modified.${NC}\n"
-}
-
-
-function verify_gpg_signature()
-{
-  # Verifies the file with its detached GPG signature.
-  # Assumes that you already have public key in your keyring.
-  # Assumes signature file is present at same location,
-  # with same name but with .sig or .gpg or .asc extension.
-  local sig_file
-  # Checks if file is present
-  if [ -f "${SCRIPT}.sig" ]; then
-    sig_file="${SCRIPT}.sig"
-  elif [ -f "${SCRIPT}.asc" ]; then
-    sig_file="${SCRIPT}.asc"
-  elif [ -f "${SCRIPT}.gpg" ]; then
-    sig_file="${SCRIPT}.gpg"
-  else
-    printf "${RED}✕ Signature file not found.${NC}\n"
-    exit 51;
-  fi
-
-  # Check for signature files
-  printf "⧗ Verifying GPG signature of file..\n"
-  printf "⧗ Signature File : ${sig_file}\n"
-  printf "⧗ Data File      : ${SCRIPT}\n"
-  # Checks for commands
-  if command -v gpg > /dev/null; then
-    if gpg --verify "${sig_file}" "${SCRIPT}" >/dev/null  2>&1; then
-      __disp_sig_check_passed
-    else
-      __disp_sig_check_failed
-      exit 50;
-    fi
-  elif command -v gpgv >/dev/null; then
-    if gpgv --keyring "$HOME/.gnupg/pubring.kbx" "${sig_file}" "${SCRIPT}" > /dev/null  2>&1; then
-      __disp_sig_check_passed
-    else
-      __disp_sig_check_failed
-      exit 50;
-    fi
-  else
-    printf "${RED}✕ Cannot perform verification. gpgv or gpg is not installed.${NC}\n"
-    printf "${RED}✕ This action requires gnugpg/gnupg2 or gpgv package.${NC}\n"
-    exit 1;
-  fi
-
 }
 
 
@@ -563,8 +496,7 @@ function _fix_ubuntu_derivatives()
                                             _log_success "Changed codename to $code_name"
                                             ;;
       # Ubuntu 20.04 and its derivatives (Current Ubuntu LTS release)
-      focal )                               readonly python2_disabled="true";
-                                            readonly enable_ppa="true";
+      focal )                               readonly enable_ppa="true";
                                             readonly distro_name="ubuntu";
                                             _log_info "This is latest LTS release of Ubuntu"
                                             _log_success "Keeping the codename as $code_name."
@@ -572,20 +504,17 @@ function _fix_ubuntu_derivatives()
       ulyana | ulyssa )                     _log_info "Release is Linux mint 20.X."
                                             _log_info "Setting additional repositories to follow Ubuntu 20.04."
                                             code_name="focal";
-                                            readonly python2_disabled="true";
                                             readonly distro_name="ubuntu";
                                             readonly enable_ppa="true";
                                             _log_success "Changed codename to $code_name"
                                             ;;
       # Current Ubuntu release (Can be non LTS)
       groovy)                               readonly enable_ppa="true";
-                                            readonly python2_disabled="true";
                                             readonly distro_name="ubuntu";
                                             _log_notice "Release is Ubuntu 20.10 Groovy Gorilla"
                                             ;;
       # Upcoming Ubuntu release
       hirsute)                              readonly enable_ppa="true";
-                                            readonly python2_disabled="true";
                                             readonly distro_name="ubuntu";
                                             _log_warn "Release is Ubuntu 21.04 Hirsute Hippo (Unstable!!)"
                                             ;;
@@ -625,8 +554,7 @@ function _test_internet_connection ()
 {
   # Function to check internet connection
   _log_info "Checking connectivity"
-  if wget --tries=2 --timeout=10 "$PING_URL" -O /dev/null &>/dev/null 2>&1; then
-    rm -f /tmp/ae/testinternet
+  if wget --tries=2 --timeout=10 "$PING_URL" -O /dev/null -o /dev/null; then
     _log_success "Connected!"
   else
     _log_error "You are not connected to the Internet!. "
@@ -830,53 +758,36 @@ function _set_yaml_config()
   # Repo flags
   #################################################################################
   _check_bool "add_docker_repo" "${config__add_repo__docker[0]}"
-  #add_docker_repo="${config__add_repo__docker[0]}"
 
   _check_bool "add_winehq_repo" "${config__add_repo__winehq[0]}"
-  #add_winehq_repo="${config__add_repo__winehq[0]}"
 
   _check_bool "add_mendeley_repo" "${config__add_repo__mendeley[0]}"
-  #add_mendeley_repo="${config__add_repo__mendeley[0]}"
-
-  _check_bool "add_gcp_repo" "${config__add_repo__googlecloud[0]}"
-  #add_gcp_repo="${config__add_repo__googlecloud[0]}"
-  _check_bool "add_gcsfuse_repo" "${config__add_repo__gcsfuse[0]}"
 
   _check_bool "add_spotify_repo" "${config__add_repo__spotify[0]}"
-  #add_spotify_repo="${config__add_repo__spotify[0]}"
-
-  _check_bool "add_skype_repo" "${config__add_repo__skype[0]}"
-  #add_skype_repo="${config__add_repo__skype[0]}"
-
-  _check_bool "add_vscode_repo" "${config__add_repo__vscode[0]}"
-  #add_vscode_repo="${config__add_repo__vscode[0]}"
-
-  _check_bool "add_insync_repo" "${config__add_repo__insync[0]}"
-  #add_insync_repo="${config__add_repo__insync[0]}"
 
   _check_bool "add_signal_repo" "${config__add_repo__signal[0]}"
-  #add_signal_repo="${config__add_repo__signal[0]}"
-
-  _check_bool "add_chrome_repo" "${config__add_repo__chrome[0]}"
-  #add_chrome_repo="${config__add_repo__chrome[0]}"
 
   # ROS
   _check_bool "add_ros_repo" "${config__add_repo__ros[0]}"
   _check_bool "add_ros2_repo" "${config__add_repo__ros2[0]}"
 
-  # DUO
-  _check_bool "add_duo_repo" "${config__add_repo__duo[0]}"
-
-  # Dev and cloud
+  # GitHub
   _check_bool "add_gh_repo" "${config__add_repo__github[0]}"
 
   _check_bool "add_hashicorp_repo" "${config__add_repo__hashicorp[0]}"
 
-  # Google Developer stuuff
+  # Google
   _check_bool "add_gvisor_repo" "${config__add_repo__gvisor[0]}"
   _check_bool "add_bazel_repo" "${config__add_repo__bazel[0]}"
+  _check_bool "add_gcp_repo" "${config__add_repo__googlecloud[0]}"
+  _check_bool "add_gcsfuse_repo" "${config__add_repo__gcsfuse[0]}"
+  _check_bool "add_chrome_repo" "${config__add_repo__chrome[0]}"
 
+  # Microsoft
   _check_bool "add_azurecli_repo" "${config__add_repo__azurecli[0]}"
+  _check_bool "add_edge_repo" "${config__add_repo__edge[0]}"
+  _check_bool "add_skype_repo" "${config__add_repo__skype[0]}"
+  _check_bool "add_vscode_repo" "${config__add_repo__vscode[0]}"
 
 
   # Other Script Flags
@@ -927,7 +838,7 @@ function _set_yaml_config()
   #                              Parse Arrays
   #################################################################################
   # Config file YAML has arrays of apt packages.
-  # We need to parse apt packages, ppa's, deb packages, python modules listed in yaml
+  # We need to parse apt packages, ppa's, deb packages, listed in yaml
   # to bash arrays.
 
   #--------------------------------------------------------------------------------
@@ -1288,46 +1199,6 @@ function add_repositories()
       _log_debug "Skipped adding Mendeley repository"
     fi
 
-    # Duo Unix
-    if [ "$add_duo_repo" == "true" ]; then
-      _log_info "Duo Security"
-      case "$code_name" in
-        focal)      duo_repo_url="https://pkg.duosecurity.com/Ubuntu focal main";
-                    duo_supported="true";
-                    ;;
-        bionic)     duo_repo_url="http://pkg.duosecurity.com/Ubuntu bionic main";
-                    duo_supported="true";
-                    ;;
-        stretch)    duo_repo_url="http://pkg.duosecurity.com/Debian stretch main";
-                    duo_supported="true";
-                    ;;
-        buster)     duo_repo_url="http://pkg.duosecurity.com/Debian buster main";
-                    duo_supported="true";
-                    ;;
-        *)          _log_warn "Only LTS/Stable versions of Ubuntu/Debian are suported."
-                    _log_warn "You are running Unsupported version : ${code_name}"
-                    ;;
-      esac
-      if [[ $duo_supported == "true" ]]; then
-        # Repo keys for duosecurity
-        _log_debug "Downloading GPG key"
-        wget -q https://duo.com/DUO-GPG-PUBLIC-KEY.asc  -O /tmp/ae/duosecurity.gpg >> "$log_file"
-        apt-key add /tmp/ae/duosecurity.gpg |& _log_trace "${_phase_apt_key}" \
-        || _log_error "Adding Duo Key Failed"
-
-        # Add repo
-        if echo "deb [arch=$ARCH] ${duo_repo_url} #Duo Security"  > ${SOURCES_FILE_DIR}/duo-security.list; then
-          _log_success "OK"
-        else
-          _log_error "Adding Duo Key Failed"
-        fi
-
-      else
-        _log_error "Duo for Unix is not supported on this distribution!"
-      fi
-    else
-      _log_info "Duo Unix is set to false."
-    fi
 
     #Wine HQ
     if [ "$add_winehq_repo" == "true" ]; then
@@ -1354,19 +1225,20 @@ function add_repositories()
   # End if ARCH==64 Check
   fi
 
-  # Google Cloud SDK and GCS-FUSE
-  if [[ $add_gcp_repo == "true" ]] || ( [[ $add_gcsfuse_repo == "true" ]] && [[ $ARCH == "amd64" ]] ) ; then
-    _log_debug "Adding GCP keys"
+  # Google Cloud SDK
+  if [[ $add_gcp_repo == "true" ]] || ( [[ ${add_gcsfuse_repo} == "true" ]] && [[ ${ARCH} == "amd64" ]] ) ; then
+    _log_debug "Adding GCP packaging keys"
     __add_repo_keys --format "gpg" \
-      --file-prefix "google-cloud" \
+      --file-prefix "google-cloud-packaging" \
       --key-url https://packages.cloud.google.com/apt/doc/apt-key.gpg
   else
     _log_debug "Not adding Google cloud APT keys"
   fi
 
+  # Google Cloud SDK
   if [ "$add_gcp_repo" == "true" ]; then
     _log_info "Google-Cloud-SDK"
-    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/google-cloud.gpg] http://packages.cloud.google.com/apt cloud-sdk main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list; then
+    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/google-cloud-packaging.gpg] http://packages.cloud.google.com/apt cloud-sdk main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list; then
       _log_success "OK"
     else
       _log_error "Adding Google Cloud SDK Repository failed"
@@ -1375,17 +1247,18 @@ function add_repositories()
     _log_debug "Skipped adding Google Cloud SDK."
   fi
 
+  # GCSFUSE
   if [ "$add_gcsfuse_repo" == "true" ]; then
 
     if [[ $ARCH == "amd64" ]]; then
       _log_info "GCSFUSE"
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/google-cloud.gpg] http://packages.cloud.google.com/apt gcsfuse-${code_name} main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/google-cloud-packaging.gpg] http://packages.cloud.google.com/apt gcsfuse-${code_name} main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list; then
         _log_success "OK"
       else
-        _log_error "Adding GCSFUSE Repository failed"
+        _log_error "Adding GCSFUSE repository failed"
       fi
     else
-      _log_error "GCSFUSE is not supported on this architecture!($ARCH)"
+      _log_error "GCSFUSE is not supported on this architecture!"
     fi
 
   else
@@ -1393,7 +1266,7 @@ function add_repositories()
   fi
 
   # Microsoft Keys
-  if [[ $add_azurecli_repo == "true" ]] || ( [[ ${add_vscode_repo} == "true"  ]] &&  [[ $ARCH == "amd64" ]] ); then
+  if ( [[ $add_azurecli_repo == "true" ]] || [[ ${add_vscode_repo} == "true"  ]] || [[ ${add_edge_repo} == "true"  ]]  ) &&  [[ $ARCH == "amd64" ]]; then
     _log_debug "Adding Microsoft keys."
     __add_repo_keys --format "asc" \
       --file-prefix "microsoft" \
@@ -1404,7 +1277,6 @@ function add_repositories()
 
   # VSCode
   if [[ ${add_vscode_repo} == "true"  ]]; then
-
     _log_info "VSCode"
     if [[ ${ARCH} == "amd64" ]]; then
       if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list; then
@@ -1416,7 +1288,6 @@ function add_repositories()
       _log_error "VSCode repositories are not supported on this architecture!($ARCH)"
       _log_error "BUT debian and snap packaages are AVAILABLE from Microsoft."
       _log_error "Either install VSCode via snaps or deb packages, script supports BOTH."
-      _log_error "Please note that in doing so you may NOT receive updates automatically."
       _log_error "Visit https://code.visualstudio.com/#alt-downloads"
     fi
 
@@ -1438,8 +1309,26 @@ function add_repositories()
       _log_error "For more info, visit https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=script"
     fi
   else
-    _log_debug "Skipped adding Azure CLI repositort"
+    _log_debug "Skipped adding Azure CLI repository"
   fi
+
+  # Microsoft Edge
+  if [[ ${add_edge_repo} == "true"  ]] ; then
+    if [[ ${ARCH} == "amd64" ]]; then
+      _log_info "Microsoft Edge"
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main #Microsoft Edge" > ${SOURCES_FILE_DIR}/microsoft-edge.list; then
+        _log_success "OK"
+      else
+        _log_error "Failed to addd Microsoft Edge repository!"
+      fi
+    else
+      _log_error "Microsoft Edge is not supported on this architecture($ARCH)!"
+    fi
+  else
+    _log_debug "Skipped adding Microsoft Edge repository"
+  fi
+
+
 
   # Docker CE
   if [ "$add_docker_repo" == "true" ]; then
@@ -1524,7 +1413,7 @@ function add_repositories()
   if [[ $add_gvisor_repo == "true" ]]; then
 
     if [[ $ARCH == "amd64" ]]; then
-      _log_info "gvisor"
+      _log_info "gVisor"
 
       # Adding gVisor Keys
       __add_repo_keys --format "asc" \
@@ -1534,7 +1423,7 @@ function add_repositories()
       if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/gvisor.gpg] https://storage.googleapis.com/gvisor/releases release main #gVisor-Container-Runtime"  > ${SOURCES_FILE_DIR}/gvisor.list; then
         _log_success "OK"
       else
-        _log_error "Adding gvisor repository failed!"
+        _log_error "Adding gVisor repository failed!"
       fi
 
     else
@@ -2217,7 +2106,7 @@ function _prompt_confirmation()
   COLUMNS=$(tput cols)
   LINES=$(tput lines)
   export COLUMNS LINES
-  if [ "$bool_say_yes_to_all" == "true" ]; then
+  if [[ ${AE_AUTOPILOT} == "true" ]]; then
     _log_debug "Yes to all: No confirm dialog to be displayed."
     _log_debug "Executing: $exec_function"
     $exec_function;
@@ -2267,25 +2156,26 @@ function _process_menu()
   __menu_info_add_repo="
   Settings for additional repositories is set as follows.
   -------------------------------------------------------
-  Google Chrome                : $add_chrome_repo
-  Google Cloud SDK             : $add_gcp_repo
-  GCS-Fuse                     : $add_gcsfuse_repo
-  Visual Studio Code           : $add_vscode_repo
-  Docker Community Edition     : $add_docker_repo
-  Insync                       : $add_insync_repo
-  Skype for Linux              : $add_skype_repo
-  Signal for Desktop           : $add_signal_repo
-  Mendeley                     : $add_mendeley_repo
-  ROS (Robot Operating System) : $add_ros_repo
-  ROS2                         : $add_ros2_repo
-  Duo Security for Unix        : $add_duo_repo
-  GitHub CLI (gh)              : $add_gh_repo
-  gVisor container runtime     : $add_gvisor_repo
-  Hashicorp Packages           : $add_hashicorp_repo
-  Azure CLI                    : $add_azurecli_repo
-  Bazel                        : $add_bazel_repo
 
-  Proceed with this action?
+  Docker Community Edition     : $add_docker_repo
+  GitHub CLI                   : $add_gh_repo
+  Google - Bazel               : $add_bazel_repo
+  Google - Chrome              : $add_chrome_repo
+  Google Cloud - SDK           : $add_gcp_repo
+  Google Cloud - GCSFUSE       : $add_gcsfuse_repo
+  Google Cloud - gVisor        : $add_gvisor_repo
+  Hashicorp Packages           : $add_hashicorp_repo
+  Mendeley for Desktop         : $add_mendeley_repo
+  Microsoft - Azure CLI        : $add_azurecli_repo
+  Microsoft - Edge             : $add_edge_repo
+  Microsoft - Skype            : $add_skype_repo
+  Microsoft - VSCode           : $add_vscode_repo
+  ROS                          : $add_ros_repo
+  ROS2                         : $add_ros2_repo
+  Signal for Desktop           : $add_signal_repo
+
+  Proceed with adding these repositories?
+
   "
 
   __menu_info_upgrade="
@@ -2348,8 +2238,6 @@ function _process_menu()
   - Add PPAs
   - Install Packages
   - Install DEB files
-  - Install Python 2 modules (if supported)
-  - Install Python 3 Modules
   - Install Static binaries
   - Install Snap Packages
   -------------------------------------------------------
@@ -2577,9 +2465,6 @@ function _process_non_root_options()
         -v | --version)     display_version;
                             exit 0;
                             ;;
-        -G | --verify)      verify_gpg_signature;
-                            exit 0;
-                            ;;
         -l | --delete-log)  delete_log_file;
                             ;;
         -h | --help)        display_usage;
@@ -2610,7 +2495,7 @@ function main()
 {
   _init_printf_variables
 
-  # Display Version Info and Verify signature options
+  # Non root options
   _process_non_root_options "$@"
 
   printf "${MAGENTA}➜ Initialize & run checks${NC}\n"
@@ -2693,7 +2578,6 @@ function main()
       # The following arguments should always be used as the only arguments.
       -l | --delete-logfile)  _log_and_exit "-l or --delete-logfile should be the only argument." "23";;
       -v | --version)         _log_and_exit "-v or --version should be the only argument." "23";;
-      -G | --verify)          _log_and_exit "--verify should be the only argument." "23";;
       -h | --help)            _log_and_exit "-h or --help should be the only argument." "23";;
        *)                     _log_and_exit "Invalid option: $1" "22";;
     esac
@@ -2701,8 +2585,21 @@ function main()
   done
 
 
-  # Initialize variables and checks
-  local after_effects_core_dependencies=(wget whiptail ping ps grep cut tr awk)
+  # Check dependencies
+  declare -ar after_effects_core_dependencies=(wget ping ps grep cut tr awk)
+
+  if [[ ${AE_AUTOPILOT} == "true" ]]; then
+    if command -v whiptail > /dev/null; then
+      _log_property "whiptail" "INSTALLED"
+    else
+      _log_property "whiptail" "NOT INSTALLED" "4"
+      _log_error "--autopilot is not enabled, but whitptail binary is not found!"
+      _log_and_exit "Missing dependency - whiptail" "1"
+    fi
+  else
+    _log_debug "whiptail is not requires as autopilot is active."
+  fi
+
   _check_dependencies "${after_effects_core_dependencies[@]}"
 
   _init_print_basic_info;
@@ -2769,7 +2666,6 @@ function main()
   # Autopilot
   _log_stage "Checking for Autopilot"
   if [[ ${AE_AUTOPILOT} == "true" ]]; then
-    bool_say_yes_to_all="true"
     _log_success "Autopilot is ENABLED"
     sleep 3;
     #_log_and_exit "Because I can" "255"

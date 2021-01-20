@@ -24,7 +24,6 @@ config:
   add_repo:
     azurecli: true
     docker: true
-    duo: true
     gcsfuse: true
     gvisor: true
     github: true
