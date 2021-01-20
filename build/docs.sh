@@ -8,16 +8,14 @@
 set -e pipefail
 
 # Build Static
-echo "Install dependencies"
-pip3 install --upgrade pip
-pip3 install mkdocs-material
-pip3 install \
-    mkdocs-minify-plugin>=0.3 \
-    mkdocs-redirects>=1.0
-mkdocs --version
-
 echo "Building Docs"
-mkdocs mkdocs build
+docker run \
+  --userns=host \
+  --workdir=/docs \
+  -v "$(pwd)":/docs squidfunk/mkdocs-material:6.2.4 \
+  build -v -s --config-file /docs/mkdocs.yml
+
+sudo chown -R "$USER" _site/
 
 echo "Copy Netlify Files"
 cp  ./netlify.toml ./_site/netlify.toml

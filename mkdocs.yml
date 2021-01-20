@@ -109,8 +109,7 @@ google_analytics:
   - auto
 
 plugins:
-  - search:
-      prebuild_index: true
+  - search
   - minify:
       minify_html: true
   # - git-revision-date-localized:
