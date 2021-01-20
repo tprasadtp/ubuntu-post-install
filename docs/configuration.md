@@ -14,8 +14,6 @@ USing`--autopilot` will run all the tasks specified in the YAML file. The order 
 - Add PPAs [if supported]
 - Install packages
 - Install DEB packages
-- Install Python2 Modules [If supported]
-- Install Python 3 Modules
 - Purge unwanted Packages
 - Install Snap packages
 

@@ -20,7 +20,6 @@ theme:
   name: material
   features:
     - navigation.instant
-    - toc.integrate
   icon:
     logo: material/book
     repo: fontawesome/brands/github-alt
@@ -90,20 +89,18 @@ markdown_extensions:
 # Page tree
 nav:
   - Home: index.md
+  - Options: clioptions.md
+  - Tasks: tasks.md
+  - Configuration: configuration.md
+  - Example: yaml.md
   - FAQ:
     - Dependencies: faq/dependencies.md
     - Distros: faq/distros.md
     - Errors: faq/errors.md
     - Exit Codes: faq/exit-codes.md
     - Debugging: faq/debug.md
-  - Options: clioptions.md
-  - Tasks: tasks.md
-  - Configuration: configuration.md
-  - Example Config: yaml.md
   - Testing: testing.md
-  - Screenshots: screenshots.md
-  - Changelog:
-    - changelog.md
+  - Changelog: changelog.md
   - License: license.md
 
 # Google Analytics
@@ -112,8 +109,7 @@ google_analytics:
   - auto
 
 plugins:
-  - search:
-      prebuild_index: true
+  - search
   - minify:
       minify_html: true
   # - git-revision-date-localized:

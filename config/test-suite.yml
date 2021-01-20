@@ -18,26 +18,29 @@ config:
     # Whether to purge packages mentioned in config.purge key
     purge: true
     debs: true
-    pip2: true
-    pip3: true
     binaries: true
     snaps: true
   # Repository Flags
   add_repo:
+    azurecli: true
+    bazel: true
+    chrome: true
     docker: true
-    duo: true
+    edge: true
     gcsfuse: true
     github: true
-    google: true
     googlecloud: true
+    gvisor: true
     hashicorp: true
     mendeley: false
     ros: true
+    ros2: true
     signal: true
     skype: true
     spotify: true
     vscode: true
     winehq: true
+    teams: true
 
   # Flags
   flags:
@@ -56,7 +59,7 @@ config:
     # Debian packages.deb files
     # CSV format
     debian_packages:
-      - https://github.com/sharkdp/bat/releases/download/v0.16.0/bat-musl_0.16.0_amd64.deb,bat.deb
+      - https://github.com/sharkdp/bat/releases/download/v0.17.1/bat_0.17.1_amd64.deb,bat.deb
     binaries:
       - https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/amd64/kubectl,kubectl
     snaps:
@@ -64,10 +67,6 @@ config:
         - htop
       classic:
         - hugo
-    python2:
-      - aws
-    python3:
-      - coloredlogs
     apt:
       # Admin related Stuff
       administration:
@@ -85,5 +84,31 @@ config:
       other:
         - less
       external:
+        # Docker
+        - docker-ce
+        # spotify
+        - spotify-client
+        # Github
         - gh
+        # Gvisor
+        - runsc
+        # Hashicorp
         - terraform
+        # Microsoft
+        - code
+        - azure-cli
+        # Google
+        - google-cloud-sdk
+        - google-chrome-stable
+        # Signal
+        - signal-desktop
+        # Skype
+        - skypeforlinux
+        # WineHQ
+        # - winehq-stable
+        # Bazel
+        - bazel
+        # Edge
+        - microsoft-edge-dev
+        # Teams
+        - teams

@@ -4,15 +4,16 @@ The configuration file is pretty much self explanatory so, I am going to just po
 
 ```yaml
 # Install Config
-version: 5
-name: Polaris
+# Install Config
+api: 2
+name: Minimal
 author: Prasad T
 # Configuration
 config:
   # Enabled Tasks
   tasks:
     update: true
-    upgrade: true
+    upgrade: false
     # Add Repos
     # individual repos flags are mentioned under config.add_repo key
     repo: true
@@ -23,26 +24,33 @@ config:
     # Whether to purge packages mentioned in config.purge key
     purge: true
     debs: true
-    pip2: true
-    pip3: true
     binaries: true
+    snaps: true
   # Repository Flags
   add_repo:
-    winehq: true
+    azurecli: true
+    bazel: true
+    chrome: true
     docker: true
-    mendeley: false
+    edge: true
+    gcsfuse: true
+    github: true
     googlecloud: true
+    gvisor: true
+    hashicorp: true
+    mendeley: false
+    ros: true
+    ros2: true
+    signal: true
+    skype: true
     spotify: true
     vscode: true
-    skype: true
-    signal: false
-    insync: true
-    google: true
+    winehq: true
+
   # Flags
   flags:
     purge_enabled: true
-    preserve_debs: true
-
+    preserve_debs: false
 
   # Packages to purge
   purge:
@@ -57,17 +65,9 @@ config:
   # Install components
   # APT Packages, Python Modules, Debian packages
   install:
-    # Python 2 Modules
-    # Not all distros support python 2
-    python2:
-      - docker-compose
-    # Python 3 Modules
-    python3:
-      - virtualenv
     # Debian packages:  .deb files
     # CSV format similar to lists
     debian_packages:
-      - https://atom-installer.github.com/v1.28.0/atom-amd64.deb,Atom-Editor.deb
       - https://download.teamviewer.com/download/teamviewer_i386.deb,Teamviewer.deb
     # Static Binaries which will be placed in /usr/local/bin
     # minikube, docker-compose, etc.
@@ -127,24 +127,11 @@ config:
       # Tools related to development.
       development:
         - curl
-        - spyder
-        - spyder3
         - git
         - shellcheck
         - ocl-icd-dev
-        - opencl-headers
-        - clinfo
-        - vainfo
-        - vdpauinfo
-        - ocl-icd-libopencl1
-        - ruby
-        - ruby-dev
-        - python-magic
         - putty
         - python3-pip
-        - python-dateutil
-        - python-pip-whl
-        - python-pip
       # Everything Else
       other:
         - gnome-online-miners
@@ -155,5 +142,8 @@ config:
         - code
         - google-cloud-sdk
         - docker-ce
+        - runsc
+        - azure-cli
+        - microsoft-edge-dev
 
 ```

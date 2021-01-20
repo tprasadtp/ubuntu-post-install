@@ -4,34 +4,33 @@
 
 This task can add the following repositories.
 
-
-| Name                 | Key |
-|:---------------------|:--- |
-|Docker | docker
-|Duo Security Unix | duo
-|Google Chrome & Google Earth | google
-|Google Cloud SDK | googlecloud
-|GCSFUSE | gcsfuse
-|Insync | insync
-|Mendeley desktop | mendeley
-|ROS | ros
-|Signal for desktop | signal
-|Skype | skype
-|Spotify Desktop | spotify
-|Visual Studio code | vscode
-|Wine HQ | winehq
-|Github CLI | github
-|Hashicorp Tools(terraform, consul etc) | hashicorp
+| Name                 | Key         | Packages                                                                 |
+| -------------------- | ----------- | ------------------------------------------------------------------------ |
+| Docker               | docker      | docker-ce, containerd.io, docker-ce-cli                                  |
+| Github - CLI         | github      | gh                                                                       |
+| Google - Bazel       | bazel       | bazel                                                                    |
+| Google - Chrome      | chrome      | google-chrome-stable, google-chrome-beta                                 |
+| Google - Cloud SDK   | googlecloud | google-cloud-sdk, kubectl, google-cloud-sdk-minikube, gogole-cloud-sdk-* |
+| Google - gVisor      | gvisor      | runsc                                                                    |
+| Hashicorp Tools      | hashicorp   | terraform, consul, nomad, vault, boundary, waypoint                      |
+| Mendeley desktop     | mendeley    | mendeleydesktop                                                          |
+| Microsoft - Edge     | edge        | microsoft-edge-dev                                                       |
+| Microsoft - Skype    | skype       | skypeforlinux                                                            |
+| Microsoft - VSCode   | vscode      | code, code-insiders, code-exploration                                    |
+| Microsoft -Azure CLI | azurecli    | azure-cli                                                                |
+| Microsoft Teams      | teams       | teams, teams-insiders                                                    |
+| ROS                  | ros         |                                                                          |
+| ROS2                 | ros2        |                                                                          |
+| Signal               | signal      | signal-desktop                                                           |
+| Spotify Client       | spotify     | spotify-client                                                           |
+| Wine HQ              | winehq      | winehq-stable, winehq-staging                                            |
 
 
 ??? tip "Using `--fix` flag"
     Please note that the above repositories are sometimes not updated for latest Ubuntu release and most certainly will not be available for upcoming release of Ubuntu(Alpha/Beta). It might take some time till the repositories are available for the latest release. Use -f or --fix command line option or --pre-release in case you are using a development version of Ubuntu to revert using latest available version of repositories (usually previous Ubuntu release or in case of Beta/Alpha latest stable release of Ubuntu). [For more info see command line options.](/clioptions/#fix-for-latest-ubuntu-releases)
 
-??? tip "Controlling which repository is added using config file"
-    You can set your YML file to decide which repository is added. Some repositories may no be supported on your architecture or distribution. Take a look at [config.yml](/api/yaml) for example. If you omit a value, it defaults to false **ALWAYS**. Do note that if you are using lists default values are different, they are mentioned in below.
-
 !!! warning "ROS Releases & Ubuntu/Debian versions"
-    - ROS repository only support certain Ubuntu/Debian distributions. You can find more info at [ROS-Wiki](http://wiki.ros.org/ROS/Installation)
+    - ROS repository only supports certain Ubuntu/Debian distributions. You can find more info at [ROS-Wiki](http://wiki.ros.org/ROS/Installation)
     - Though Ubuntu derivatives might work, they are not supported.
 
 Example yaml configuration snippet is given below.
@@ -46,32 +45,35 @@ config:
     repo: true
   # Repository Flags
   add_repo:
-    winehq: true
+    azurecli: true
     docker: true
-    mendeley: false
+    gcsfuse: true
+    gvisor: true
+    github: true
+    chrome: true
+    edge: true
     googlecloud: true
+    hashicorp: true
+    mendeley: false
+    ros: true
+    ros2: true
+    signal: true
+    skype: true
     spotify: true
     vscode: true
-    skype: true
-    signal: false
-    insync: true
-    github: true
-    google: true
+    winehq: true
+    bazel: true
 ```
 
-### Canonical partner repositories
-
-  Canonical partner repositories are not configured or enabled for derivatives of Ubuntu because thee might be some conflicts.
-
+!!! warning "Wine HQ  and Multiarch support"
+    To install i386 pacakges or packages which have i386 dependencies (eg. wine-stable), you MUST
+    enable foreign architectures BEFORE running this script!
 
 ## Add personal package archives (PPA)
 
 - Only one ppa entry per line (No comments or anything else anywhere in the file) in the format ppa:{author}/{ppa} for example `ppa:mozillateam/firefox-next` The file will be read and the PPAs will be added from the list.
 - Logs will  show entry in the format `[date and time] [  PPA-Logs  ] <log>`
 
-!!! warning
-
-    - PPAs are not supported on Debian.
 
 ## Install apt packages
 
@@ -144,27 +146,6 @@ config:
 !!! note "Note on file names in configuration"
     Please note that file will be saved with the name mentioned in the file and will be in your path.
 
-## Install python packages (via pip)
-
-This will install system wide python packages using pip. You can specify in YAML config under `config.install.python2` or `config.install.python3`
-- These follow similar configuration as packages files. One item per line. however you can specify version requirements as you would for requirements file.
-- Simulate flag will skip installing packages, unless `--internal-ci-mode` is used.
-
-Example configuration is given below.
-
-```yaml
-config:
-  install:
-    python2:
-      - docker-compose
-    python3:
-      - awscli
-
-```
-
-!!! warning
-    Some recent distributions do not support Python2.
-
 ## Purge Unwanted Packages
 
 This will purge Unwanted packages from the system.
@@ -174,16 +155,6 @@ This will purge Unwanted packages from the system.
 
 !!! warning
     It is necessary to pass command line argument `-d` or  set `config.flags.purge_enabled: true` in config.
-
-## Reset repositories / Purge PPAs
-
-- This will reset the repositories, and purge ppas added by this script.
-- This will **NOT** reset or remove repositories added by the DEB files.
-- Simulate option has no effect on this action and ppa-purge **WILL** downgrade packages if necessary.
-
-!!! bug "Scope of this function"
-    This will **NOT** remove PPAs or repositories you have added manually or those added while installing DEB files.
-    Additionally, this will not un-install packages installed from those repos and PPAs.
 
 ## Installing Snap packages
 
@@ -216,8 +187,6 @@ This will perform Following actions. (In the following order)
 - Add PPAs
 - Install Apps
 - Install DEB files
-- Install Python 2 modules
-- Install Python 3 Modules
 - Install Static binaries
 
 This option will honor --autopilot and --simulate options as individual tasks would do.
@@ -234,17 +203,15 @@ config:
     update: true
     upgrade: true
     # Add Repos
-    # individual repos flags are mentioned under config.add_repo key
+    # individual repos flags are mentioned under config.add_repo
     repo: true
     # Add PPAs
     ppa: true
     # APT Packages
     apt: true
-    # Whether to purge packages mentioned in config.purge key
+    # Whether to purge packages mentioned in config.purge
     purge: true
     debs: true
-    pip2: true
-    pip3: true
     binaries: true
 ```
 
@@ -255,3 +222,6 @@ A log file is generated containing all the output generated by the apt and other
 - This task will delete the log file `after-effects.log`.
 - Log file is located in the directory `logs` in folder which you ran thin script.
 - Sometimes errors might not be written to log file but displayed on screen and vice-versa.
+
+[gvisor]: https://gvisor.dev
+[azure-cli]: https://github.com/Azure/azure-cli

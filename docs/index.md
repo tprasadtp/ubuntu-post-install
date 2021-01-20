@@ -9,6 +9,7 @@ An Effortless & Simple post-installation script for Ubuntu, Linux Mint, Elementa
 [![netlify][netlify-badge]][netlify]
 [![version][version]][changelog]
 [![license][gpl-badge]][license]
+
 [![Bash](https://static.prasadt.com/logo64/bash.png)](https://ae.prasadt.com)
 
 This script is built for one purpose only. Automating post installation tasks on a fresh Ubuntu/Debian installation.
@@ -38,7 +39,7 @@ sudo ./after-effects -c <your config.yml>
 
 ## See in Action
 
-[![inaction](assets/images/in-action.gif)](assets/images/in-action.gif)
+![inaction](assets/recordings/ubuntu-focal.gif)
 
 ## Supported Distros
 

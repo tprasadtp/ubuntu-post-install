@@ -8,6 +8,7 @@ Effortless way to setup your fresh Ubuntu, Linux Mint and Debian installation.
 [![netlify][netlify-badge]][netlify]
 [![version][version]][changelog]
 [![license][gpl-badge]][license]
+![dl](https://img.shields.io/github/downloads/tprasadtp/ubuntu-post-install/total?logo=github&label=DL)
 
 ![Bash](https://static.prasadt.com/logo64/bash.png)
 
@@ -42,7 +43,7 @@ Sample configuration can be found in `config` directory.
 
 ## See in Action
 
-[![inaction](docs/assets/images/in-action.gif)](docs/assets/images/in-action.gif)
+![inaction](docs/assets/recordings/ubuntu-focal.gif)
 
 ## FAQ & Documentation
 
@@ -61,7 +62,6 @@ See /docs or visit [docs][docs]
 [![Ubuntu-Mate](https://static.prasadt.com/logo64/ubuntu-mate.png)](https://ubuntu-mate.org/)
 [![Ubuntu-Budgie](https://static.prasadt.com/logo64/ubuntu-budgie.png)](https://ubuntubudgie.org/)
 [![Ubuntu-Studio](https://static.prasadt.com/logo64/ubuntu-studio.png)](https://ubuntustudio.org/)
-[![Ubuntu-Gnome](https://static.prasadt.com/logo64/ubuntu-gnome.png)](https://ubuntugnome.org/)
 [![Linux-Mint](https://static.prasadt.com/logo64/linux-mint.png)](https://www.linuxmint.com/)
 [![Debian](https://static.prasadt.com/logo64/debian.png)](https://www.debian.org/)
 [![Elementary-OS](https://static.prasadt.com/logo64/elementary-os.png)](https://elementary.io/)
@@ -81,7 +81,6 @@ For a complete  list of supported distributions [click here](https://ae.prasadt.
 - [Install packages](https://ae.prasadt.com/tasks/#install-apt-packages)
 - [Add repositories](https://ae.prasadt.com/tasks/#add-repositories)
 - [Remove pre installed](https://ae.prasadt.com/tasks/#purge-unwanted-packages)
-- [Python 2 and Python 3 Packages](https://ae.prasadt.com/tasks/#install-python-packages-via-pip)
 - [Add PPAs](https://ae.prasadt.com/tasks/#add-personal-package-archives-ppa)
 - [Install deb packages](https://ae.prasadt.com/tasks/#install-debian-package-archives-deb-files)
 - [Install static binaries](https://ae.prasadt.com/tasks/#install-static-binaries)
@@ -91,22 +90,26 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 
 ## Supported External repositories
 
-| Name                 | Key |
-|:---------------------|:--- |
-|Docker | docker
-|Duo Security Unix | duo
-|Google Chrome & Google Earth | google
-|Google Cloud SDK | googlecloud
-|Insync | insync
-|Mendeley desktop | mendeley
-|ROS | ros
-|Signal for desktop | signal
-|Skype | skype
-|Spotify Desktop | spotify
-|Visual Studio code | vscode
-|Wine HQ | winehq
-|Github CLI | github
-|Hashicorp Tools(terraform, consul etc) | hashicorp
+| Name                 | Key         | Packages                                                                 |
+| -------------------- | ----------- | ------------------------------------------------------------------------ |
+| Docker               | docker      | docker-ce, containerd.io, docker-ce-cli                                  |
+| Github - CLI         | github      | gh                                                                       |
+| Google - Bazel       | bazel       | bazel                                                                    |
+| Google - Chrome      | chrome      | google-chrome-stable, google-chrome-beta                                 |
+| Google - Cloud SDK   | googlecloud | google-cloud-sdk, kubectl, google-cloud-sdk-minikube, google-cloud-sdk-* |
+| Google - gVisor      | gvisor      | runsc                                                                    |
+| Hashicorp Tools      | hashicorp   | terraform, consul, nomad, vault, boundary, waypoint                      |
+| Mendeley desktop     | mendeley    | mendeleydesktop                                                          |
+| Microsoft - Edge     | edge        | microsoft-edge-dev                                                       |
+| Microsoft - Skype    | skype       | skypeforlinux                                                            |
+| Microsoft - VSCode   | vscode      | code, code-insiders, code-exploration                                    |
+| Microsoft -Azure CLI | azurecli    | azure-cli                                                                |
+| Microsoft Teams      | teams       | teams, teams-insiders                                                    |
+| ROS                  | ros         |                                                                          |
+| ROS2                 | ros2        |                                                                          |
+| Signal               | signal      | signal-desktop                                                           |
+| Spotify Client       | spotify     | spotify-client                                                           |
+| Wine HQ              | winehq      | winehq-stable, winehq-staging                                            |
 
 ## Issues & Help
 
@@ -143,3 +146,8 @@ See [Contributing and forks](/CONTRIBUTING.md)
 
 [gpl-badge]: https://img.shields.io/badge/License-GPLv3-ff69b4
 [license]: https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE
+
+
+[gVisor]: https://gvisor.dev
+[Azure CLI]: https://github.com/Azure/azure-cli
+[Bazel]: https://bazel.build

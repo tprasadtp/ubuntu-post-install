@@ -11,13 +11,12 @@ The script depends on following utilities which are usually present on a typical
 !!! tip "Install Dependencies"
 
     ```console
-    sudo apt-get install -y --no-install-recommends whiptail coreutils iputils-ping procps wget
+    sudo apt-get install -y --no-install-recommends whiptail coreutils procps wget
     ```
 
 - `whiptail`, to display the menu.
 - `coreutils` cut, tr, grep etc.
 - `wget`, to get deb packages check for updates etc.
-- `iputils-ping`, to test connectivity.
 - `procps` to check running processes
 - `awk`, `sed` to parse configs
 - bash (4.x)
@@ -41,7 +40,7 @@ Some tasks might install packages automatically, as required to perform certain 
     - python-pip (for python 2)
     - python3-pip (for python 3)
 
-    ### For resetting repositories
+    ### For removing PPAs
     - ppa-purge
 
     Any dependencies of these packages will also be installed.

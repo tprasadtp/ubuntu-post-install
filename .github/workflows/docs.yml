@@ -28,6 +28,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install Deps
+        run: |
+          sudo apt-get update || true
+          sudo apt-get install python3-pip python3-setuptools
+
       - name: Build Docs
         run: |
           ./build/docs.sh

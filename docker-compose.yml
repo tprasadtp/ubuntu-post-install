@@ -2,9 +2,10 @@ version: "2.4"
 services:
   site:
     image: squidfunk/mkdocs-material:6.2.4
+    runtime: runsc-kvm
+    userns_mode: "host"
     # it is important to specify dev address as 0.0.0.0 otherwise server
     # wont listen on required interfaces.
-    runtime: runsc
     command: -v serve --dev-addr=0.0.0.0:8000
     volumes:
       - ./docs:/docs/docs:ro

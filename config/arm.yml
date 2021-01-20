@@ -1,13 +1,13 @@
 # Install Config
 api: 2
-name: Polaris
+name: Minimal
 author: Prasad T
 # Configuration
 config:
   # Enabled Tasks
   tasks:
     update: true
-    upgrade: true
+    upgrade: false
     # Add Repos
     # individual repos flags are mentioned under config.add_repo key
     repo: true
@@ -18,83 +18,65 @@ config:
     # Whether to purge packages mentioned in config.purge key
     purge: true
     debs: true
-    pip2: true
-    pip3: true
     binaries: true
     snaps: yes
   # Repository Flags
   add_repo:
-    winehq: true
+    azurecli: true
     docker: true
-    mendeley: false
+    gcsfuse: true
+    gvisor: true
+    github: true
+    chrome: true
     googlecloud: true
-    gcsfuse: false
-    spotify: true
     hashicorp: true
-    vscode: true
-    skype: true
-    signal: true
-    insync: true
-    google: true
+    mendeley: false
     ros: true
-    duo: true
+    ros2: true
+    signal: true
+    skype: true
+    spotify: true
+    vscode: true
+    winehq: true
+    bazel: true
+    teams: true
+
   # Flags
   flags:
-  # Simulate flag will never be overridden by remote config.
     purge_enabled: true
     preserve_debs: false
 
   # Packages to purge
   purge:
     - gnome-mines
-    - gnome-sudoku
-    - aisleriot
-    - gnome-mahjongg
-  # Install components
-  # APT Packages, Python Modules, Debian packages
   install:
-    # Debian packages.deb files
-    # CSV format
-    # Static Binaries which will be placed in /usr/local/bin
-    # minikube, docker-compose, etc.
-    # Follows same pattern as Debian packages
-    # Name to be saved is second field
+    debian_packages:
+      - https://github.com/sharkdp/bat/releases/download/v0.17.1/bat_0.17.1_arm64.deb,bat.deb
     binaries:
       - https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/arm64/kubectl,kubectl
     snaps:
       normal:
-        # No Beta, No classic
         - htop
-    python2:
-      - future
-    python3:
-      - coloredlogs
+      classic:
+        - hugo
     apt:
       # Admin related Stuff
       administration:
-        - gparted
-        - synaptic
+        - curl
       # Security Related Stuff
       security:
-        - gufw
-        - opensc
-        - scdaemon
         - gnupg2
       # Productivity & Office Tools.
       productivity:
-        - evolution
-      # Multimedia Tools. Photo Editors Converting tools, plex etc.
-      multimedia:
-        - vlc
-        - cheese
+        - curl
       # Tools related to development.
       development:
-        - curl
-        - nano
-        - zsh
-        - make
+        - iputils-ping
       # Everything Else
-      # Which is conditional
-      # Packages supplied by external repositories & PPAs
-      # Dont Mix packages provided by distribution and PPAs
-      # Sometimes external repos and ppas fail, so better isolate it.
+      other:
+        - less
+      external:
+        # Docker
+        - docker-ce
+        # Github
+        - gh

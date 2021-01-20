@@ -58,7 +58,7 @@ Please do have a look at exceptions, as all tasks cannot be simulated.
 !!! snippet "Usage"
 
     ```console
-    ./after-effects --skip-version-check
+    ./after-effects --no-version-check
     ```
 
 Script will warn you and exit if you are not running latest version of the script. You can skip that by using the above option.
@@ -176,7 +176,7 @@ Default behavior is to clean apt cache and delete downloaded DEB packages.
     OR
 
     ```console
-    ./after-effects -R <URL to YAML file>
+    ./after-effects -r <URL to YAML file>
     ```
 
 You can specify YAML file to use. Script will fetch it and parse it.The file should be available without any interactive logins.
@@ -209,46 +209,61 @@ Autopilot mode is designed to run the script in a non interactive manner. Please
 
 Displays this help option.
 
-<pre>➜ ./after-effects -h
+<pre>./after-effects <font color="#A1EFE4">-h</font>
 
-<font color="#A6E22E">A Post Installation Script for Ubuntu/Debian/Linux Mint</font>
-Usage: <font color="#A6E22E"> [sudo] ./after-effects </font><font color="#FFD700">  [options]</font>
+A Post Installation Script for Ubuntu, Debian,
+Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.
+
+Usage: <font color="#D7FF87"> [sudo] ./after-effects </font><font color="#FF8700">  [options]</font>
 
 <font color="#FFD700">Non-Action options (can be run as non-root user)</font>
-<font color="#FFD700">-------------------------------------------------</font>
-[-v --version]     Display version info
-[-h --help]        Display this help message
+<font color="#FFD700">---------------------------------------------------------</font>
+[-v | --version]      Display version info.
+[-h | --help]         Display this help message.
 
 <font color="#FFD700">Configuration Options</font>
-<font color="#FFD700">-------------------------------------------------</font>
-[-c | --config-file]   Local yaml config file
-[-R | --remote-yaml]   Use config yaml hosted somewhere else
+<font color="#FFD700">---------------------------------------------------------</font>
+[-c | --config-file]  Local yaml config file.
+[-r | --remote-yaml]  Use config yaml from a URL.
 
-<font color="#66D9EF">The following options are &quot;action&quot; options and</font>
-<font color="#66D9EF">will make changes to your system depending on tasks chosen.</font>
-<font color="#66D9EF">-------------------------------------------------</font>
-[-d | --purge]         Enable Purging packages
-[-f | --fix]           Fix codenames for new releases
-[-p | --pre-release]   Same as --fix but for beta/alpha releases
-[--fix-mode-lts]       Similar to --fix but fallback to last LTS
-                       Should be used with --fix
-[-k | --keep-debs]     Do not invoke apt-clean &amp; do not delete
-                       downloaded deb packages
-[-l | --delete-log]    Delete logfile (./log/after-effects.log)
-[-s | --simulate]      Try not to make changes to system and use --dry-run
-                       Please read the documentation, to know its limits
-                       as everything cannot be simulated.
+<font color="#AFFFFF">The following options are &quot;action&quot; options and will</font>
+<font color="#AFFFFF">make changes to your system depending on tasks selcted.</font>
+<font color="#AFFFFF">---------------------------------------------------------</font>
+[-d | --purge]        Enable Purging packages
+[-f | --fix]          Fix codenames for new releases
+[-p | --pre-release]  Same as --fix but for beta/alpha
+                      releases of Ubuntu and Debian.
+[--fix-mode-lts]      Similar to --fix but fallback to
+                      last LTS. MUST be used with --fix.
+                      Only works on Ubuntu and Debian.
+[-k | --keep-debs]    Do not invoke apt-clean &amp; do not
+                      delete downloaded deb packages.
+[-l | --delete-log]   Deletes the logfile.
+                      (log/after-effects.log)
+[-s | --simulate]     Try not to make changes to system
+                      and use --dry-run Please read the
+                      documentation, to know its limits
+                      as everything cannot be simulated.
 
 <font color="#FFD700">Other Options</font>
-<font color="#FFD700">-------------------------------------------------</font>
-[-E | --skip-env-checks]     Skip some env checks
-[-V | --skip-version-check]  Skip checking for latest version
-[-A --autopilot]             Enables AUTOPILOT mode(No Prompts)
+<font color="#FFD700">---------------------------------------------------------</font>
+[--no-env-checks]     Skip some env checks.
+[--no-version-check]  Skip checking for latest version
+[-A | --autopilot]    Enables AUTOPILOT mode(No Prompts).
 
-<font color="#A6E22E">Links &amp; License</font>
-<font color="#A6E22E">-------------------------------------------------</font>
-GitHub          : <font color="#66D9EF">https://git.io/Jv08V</font>
-Documentation   : <font color="#66D9EF">https://ae.prasadt.com</font>
-* This script is licensed under GPLv3.
--------------------------------------------------
-</pre>
+<font color="#949494">Debugging Options</font>
+<font color="#949494">---------------------------------------------------------</font>
+<font color="#949494">[-nx | --nx]          Just process config but do not</font>
+<font color="#949494">                      make any changes to the system.</font>
+<font color="#949494">[--debug]             Prints debug logs.</font>
+<font color="#949494">[--debug-trace]       Prints trace level logs which</font>
+<font color="#949494">                      includes output from apt-get</font>
+<font color="#949494">                      and other commands.</font>
+
+<font color="#D7FF87">Documentation, License and Version Information</font>
+<font color="#D7FF87">---------------------------------------------------------</font>
+Version : <font color="#FF8700">6.4.0</font>
+GitHub  : <font color="#AFFFFF">https://git.io/ubuntu-post-install</font>
+Docs    : <font color="#AFFFFF">https://ae.prasadt.com</font>
+License : <font color="#FF8700">GPLv3</font>
+---------------------------------------------------------</pre>

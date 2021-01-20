@@ -1,6 +1,6 @@
 # Install Config
 api: 2
-name: Polaris
+name: Focal
 author: Prasad T
 # Configuration
 config:
@@ -8,80 +8,34 @@ config:
   tasks:
     update: true
     upgrade: true
-    # Add Repos
-    # individual repos flags are mentioned under config.add_repo key
     repo: true
-    # Add PPAs
-    ppa: true
-    # APT Packages
     apt: true
-    # Whether to purge packages mentioned in config.purge key
     purge: true
-    debs: true
-    pip2: false
-    pip3: false
-    binaries: true
-  # Repository Flags
   add_repo:
-    winehq: false
-    docker: true
-    mendeley: false
-    googlecloud: true
+    chrome: true
     spotify: true
     vscode: true
-    skype: true
-    signal: false
-    insync: true
-    google: true
-    ros: true
-  # Flags
+    googlecloud: true
+    signal: true
+    bazel: true
   flags:
-  # Simulate flag will never be overridden by remote config.
     purge_enabled: true
-    preserve_debs: false
 
-
-  # Packages to purge
   purge:
     - gnome-mines
     - gnome-sudoku
     - aisleriot
     - gnome-mahjongg
-  # PPAs
-  ppa:
-    - ppa:yubico/stable
-    - ppa:myriadrf/drivers
-  # Install components
-  # APT Packages, Python Modules, Debian packages
   install:
-    # Debian packages.deb files
-    # CSV format
-    debian_packages:
-      - https://atom-installer.github.com/v1.35.1/atom-amd64.deb,Atom-Editor.deb
-    # Static Binaries which will be placed in /usr/local/bin
-    # minikube, docker-compose, etc.
-    # Follows same pattern as Debian packages
-    # Name to be saved is second field
-    binaries:
-      - https://github.com/docker/compose/releases/download/1.23.0/docker-compose-linux-x86_64,docker-compose
-    python3:
-      - troposphere
-      - coloredlogs
-      - awacs
-      - awscli
     apt:
-      # Admin related Stuff
       administration:
         - htop
         - apt-xapian-index
         - gparted
         - synaptic
         - bleachbit
-        - tree
-      # Security Related Stuff
       security:
         - gufw
-      # Productivity & Office Tools.
       productivity:
         - pandoc-data
         - pandoc
@@ -90,7 +44,6 @@ config:
         - texlive-formats-extra
         - texlive-fonts-recommended
         - texlive-science
-        - texlive-generic-extra
         - texlive-xetex
         - texlive-luatex
         - texlive-pstricks
@@ -115,82 +68,37 @@ config:
         - cheese
       # Tools related to development.
       development:
+        - fish
         - curl
-        - spyder
-        - spyder3
         - git
         - shellcheck
-        - clinfo
-        - vainfo
-        - vdpauinfo
         - python3-pip
       # Everything Else
       other:
         - gnuradio
-        - gqrx-sdr
-        - gr-radar
-        - gr-radar-doc
         - opensc
-        - scdaemon
-        - zsh
-        - cmake
-        - libboost-all-dev
-        - swig
-        - g++
-        - ccache
-        - gcc-opt
-        - libi2c-dev
-        - libusb-1.0-0-dev
-        - libsqlite3-dev
-        - libwxgtk3.0-dev
-        - python-tk
-        - python3-tk
-        - python-soapysdr
-        - soapysdr-module-osmosdr
-        - soapysdr-module-rtlsdr
-        - soapysdr-tools
-        - soapysdr-module-lms7
-        - python-soapysdr
-        - soapysdr-tools
-        - soapysdr-module-rtlsdr
-        - python-soapysdr
-        - libsoapysdr-dev
-        - libsoapysdr-doc
         - virt-manager
         - virt-viewer
         - libvirt-daemon-system
         - lm-sensors
-        - imwheel
         - chrome-gnome-shell
         - gnome-logs
         - gnome-system-monitor
         - gnome-calculator
         - gnome-usage
         - seahorse-nautilus
-      # Packages supplied by external repositories & PPAs
-      # Dont Mix packages provided by distribution and PPAs
-      # Sometimes external repos and ppas fail, As the entire section would
-      # fail to install so better isolate it.
-      # Even though some are supplied by ubuntu repos, They were added only
-      # in 18.10. So they are kept here for now. Feel free to move them to
-      # Others.
+        - unrar
+        - gnome-tweak-tool
       external:
         - google-chrome-stable
         - spotify-client
+        - runsc
         - code
         - neofetch
         - google-cloud-sdk
-        - docker-ce
-        - chromium-browser
         - yubioath-desktop
         - yubikey-manager-qt
-        - libpam-u2f
         - yubikey-personalization-gui
         - yubikey-piv-manager
         - ubuntu-restricted-extras
         - ubuntu-restricted-addons
-        - unrar
-        - limesuite
-        - liblimesuite-dev
-        - limesuite-udev
-        - gnome-tweak-tool

@@ -19,7 +19,7 @@
 | 20 | Purge function is  called without -d flag |
 | 21 | Failed to install dependencies |
 | 22 | Invalid flag passed |
-| 23 | Invalid argument position. |
+| 23 | Invalid argument position |
 | 24 | Not Running the latest version |
 | 25 | Incompatible arguments |
 | 26 | Option is obsolete |
@@ -39,4 +39,6 @@
 | 61 | apt-get update failed with some warnings or errors |
 | 62 | DEPRECATED_EXIT_CODE |
 | 63 | Undefined configuration |
+| 64 |Required basefiles/directories are missing (Your installation of Ubuntu is broken)
+| 66 |
 | 255 | Test Exit code |
