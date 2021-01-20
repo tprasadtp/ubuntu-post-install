@@ -2,11 +2,12 @@
 
 ## 7.0.0
 
-- **New-Repository** Google [gVisor](https://gvisor.dev) container runtime
-- **New-Repository** Azure CLI
-- **New-Repository** Microsoft Edge
+- **New-Repository** Google - [gVisor](https://gvisor.dev)
+- **New Repository** Google - [Bazel](https://bazel.build)
+- **New-Repository** Microsoft - Azure CLI
+- **New-Repository** Microsoft - Edge
+- **New-Repository** Microsoft - Teams
 - **New-Repository** ROS2
-- **New Repository** [Bazel](https://bazel.build)
 - **CONFIG** Renamed Coogle chrome repo config from `google` to `chrome`
 - **REMOVED** Python packages (Due to low usage and you should use either system package manger
 or virtual environments)
@@ -18,7 +19,6 @@ we do not want to change them without referring to thier key ids.
 - _(Internal)_ Rework adding apt-keys as `apt-key` is deprecated.
 - _(Internal)_ Add arch checks for gcsfuse
 - _(Internal)_ Logging tweaks
-
 
 ## 6.3.0
 

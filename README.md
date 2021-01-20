@@ -8,6 +8,7 @@ Effortless way to setup your fresh Ubuntu, Linux Mint and Debian installation.
 [![netlify][netlify-badge]][netlify]
 [![version][version]][changelog]
 [![license][gpl-badge]][license]
+![dl](https://img.shields.io/github/downloads/tprasadtp/ubuntu-post-install/total?logo=github&label=DL)
 
 ![Bash](https://static.prasadt.com/logo64/bash.png)
 
@@ -42,7 +43,7 @@ Sample configuration can be found in `config` directory.
 
 ## See in Action
 
-[![inaction](docs/assets/recordings/docker-focal.gif)
+[![inaction](docs/assets/recordings/ubuntu-focal.gif)
 
 ## FAQ & Documentation
 
@@ -89,25 +90,26 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 
 ## Supported External repositories
 
-| Name                 | Key |
-|:---------------------|:--- |
-|Azure CLI | azurecli
-|Bazel | bazel
-|Docker | docker
-|Github CLI | github
-|Google Chrome | chrome
-|Google Cloud SDK | googlecloud
-|gVisor | gvisor
-|Hashicorp Tools(terraform, consul etc) | hashicorp
-|Mendeley desktop | mendeley
-|Microsoft Edge | edge
-|ROS | ros
-|ROS2 | ros2
-|Signal for desktop | signal
-|Skype | skype
-|Spotify Desktop | spotify
-|Visual Studio code | vscode
-|Wine HQ | winehq
+| Name                 | Key         | Packages                                                                 |
+| -------------------- | ----------- | ------------------------------------------------------------------------ |
+| Docker               | docker      | docker-ce, containerd.io, docker-ce-cli                                  |
+| Github - CLI         | github      | gh                                                                       |
+| Google - Bazel       | bazel       | bazel                                                                    |
+| Google - Chrome      | chrome      | google-chrome-stable, google-chrome-beta                                 |
+| Google - Cloud SDK   | googlecloud | google-cloud-sdk, kubectl, google-cloud-sdk-minikube, gogole-cloud-sdk-* |
+| Google - gVisor      | gvisor      | runsc                                                                    |
+| Hashicorp Tools      | hashicorp   | terraform, consul, nomad, vault, boundary, waypoint                      |
+| Mendeley desktop     | mendeley    | mendeleydesktop                                                          |
+| Microsoft - Edge     | edge        | microsoft-edge-dev                                                       |
+| Microsoft - Skype    | skype       | skypeforlinux                                                            |
+| Microsoft - VSCode   | vscode      | code, code-insiders, code-exploration                                    |
+| Microsoft -Azure CLI | azurecli    | azure-cli                                                                |
+| Microsoft Teams      | teams       | teams, teams-insiders                                                    |
+| ROS                  | ros         |                                                                          |
+| ROS2                 | ros2        |                                                                          |
+| Signal               | signal      | signal-desktop                                                           |
+| Spotify Client       | spotify     | spotify-client                                                           |
+| Wine HQ              | winehq      | winehq-stable, winehq-staging                                            |
 
 ## Issues & Help
 

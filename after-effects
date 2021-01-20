@@ -323,7 +323,7 @@ function _init_script_variables()
   if [[ -v  ${TRUSTED_KEYRINGS_DIR}  ]]; then
     _log_and_exit "Reserved variable (TRUSTED_KEYRINGS_DIR) is set!" "66"
   else
-    readonly TRUSTED_KEYRINGS_DIR=/etc/apt/trusted.gpg.d
+    readonly TRUSTED_KEYRINGS_DIR=/usr/share/keyrings
   fi
 
   # Ping URL
@@ -788,6 +788,7 @@ function _set_yaml_config()
   _check_bool "add_edge_repo" "${config__add_repo__edge[0]}"
   _check_bool "add_skype_repo" "${config__add_repo__skype[0]}"
   _check_bool "add_vscode_repo" "${config__add_repo__vscode[0]}"
+  _check_bool "add_msteams_repo" "${config__add_repo__teams[0]}"
 
 
   # Other Script Flags
@@ -1100,6 +1101,26 @@ function add_repositories()
 
   #local CLOUD_SDK_REPO
   local exit_status
+
+  # shellcheck disable=SC2034
+  declare -r MENDELEY_SOURCE_FILE_CONTENT="# This file lists the repositories for Mendeley Desktop.
+#
+# These repositories should work with most recent Debian/Ubuntu-based Linux
+# distributions.
+#
+# If you have any problems with Mendeley's Debian/Ubuntu repositories,
+# you can let us know at http://feedback.mendeley.com
+#
+# The distribution name sets the release channel you want to use,
+# which can be either \"stable\" or \"preview\"
+
+deb https://desktop-download.mendeley.com/download/apt stable main"
+
+  # shellcheck disable=SC2034
+  declare -r GOOGLE_CHROME_SOURCE_FILE_CONTENT="#  # # THIS FILE IS AUTOMATICALLY CONFIGURED ###
+# You may comment out this entry, but any other modifications may be lost.
+deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
+
   # install dependencies required
   _install_pre_requisites;
   # if repository is not available for latest ubuntu release, use previous release
@@ -1189,7 +1210,8 @@ function add_repositories()
       apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 |& _log_trace "${_phase_apt_key}" \
       || _log_error "Adding Mendeley Desktop Key Failed"
 
-      if echo "deb [arch=$ARCH] https://desktop-download.mendeley.com/download/apt stable main #Mendeley-Desktop"  > ${SOURCES_FILE_DIR}/mendeley-desktop.list; then
+      # DO NOT RENAME THE FILE!
+      if echo "${MENDELEY_SOURCE_FILE_CONTENT}" > ${SOURCES_FILE_DIR}/mendeleydesktop.list; then
         _log_success "OK"
       else
         _log_error "Failed to add mendeley repository!"
@@ -1266,7 +1288,7 @@ function add_repositories()
   fi
 
   # Microsoft Keys
-  if ( [[ $add_azurecli_repo == "true" ]] || [[ ${add_vscode_repo} == "true"  ]] || [[ ${add_edge_repo} == "true"  ]]  ) &&  [[ $ARCH == "amd64" ]]; then
+  if ( [[ $add_azurecli_repo == "true" ]] || [[ ${add_vscode_repo} == "true"  ]] || [[ ${add_edge_repo} == "true"  ]] || [[ ${add_msteams_repo} == "true"  ]]  ) &&  [[ $ARCH == "amd64" ]]; then
     _log_debug "Adding Microsoft keys."
     __add_repo_keys --format "asc" \
       --file-prefix "microsoft" \
@@ -1328,7 +1350,21 @@ function add_repositories()
     _log_debug "Skipped adding Microsoft Edge repository"
   fi
 
-
+  # Microsoft Teams
+  if [[ ${add_msteams_repo} == "true"  ]] ; then
+    if [[ ${ARCH} == "amd64" ]]; then
+      _log_info "Microsoft Teams"
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/ms-teams stable main #Microsoft Edge" > ${SOURCES_FILE_DIR}/microsoft-teams.list; then
+        _log_success "OK"
+      else
+        _log_error "Failed to addd Microsoft Teams repository!"
+      fi
+    else
+      _log_error "Microsoft Teams is not supported on this architecture($ARCH)!"
+    fi
+  else
+    _log_debug "Skipped adding Microsoft Teams repository"
+  fi
 
   # Docker CE
   if [ "$add_docker_repo" == "true" ]; then
@@ -2169,6 +2205,7 @@ function _process_menu()
   Microsoft - Azure CLI        : $add_azurecli_repo
   Microsoft - Edge             : $add_edge_repo
   Microsoft - Skype            : $add_skype_repo
+  Microsoft - Teams            : $add_msteams_repo
   Microsoft - VSCode           : $add_vscode_repo
   ROS                          : $add_ros_repo
   ROS2                         : $add_ros2_repo

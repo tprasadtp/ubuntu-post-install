@@ -10,7 +10,7 @@ You can chose from multiple debug modes.
 - `--debug-trace` Prints debug messages and apt/dpkg/snap/ppa logs.
 Please note that This can generate a lot of output.
 
-![debug](/assets/recordings/docker-focal-debug.gif)
+![debug](/assets/recordings/ubuntu-focal-debug.gif)
 
 ## Local testing
 

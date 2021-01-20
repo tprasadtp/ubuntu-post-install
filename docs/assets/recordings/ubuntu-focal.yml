@@ -1,0 +1,247 @@
+# The configurations that used for the recording, feel free to edit them
+config:
+
+  # Specify a command to be executed
+  # like `/bin/bash -l`, `ls`, or any other commands
+  # the default is bash for Linux
+  # or powershell.exe for Windows
+  command: docker run -it --rm --name=ubuntu-focal --hostname=ubuntu-focal -v $(pwd):/shared ae:ubuntu-focal ./after-effects --autopilot --config config/recorder.yml
+
+  # Specify the current working directory path
+  # the default is the current working directory path
+  cwd: ~/git/ubuntu-post-install
+
+  # Export additional ENV variables
+  env:
+    recording: true
+
+  # Explicitly set the number of columns
+  # or use `auto` to take the current
+  # number of columns of your shell
+  cols: 120
+
+  # Explicitly set the number of rows
+  # or use `auto` to take the current
+  # number of rows of your shell
+  rows: 30
+
+  # Amount of times to repeat GIF
+  # If value is -1, play once
+  # If value is 0, loop indefinitely
+  # If value is a positive number, loop n times
+  repeat: 0
+
+  # Quality
+  # 1 - 100
+  quality: 100
+
+  # Delay between frames in ms
+  # If the value is `auto` use the actual recording delays
+  frameDelay: auto
+
+  # Maximum delay between frames in ms
+  # Ignored if the `frameDelay` isn't set to `auto`
+  # Set to `auto` to prevent limiting the max idle time
+  maxIdleTime: 2000
+
+  # The surrounding frame box
+  # The `type` can be null, window, floating, or solid`
+  # To hide the title use the value null
+  # Don't forget to add a backgroundColor style with a null as type
+  frameBox:
+    type: solid
+    title: null
+    style:
+      border: 0px black solid
+      boxShadow: none
+      margin: 0px
+
+  # Add a watermark image to the rendered gif
+  # You need to specify an absolute path for
+  # the image on your machine or a URL, and you can also
+  # add your own CSS styles
+  watermark:
+    imagePath: null
+    style:
+      position: absolute
+      right: 15px
+      bottom: 15px
+      width: 100px
+      opacity: 0.9
+
+  # Cursor style can be one of
+  # `block`, `underline`, or `bar`
+  cursorStyle: block
+
+  # Font family
+  # You can use any font that is installed on your machine
+  # in CSS-like syntax
+  fontFamily: "Monaco, Lucida Console, Ubuntu Mono, Monospace"
+
+  # The size of the font
+  fontSize: 12
+
+  # The height of lines
+  lineHeight: 1
+
+  # The spacing between letters
+  letterSpacing: 0
+
+  # Theme
+  theme:
+    background: "transparent"
+    foreground: "#afafaf"
+    cursor: "#c7c7c7"
+    black: "#232628"
+    red: "#fc4384"
+    green: "#b3e33b"
+    yellow: "#ffa727"
+    blue: "#75dff2"
+    magenta: "#ae89fe"
+    cyan: "#708387"
+    white: "#d5d5d0"
+    brightBlack: "#626566"
+    brightRed: "#ff7fac"
+    brightGreen: "#c8ed71"
+    brightYellow: "#ebdf86"
+    brightBlue: "#75dff2"
+    brightMagenta: "#ae89fe"
+    brightCyan: "#b1c6ca"
+    brightWhite: "#f9f9f4"
+
+# Records, feel free to edit them
+records:
+  - delay: 2336
+    content: "\e[38;5;219m➜ Initialize & run checks\e[0m\r\n  • Permission checks\r\n"
+  - delay: 9
+    content: "\e[38;5;192m  • OK! Running as root \e[0m\r\n"
+  - delay: 68
+    content: "\e[38;5;51m  • Autopilot            : ENABLED\e[0m\r\n\e[38;5;51m  • Config file          : LOCAL\e[0m\r\n"
+  - delay: 8
+    content: "  • Checking dependencies\r\n"
+  - delay: 51
+    content: "  • Hostname             : ubuntu-focal\r\n"
+  - delay: 6
+    content: "  • OS                   : Ubuntu 20.04.1 LTS\r\n"
+  - delay: 10
+    content: "  • Distribution         : Ubuntu\r\n"
+  - delay: 8
+    content: "  • Release              : focal\r\n  • Architecture         : amd64\r\n"
+  - delay: 5
+    content: "  • Version(Number)      : 7.0.0(700)\r\n"
+  - delay: 9
+    content: "  • Checking connectivity\r\n"
+  - delay: 132
+    content: "\e[38;5;192m  • Connected! \e[0m\r\n  • Checking configuration\r\n"
+  - delay: 16
+    content: "\e[38;5;192m  • OK \e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;219m➜ Running environment checks... \e[0m\r\n"
+  - delay: 14
+    content: "\e[38;5;208m  • Running in docker \e[0m\r\n"
+  - delay: 3053
+    content: "\e[38;5;219m➜ Checking for Ubuntu derivates/Debian \e[0m\r\n  • This is latest LTS release of Ubuntu\r\n\e[38;5;192m  • Keeping the codename as focal. \e[0m\r\n\e[38;5;192m  • Applied release specific settings and fixes. \e[0m\r\n\e[38;5;219m➜ Checking for updates \e[0m\r\n"
+  - delay: 1652
+    content: "\e[38;5;208m  • You running development version 7.0.0(700). \e[0m\r\n\e[38;5;208m  • Latest stable version is 6.3.0(630). \e[0m\r\n\e[38;5;219m➜ Processing configuration... \e[0m\r\n\e[38;5;51m  • Config file          : config/recorder.yml\e[0m\r\n\e[38;5;51m  • Parsing config       : config/recorder.yml\e[0m\r\n"
+  - delay: 108
+    content: "\e[38;5;219m➜ Check if terminal is non interactive \e[0m\r\n\e[38;5;192m  • OK \e[0m\r\n\e[38;5;219m➜ Check for conflicting apps \e[0m\r\n"
+  - delay: 114
+    content: "\e[38;5;192m  • No conflicts detected \e[0m\r\n"
+  - delay: 7
+    content: "\e[38;5;219m➜ Checking for Autopilot \e[0m\r\n\e[38;5;192m  • Autopilot is ENABLED \e[0m\r\n"
+  - delay: 3013
+    content: "\e[38;5;219m➜ Update repository metadata \e[0m\r\n  • Running apt-get update\r\n"
+  - delay: 2120
+    content: "\e[38;5;192m  • Success! \e[0m\r\n"
+  - delay: 6
+    content: "\e[38;5;219m➜ Setting up repositories \e[0m\r\n  • Installing necessary dependencies...\r\n"
+  - delay: 1610
+    content: "\e[38;5;192m  • Installed \e[0m\r\n"
+  - delay: 57
+    content: "  • Google Chrome\r\n"
+  - delay: 2048
+    content: "\e[38;5;192m  • OK \e[0m\r\n  • Spotify\r\n"
+  - delay: 320
+    content: "\e[38;5;192m  • OK \e[0m\r\n  • Skype\r\n"
+  - delay: 1372
+    content: "\e[38;5;192m  • OK \e[0m\r\n  • Signal for Desktop\r\n"
+  - delay: 424
+    content: "\e[38;5;192m  • OK \e[0m\r\n"
+  - delay: 5
+    content: "  • WineHQ\r\n"
+  - delay: 336
+    content: "\e[38;5;192m  • OK \e[0m\r\n"
+  - delay: 328
+    content: "  • Google-Cloud-SDK\r\n\e[38;5;192m  • OK \e[0m\r\n  • GCSFUSE\r\n"
+  - delay: 6
+    content: "\e[38;5;192m  • OK \e[0m\r\n"
+  - delay: 1508
+    content: "  • VSCode\r\n\e[38;5;192m  • OK \e[0m\r\n  • Azure CLI\r\n\e[38;5;192m  • OK \e[0m\r\n  • Microsoft Edge\r\n\e[38;5;192m  • OK \e[0m\r\n"
+  - delay: 7
+    content: "  • Docker-CE\r\n"
+  - delay: 293
+    content: "\e[38;5;192m  • OK \e[0m\r\n  • GitHub CLI\r\n"
+  - delay: 1696
+    content: "\e[38;5;192m  • OK \e[0m\r\n"
+  - delay: 9
+    content: "  • Hashicorp\r\n"
+  - delay: 621
+    content: "\e[38;5;192m  • OK \e[0m\r\n  • Bazel\r\n"
+  - delay: 330
+    content: "\e[38;5;192m  • OK \e[0m\r\n  • gVisor\r\n"
+  - delay: 350
+    content: "\e[38;5;192m  • OK \e[0m\r\n  • ROS2\r\n\e[38;5;192m  • ROS2 is available on focal/amd64 \e[0m\r\n  • Adding ROS2 repositories\r\n"
+  - delay: 753
+    content: "\e[38;5;192m  • OK \e[0m\r\n  • ROS\r\n\e[38;5;192m  • ROS is available on Focal/amd64 \e[0m\r\n  • Adding ROS repositories\r\n"
+  - delay: 1537
+    content: "\e[38;5;192m  • OK \e[0m\r\n"
+  - delay: 9
+    content: "  • Running apt-get update\r\n"
+  - delay: 10463
+    content: "\e[38;5;192m  • Success! \e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;219m➜ Adding PPAs \e[0m\r\n  • Installing dependencies\r\n"
+  - delay: 1937
+    content: "\e[38;5;192m  • Installed \e[0m\r\n"
+  - delay: 17
+    content: "  • Setting up PPA - ppa:yubico/stable\r\n"
+  - delay: 6063
+    content: "\e[38;5;192m  • Success! \e[0m\r\n\e[38;5;219m➜ Install packages \e[0m\r\n  • Running apt-get update\r\n"
+  - delay: 4505
+    content: "\e[38;5;192m  • Success! \e[0m\r\n"
+  - delay: 169
+    content: "  • Installing administration packages\r\n"
+  - delay: 1689
+    content: "\e[38;5;192m  • Done! \e[0m\r\n  • Installing security packages\r\n"
+  - delay: 1734
+    content: "\e[38;5;192m  • Done! \e[0m\r\n  • Installing productivity packages\r\n"
+  - delay: 1940
+    content: "\e[38;5;192m  • Done! \e[0m\r\n  • Installing development packages\r\n"
+  - delay: 2305
+    content: "\e[38;5;192m  • Done! \e[0m\r\n"
+  - delay: 700
+    content: "  • Installing other packages\r\n"
+  - delay: 7655
+    content: "\e[38;5;192m  • Done! \e[0m\r\n  • Installing external packages\r\n"
+  - delay: 1563
+    content: "\e[38;5;192m  • Done! \e[0m\r\n"
+  - delay: 15
+    content: "\e[38;5;219m➜ Install DEB packages \e[0m\r\n"
+  - delay: 23
+    content: "  • Downloading          : bat.deb\r\n"
+  - delay: 2394
+    content: "  • Installing           : bat.deb\r\n"
+  - delay: 2426
+    content: "\e[38;5;192m  • Done \e[0m\r\n"
+  - delay: 17
+    content: "\e[38;5;219m➜ Purging packages \e[0m\r\n"
+  - delay: 1721
+    content: "\e[38;5;192m  • Done! \e[0m\r\n"
+  - delay: 5
+    content: "\e[38;5;219m➜ Install static binaries \e[0m\r\n"
+  - delay: 14
+    content: "  • Downloading - kubectl\r\n"
+  - delay: 844
+    content: "\e[38;5;192m  • OK \e[0m\r\n  • Installing  - kubectl\r\n"
+  - delay: 69
+    content: "\e[38;5;219m➜ Cleanup and Exit \e[0m\r\n"

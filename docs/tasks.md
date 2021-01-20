@@ -4,26 +4,26 @@
 
 This task can add the following repositories.
 
-
-| Name                 | Key |
-|:---------------------|:--- |
-|Docker | docker
-|Github CLI | github
-|Google Bazel | bazel
-|Google Chrome | chrome
-|Google Cloud SDK | googlecloud
-|Google gVisor | gvisor
-|Hashicorp (terraform, consul etc) | hashicorp
-|Mendeley desktop | mendeley
-|Micosoft Skype | skype
-|Micosoft Visual Studio code | vscode
-|Microsoft Azure CLI | azurecli
-|Microsoft Edge | edge
-|ROS | ros
-|ROS2 | ros2
-|Signal for desktop | signal
-|Spotify Desktop | spotify
-|Wine HQ | winehq
+| Name                 | Key         | Packages                                                                 |
+| -------------------- | ----------- | ------------------------------------------------------------------------ |
+| Docker               | docker      | docker-ce, containerd.io, docker-ce-cli                                  |
+| Github - CLI         | github      | gh                                                                       |
+| Google - Bazel       | bazel       | bazel                                                                    |
+| Google - Chrome      | chrome      | google-chrome-stable, google-chrome-beta                                 |
+| Google - Cloud SDK   | googlecloud | google-cloud-sdk, kubectl, google-cloud-sdk-minikube, gogole-cloud-sdk-* |
+| Google - gVisor      | gvisor      | runsc                                                                    |
+| Hashicorp Tools      | hashicorp   | terraform, consul, nomad, vault, boundary, waypoint                      |
+| Mendeley desktop     | mendeley    | mendeleydesktop                                                          |
+| Microsoft - Edge     | edge        | microsoft-edge-dev                                                       |
+| Microsoft - Skype    | skype       | skypeforlinux                                                            |
+| Microsoft - VSCode   | vscode      | code, code-insiders, code-exploration                                    |
+| Microsoft -Azure CLI | azurecli    | azure-cli                                                                |
+| Microsoft Teams      | teams       | teams, teams-insiders                                                    |
+| ROS                  | ros         |                                                                          |
+| ROS2                 | ros2        |                                                                          |
+| Signal               | signal      | signal-desktop                                                           |
+| Spotify Client       | spotify     | spotify-client                                                           |
+| Wine HQ              | winehq      | winehq-stable, winehq-staging                                            |
 
 
 ??? tip "Using `--fix` flag"

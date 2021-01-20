@@ -39,6 +39,7 @@ config:
     vscode: true
     winehq: true
     bazel: true
+    teams: true
 
   # Flags
   flags:

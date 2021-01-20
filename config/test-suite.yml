@@ -40,6 +40,7 @@ config:
     spotify: true
     vscode: true
     winehq: true
+    teams: true
 
   # Flags
   flags:
@@ -109,3 +110,5 @@ config:
         - bazel
         # Edge
         - microsoft-edge-dev
+        # Teams
+        - teams
