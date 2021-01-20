@@ -7,10 +7,10 @@ Logs are written to a file `<current-dir>/logs/after-effects.log`.
 You can chose from multiple debug modes.
 
 - `--debug` Only prints debug messages
-- `--debug-trace` Prints debug messages and apt/dpkg/snap/ppa/pip logs.
+- `--debug-trace` Prints debug messages and apt/dpkg/snap/ppa logs.
 Please note that This can generate a lot of output.
 
-![debug](/assets/recordings/docker-no-snaps-focal-debug.gif)
+![debug](/assets/recordings/docker-focal-debug.gif)
 
 ## Local testing
 
@@ -18,9 +18,6 @@ You can use `./tests/local.sh --help` to test the scripts locally. It uses docke
 containers. This script requires two arguments __--distro__ and __--release__. They are used as parameters to build the Docker image from dockerfile in `dockerfiles/tests`.eg. to test the script on Ubuntu 18.04 bionic, run it as
 `./tests/local.sh --distro ubuntu --release bionic`.
 
-!!! tip
-    This assumes that you can run docker without using sudo. Add yourself yo docker group or refer to docker documentation
-    for more info.
 
 ## Documentation
 
