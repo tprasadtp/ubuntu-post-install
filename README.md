@@ -96,7 +96,7 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 | Github - CLI         | github      | gh                                                                       |
 | Google - Bazel       | bazel       | bazel                                                                    |
 | Google - Chrome      | chrome      | google-chrome-stable, google-chrome-beta                                 |
-| Google - Cloud SDK   | googlecloud | google-cloud-sdk, kubectl, google-cloud-sdk-minikube, gogole-cloud-sdk-* |
+| Google - Cloud SDK   | googlecloud | google-cloud-sdk, kubectl, google-cloud-sdk-minikube, google-cloud-sdk-* |
 | Google - gVisor      | gvisor      | runsc                                                                    |
 | Hashicorp Tools      | hashicorp   | terraform, consul, nomad, vault, boundary, waypoint                      |
 | Mendeley desktop     | mendeley    | mendeleydesktop                                                          |
