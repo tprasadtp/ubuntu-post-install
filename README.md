@@ -43,7 +43,7 @@ Sample configuration can be found in `config` directory.
 
 ## See in Action
 
-[![inaction](docs/assets/recordings/ubuntu-focal.gif)
+![inaction](docs/assets/recordings/ubuntu-focal.gif)
 
 ## FAQ & Documentation
 
