@@ -1,5 +1,21 @@
 # What can it do?
 
+List of all the keys under `config.tasks`:
+
+| Name                                                                                       | Key           |
+| ------------------------------------------------------------------------------------------ | ------------- |
+| [Add Repositories](#add-repositories)                                                      | `key`         |
+| [Add personal package archives (PPA)](#add-personal-package-archives-ppa)                  | `ppa`         |
+| [Install apt packages](#install-apt-packages)                                              | `apt`         |
+| [Install Debian package archives (.deb files)](#install-debian-package-archives-deb-files) | `dev`         |
+| [Install Static binaries to /usr/local/bin](#install-static-binaries-to-usrlocalbin)       | `binaries`    |
+| [Install python packages (via pip)](#install-python-packages-via-pip)                      | `pip2`/`pip3` |
+| [Purge Unwanted Packages](#purge-unwanted-packages)                                        | `purge`       |
+| [Reset repositories / Purge PPAs](#reset-repositories-purge-ppas)                          |               |
+| [Installing Snap packages](#installing-snap-packages)                                      | `snap`        |
+| [All In one](#all-in-one)                                                                  | `all`         |
+
+
 ## Add Repositories
 
 This task can add the following repositories.
@@ -70,6 +86,8 @@ config:
     enable foreign architectures BEFORE running this script!
 
 ## Add personal package archives (PPA)
+
+Task name: `ppa`.
 
 - Only one ppa entry per line (No comments or anything else anywhere in the file) in the format ppa:{author}/{ppa} for example `ppa:mozillateam/firefox-next` The file will be read and the PPAs will be added from the list.
 - Logs will  show entry in the format `[date and time] [  PPA-Logs  ] <log>`
