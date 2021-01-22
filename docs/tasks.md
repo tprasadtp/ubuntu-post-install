@@ -87,8 +87,6 @@ config:
 
 ## Add personal package archives (PPA)
 
-Task name: `ppa`.
-
 - Only one ppa entry per line (No comments or anything else anywhere in the file) in the format ppa:{author}/{ppa} for example `ppa:mozillateam/firefox-next` The file will be read and the PPAs will be added from the list.
 - Logs will  show entry in the format `[date and time] [  PPA-Logs  ] <log>`
 
