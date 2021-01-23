@@ -125,7 +125,7 @@ See [Contributing and forks](/CONTRIBUTING.md)
 ![Analytics](https://ga-beacon.prasadt.com/UA-101760811-3/github/ubuntu-post-install?flat)
 
 [FAQ]: https://ae.prasadt.com/faq/dependencies/
-[docs]: https://ae.prasadt.com/getting-started/
+[docs]: https://ae.prasadt.com/
 [known-issues]: https://ae.prasadt.com/faq/errors/
 [changelog]: https://ae.prasadt.com/changelog/
 
