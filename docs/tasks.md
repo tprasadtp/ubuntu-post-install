@@ -19,7 +19,7 @@ This task can add the following repositories.
 | Microsoft - Skype     | skype       | skypeforlinux                                                            |
 | Microsoft - Teams     | teams       | teams, teams-insiders                                                    |
 | Microsoft - VSCode    | vscode      | code, code-insiders, code-exploration                                    |
-| [Podman][] (via OBS)  | Podman      | podman, varlink, podman-plugins, cri-o-runc, cri-tools, buildah, crun    |
+| [Podman][] (via OBS)  | Podman      | podman, podman-plugins, cri-o-runc, cri-tools, buildah, crun             |
 | ROS                   | ros         |                                                                          |
 | ROS2                  | ros2        |                                                                          |
 | Signal                | signal      | signal-desktop                                                           |

@@ -43,6 +43,15 @@ config:
     teams: true
     vscode: true
     winehq: true
+    #
+    backports: true
+    # Debian
+    debian_nonfree: true
+    debian_contrib: true
+    # Ubuntu
+    ubuntu_universe: true
+    ubuntu_multiverse: true
+    ubuntu_restricted: true
 
   # Flags
   flags:
@@ -70,6 +79,8 @@ config:
       classic:
         - hugo
     apt:
+      backports:
+        - libseccomp2
       # Admin related Stuff
       administration:
         - curl
@@ -116,5 +127,3 @@ config:
         - teams
         # Sublime
         - sublime-text
-        # Podman
-        - podman

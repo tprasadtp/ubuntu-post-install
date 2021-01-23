@@ -208,9 +208,9 @@ function _log_var()
   local var
   var="$1"
   if [[ $AE_DEBUG -gt 0 ]]; then
-    printf "${GRAY}  » %-20s - %-10s${NC}\n" "${var}" "${!var}"
+    printf "${GRAY}  » %-22s - %-10s${NC}\n" "${var}" "${!var}"
   fi
-  printf "$(date) ${_variable} %-20s - %-10s\n" "${var}" "${!var}" >> "$log_file"
+  printf "$(date) ${_variable} %-22s - %-10s\n" "${var}" "${!var}" >> "$log_file"
 }
 
 function  _log_trace()
@@ -248,7 +248,7 @@ function _log_property()
   desc="${1}"
   value="${2}"
   lvl="${3:-0}"
-  fmt="%-${4:-20}s"
+  fmt="%-${4:-22}s"
   __msg_string="$(printf "${fmt} : %s" "${desc}" "${value}")"
 
   case ${lvl} in
@@ -331,6 +331,9 @@ function _init_script_variables()
     _log_and_exit "Reserved variable (AE_OBS_PREFIX) is set!" "66"
   fi
 
+  if [[ -v  ${AE_BASE_CODENAME}  ]]; then
+    _log_and_exit "Reserved variable (AE_BASE_CODENAME) is set!" "66"
+  fi
 
   # Ping URL
   readonly PING_URL="http://connectivitycheck.gstatic.com/generate_204"
@@ -557,6 +560,11 @@ function _fix_ubuntu_derivatives()
 
   _log_success "Applied release specific settings and fixes."
   _log_var "code_name"
+
+  # Save a copy of code_name
+  declare -gr AE_BASE_CODENAME="${code_name}"
+  _log_var "AE_BASE_CODENAME"
+
 
 }
 
@@ -805,6 +813,15 @@ function _set_yaml_config()
   _check_bool "add_vscode_repo" "${config__add_repo__vscode[0]}"
   _check_bool "add_msteams_repo" "${config__add_repo__teams[0]}"
 
+  # Debian Components
+  _check_bool "add_debian_nonfree" "${config__add_repo__debian_nonfree[0]}"
+  _check_bool "add_debian_contrib" "${config__add_repo__debian_contrib[0]}"
+
+  # Ubuntu Components
+  _check_bool "add_ubuntu_universe" "${config__add_repo__ubuntu_universe[0]}"
+  _check_bool "add_ubuntu_multiverse" "${config__add_repo__ubuntu_multiverse[0]}"
+  _check_bool "add_ubuntu_restricted" "${config__add_repo__ubuntu_restricted[0]}"
+
 
   # Other Script Flags
   #################################################################################
@@ -891,7 +908,11 @@ function _set_yaml_config()
   # Lets get em, shall we?
 
   # Copy package array
+
+  # Purge
   declare -gar parsed_purge_packages=("${config__purge_[@]}")
+
+  # Normal
   declare -gar parsed_administration_packages=("${config__install__apt__administration_[@]}")
   declare -gar parsed_secutity_packages=("${config__install__apt__security_[@]}")
   declare -gar parsed_productivity_packages=("${config__install__apt__productivity_[@]}")
@@ -1526,12 +1547,19 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     if [[ ${ARCH} == "arm64" ]] || [[ ${ARCH} == "armhf" ]]; then
       # Podman is not supported on arm on Ubuntu 18 and Debian 9
       case ${code_name} in
-        focal | groovy )            podman_supported="true";;
-        buster | bullseye)          podman_supported="true";;
-        *)                          podman_supported="false";;
+        focal | groovy )        podman_supported="true";;
+        *)                      podman_supported="false";;
       esac
     else
       podman_supported="true"
+    fi
+
+    # Podman requires backports on debian
+    if [[ $bool_is_debian ]]; then
+      case ${code_name} in
+        bullseye)       podman_supported="true";;
+        *)              podman_supported="false";;
+      esac
     fi
 
     if [[ ${podman_supported} == "true" ]]; then
@@ -1546,7 +1574,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       fi
 
     else
-      _log_error "Podman is not supported on this distro/arch(${AE_DISTRO}/${ARCH}"
+      _log_error "Podman is not supported on this distro[${AE_DISTRO}] and arch[${ARCH}]"
     fi
 
   else
@@ -1682,7 +1710,84 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     _log_debug "Skipped ROS"
   fi # add_ros_repo
 
+  # Ubuntu multiverse/universe/restricted
+  if [[ ${distro_name} == "ubuntu" ]]; then
+
+    # Universe - Community-maintained free and open-source software.
+    if [[ ${add_ubuntu_universe} == "true" ]]; then
+      _log_info "Ubuntu/Universe"
+      if add-apt-repository universe |& _log_trace "${_phase_repo}" ; then
+        _log_success "OK"
+      else
+        _log_error "Failed to add Ubuntu/Universe reposiroty!"
+      fi
+    else
+      _log_debug "Skipped adding Ubuntu/Universe repository"
+    fi
+
+    # Restricted - Proprietary drivers for devices.
+    if [[ ${add_ubuntu_restricted} == "true" ]]; then
+      _log_info "Ubuntu/Restricted"
+      if add-apt-repository restricted |& _log_trace "${_phase_repo}" ; then
+        _log_success "OK"
+      else
+        _log_error "Failed to add Ubuntu/Restricted reposiroty!"
+      fi
+    else
+      _log_debug "Skipped adding Ubuntu/Restricted repository"
+    fi
+
+    # Multiverse - Software restricted by copyright or legal issues.
+    if [[ ${add_ubuntu_multiverse} == "true" ]]; then
+      _log_info "Ubuntu/Multiverse"
+      if add-apt-repository multiverse |& _log_trace "${_phase_repo}" ; then
+        _log_success "OK"
+      else
+        _log_error "Failed to add Ubuntu/Multiverse reposiroty!"
+      fi
+    else
+      _log_debug "Skipped adding Ubuntu/Multiverse repository"
+    fi
+
+
+  else
+    _log_debug "Distro is not Ubuntu, skip adding ubuntu specific components!"
+  fi # ubuntu check
+
+
+  # Debian Additional repos
+  if [[ ${distro_name} == "debian" ]]; then
+
+    # Contrib
+    if [[ ${add_debian_contrib} == "true" ]]; then
+      _log_info "Debian/Contrib"
+      if add-apt-repository contrib |& _log_trace "${_phase_repo}" ; then
+        _log_success "OK"
+      else
+        _log_error "Failed to add Debian/Contrib reposiroty!"
+      fi
+    else
+      _log_debug "Skipped adding Debian/Contrib repository"
+    fi
+
+    # Non-Free - Proprietary drivers for devices.
+    if [[ ${add_debian_nonfree} == "true" ]]; then
+      _log_info "Debian/Non-Free"
+      if add-apt-repository non-free |& _log_trace "${_phase_repo}" ; then
+        _log_success "OK"
+      else
+        _log_error "Failed to add Debian/Non-Free reposiroty!"
+      fi
+    else
+      _log_debug "Skipped adding Debian/Non-Free repository"
+    fi
+
+  else
+    _log_debug "Distro is not Debian, skip adding debian specific components!"
+  fi # debian check
+
   update_repos
+
 
 }
 
@@ -1968,6 +2073,7 @@ function install_apps()
                               external
                               )
   for array in "${package_arrays[@]}"; do
+    local apt_extra_args=()
     case "${array}" in
       administration)         packages=("${parsed_administration_packages[@]}");;
       security)               packages=("${parsed_secutity_packages[@]}");;
@@ -1987,11 +2093,12 @@ function install_apps()
       _log_info "Installing $array packages"
       # Check if simulate is true
       if [ "$simulate_apt_install" == "true" ]; then
-        _log_warn "SIM - Using --dry-run "
-        apt-get -q -o=Dpkg::Use-Pty=0 -y install -s "${packages[@]}" | _log_trace "${_phase_apt}"
-      else
-        apt-get -q -o=Dpkg::Use-Pty=0 -y install "${packages[@]}" | _log_trace "${_phase_apt}"
+        _log_warn "SIM - Using --dry-run"
+        apt_extra_args+=("--dry-run")
       fi
+
+      apt-get -q -o=Dpkg::Use-Pty=0 -y install "${apt_extra_args[@]}" "${packages[@]}" | _log_trace "${_phase_apt}"
+
       exit_status=$?
       unset packages;
       if [[ $exit_status -eq 0 ]]; then
@@ -2316,6 +2423,15 @@ function _process_menu()
   ROS2                         : $add_ros2_repo
   Signal for Desktop           : $add_signal_repo
   SublimeText Editor           : $add_sublimetext_repo
+  ----------------- Only Applied on Ubuntu --------------
+  Multiverse                   : $add_ubuntu_multiverse
+  Universe                     : $add_ubuntu_universe
+  Restricted                   : $add_ubuntu_restricted
+  ----------------- Only Applied on Debian --------------
+  Non-Free                     : $add_debian_contrib
+  Contrib                      : $add_debian_contrib
+
+
 
   Proceed with adding these repositories?
 
@@ -2733,7 +2849,7 @@ function main()
 
   _log_info "Checking dependencies"
 
-  if [[ ${AE_AUTOPILOT} == "true" ]]; then
+  if [[ ${AE_AUTOPILOT} != "true" ]]; then
     if command -v whiptail > /dev/null; then
       _log_property "whiptail" "INSTALLED"
     else
@@ -2742,7 +2858,7 @@ function main()
       _log_and_exit "Missing dependency - whiptail" "1"
     fi
   else
-    _log_debug "whiptail is not requires as autopilot is active."
+    _log_debug "whiptail is not required as autopilot is active."
   fi
 
   _check_dependencies "${after_effects_core_dependencies[@]}"
