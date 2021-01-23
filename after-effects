@@ -1179,7 +1179,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
 
   # AMD64 only
   if [ "$ARCH" != "amd64" ]; then
-    _log_warn "Google Chrome, Spotify, Mendeley, Signal, Wine and Duo for Unix are only supported on 64 Bit"
+    _log_warn "Google Chrome, Spotify, Mendeley, Signal and WineHQ are only supported on amd64 architecture!"
   else
 
     _log_debug "Arch is 64 Bit. Enabled adding 64 bit repos."
@@ -1287,7 +1287,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       else
         _log_error "Latest version of WINE depends on libfaudio0 package,"
         _log_error "which is not available on your distribution!"
-        _log_error "For more information visit https://forum.winehq.org/viewtopic.php?f=8&t=32192"
+        _log_warn "For more information visit https://forum.winehq.org/viewtopic.php?f=8&t=32192"
       fi
     else
       _log_info "Skipped adding WineHQ."
@@ -1357,9 +1357,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       fi
     else
       _log_error "VSCode repositories are not supported on this architecture!($ARCH)"
-      _log_error "BUT debian and snap packaages are AVAILABLE from Microsoft."
-      _log_error "Either install VSCode via snaps or deb packages, script supports BOTH."
-      _log_error "Visit https://code.visualstudio.com/#alt-downloads"
+      _log_warn "Visit https://code.visualstudio.com/#alt-downloads"
     fi
 
   else
@@ -1377,7 +1375,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       fi
     else
       _log_error "Azure CLI cannot be installed via package manager on this architecture."
-      _log_error "For more info, visit https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=script"
+      _log_warn "See https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=script"
     fi
   else
     _log_debug "Skipped adding Azure CLI repository"
@@ -1523,16 +1521,32 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
 
   # Podman via OBS
   if [[ ${add_podman_repo} == "true" ]]; then
+    local podman_supported
 
-    _log_info "Podman"
-    __add_repo_keys --format "asc" \
-      --file-prefix "obs-podman-${code_name}" \
-      --key-url https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_OBS_PREFIX}/Release.key
-
-    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/obs-podman-${code_name}.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_OBS_PREFIX}/ / #Podman (via OBS)"  > ${SOURCES_FILE_DIR}/obs-podman.list; then
-      _log_success "OK"
+    if [[ ${ARCH} == "arm64" ]] || [[ ${ARCH} == "armhf" ]]; then
+      # Podman is not supported on arm on Ubuntu 18 and Debian 9
+      case ${code_name} in
+        focal | groovy )            podman_supported="true";;
+        buster | bullseye)          podman_supported="true";;
+        *)                          podman_supported="false";;
+      esac
     else
-      _log_error "Adding Podman repository failed!"
+      podman_supported="true"
+    fi
+
+    if [[ ${podman_supported} == "true" ]]; then
+      _log_info "Podman"
+      __add_repo_keys --format "asc" \
+        --file-prefix "obs-podman-${code_name}" \
+        --key-url https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_OBS_PREFIX}/Release.key
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/obs-podman-${code_name}.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_OBS_PREFIX}/ / #Podman (via OBS)"  > ${SOURCES_FILE_DIR}/obs-podman.list; then
+        _log_success "OK"
+      else
+        _log_error "Adding Podman repository failed!"
+      fi
+
+    else
+      _log_error "Podman is not supported on this distro/arch(${AE_DISTRO}/${ARCH}"
     fi
 
   else

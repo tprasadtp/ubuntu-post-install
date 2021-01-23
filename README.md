@@ -122,6 +122,11 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 
 See [Contributing and forks](/CONTRIBUTING.md)
 
+## Alternatives
+
+- [snwh/ubuntu-post-install](https://github.com/snwh/ubuntu-post-install):  Has few features like setting up dotfiles, but has limited config options and requires user t be interactive, only few external repositories are supported.
+- [Ansible](https://ansible.com) : Requires python on your system. Much more deteministic and better idempotency. There are plenty of roles and collections available on ansible-galaxy. But it adds more complexity and you have to write your own playbooks.
+
 ![Analytics](https://ga-beacon.prasadt.com/UA-101760811-3/github/ubuntu-post-install?flat)
 
 [FAQ]: https://ae.prasadt.com/faq/dependencies/

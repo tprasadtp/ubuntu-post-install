@@ -83,5 +83,3 @@ config:
         - docker-ce
         # Github
         - gh
-        # Podman
-        - podman
