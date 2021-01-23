@@ -4,27 +4,35 @@
 
 This task can add the following repositories.
 
-| Name                 | Key         | Packages                                                                 |
-| -------------------- | ----------- | ------------------------------------------------------------------------ |
-| Docker               | docker      | docker-ce, containerd.io, docker-ce-cli                                  |
-| Github - CLI         | github      | gh                                                                       |
-| Google - Bazel       | bazel       | bazel                                                                    |
-| Google - Chrome      | chrome      | google-chrome-stable, google-chrome-beta                                 |
-| Google - Cloud SDK   | googlecloud | google-cloud-sdk, kubectl, google-cloud-sdk-minikube, gogole-cloud-sdk-* |
-| Google - gVisor      | gvisor      | runsc                                                                    |
-| Hashicorp Tools      | hashicorp   | terraform, consul, nomad, vault, boundary, waypoint                      |
-| Mendeley desktop     | mendeley    | mendeleydesktop                                                          |
-| Microsoft - Edge     | edge        | microsoft-edge-dev                                                       |
-| Microsoft - Skype    | skype       | skypeforlinux                                                            |
-| Microsoft - VSCode   | vscode      | code, code-insiders, code-exploration                                    |
-| Microsoft -Azure CLI | azurecli    | azure-cli                                                                |
-| Microsoft Teams      | teams       | teams, teams-insiders                                                    |
-| ROS                  | ros         |                                                                          |
-| ROS2                 | ros2        |                                                                          |
-| Signal               | signal      | signal-desktop                                                           |
-| Spotify Client       | spotify     | spotify-client                                                           |
-| Wine HQ              | winehq      | winehq-stable, winehq-staging                                            |
+| Name                    | Key               | Packages                                                     |
+| ----------------------- | ----------------- | ------------------------------------------------------------ |
+| Docker                  | docker            | docker-ce, containerd.io, docker-ce-cli                      |
+| [GitHub - CLI][]        | github            | gh                                                           |
+| [Google - Bazel][]      | bazel             | bazel                                                        |
+| Google - Chrome         | chrome            | google-chrome-stable, google-chrome-beta                     |
+| Google - Cloud SDK      | googlecloud       | google-cloud-sdk, kubectl, google-cloud-sdk-minikube         |
+| [Google - gVisor][]     | gvisor            | runsc                                                        |
+| Hashicorp               | hashicorp         | terraform, consul, nomad, vault, boundary, waypoint          |
+| Mendeley desktop        | mendeley          | mendeleydesktop                                              |
+| Microsoft - Azure CLI   | azurecli          | azure-cli                                                    |
+| Microsoft - Edge        | edge              | microsoft-edge-dev                                           |
+| Microsoft - Skype       | skype             | skypeforlinux                                                |
+| Microsoft - Teams       | teams             | teams, teams-insiders                                        |
+| Microsoft - VSCode      | vscode            | code, code-insiders, code-exploration                        |
+| [Podman][] (via OBS)    | Podman            | podman, podman-plugins, cri-o-runc, cri-tools, buildah, crun |
+| ROS                     | ros               |                                                              |
+| ROS2                    | ros2              |                                                              |
+| Signal                  | signal            | signal-desktop                                               |
+| Spotify Client          | spotify           | spotify-client                                               |
+| Sublime Text Editor     | sublimetext       | sublime-text                                                 |
+| Wine HQ                 | winehq            | winehq-stable, winehq-staging                                |
+| [Ubuntu - Universe][]   | ubuntu_universe   |                                                              |
+| [Ubuntu - Multiverse][] | ubuntu_multiverse |                                                              |
+| [Ubuntu - Restricted][] | ubuntu_restricted |                                                              |
+| [Debian - contrib][]    | debian_contrib    |                                                              |
+| [Debian - non-free][]   | debian_nonfree    |                                                              |
 
+> Support for adding `multiverse`, `universe`, `restricted`(on Ubuntu), `contrib` and `non-free` (on Debian) is considered beta. Use with caution!
 
 ??? tip "Using `--fix` flag"
     Please note that the above repositories are sometimes not updated for latest Ubuntu release and most certainly will not be available for upcoming release of Ubuntu(Alpha/Beta). It might take some time till the repositories are available for the latest release. Use -f or --fix command line option or --pre-release in case you are using a development version of Ubuntu to revert using latest available version of repositories (usually previous Ubuntu release or in case of Beta/Alpha latest stable release of Ubuntu). [For more info see command line options.](/clioptions/#fix-for-latest-ubuntu-releases)
@@ -46,28 +54,42 @@ config:
   # Repository Flags
   add_repo:
     azurecli: true
-    docker: true
-    gcsfuse: true
-    gvisor: true
-    github: true
+    bazel: true
     chrome: true
+    docker: true
     edge: true
+    gcsfuse: true
+    github: true
     googlecloud: true
+    gvisor: true
     hashicorp: true
-    mendeley: false
+    mendeley: true
+    podman: true
     ros: true
     ros2: true
     signal: true
     skype: true
     spotify: true
+    sublimetext: true
+    teams: true
     vscode: true
     winehq: true
-    bazel: true
+    # Debian
+    debian_nonfree: true
+    debian_contrib: true
+    # Ubuntu
+    ubuntu_universe: true
+    ubuntu_multiverse: true
+    ubuntu_restricted: true
 ```
 
-!!! warning "Wine HQ  and Multiarch support"
-    To install i386 pacakges or packages which have i386 dependencies (eg. wine-stable), you MUST
-    enable foreign architectures BEFORE running this script!
+### Note about Wine HQ and i386 packages
+
+To install i386 pacakges or packages which have i386 dependencies (eg. wine-stable), you **MUST** enable foreign architectures BEFORE running this script!
+
+### Note abount PodMan repository
+
+Podman repository(Provided by Kubic project) also provides golang package for some reason (ughhh!) so please be careful while installing go via apt.
 
 ## Add personal package archives (PPA)
 
@@ -112,6 +134,7 @@ This will install deb files specified in the YAML config under `config.install.d
 - Each DEB file to be installed should have following entry.
 - URL to the deb file which can be accessed using wget`,`Name of the deb file without any spaces or special chars except hyphen.
 - For example to install Atom Editor the entry should look like below.
+- Some deb packages will add their own apt source entry and add their repository keys to system keyring.
 
 
 ```yaml
@@ -223,5 +246,12 @@ A log file is generated containing all the output generated by the apt and other
 - Log file is located in the directory `logs` in folder which you ran thin script.
 - Sometimes errors might not be written to log file but displayed on screen and vice-versa.
 
-[gvisor]: https://gvisor.dev
-[azure-cli]: https://github.com/Azure/azure-cli
+[GitHub - CLI]: https://cli.github.com
+[Google - gVisor]: https://gvisor.dev
+[Podman]: https://podmain.io
+[Google - Bazel]: https://bazel.build
+[Ubuntu - Universe]: https://help.ubuntu.com/community/Repositories/Ubuntu
+[Ubuntu - Restricted]: https://help.ubuntu.com/community/Repositories/Ubuntu
+[Ubuntu - Multiverse]: https://help.ubuntu.com/community/Repositories/Ubuntu
+[Debian - contrib]: https://www.debian.org/doc/debian-policy/ch-archive#s-contrib
+[Debian - non-free]: https://www.debian.org/doc/debian-policy/ch-archive#s-non-free

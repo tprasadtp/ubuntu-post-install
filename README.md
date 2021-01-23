@@ -90,26 +90,35 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 
 ## Supported External repositories
 
-| Name                 | Key         | Packages                                                                 |
-| -------------------- | ----------- | ------------------------------------------------------------------------ |
-| Docker               | docker      | docker-ce, containerd.io, docker-ce-cli                                  |
-| Github - CLI         | github      | gh                                                                       |
-| Google - Bazel       | bazel       | bazel                                                                    |
-| Google - Chrome      | chrome      | google-chrome-stable, google-chrome-beta                                 |
-| Google - Cloud SDK   | googlecloud | google-cloud-sdk, kubectl, google-cloud-sdk-minikube, google-cloud-sdk-* |
-| Google - gVisor      | gvisor      | runsc                                                                    |
-| Hashicorp Tools      | hashicorp   | terraform, consul, nomad, vault, boundary, waypoint                      |
-| Mendeley desktop     | mendeley    | mendeleydesktop                                                          |
-| Microsoft - Edge     | edge        | microsoft-edge-dev                                                       |
-| Microsoft - Skype    | skype       | skypeforlinux                                                            |
-| Microsoft - VSCode   | vscode      | code, code-insiders, code-exploration                                    |
-| Microsoft -Azure CLI | azurecli    | azure-cli                                                                |
-| Microsoft Teams      | teams       | teams, teams-insiders                                                    |
-| ROS                  | ros         |                                                                          |
-| ROS2                 | ros2        |                                                                          |
-| Signal               | signal      | signal-desktop                                                           |
-| Spotify Client       | spotify     | spotify-client                                                           |
-| Wine HQ              | winehq      | winehq-stable, winehq-staging                                            |
+| Name                    | Key               | Packages                                                     |
+| ----------------------- | ----------------- | ------------------------------------------------------------ |
+| Docker                  | docker            | docker-ce, containerd.io, docker-ce-cli                      |
+| [GitHub - CLI][]        | github            | gh                                                           |
+| [Google - Bazel][]      | bazel             | bazel                                                        |
+| Google - Chrome         | chrome            | google-chrome-stable, google-chrome-beta                     |
+| Google - Cloud SDK      | googlecloud       | google-cloud-sdk, kubectl, google-cloud-sdk-minikube         |
+| [Google - gVisor][]     | gvisor            | runsc                                                        |
+| Hashicorp               | hashicorp         | terraform, consul, nomad, vault, boundary, waypoint          |
+| Mendeley desktop        | mendeley          | mendeleydesktop                                              |
+| Microsoft - Azure CLI   | azurecli          | azure-cli                                                    |
+| Microsoft - Edge        | edge              | microsoft-edge-dev                                           |
+| Microsoft - Skype       | skype             | skypeforlinux                                                |
+| Microsoft - Teams       | teams             | teams, teams-insiders                                        |
+| Microsoft - VSCode      | vscode            | code, code-insiders, code-exploration                        |
+| [Podman][] (via OBS)    | Podman            | podman, podman-plugins, cri-o-runc, cri-tools, buildah, crun |
+| ROS                     | ros               |                                                              |
+| ROS2                    | ros2              |                                                              |
+| Signal                  | signal            | signal-desktop                                               |
+| Spotify Client          | spotify           | spotify-client                                               |
+| Sublime Text Editor     | sublimetext       | sublime-text                                                 |
+| Wine HQ                 | winehq            | winehq-stable, winehq-staging                                |
+| [Ubuntu - Universe][]   | ubuntu_universe   |                                                              |
+| [Ubuntu - Multiverse][] | ubuntu_multiverse |                                                              |
+| [Ubuntu - Restricted][] | ubuntu_restricted |                                                              |
+| [Debian - contrib][]    | debian_contrib    |                                                              |
+| [Debian - non-free][]   | debian_nonfree    |                                                              |
+
+> Support for adding `multiverse`, `universe`, `restricted`(on Ubuntu), `contrib` and `non-free` (on Debian) is considered beta. Use with caution!
 
 ## Issues & Help
 
@@ -119,6 +128,11 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 ## Contributing & Forks
 
 See [Contributing and forks](/CONTRIBUTING.md)
+
+## Alternatives
+
+- [snwh/ubuntu-post-install](https://github.com/snwh/ubuntu-post-install):  Has few features like setting up dotfiles, but has limited config options and requires shell to be interactive. Only few external repositories are supported.
+- [Ansible](https://ansible.com) : Requires python on your system. Much more deteministic and better idempotency. There are plenty of roles and collections available on ansible-galaxy. But it adds more complexity and you have to write your own playbooks.
 
 ![Analytics](https://ga-beacon.prasadt.com/UA-101760811-3/github/ubuntu-post-install?flat)
 
@@ -147,7 +161,12 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [gpl-badge]: https://img.shields.io/badge/License-GPLv3-ff69b4
 [license]: https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE
 
-
-[gVisor]: https://gvisor.dev
-[Azure CLI]: https://github.com/Azure/azure-cli
-[Bazel]: https://bazel.build
+[GitHub - CLI]: https://cli.github.com
+[Google - gVisor]: https://gvisor.dev
+[Podman]: https://podmain.io
+[Google - Bazel]: https://bazel.build
+[Ubuntu - Universe]: https://help.ubuntu.com/community/Repositories/Ubuntu
+[Ubuntu - Restricted]: https://help.ubuntu.com/community/Repositories/Ubuntu
+[Ubuntu - Multiverse]: https://help.ubuntu.com/community/Repositories/Ubuntu
+[Debian - contrib]: https://www.debian.org/doc/debian-policy/ch-archive#s-contrib
+[Debian - non-free]: https://www.debian.org/doc/debian-policy/ch-archive#s-non-free

@@ -25,15 +25,6 @@ on:
     tags-ignore:
       - "**"
   pull_request:
-    # Lets ignore docs in PR.
-    # as we have docs workflow taking care of it.
-    paths-ignore:
-      - ".github/workflows/docs.yml"
-      - "docs/**"
-      - "netlify.toml"
-      - "mkdocs.yml"
-      - "runtime.txt"
-      - "docker-compose.yml"
 name: build
 jobs:
   shellcheck:
