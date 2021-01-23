@@ -10,7 +10,7 @@
 - **New-Repository** [Podman](https://podmain.io) (via OBS from Kubic Project)
 - **New-Repository** ROS2
 - **New-Repository** SublimeText
-- **BREAKING-CHANGE** Renamed Coogle chrome repo config from `google` to `chrome`
+- **BREAKING-CHANGE** Renamed Google chrome repo config from `google` to `chrome`
 - **REMOVED** Python packages (Due to low usage and you should use either system package manger
 or virtual environments)
 - **REMOVED** Resetting repo features. This is because apt-key is deprecated

@@ -43,8 +43,6 @@ config:
     teams: true
     vscode: true
     winehq: true
-    #
-    backports: true
     # Debian
     debian_nonfree: true
     debian_contrib: true
@@ -79,8 +77,6 @@ config:
       classic:
         - hugo
     apt:
-      backports:
-        - libseccomp2
       # Admin related Stuff
       administration:
         - curl
@@ -127,3 +123,7 @@ config:
         - teams
         # Sublime
         - sublime-text
+        # From Universe in Ubuntu
+        - apt-xapian-index
+        # Non-free in debian, multiverse in Ubuntu(canonical partner repos)
+        - unrar

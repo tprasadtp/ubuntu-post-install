@@ -90,28 +90,35 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 
 ## Supported External repositories
 
-| Name                  | Key         | Packages                                                                 |
-| --------------------- | ----------- | ------------------------------------------------------------------------ |
-| Docker                | docker      | docker-ce, containerd.io, docker-ce-cli                                  |
-| [GitHub - CLI][]      | github      | gh                                                                       |
-| [Google - Bazel][]    | bazel       | bazel                                                                    |
-| Google - Chrome       | chrome      | google-chrome-stable, google-chrome-beta                                 |
-| Google - Cloud SDK    | googlecloud | google-cloud-sdk, kubectl, google-cloud-sdk-minikube, google-cloud-sdk-* |
-| [Google - gVisor][]   | gvisor      | runsc                                                                    |
-| Hashicorp             | hashicorp   | terraform, consul, nomad, vault, boundary, waypoint                      |
-| Mendeley desktop      | mendeley    | mendeleydesktop                                                          |
-| Microsoft - Azure CLI | azurecli    | azure-cli                                                                |
-| Microsoft - Edge      | edge        | microsoft-edge-dev                                                       |
-| Microsoft - Skype     | skype       | skypeforlinux                                                            |
-| Microsoft - Teams     | teams       | teams, teams-insiders                                                    |
-| Microsoft - VSCode    | vscode      | code, code-insiders, code-exploration                                    |
-| [Podman][] (via OBS)  | Podman      | podman, podman-plugins, cri-o-runc, cri-tools, buildah, crun             |
-| ROS                   | ros         |                                                                          |
-| ROS2                  | ros2        |                                                                          |
-| Signal                | signal      | signal-desktop                                                           |
-| Spotify Client        | spotify     | spotify-client                                                           |
-| Sublime Text Editor   | sublimetext | sublime-text                                                             |
-| Wine HQ               | winehq      | winehq-stable, winehq-staging                                            |
+| Name                    | Key               | Packages                                                     |
+| ----------------------- | ----------------- | ------------------------------------------------------------ |
+| Docker                  | docker            | docker-ce, containerd.io, docker-ce-cli                      |
+| [GitHub - CLI][]        | github            | gh                                                           |
+| [Google - Bazel][]      | bazel             | bazel                                                        |
+| Google - Chrome         | chrome            | google-chrome-stable, google-chrome-beta                     |
+| Google - Cloud SDK      | googlecloud       | google-cloud-sdk, kubectl, google-cloud-sdk-minikube         |
+| [Google - gVisor][]     | gvisor            | runsc                                                        |
+| Hashicorp               | hashicorp         | terraform, consul, nomad, vault, boundary, waypoint          |
+| Mendeley desktop        | mendeley          | mendeleydesktop                                              |
+| Microsoft - Azure CLI   | azurecli          | azure-cli                                                    |
+| Microsoft - Edge        | edge              | microsoft-edge-dev                                           |
+| Microsoft - Skype       | skype             | skypeforlinux                                                |
+| Microsoft - Teams       | teams             | teams, teams-insiders                                        |
+| Microsoft - VSCode      | vscode            | code, code-insiders, code-exploration                        |
+| [Podman][] (via OBS)    | Podman            | podman, podman-plugins, cri-o-runc, cri-tools, buildah, crun |
+| ROS                     | ros               |                                                              |
+| ROS2                    | ros2              |                                                              |
+| Signal                  | signal            | signal-desktop                                               |
+| Spotify Client          | spotify           | spotify-client                                               |
+| Sublime Text Editor     | sublimetext       | sublime-text                                                 |
+| Wine HQ                 | winehq            | winehq-stable, winehq-staging                                |
+| [Ubuntu - Universe][]   | ubuntu_universe   |                                                              |
+| [Ubuntu - Multiverse][] | ubuntu_multiverse |                                                              |
+| [Ubuntu - Restricted][] | ubuntu_restricted |                                                              |
+| [Debian - contrib][]    | debian_contrib    |                                                              |
+| [Debian - non-free][]   | debian_nonfree    |                                                              |
+
+> Support for adding `multiverse`, `universe`, `restricted`(on Ubuntu), `contrib` and `non-free` (on Debian) is considered beta. Use with caution!
 
 ## Issues & Help
 
@@ -158,3 +165,8 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [Google - gVisor]: https://gvisor.dev
 [Podman]: https://podmain.io
 [Google - Bazel]: https://bazel.build
+[Ubuntu - Universe]: https://help.ubuntu.com/community/Repositories/Ubuntu
+[Ubuntu - Restricted]: https://help.ubuntu.com/community/Repositories/Ubuntu
+[Ubuntu - Multiverse]: https://help.ubuntu.com/community/Repositories/Ubuntu
+[Debian - contrib]: https://www.debian.org/doc/debian-policy/ch-archive#s-contrib
+[Debian - non-free]: https://www.debian.org/doc/debian-policy/ch-archive#s-non-free
