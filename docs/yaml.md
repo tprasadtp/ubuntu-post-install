@@ -39,11 +39,14 @@ config:
     gvisor: true
     hashicorp: true
     mendeley: false
+    podman: true
     ros: true
     ros2: true
     signal: true
     skype: true
     spotify: true
+    sublimetext: true
+    teams: true
     vscode: true
     winehq: true
 
@@ -61,14 +64,13 @@ config:
   # PPA List
   ppa:
     - ppa:yubico/stable
-    - ppa:teejee2008/ppa
   # Install components
   # APT Packages, Python Modules, Debian packages
   install:
     # Debian packages:  .deb files
     # CSV format similar to lists
     debian_packages:
-      - https://download.teamviewer.com/download/teamviewer_i386.deb,Teamviewer.deb
+      - https://download.teamviewer.com/download/teamviewer_i386.deb,TeamViewer.deb
     # Static Binaries which will be placed in /usr/local/bin
     # minikube, docker-compose, etc.
     # Follows same pattern as Debian packages

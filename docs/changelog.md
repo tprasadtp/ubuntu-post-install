@@ -2,13 +2,15 @@
 
 ## 7.0.0
 
-- **New-Repository** Google - [gVisor](https://gvisor.dev)
 - **New Repository** Google - [Bazel](https://bazel.build)
+- **New-Repository** Google - [gVisor](https://gvisor.dev)
 - **New-Repository** Microsoft - Azure CLI
 - **New-Repository** Microsoft - Edge
 - **New-Repository** Microsoft - Teams
+- **New-Repository** [Podman](https://podmain.io) (via OBS from Kubic Project)
 - **New-Repository** ROS2
-- **CONFIG** Renamed Coogle chrome repo config from `google` to `chrome`
+- **New-Repository** SublimeText
+- **BREAKING-CHANGE** Renamed Coogle chrome repo config from `google` to `chrome`
 - **REMOVED** Python packages (Due to low usage and you should use either system package manger
 or virtual environments)
 - **REMOVED** Resetting repo features. This is because apt-key is deprecated

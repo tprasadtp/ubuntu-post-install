@@ -326,6 +326,12 @@ function _init_script_variables()
     readonly TRUSTED_KEYRINGS_DIR=/usr/share/keyrings
   fi
 
+  # AE_OBS_PREFIX check
+  if [[ -v  ${AE_OBS_PREFIX}  ]]; then
+    _log_and_exit "Reserved variable (AE_OBS_PREFIX) is set!" "66"
+  fi
+
+
   # Ping URL
   readonly PING_URL="http://connectivitycheck.gstatic.com/generate_204"
 
@@ -432,7 +438,6 @@ function _check_dependencies()
   local dependencies=("$@")
   local dependency_check_failed_count dependency
   dependency_check_failed_count=0;
-  _log_info "Checking dependencies"
   for dependency in "${dependencies[@]}"; do
     if command -v "$dependency" > /dev/null; then
       _log_property "${dependency}" "INSTALLED"
@@ -478,35 +483,35 @@ function _fix_ubuntu_derivatives()
       # Ubuntu 18.04 and its derivatives
       bionic )                              readonly enable_ppa="true";
                                             readonly distro_name="ubuntu";
-                                            _log_info "This is a LTS release of Ubuntu (18.04)"
-                                            _log_success "Keeping the codename as $code_name."
+                                            _log_info "This is a LTS release of Ubuntu (18.04)";
+                                            _log_success "Keeping the codename as $code_name.";
                                             ;;
-      tara | tessa | tina | tricia )        _log_info "This is Linux-Mint 19.X."
-                                            _log_info "Setting additional repositories to follow Ubuntu 18.04."
+      tara | tessa | tina | tricia )        _log_info "This is Linux-Mint 19.X.";
+                                            _log_info "Setting additional repositories to follow Ubuntu 18.04.";
                                             code_name="bionic";
                                             readonly distro_name="ubuntu";
                                             readonly enable_ppa="true";
-                                            _log_success "Changed codename to $code_name"
+                                            _log_success "Changed codename to $code_name";
                                             ;;
-      juno | hera)                          _log_info "This release of Elementary OS is based on Ubuntu 18.04 Bionic."
-                                            _log_info "External repositories will use Ubuntu 18.04."
+      juno | hera)                          _log_info "This release of Elementary OS is based on Ubuntu 18.04 Bionic.";
+                                            _log_info "External repositories will use Ubuntu 18.04.";
                                             code_name="bionic";
                                             readonly distro_name="ubuntu";
                                             readonly enable_ppa="true";
-                                            _log_success "Changed codename to $code_name"
+                                            _log_success "Changed codename to $code_name";
                                             ;;
       # Ubuntu 20.04 and its derivatives (Current Ubuntu LTS release)
       focal )                               readonly enable_ppa="true";
                                             readonly distro_name="ubuntu";
-                                            _log_info "This is latest LTS release of Ubuntu"
-                                            _log_success "Keeping the codename as $code_name."
+                                            _log_info "This is latest LTS release of Ubuntu";
+                                            _log_success "Keeping the codename as $code_name.";
                                             ;;
       ulyana | ulyssa )                     _log_info "Release is Linux mint 20.X."
                                             _log_info "Setting additional repositories to follow Ubuntu 20.04."
                                             code_name="focal";
                                             readonly distro_name="ubuntu";
                                             readonly enable_ppa="true";
-                                            _log_success "Changed codename to $code_name"
+                                            _log_success "Changed codename to $code_name";
                                             ;;
       # Current Ubuntu release (Can be non LTS)
       groovy)                               readonly enable_ppa="true";
@@ -518,11 +523,17 @@ function _fix_ubuntu_derivatives()
                                             readonly distro_name="ubuntu";
                                             _log_warn "Release is Ubuntu 21.04 Hirsute Hippo (Unstable!!)"
                                             ;;
-      # Current Debian releases
-      stretch | buster )                    bool_is_debian="true";
+      # Old Debian release
+      stretch )                             bool_is_debian="true";
                                             readonly distro_name="debian";
                                             readonly enable_ppa="false";
                                             _log_notice "This is Debian. PPAs are disabled."
+                                            ;;
+      # Current Debian release
+      buster )                              bool_is_debian="true";
+                                            readonly distro_name="debian";
+                                            readonly enable_ppa="false";
+                                            _log_notice "This is current stable release of Debian. PPAs are disabled."
                                             ;;
       # Upcoming Debian release
       bullseye )                            bool_is_debian="true";
@@ -766,6 +777,10 @@ function _set_yaml_config()
   _check_bool "add_spotify_repo" "${config__add_repo__spotify[0]}"
 
   _check_bool "add_signal_repo" "${config__add_repo__signal[0]}"
+
+  _check_bool "add_sublimetext_repo" "${config__add_repo__sublimetext[0]}"
+
+  _check_bool "add_podman_repo" "${config__add_repo__podman[0]}"
 
   # ROS
   _check_bool "add_ros_repo" "${config__add_repo__ros[0]}"
@@ -1055,6 +1070,37 @@ function _fix_repo_not_available_upcoming_release()
 }
 
 
+function _map_to_obs_repos()
+{
+  # This function maps code_name to OBS repos
+  # This MUST be called AFTER code name fixes are applied.
+  # but BEFORE adding any OBS repos
+  _log_debug "Mapping code_name to OBS prefix"
+
+  # AE_OBS_PREFIX check
+  if [[ -v  ${AE_OBS_PREFIX}  ]]; then
+    _log_and_exit "Reserved variable (AE_OBS_PREFIX) is set!" "66"
+  fi
+
+  # We dont need mint/elementary here because we dont use them as base anyway!
+  case ${code_name} in
+    # Ubuntu
+    bionic)     readonly AE_OBS_PREFIX="xUbuntu_18.04";;
+    focal)      readonly AE_OBS_PREFIX="xUbuntu_20.04";;
+    groovy)     readonly AE_OBS_PREFIX="xUbuntu_20.10";;
+    hirsute)    readonly AE_OBS_PREFIX="xUbuntu_21.04";;
+    # Debian
+    stretch)    readonly AE_OBS_PREFIX="Debian_9";;
+    buster)     readonly AE_OBS_PREFIX="Debian_10";;
+    bullseye)   readonly AE_OBS_PREFIX="Debian_Testing";;
+    *)          _log_and_exit "Internal Error in ${FUNCNAME[0]}, Failed to match AE_OBS_PREFIX for ${code_name}" "67";;
+
+  esac
+
+  _log_debug "Matched code_name:${code_name} to AE_OBS_PREFIX:${AE_OBS_PREFIX}"
+
+}
+
 function add_ppas()
 {
   # Function to add ppa by reading ppas from ppa.list of from YAML key config.ppa
@@ -1128,7 +1174,10 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   _fix_repo_not_available_upcoming_release;
   _fix_repo_not_available;
 
+  # OBS
+  _map_to_obs_repos
 
+  # AMD64 only
   if [ "$ARCH" != "amd64" ]; then
     _log_warn "Google Chrome, Spotify, Mendeley, Signal, Wine and Duo for Unix are only supported on 64 Bit"
   else
@@ -1142,7 +1191,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       wget -q  https://dl.google.com/linux/linux_signing_key.pub -O /tmp/ae/google_signing_key.pub >> $"$log_file"
       apt-key add /tmp/ae/google_signing_key.pub |& _log_trace "${_phase_apt_key}" \
       || _log_error "Adding trusted keys for Google failed."
-      if echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main #Google-Chrome" > ${SOURCES_FILE_DIR}/google-chrome.list; then
+      if echo "${GOOGLE_CHROME_SOURCE_FILE_CONTENT}" > ${SOURCES_FILE_DIR}/google-chrome.list; then
         _log_success "OK"
       else
         _log_error "Adding Google Chrome Repository failed"
@@ -1470,6 +1519,47 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   else
     # gVisor is not enabled
     _log_debug "Skipped addinng gVisor repository."
+  fi
+
+  # Podman via OBS
+  if [[ ${add_podman_repo} == "true" ]]; then
+
+    _log_info "Podman"
+    __add_repo_keys --format "asc" \
+      --file-prefix "obs-podman-${code_name}" \
+      --key-url https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_OBS_PREFIX}/Release.key
+
+    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/obs-podman-${code_name}.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_OBS_PREFIX}/ / #Podman (via OBS)"  > ${SOURCES_FILE_DIR}/obs-podman.list; then
+      _log_success "OK"
+    else
+      _log_error "Adding Podman repository failed!"
+    fi
+
+  else
+    # Podman is not enabled
+    _log_debug "Skipped addinng Podman repository."
+  fi
+
+
+  # Sublime Text
+  if [ "$add_sublimetext_repo" == "true" ]; then
+    if [ "$ARCH" == "amd64" ]; then
+      _log_info "SublimeText"
+      __add_repo_keys --format "asc" \
+        --file-prefix "sublimetext" \
+        --key-url https://download.sublimetext.com/sublimehq-pub.gpg
+
+      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/sublimetext.gpg] https://download.sublimetext.com/ apt/stable/ #SublimeText Editor" > ${SOURCES_FILE_DIR}/sublimetext.list; then
+        _log_success "OK"
+      else
+        _log_error "Failed to add SublimeText repository"
+      fi
+
+    else
+      _log_error "SublimeText repository is not supported on this architecture($ARCH)!"
+    fi
+  else
+    _log_debug "Skipped adding SublimeText repository"
   fi
 
   # ROS2
@@ -2207,9 +2297,11 @@ function _process_menu()
   Microsoft - Skype            : $add_skype_repo
   Microsoft - Teams            : $add_msteams_repo
   Microsoft - VSCode           : $add_vscode_repo
+  Podman (via from Kubic OBS)  : $add_podman_repo
   ROS                          : $add_ros_repo
   ROS2                         : $add_ros2_repo
   Signal for Desktop           : $add_signal_repo
+  SublimeText Editor           : $add_sublimetext_repo
 
   Proceed with adding these repositories?
 
@@ -2624,6 +2716,8 @@ function main()
 
   # Check dependencies
   declare -ar after_effects_core_dependencies=(wget ping ps grep cut tr awk)
+
+  _log_info "Checking dependencies"
 
   if [[ ${AE_AUTOPILOT} == "true" ]]; then
     if command -v whiptail > /dev/null; then

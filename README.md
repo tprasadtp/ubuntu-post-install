@@ -93,22 +93,24 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 | Name                  | Key         | Packages                                                                 |
 | --------------------- | ----------- | ------------------------------------------------------------------------ |
 | Docker                | docker      | docker-ce, containerd.io, docker-ce-cli                                  |
-| Github - CLI          | github      | gh                                                                       |
-| Google - Bazel        | bazel       | bazel                                                                    |
+| [GitHub - CLI][]      | github      | gh                                                                       |
+| [Google - Bazel][]    | bazel       | bazel                                                                    |
 | Google - Chrome       | chrome      | google-chrome-stable, google-chrome-beta                                 |
 | Google - Cloud SDK    | googlecloud | google-cloud-sdk, kubectl, google-cloud-sdk-minikube, google-cloud-sdk-* |
-| Google - gVisor       | gvisor      | runsc                                                                    |
-| Hashicorp Tools       | hashicorp   | terraform, consul, nomad, vault, boundary, waypoint                      |
+| [Google - gVisor][]   | gvisor      | runsc                                                                    |
+| Hashicorp             | hashicorp   | terraform, consul, nomad, vault, boundary, waypoint                      |
 | Mendeley desktop      | mendeley    | mendeleydesktop                                                          |
+| Microsoft - Azure CLI | azurecli    | azure-cli                                                                |
 | Microsoft - Edge      | edge        | microsoft-edge-dev                                                       |
 | Microsoft - Skype     | skype       | skypeforlinux                                                            |
+| Microsoft - Teams     | teams       | teams, teams-insiders                                                    |
 | Microsoft - VSCode    | vscode      | code, code-insiders, code-exploration                                    |
-| Microsoft - Azure CLI | azurecli    | azure-cli                                                                |
-| Microsoft Teams       | teams       | teams, teams-insiders                                                    |
+| [Podman][] (via OBS)  | Podman      | podman, varlink, podman-plugins, cri-o-runc, cri-tools, buildah, crun    |
 | ROS                   | ros         |                                                                          |
 | ROS2                  | ros2        |                                                                          |
 | Signal                | signal      | signal-desktop                                                           |
 | Spotify Client        | spotify     | spotify-client                                                           |
+| Sublime Text Editor   | sublimetext | sublime-text                                                             |
 | Wine HQ               | winehq      | winehq-stable, winehq-staging                                            |
 
 ## Issues & Help
@@ -146,3 +148,8 @@ See [Contributing and forks](/CONTRIBUTING.md)
 
 [gpl-badge]: https://img.shields.io/badge/License-GPLv3-ff69b4
 [license]: https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE
+
+[GitHub - CLI]: https://cli.github.com
+[Google - gVisor]: https://gvisor.dev
+[Podman]: https://podmain.io
+[Google - Bazel]: https://bazel.build
