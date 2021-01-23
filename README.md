@@ -90,26 +90,26 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 
 ## Supported External repositories
 
-| Name                 | Key         | Packages                                                                 |
-| -------------------- | ----------- | ------------------------------------------------------------------------ |
-| Docker               | docker      | docker-ce, containerd.io, docker-ce-cli                                  |
-| Github - CLI         | github      | gh                                                                       |
-| Google - Bazel       | bazel       | bazel                                                                    |
-| Google - Chrome      | chrome      | google-chrome-stable, google-chrome-beta                                 |
-| Google - Cloud SDK   | googlecloud | google-cloud-sdk, kubectl, google-cloud-sdk-minikube, google-cloud-sdk-* |
-| Google - gVisor      | gvisor      | runsc                                                                    |
-| Hashicorp Tools      | hashicorp   | terraform, consul, nomad, vault, boundary, waypoint                      |
-| Mendeley desktop     | mendeley    | mendeleydesktop                                                          |
-| Microsoft - Edge     | edge        | microsoft-edge-dev                                                       |
-| Microsoft - Skype    | skype       | skypeforlinux                                                            |
-| Microsoft - VSCode   | vscode      | code, code-insiders, code-exploration                                    |
-| Microsoft -Azure CLI | azurecli    | azure-cli                                                                |
-| Microsoft Teams      | teams       | teams, teams-insiders                                                    |
-| ROS                  | ros         |                                                                          |
-| ROS2                 | ros2        |                                                                          |
-| Signal               | signal      | signal-desktop                                                           |
-| Spotify Client       | spotify     | spotify-client                                                           |
-| Wine HQ              | winehq      | winehq-stable, winehq-staging                                            |
+| Name                  | Key         | Packages                                                                 |
+| --------------------- | ----------- | ------------------------------------------------------------------------ |
+| Docker                | docker      | docker-ce, containerd.io, docker-ce-cli                                  |
+| Github - CLI          | github      | gh                                                                       |
+| Google - Bazel        | bazel       | bazel                                                                    |
+| Google - Chrome       | chrome      | google-chrome-stable, google-chrome-beta                                 |
+| Google - Cloud SDK    | googlecloud | google-cloud-sdk, kubectl, google-cloud-sdk-minikube, google-cloud-sdk-* |
+| Google - gVisor       | gvisor      | runsc                                                                    |
+| Hashicorp Tools       | hashicorp   | terraform, consul, nomad, vault, boundary, waypoint                      |
+| Mendeley desktop      | mendeley    | mendeleydesktop                                                          |
+| Microsoft - Edge      | edge        | microsoft-edge-dev                                                       |
+| Microsoft - Skype     | skype       | skypeforlinux                                                            |
+| Microsoft - VSCode    | vscode      | code, code-insiders, code-exploration                                    |
+| Microsoft - Azure CLI | azurecli    | azure-cli                                                                |
+| Microsoft Teams       | teams       | teams, teams-insiders                                                    |
+| ROS                   | ros         |                                                                          |
+| ROS2                  | ros2        |                                                                          |
+| Signal                | signal      | signal-desktop                                                           |
+| Spotify Client        | spotify     | spotify-client                                                           |
+| Wine HQ               | winehq      | winehq-stable, winehq-staging                                            |
 
 ## Issues & Help
 
@@ -146,8 +146,3 @@ See [Contributing and forks](/CONTRIBUTING.md)
 
 [gpl-badge]: https://img.shields.io/badge/License-GPLv3-ff69b4
 [license]: https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE
-
-
-[gVisor]: https://gvisor.dev
-[Azure CLI]: https://github.com/Azure/azure-cli
-[Bazel]: https://bazel.build
