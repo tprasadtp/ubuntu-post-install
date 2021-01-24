@@ -1,6 +1,6 @@
 # Install Config
 api: 2
-name: Minimal
+name: Test-Suite-ARM
 author: Prasad T
 # Configuration
 config:
@@ -23,23 +23,26 @@ config:
   # Repository Flags
   add_repo:
     azurecli: true
-    docker: true
-    gcsfuse: true
-    gvisor: true
-    github: true
+    bazel: true
     chrome: true
+    docker: true
+    edge: true
+    gcsfuse: true
+    github: true
     googlecloud: true
+    gvisor: true
     hashicorp: true
     mendeley: false
+    podman: true
     ros: true
     ros2: true
     signal: true
     skype: true
     spotify: true
+    sublimetext: true
+    teams: true
     vscode: true
     winehq: true
-    bazel: true
-    teams: true
 
   # Flags
   flags:

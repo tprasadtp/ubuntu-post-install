@@ -262,7 +262,7 @@ Usage: <font color="#D7FF87"> [sudo] ./after-effects </font><font color="#FF8700
 
 <font color="#D7FF87">Documentation, License and Version Information</font>
 <font color="#D7FF87">---------------------------------------------------------</font>
-Version : <font color="#FF8700">6.4.0</font>
+Version : <font color="#FF8700">7.0.0</font>
 GitHub  : <font color="#AFFFFF">https://git.io/ubuntu-post-install</font>
 Docs    : <font color="#AFFFFF">https://ae.prasadt.com</font>
 License : <font color="#FF8700">GPLv3</font>

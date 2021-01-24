@@ -1,6 +1,6 @@
 # Install Config
 api: 2
-name: Minimal
+name: Test-Suite
 author: Prasad T
 # Configuration
 config:
@@ -33,14 +33,23 @@ config:
     gvisor: true
     hashicorp: true
     mendeley: false
+    podman: true
     ros: true
     ros2: true
     signal: true
     skype: true
     spotify: true
+    sublimetext: true
+    teams: true
     vscode: true
     winehq: true
-    teams: true
+    # Debian
+    debian_nonfree: true
+    debian_contrib: true
+    # Ubuntu
+    ubuntu_universe: true
+    ubuntu_multiverse: true
+    ubuntu_restricted: true
 
   # Flags
   flags:
@@ -112,3 +121,9 @@ config:
         - microsoft-edge-dev
         # Teams
         - teams
+        # Sublime
+        - sublime-text
+        # From Universe in Ubuntu
+        - apt-xapian-index
+        # Non-free in debian, multiverse in Ubuntu(canonical partner repos)
+        - unrar

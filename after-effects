@@ -208,9 +208,9 @@ function _log_var()
   local var
   var="$1"
   if [[ $AE_DEBUG -gt 0 ]]; then
-    printf "${GRAY}  » %-20s - %-10s${NC}\n" "${var}" "${!var}"
+    printf "${GRAY}  » %-22s - %-10s${NC}\n" "${var}" "${!var}"
   fi
-  printf "$(date) ${_variable} %-20s - %-10s\n" "${var}" "${!var}" >> "$log_file"
+  printf "$(date) ${_variable} %-22s - %-10s\n" "${var}" "${!var}" >> "$log_file"
 }
 
 function  _log_trace()
@@ -248,7 +248,7 @@ function _log_property()
   desc="${1}"
   value="${2}"
   lvl="${3:-0}"
-  fmt="%-${4:-20}s"
+  fmt="%-${4:-22}s"
   __msg_string="$(printf "${fmt} : %s" "${desc}" "${value}")"
 
   case ${lvl} in
@@ -324,6 +324,15 @@ function _init_script_variables()
     _log_and_exit "Reserved variable (TRUSTED_KEYRINGS_DIR) is set!" "66"
   else
     readonly TRUSTED_KEYRINGS_DIR=/usr/share/keyrings
+  fi
+
+  # AE_OBS_PREFIX check
+  if [[ -v  ${AE_OBS_PREFIX}  ]]; then
+    _log_and_exit "Reserved variable (AE_OBS_PREFIX) is set!" "66"
+  fi
+
+  if [[ -v  ${AE_BASE_CODENAME}  ]]; then
+    _log_and_exit "Reserved variable (AE_BASE_CODENAME) is set!" "66"
   fi
 
   # Ping URL
@@ -432,7 +441,6 @@ function _check_dependencies()
   local dependencies=("$@")
   local dependency_check_failed_count dependency
   dependency_check_failed_count=0;
-  _log_info "Checking dependencies"
   for dependency in "${dependencies[@]}"; do
     if command -v "$dependency" > /dev/null; then
       _log_property "${dependency}" "INSTALLED"
@@ -478,35 +486,35 @@ function _fix_ubuntu_derivatives()
       # Ubuntu 18.04 and its derivatives
       bionic )                              readonly enable_ppa="true";
                                             readonly distro_name="ubuntu";
-                                            _log_info "This is a LTS release of Ubuntu (18.04)"
-                                            _log_success "Keeping the codename as $code_name."
+                                            _log_info "This is a LTS release of Ubuntu (18.04)";
+                                            _log_success "Keeping the codename as $code_name.";
                                             ;;
-      tara | tessa | tina | tricia )        _log_info "This is Linux-Mint 19.X."
-                                            _log_info "Setting additional repositories to follow Ubuntu 18.04."
+      tara | tessa | tina | tricia )        _log_info "This is Linux-Mint 19.X.";
+                                            _log_info "Setting additional repositories to follow Ubuntu 18.04.";
                                             code_name="bionic";
                                             readonly distro_name="ubuntu";
                                             readonly enable_ppa="true";
-                                            _log_success "Changed codename to $code_name"
+                                            _log_success "Changed codename to $code_name";
                                             ;;
-      juno | hera)                          _log_info "This release of Elementary OS is based on Ubuntu 18.04 Bionic."
-                                            _log_info "External repositories will use Ubuntu 18.04."
+      juno | hera)                          _log_info "This release of Elementary OS is based on Ubuntu 18.04 Bionic.";
+                                            _log_info "External repositories will use Ubuntu 18.04.";
                                             code_name="bionic";
                                             readonly distro_name="ubuntu";
                                             readonly enable_ppa="true";
-                                            _log_success "Changed codename to $code_name"
+                                            _log_success "Changed codename to $code_name";
                                             ;;
       # Ubuntu 20.04 and its derivatives (Current Ubuntu LTS release)
       focal )                               readonly enable_ppa="true";
                                             readonly distro_name="ubuntu";
-                                            _log_info "This is latest LTS release of Ubuntu"
-                                            _log_success "Keeping the codename as $code_name."
+                                            _log_info "This is latest LTS release of Ubuntu";
+                                            _log_success "Keeping the codename as $code_name.";
                                             ;;
       ulyana | ulyssa )                     _log_info "Release is Linux mint 20.X."
                                             _log_info "Setting additional repositories to follow Ubuntu 20.04."
                                             code_name="focal";
                                             readonly distro_name="ubuntu";
                                             readonly enable_ppa="true";
-                                            _log_success "Changed codename to $code_name"
+                                            _log_success "Changed codename to $code_name";
                                             ;;
       # Current Ubuntu release (Can be non LTS)
       groovy)                               readonly enable_ppa="true";
@@ -518,11 +526,17 @@ function _fix_ubuntu_derivatives()
                                             readonly distro_name="ubuntu";
                                             _log_warn "Release is Ubuntu 21.04 Hirsute Hippo (Unstable!!)"
                                             ;;
-      # Current Debian releases
-      stretch | buster )                    bool_is_debian="true";
+      # Old Debian release
+      stretch )                             bool_is_debian="true";
                                             readonly distro_name="debian";
                                             readonly enable_ppa="false";
                                             _log_notice "This is Debian. PPAs are disabled."
+                                            ;;
+      # Current Debian release
+      buster )                              bool_is_debian="true";
+                                            readonly distro_name="debian";
+                                            readonly enable_ppa="false";
+                                            _log_notice "This is current stable release of Debian. PPAs are disabled."
                                             ;;
       # Upcoming Debian release
       bullseye )                            bool_is_debian="true";
@@ -546,6 +560,11 @@ function _fix_ubuntu_derivatives()
 
   _log_success "Applied release specific settings and fixes."
   _log_var "code_name"
+
+  # Save a copy of code_name
+  declare -gr AE_BASE_CODENAME="${code_name}"
+  _log_var "AE_BASE_CODENAME"
+
 
 }
 
@@ -767,6 +786,10 @@ function _set_yaml_config()
 
   _check_bool "add_signal_repo" "${config__add_repo__signal[0]}"
 
+  _check_bool "add_sublimetext_repo" "${config__add_repo__sublimetext[0]}"
+
+  _check_bool "add_podman_repo" "${config__add_repo__podman[0]}"
+
   # ROS
   _check_bool "add_ros_repo" "${config__add_repo__ros[0]}"
   _check_bool "add_ros2_repo" "${config__add_repo__ros2[0]}"
@@ -789,6 +812,15 @@ function _set_yaml_config()
   _check_bool "add_skype_repo" "${config__add_repo__skype[0]}"
   _check_bool "add_vscode_repo" "${config__add_repo__vscode[0]}"
   _check_bool "add_msteams_repo" "${config__add_repo__teams[0]}"
+
+  # Debian Components
+  _check_bool "add_debian_nonfree" "${config__add_repo__debian_nonfree[0]}"
+  _check_bool "add_debian_contrib" "${config__add_repo__debian_contrib[0]}"
+
+  # Ubuntu Components
+  _check_bool "add_ubuntu_universe" "${config__add_repo__ubuntu_universe[0]}"
+  _check_bool "add_ubuntu_multiverse" "${config__add_repo__ubuntu_multiverse[0]}"
+  _check_bool "add_ubuntu_restricted" "${config__add_repo__ubuntu_restricted[0]}"
 
 
   # Other Script Flags
@@ -876,7 +908,11 @@ function _set_yaml_config()
   # Lets get em, shall we?
 
   # Copy package array
+
+  # Purge
   declare -gar parsed_purge_packages=("${config__purge_[@]}")
+
+  # Normal
   declare -gar parsed_administration_packages=("${config__install__apt__administration_[@]}")
   declare -gar parsed_secutity_packages=("${config__install__apt__security_[@]}")
   declare -gar parsed_productivity_packages=("${config__install__apt__productivity_[@]}")
@@ -1055,6 +1091,38 @@ function _fix_repo_not_available_upcoming_release()
 }
 
 
+function _map_to_obs_repos()
+{
+  # This function maps code_name to OBS repos
+  # This MUST be called AFTER code name fixes are applied.
+  # but BEFORE adding any OBS repos
+  _log_debug "Mapping code_name to OBS prefix"
+
+  # AE_OBS_PREFIX check
+  if [[ -v  ${AE_OBS_PREFIX}  ]]; then
+    _log_and_exit "Reserved variable (AE_OBS_PREFIX) is set!" "66"
+  fi
+
+  # We dont need mint/elementary here because we dont use them as base anyway!
+  case ${code_name} in
+    # Ubuntu
+    bionic)     readonly AE_OBS_PREFIX="xUbuntu_18.04";;
+    focal)      readonly AE_OBS_PREFIX="xUbuntu_20.04";;
+    groovy)     readonly AE_OBS_PREFIX="xUbuntu_20.10";;
+    hirsute)    readonly AE_OBS_PREFIX="xUbuntu_21.04";;
+    # Debian
+    stretch)    readonly AE_OBS_PREFIX="Debian_9";;
+    buster)     readonly AE_OBS_PREFIX="Debian_10";;
+    bullseye)   readonly AE_OBS_PREFIX="Debian_Testing";;
+    *)          _log_and_exit "Internal Error in ${FUNCNAME[0]}, Failed to match AE_OBS_PREFIX for ${code_name}" "67";;
+
+  esac
+
+  _log_var "code_name"
+  _log_var "AE_OBS_PREFIX"
+
+}
+
 function add_ppas()
 {
   # Function to add ppa by reading ppas from ppa.list of from YAML key config.ppa
@@ -1099,8 +1167,8 @@ function add_repositories()
   _log_stage "Setting up repositories"
 
 
-  #local CLOUD_SDK_REPO
   local exit_status
+  local sources_list_bak_ts
 
   # shellcheck disable=SC2034
   declare -r MENDELEY_SOURCE_FILE_CONTENT="# This file lists the repositories for Mendeley Desktop.
@@ -1128,9 +1196,104 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   _fix_repo_not_available_upcoming_release;
   _fix_repo_not_available;
 
+  # OBS
+  _map_to_obs_repos
 
+  # Backup sources.list if it will be modified
+  if [[ $add_ubuntu_multiverse == "true" ]] || [[ $add_ubuntu_universe == "true" ]] \
+  || [[ $add_ubuntu_restricted == "true" ]] || [[ $add_debian_contrib == "true" ]] \
+  || [[ $add_debian_nonfree == "true" ]]; then
+    _log_warn "Configuration will modify etc/apt/sources.list"
+    sources_list_bak_ts="$(date +'%Y%m%d-%H%M%S')"
+    _log_info "Backing up with suffix - ${sources_list_bak_ts}.ae.bak"
+    if cp /etc/apt/sources.list "/etc/apt/sources.list.${sources_list_bak_ts}.ae.bak" |& _log_trace "${_phase_repo}"; then
+      _log_success "Backed up!"
+    else
+      _log_and_exit "Failed to create backup of sources.list before modification!" "68"
+    fi
+  else
+    _log_debug "No need to backup sources.list!"
+  fi
+
+  # Ubuntu multiverse/universe/restricted
+  if [[ ${distro_name} == "ubuntu" ]]; then
+
+    # Universe - Community-maintained free and open-source software.
+    if [[ ${add_ubuntu_universe} == "true" ]]; then
+      _log_info "Ubuntu/Universe"
+      if add-apt-repository universe |& _log_trace "${_phase_repo}" ; then
+        _log_success "OK"
+      else
+        _log_error "Failed to add Ubuntu/Universe reposiroty!"
+      fi
+    else
+      _log_debug "Skipped adding Ubuntu/Universe repository"
+    fi
+
+    # Restricted - Proprietary drivers for devices.
+    if [[ ${add_ubuntu_restricted} == "true" ]]; then
+      _log_info "Ubuntu/Restricted"
+      if add-apt-repository restricted |& _log_trace "${_phase_repo}" ; then
+        _log_success "OK"
+      else
+        _log_error "Failed to add Ubuntu/Restricted reposiroty!"
+      fi
+    else
+      _log_debug "Skipped adding Ubuntu/Restricted repository"
+    fi
+
+    # Multiverse - Software restricted by copyright or legal issues.
+    if [[ ${add_ubuntu_multiverse} == "true" ]]; then
+      _log_info "Ubuntu/Multiverse"
+      if add-apt-repository multiverse |& _log_trace "${_phase_repo}" ; then
+        _log_success "OK"
+      else
+        _log_error "Failed to add Ubuntu/Multiverse reposiroty!"
+      fi
+    else
+      _log_debug "Skipped adding Ubuntu/Multiverse repository"
+    fi
+
+
+  else
+    _log_debug "Distro is not Ubuntu, skip adding ubuntu specific components!"
+  fi # ubuntu check
+
+
+  # Debian Additional repos
+  if [[ ${distro_name} == "debian" ]]; then
+
+    # Contrib
+    if [[ ${add_debian_contrib} == "true" ]]; then
+      _log_info "Debian/Contrib"
+      if add-apt-repository contrib |& _log_trace "${_phase_repo}" ; then
+        _log_success "OK"
+      else
+        _log_error "Failed to add Debian/Contrib reposiroty!"
+      fi
+    else
+      _log_debug "Skipped adding Debian/Contrib repository"
+    fi
+
+    # Non-Free - Proprietary drivers for devices.
+    if [[ ${add_debian_nonfree} == "true" ]]; then
+      _log_info "Debian/Non-Free"
+      if add-apt-repository non-free |& _log_trace "${_phase_repo}" ; then
+        _log_success "OK"
+      else
+        _log_error "Failed to add Debian/Non-Free reposiroty!"
+      fi
+    else
+      _log_debug "Skipped adding Debian/Non-Free repository"
+    fi
+
+  else
+    _log_debug "Distro is not Debian, skip adding debian specific components!"
+  fi # debian check
+
+  # AMD64 only
   if [ "$ARCH" != "amd64" ]; then
-    _log_warn "Google Chrome, Spotify, Mendeley, Signal, Wine and Duo for Unix are only supported on 64 Bit"
+    _log_warn "Google Chrome, Spotify, Mendeley, Signal and WineHQ are only supported on amd64 architecture!"
   else
 
     _log_debug "Arch is 64 Bit. Enabled adding 64 bit repos."
@@ -1142,7 +1305,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       wget -q  https://dl.google.com/linux/linux_signing_key.pub -O /tmp/ae/google_signing_key.pub >> $"$log_file"
       apt-key add /tmp/ae/google_signing_key.pub |& _log_trace "${_phase_apt_key}" \
       || _log_error "Adding trusted keys for Google failed."
-      if echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main #Google-Chrome" > ${SOURCES_FILE_DIR}/google-chrome.list; then
+      if echo "${GOOGLE_CHROME_SOURCE_FILE_CONTENT}" > ${SOURCES_FILE_DIR}/google-chrome.list; then
         _log_success "OK"
       else
         _log_error "Adding Google Chrome Repository failed"
@@ -1159,7 +1322,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "spotify" \
         --key-url https://download.spotify.com/debian/pubkey_0D811D58.gpg
 
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/spotify.gpg] http://repository.spotify.com stable non-free #Spotify" > ${SOURCES_FILE_DIR}/spotify.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/spotify.gpg] http://repository.spotify.com stable non-free #Spotify" > ${SOURCES_FILE_DIR}/after-effects:spotify.list; then
         _log_success "OK"
       else
         _log_error "Adding Spotify Repository Failed"
@@ -1177,7 +1340,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "skype" \
         --key-url https://repo.skype.com/data/SKYPE-GPG-KEY
 
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/skype.gpg] https://repo.skype.com/deb stable main #Skype" > $SOURCES_FILE_DIR/skype-stable.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/skype.gpg] https://repo.skype.com/deb stable main #Skype" > $SOURCES_FILE_DIR/after-effects:skype.list; then
         _log_success "OK"
       else
         _log_error "Adding Skype for linux repository failed"
@@ -1194,7 +1357,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "signal-desktop" \
         --key-url https://updates.signal.org/desktop/apt/keys.asc
 
-      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/signal-desktop.gpg] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/signal-desktop.list; then
+      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/signal-desktop.gpg] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/after-effects:signal.list; then
         _log_success "OK"
       else
         _log_error "Failed to addd Signal for desktop repository!"
@@ -1230,7 +1393,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         __add_repo_keys --format "asc" \
           --file-prefix "wine-hq" \
           --key-url https://dl.winehq.org/wine-builds/winehq.key
-        if echo "deb [signed-by=${TRUSTED_KEYRINGS_DIR}/wine-hq.gpg] https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/winehq.list; then
+        if echo "deb [signed-by=${TRUSTED_KEYRINGS_DIR}/wine-hq.gpg] https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/after-effects:winehq.list; then
           _log_success "OK"
         else
           _log_error "Adding WineHQ repository failed"
@@ -1238,7 +1401,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       else
         _log_error "Latest version of WINE depends on libfaudio0 package,"
         _log_error "which is not available on your distribution!"
-        _log_error "For more information visit https://forum.winehq.org/viewtopic.php?f=8&t=32192"
+        _log_warn "For more information visit https://forum.winehq.org/viewtopic.php?f=8&t=32192"
       fi
     else
       _log_info "Skipped adding WineHQ."
@@ -1260,7 +1423,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   # Google Cloud SDK
   if [ "$add_gcp_repo" == "true" ]; then
     _log_info "Google-Cloud-SDK"
-    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/google-cloud-packaging.gpg] http://packages.cloud.google.com/apt cloud-sdk main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/google-cloud-sdk.list; then
+    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/google-cloud-packaging.gpg] http://packages.cloud.google.com/apt cloud-sdk main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/after-effects:googlecloud.list; then
       _log_success "OK"
     else
       _log_error "Adding Google Cloud SDK Repository failed"
@@ -1274,7 +1437,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
 
     if [[ $ARCH == "amd64" ]]; then
       _log_info "GCSFUSE"
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/google-cloud-packaging.gpg] http://packages.cloud.google.com/apt gcsfuse-${code_name} main #GCSFUSE" > ${SOURCES_FILE_DIR}/gcsfuse.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/google-cloud-packaging.gpg] http://packages.cloud.google.com/apt gcsfuse-${code_name} main #GCSFUSE" > ${SOURCES_FILE_DIR}/after-effects:gcsfuse.list; then
         _log_success "OK"
       else
         _log_error "Adding GCSFUSE repository failed"
@@ -1301,16 +1464,14 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   if [[ ${add_vscode_repo} == "true"  ]]; then
     _log_info "VSCode"
     if [[ ${ARCH} == "amd64" ]]; then
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/vscode.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/after-effects:vscode.list; then
         _log_success "OK"
       else
         _log_error "Failed to addd VSCode repository!"
       fi
     else
       _log_error "VSCode repositories are not supported on this architecture!($ARCH)"
-      _log_error "BUT debian and snap packaages are AVAILABLE from Microsoft."
-      _log_error "Either install VSCode via snaps or deb packages, script supports BOTH."
-      _log_error "Visit https://code.visualstudio.com/#alt-downloads"
+      _log_warn "Visit https://code.visualstudio.com/#alt-downloads"
     fi
 
   else
@@ -1321,14 +1482,14 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   if [[ ${add_azurecli_repo} == "true"  ]] ; then
     if [[ ${ARCH} == "amd64" ]]; then
       _log_info "Azure CLI"
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ ${code_name} main #Azure CLI" > ${SOURCES_FILE_DIR}/azure-cli.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ ${code_name} main #Azure CLI" > ${SOURCES_FILE_DIR}/after-effects:azurecli.list; then
         _log_success "OK"
       else
         _log_error "Failed to addd Azure CLI repository!"
       fi
     else
       _log_error "Azure CLI cannot be installed via package manager on this architecture."
-      _log_error "For more info, visit https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=script"
+      _log_warn "See https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=script"
     fi
   else
     _log_debug "Skipped adding Azure CLI repository"
@@ -1338,7 +1499,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   if [[ ${add_edge_repo} == "true"  ]] ; then
     if [[ ${ARCH} == "amd64" ]]; then
       _log_info "Microsoft Edge"
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main #Microsoft Edge" > ${SOURCES_FILE_DIR}/microsoft-edge.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main #Microsoft Edge" > ${SOURCES_FILE_DIR}/after-effects:edge.list; then
         _log_success "OK"
       else
         _log_error "Failed to addd Microsoft Edge repository!"
@@ -1354,7 +1515,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   if [[ ${add_msteams_repo} == "true"  ]] ; then
     if [[ ${ARCH} == "amd64" ]]; then
       _log_info "Microsoft Teams"
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/ms-teams stable main #Microsoft Edge" > ${SOURCES_FILE_DIR}/microsoft-teams.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/ms-teams stable main #Microsoft Edge" > ${SOURCES_FILE_DIR}/after-effects:teams.list; then
         _log_success "OK"
       else
         _log_error "Failed to addd Microsoft Teams repository!"
@@ -1372,9 +1533,9 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     __add_repo_keys --format "asc" \
       --file-prefix "docker-ce" \
       --key-url https://download.docker.com/linux/"${distro_name}"/gpg
-    _log_debug "Adding Docker-CE sources .list"
+    _log_debug "Adding Docker(Docker Inc) sources .list"
 
-    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/docker-ce.gpg] https://download.docker.com/linux/${distro_name}  ${code_name} stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/docker.list; then
+    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/docker-ce.gpg] https://download.docker.com/linux/${distro_name}  ${code_name} stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/after-effects:docker.list; then
       _log_success "OK"
     else
       _log_error "Adding Docker-CE repository failed"
@@ -1392,7 +1553,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C99B11DEB97541F0 |& _log_trace "${_phase_apt_key}" \
    || _log_error "Adding Github CLI keys failed"
 
-    if echo "deb https://cli.github.com/packages  ${code_name}  main #GitHub-CLI" > ${SOURCES_FILE_DIR}/github-cli.list; then
+    if echo "deb https://cli.github.com/packages  ${code_name}  main #GitHub-CLI" > ${SOURCES_FILE_DIR}/after-effects:github.list; then
       _log_success "OK"
     else
       _log_error "Adding GH CLi repository failed"
@@ -1410,7 +1571,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "hashicorp" \
         --key-url https://apt.releases.hashicorp.com/gpg
 
-      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/hashicorp.gpg] https://apt.releases.hashicorp.com ${code_name} main#Hashicorp-Packages" > ${SOURCES_FILE_DIR}/hashicorp.list; then
+      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/hashicorp.gpg] https://apt.releases.hashicorp.com ${code_name} main#Hashicorp-Packages" > ${SOURCES_FILE_DIR}/after-effects:hashicorp.list; then
         _log_success "OK"
       else
         _log_error "Failed to add hashicorp repository"
@@ -1431,7 +1592,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "bazel" \
         --key-url https://bazel.build/bazel-release.pub.gpg
 
-      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/bazel.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8 #Bazel" > ${SOURCES_FILE_DIR}/bazel.list; then
+      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/bazel.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8 #Bazel" > ${SOURCES_FILE_DIR}/after-effects:bazel.list; then
         _log_success "OK"
       else
         _log_error "Failed to add bazel repository"
@@ -1456,7 +1617,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "gvisor" \
         --key-url https://gvisor.dev/archive.key
 
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/gvisor.gpg] https://storage.googleapis.com/gvisor/releases release main #gVisor-Container-Runtime"  > ${SOURCES_FILE_DIR}/gvisor.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/gvisor.gpg] https://storage.googleapis.com/gvisor/releases release main #gVisor-Container-Runtime"  > ${SOURCES_FILE_DIR}/after-effects:gvisor.list; then
         _log_success "OK"
       else
         _log_error "Adding gVisor repository failed!"
@@ -1470,6 +1631,56 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   else
     # gVisor is not enabled
     _log_debug "Skipped addinng gVisor repository."
+  fi
+
+  # Podman via OBS
+  if [[ ${add_podman_repo} == "true" ]]; then
+
+    if [[ ${ARCH} == "amd64" ]] && [[ $distro_name == "ubuntu" ]]; then
+
+      _log_info "Podman"
+      __add_repo_keys --format "asc" \
+        --file-prefix "obs-podman-${code_name}" \
+        --key-url https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_OBS_PREFIX}/Release.key
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/obs-podman-${code_name}.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_OBS_PREFIX}/ / #Podman (via OBS)"  > ${SOURCES_FILE_DIR}/after-effects:podman.list; then
+        _log_success "OK"
+      else
+        _log_error "Adding Podman repository failed!"
+      fi
+
+    else
+      _log_error "Podman is not supported on ${AE_DISTRO_NAME}/${ARCH}"
+      if [[ ${distro_name} == "debian" ]]; then
+        _log_warn "Podman depends on libseccomp2 from backports repository."
+        _log_warn "See https://podman.io/getting-started/installation."
+      fi
+    fi
+
+  else
+    # Podman is not enabled
+    _log_debug "Skipped addinng Podman repository."
+  fi
+
+
+  # Sublime Text
+  if [ "$add_sublimetext_repo" == "true" ]; then
+    if [ "$ARCH" == "amd64" ]; then
+      _log_info "SublimeText"
+      __add_repo_keys --format "asc" \
+        --file-prefix "sublimetext" \
+        --key-url https://download.sublimetext.com/sublimehq-pub.gpg
+
+      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/sublimetext.gpg] https://download.sublimetext.com/ apt/stable/ #SublimeText Editor" > ${SOURCES_FILE_DIR}/after-effects:sublimetext.list; then
+        _log_success "OK"
+      else
+        _log_error "Failed to add SublimeText repository"
+      fi
+
+    else
+      _log_error "SublimeText repository is not supported on this architecture($ARCH)!"
+    fi
+  else
+    _log_debug "Skipped adding SublimeText repository"
   fi
 
   # ROS2
@@ -1501,7 +1712,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "ros2" \
         --key-url https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc
 
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/ros2.gpg]  http://packages.ros.org/ros2/ubuntu ${code_name} main #ROS-Repository" > $SOURCES_FILE_DIR/ros2-latest.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/ros2.gpg]  http://packages.ros.org/ros2/ubuntu ${code_name} main #ROS-Repository" > $SOURCES_FILE_DIR/ros2.list; then
         _log_success "OK"
       else
         _log_error "Adding ROS repository failed!"
@@ -1564,7 +1775,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         _log_warn "Till then, upstream is being used!"
       fi
 
-      if echo "deb http://packages.ros.org/ros/ubuntu ${code_name} main #ROS-Repository" > $SOURCES_FILE_DIR/ros-latest.list; then
+      if echo "deb http://packages.ros.org/ros/ubuntu ${code_name} main #ROS-Repository" > $SOURCES_FILE_DIR/ros.list; then
         _log_success "OK"
       else
         _log_error "Adding ROS repository failed!"
@@ -1579,6 +1790,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   fi # add_ros_repo
 
   update_repos
+
 
 }
 
@@ -1864,6 +2076,7 @@ function install_apps()
                               external
                               )
   for array in "${package_arrays[@]}"; do
+    local apt_extra_args=()
     case "${array}" in
       administration)         packages=("${parsed_administration_packages[@]}");;
       security)               packages=("${parsed_secutity_packages[@]}");;
@@ -1883,11 +2096,12 @@ function install_apps()
       _log_info "Installing $array packages"
       # Check if simulate is true
       if [ "$simulate_apt_install" == "true" ]; then
-        _log_warn "SIM - Using --dry-run "
-        apt-get -q -o=Dpkg::Use-Pty=0 -y install -s "${packages[@]}" | _log_trace "${_phase_apt}"
-      else
-        apt-get -q -o=Dpkg::Use-Pty=0 -y install "${packages[@]}" | _log_trace "${_phase_apt}"
+        _log_warn "SIM - Using --dry-run"
+        apt_extra_args+=("--dry-run")
       fi
+
+      apt-get -q -o=Dpkg::Use-Pty=0 -y install "${apt_extra_args[@]}" "${packages[@]}" | _log_trace "${_phase_apt}"
+
       exit_status=$?
       unset packages;
       if [[ $exit_status -eq 0 ]]; then
@@ -2207,9 +2421,20 @@ function _process_menu()
   Microsoft - Skype            : $add_skype_repo
   Microsoft - Teams            : $add_msteams_repo
   Microsoft - VSCode           : $add_vscode_repo
+  Podman (via from Kubic OBS)  : $add_podman_repo
   ROS                          : $add_ros_repo
   ROS2                         : $add_ros2_repo
   Signal for Desktop           : $add_signal_repo
+  SublimeText Editor           : $add_sublimetext_repo
+  ----------------- Only Applied on Ubuntu --------------
+  Multiverse                   : $add_ubuntu_multiverse
+  Universe                     : $add_ubuntu_universe
+  Restricted                   : $add_ubuntu_restricted
+  ----------------- Only Applied on Debian --------------
+  Non-Free                     : $add_debian_contrib
+  Contrib                      : $add_debian_contrib
+
+
 
   Proceed with adding these repositories?
 
@@ -2625,7 +2850,9 @@ function main()
   # Check dependencies
   declare -ar after_effects_core_dependencies=(wget ping ps grep cut tr awk)
 
-  if [[ ${AE_AUTOPILOT} == "true" ]]; then
+  _log_info "Checking dependencies"
+
+  if [[ ${AE_AUTOPILOT} != "true" ]]; then
     if command -v whiptail > /dev/null; then
       _log_property "whiptail" "INSTALLED"
     else
@@ -2634,7 +2861,7 @@ function main()
       _log_and_exit "Missing dependency - whiptail" "1"
     fi
   else
-    _log_debug "whiptail is not requires as autopilot is active."
+    _log_debug "whiptail is not required as autopilot is active."
   fi
 
   _check_dependencies "${after_effects_core_dependencies[@]}"

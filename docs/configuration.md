@@ -6,16 +6,16 @@ This Script is designed to be flexible. use `--config-file FILENAME`
 
 ## Autopilot mode
 
-USing`--autopilot` will run all the tasks specified in the YAML file. The order in which tasks are run is as follows.
+Using`--autopilot` will run all the tasks specified in the YAML file. The order in which tasks are run is as follows.
 
 - Update
-- Upgrade
-- Add Repositories
+- Upgrade packages
+- Add repositories
 - Add PPAs [if supported]
 - Install packages
-- Install DEB packages
+- Install .deb packages
 - Purge unwanted Packages
-- Install Snap packages
+- Install snap packages
 
 ## Reserved Environment Variables
 
