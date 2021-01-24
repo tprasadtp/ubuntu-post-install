@@ -1,21 +1,5 @@
 # What can it do?
 
-List of all the keys under `config.tasks`:
-
-| Name                                                                                       | Key           |
-| ------------------------------------------------------------------------------------------ | ------------- |
-| [Add Repositories](#add-repositories)                                                      | `key`         |
-| [Add personal package archives (PPA)](#add-personal-package-archives-ppa)                  | `ppa`         |
-| [Install apt packages](#install-apt-packages)                                              | `apt`         |
-| [Install Debian package archives (.deb files)](#install-debian-package-archives-deb-files) | `dev`         |
-| [Install Static binaries to /usr/local/bin](#install-static-binaries-to-usrlocalbin)       | `binaries`    |
-| [Install python packages (via pip)](#install-python-packages-via-pip)                      | `pip2`/`pip3` |
-| [Purge Unwanted Packages](#purge-unwanted-packages)                                        | `purge`       |
-| [Reset repositories / Purge PPAs](#reset-repositories-purge-ppas)                          |               |
-| [Installing Snap packages](#installing-snap-packages)                                      | `snap`        |
-| [All In one](#all-in-one)                                                                  | `all`         |
-
-
 ## Add Repositories
 
 This task can add the following repositories.
@@ -230,6 +214,17 @@ config:
     debs: true
     binaries: true
 ```
+
+| Name                                                                                       | Key           |
+| ------------------------------------------------------------------------------------------ | ------------- |
+| [Add Repositories](#add-repositories)                                                      | `repo`        |
+| [Add personal package archives (PPA)](#add-personal-package-archives-ppa)                  | `ppa`         |
+| [Install apt packages](#install-apt-packages)                                              | `apt`         |
+| [Install Debian package archives (.deb files)](#install-debian-package-archives-deb-files) | `dev`         |
+| [Install Static binaries to /usr/local/bin](#install-static-binaries-to-usrlocalbin)       | `binaries`    |
+| [Purge Unwanted Packages](#purge-unwanted-packages)                                        | `purge`       |
+| [Installing Snap packages](#installing-snap-packages)                                      | `snap`        |
+| [All In one](#all-in-one)                                                                  | `all`         |
 
 ## Delete logs
 
