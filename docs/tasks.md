@@ -19,7 +19,7 @@ This task can add the following repositories.
 | Microsoft - Skype       | skype             | skypeforlinux                                                |
 | Microsoft - Teams       | teams             | teams, teams-insiders                                        |
 | Microsoft - VSCode      | vscode            | code, code-insiders, code-exploration                        |
-| [Podman][] (via OBS)    | Podman            | podman, podman-plugins, cri-o-runc, cri-tools, buildah, crun |
+| [Podman][] (via OBS)    | podman            | podman, podman-plugins, cri-o-runc, cri-tools, buildah, crun |
 | ROS                     | ros               |                                                              |
 | ROS2                    | ros2              |                                                              |
 | Signal                  | signal            | signal-desktop                                               |
@@ -162,7 +162,7 @@ This will install binaries `bin.list` or YAML config under `config.install.binar
 config:
   install:
     binaries:
-      - https://github.com/docker/compose/releases/download/1.23.0/docker-compose-linux-x86_64,docker-compose
+      - https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/amd64/kubectl,kubectl
 
 ```
 

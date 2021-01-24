@@ -12,12 +12,16 @@ config:
     apt: true
     purge: true
   add_repo:
+    bazel: true
     chrome: true
+    docker: true
+    github: true
+    googlecloud: true
+    gvisor: true
+    podman: true
+    signal: true
     spotify: true
     vscode: true
-    googlecloud: true
-    signal: true
-    bazel: true
   flags:
     purge_enabled: true
 
