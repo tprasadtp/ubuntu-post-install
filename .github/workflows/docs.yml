@@ -55,6 +55,11 @@ jobs:
           git add --all
           git commit -s -m "Pages deploy ${GITHUB_SHA:0:7} BUILD-${GITHUB_RUN_NUMBER}"
 
+      - name: Install git-chglog
+        run: |
+          brew tap git-chglog/git-chglog
+          brew install git-chglog
+
       - name: Generate changelog
         run: |
           ./scripts/changelog.sh --changelog --oldest-tag "v7.0.0" --footer-file .chglog/OLD_CHGLOG.md --output docs/changelog.md
