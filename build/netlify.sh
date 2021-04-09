@@ -38,6 +38,7 @@ function build_production()
 function build_branch()
 {
   install_dependencies;
+  generate_changelog
 
   echo "---> Building Website with Branch"
   mkdocs build;
