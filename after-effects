@@ -550,7 +550,6 @@ function _fix_ubuntu_derivatives()
       jessie)                               _eol_message "June  2020";;
       xenial)                               _eol_message "April 2021";;
       sarah | serena | sonya | sylvia)      _eol_message "April 2021";;
-      tara | tessa | tina | tricia)         _eol_message "April 2021";;
       loki)                                 _eol_message "April 2021";;
       *)                                    _log_error "Unknown or unsupported release($code_name) !!"
                                             _script_exit_log;
@@ -738,13 +737,16 @@ function _check_bool()
   g_var="${1}"
   param_bool="${2}"
   case "${param_bool}" in
-    true | True | TRUE | Yes | yes | YES | 1 )  declare -g ${g_var}="true"
+    true | True | TRUE | Yes | yes | YES | 1 )  # shellcheck disable=SC2086
+                                                declare -g ${g_var}="true"
                                                 _log_var "$g_var"
                                                 ;;
-    false | False | FALSE | No | no | NO | 0 )  declare -g ${g_var}="false"
+    false | False | FALSE | No | no | NO | 0 )  # shellcheck disable=SC2086
+                                                declare -g ${g_var}="false"
                                                 _log_var "$g_var"
                                                 ;;
-    *)                                          declare -g ${g_var}="${default_val}"
+    * )                                         # shellcheck disable=SC2086
+                                                declare -g ${g_var}="${default_val}"
                                                 _log_var "$g_var"
                                                 ;;
   esac
@@ -1425,6 +1427,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   fi
 
   # Google Cloud SDK
+  # shellcheck disable=SC2235
   if [[ $add_gcp_repo == "true" ]] || ( [[ ${add_gcsfuse_repo} == "true" ]] && [[ ${ARCH} == "amd64" ]] ) ; then
     _log_debug "Adding GCP packaging keys"
     __add_repo_keys --format "gpg" \
@@ -1465,6 +1468,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   fi
 
   # Microsoft Keys
+  # shellcheck disable=SC2235
   if ( [[ $add_azurecli_repo == "true" ]] || [[ ${add_vscode_repo} == "true"  ]] || [[ ${add_edge_repo} == "true"  ]] || [[ ${add_msteams_repo} == "true"  ]]  ) &&  [[ $ARCH == "amd64" ]]; then
     _log_debug "Adding Microsoft keys."
     __add_repo_keys --format "asc" \
