@@ -49,10 +49,6 @@ Sample configuration can be found in `config` directory.
 
 See /docs or visit [docs][docs]
 
-![commit][commit]
-![Uptime Robot status](https://img.shields.io/uptimerobot/status/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
-![Uptime Robot ratio (30 days)](https://img.shields.io/uptimerobot/ratio/30/m780628218-79e4106657d18a5abccd3565.svg?style=flat)
-
 ## Supported Distributions
 
 [![Ubuntu](https://static.prasadt.com/logo64/ubuntu.png)](https://www.ubuntu.com/desktop)
