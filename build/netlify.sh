@@ -38,6 +38,7 @@ function build_production()
 function build_branch()
 {
   install_dependencies;
+  generate_changelog
 
   echo "---> Building Website with Branch"
   mkdocs build;
@@ -53,6 +54,16 @@ Usage: netlify-deploy [OPTIONS]
 [-b --branch]           [Branch Deployment]
 [-pr --pull-request]    [Pull request deployment (Same as branch)]
 EOF
+}
+
+function generate_changelog()
+{
+  echo "---> Installing git-chglog (homebrew)"
+  brew tap git-chglog/git-chglog
+  brew install git-chglog
+  echo "---> Generating docs/changelog.md via git-chglog"
+  ./scripts/changelog.sh --changelog --oldest-tag "v7.0.0" --footer-file .chglog/OLD_CHGLOG.md --output docs/changelog.md
+  cat docs/changelog.md
 }
 
 function install_dependencies()

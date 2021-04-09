@@ -13,6 +13,21 @@ jobs:
           # Avoid breaking git rev date plugin
           fetch-depth: 0
 
+      - name: Install git-chglog
+        run: |
+          brew tap git-chglog/git-chglog
+          brew install git-chglog
+
+      - name: Generate changelog
+        run: |
+          ./scripts/changelog.sh --changelog --oldest-tag "v7.0.0" --footer-file .chglog/OLD_CHGLOG.md --output docs/changelog.md
+          cat docs/changelog.md
+
+      - name: Generate release notes
+        run: |
+          ./scripts/changelog.sh --release-notes --output RELEASE_NOTES.md
+          cat RELEASE_NOTES.md
+
       - name: Build Docs
         run: |
           ./build/docs.sh
@@ -33,15 +48,18 @@ jobs:
           ref: gh-pages
           path: pages
           fetch-depth: 0
+
       - name: Copy _site folder to pages
         run: |
           rsync -avh --ignore-times --delete --exclude '**/.git/**/*' --exclude '**/.git/' ./_site/ pages/
+
       - name: Commit Pages Built
         run: |
           cd pages
           git add -A
           git commit -m "Pages deploy ${GITHUB_SHA:0:7} BUILD-${GITHUB_RUN_NUMBER}"
           git status
+
       # Upload site data and checksums to artifacts
       - name: Artifacts _site
         uses: actions/upload-artifact@v1
@@ -80,8 +98,7 @@ jobs:
         with:
           tag_name: ${{ steps.get_version.outputs.VERSION }}
           release_name: Release ${{ steps.get_version.outputs.VERSION }}
-          body: |
-            Please check the changelog at https://ae.prasadt.com/changelog/.
+          body_path: RELEASE_NOTES.md
           draft: false
           prerelease: false
 

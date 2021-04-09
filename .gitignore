@@ -69,3 +69,5 @@ Release*
 
 ## Custom ##
 .envrc
+RELEASE_NOTES.md
+docs/changelog.md
