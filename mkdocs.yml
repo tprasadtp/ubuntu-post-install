@@ -20,6 +20,7 @@ theme:
   name: material
   features:
     - navigation.instant
+    - navigation.top
   icon:
     logo: material/book
     repo: fontawesome/brands/github-alt
@@ -28,9 +29,22 @@ theme:
   language: en
   # Color Settings
   palette:
-    scheme: slate
-    primary: orange
-    accent: cyan
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: orange
+      accent: orange
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: orange
+      accent: orange
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
   # Fonts
   font:
     text: Ubuntu
