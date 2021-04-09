@@ -13,6 +13,21 @@ jobs:
           # Avoid breaking git rev date plugin
           fetch-depth: 0
 
+      - name: Install git-chglog
+        run: |
+          brew tap git-chglog/git-chglog
+          brew install git-chglog
+
+      - name: Generate changelog
+        run: |
+          ./scripts/changelog.sh --changelog --oldest-tag "v7.0.0" --footer-file .chglog/OLD_CHGLOG.md --output docs/changelog.md
+          cat docs/changelog.md
+
+      - name: Generate release notes
+        run: |
+          ./scripts/changelog.sh --release-notes --output RELEASE_NOTES.md
+          cat docs/RELEASE_NOTES.md
+
       - name: Build Docs
         run: |
           ./build/docs.sh
@@ -90,7 +105,7 @@ jobs:
         with:
           tag_name: ${{ steps.get_version.outputs.VERSION }}
           release_name: Release ${{ steps.get_version.outputs.VERSION }}
-          body: RELEASE_NOTES.md
+          body_path: RELEASE_NOTES.md
           draft: false
           prerelease: false
 

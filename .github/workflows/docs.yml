@@ -12,6 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
+          persist-credentials: false
           fetch-depth: 0
 
       - name: Install git-chglog
@@ -27,7 +28,7 @@ jobs:
       - name: Generate release notes
         run: |
           ./scripts/changelog.sh --release-notes --output RELEASE_NOTES.md
-          cat docs/changelog.md
+          cat docs/RELEASE_NOTES.md
 
       - name: Build Docs
         run: |
