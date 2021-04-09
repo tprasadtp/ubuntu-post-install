@@ -1166,6 +1166,20 @@ function add_repositories()
 
   _log_stage "Setting up repositories"
 
+  AE_UMASK_PRE_HOOK="$(umask)"
+  _log_debug "Default UMASK is $AE_UMASK_PRE_HOOK"
+
+  if [[ $AE_UMASK_PRE_HOOK != "0022" ]]; then
+    _log_notice "Setting UMASK to 0022 for the script to avoid APT errors"
+    _log_notice "This will be reverted at the end of this task."
+    if ! umask 0022; then
+      _log_error "Failed to set UMASK to 0022 for task: Repositories"
+      _log_error "This may result in errors while updating repositories via packagekit"
+    fi
+  else
+    _log_debug "No need to modify UMASK"
+  fi
+
 
   local exit_status
   local sources_list_bak_ts
@@ -1788,6 +1802,16 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   else
     _log_debug "Skipped ROS"
   fi # add_ros_repo
+
+  # Reset UMASK if not 0022
+  if [[ $AE_UMASK_PRE_HOOK != "0022" ]]; then
+    _log_notice "Setting UMASK back to $AE_UMASK_PRE_HOOK"
+    if ! umask "$AE_UMASK_PRE_HOOK"; then
+      _log_error "Failed to set UMASK back to $AE_UMASK_PRE_HOOK"
+    fi
+  else
+    _log_debug "No need to modify UMASK (post-task-hook)"
+  fi
 
   update_repos
 
