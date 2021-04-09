@@ -165,3 +165,8 @@ description = "ElementaryOS"
 color = "E95420"
 name = "Ubuntu"
 description = "Ubuntu support"
+
+["Help-Wanted"]
+color = "E95420"
+name = "Help-Wanted"
+description = "Help-Wanted"
