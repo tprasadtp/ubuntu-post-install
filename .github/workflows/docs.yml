@@ -54,6 +54,17 @@ jobs:
           cd pages
           git add --all
           git commit -s -m "Pages deploy ${GITHUB_SHA:0:7} BUILD-${GITHUB_RUN_NUMBER}"
+
+      - name: Generate changelog
+        run: |
+          ./scripts/changelog.sh --changelog --oldest-tag "v7.0.0" --footer-file .chglog/OLD_CHGLOG.md --output docs/changelog.md
+          cat docs/changelog.md
+
+      - name: Generate release notes
+        run: |
+          ./scripts/changelog.sh --release-notes --output RELEASE_NOTES.md
+          cat docs/changelog.md
+
       # Upload site data and checksums to artifacts
       - name: Artifacts _site
         uses: actions/upload-artifact@v1
