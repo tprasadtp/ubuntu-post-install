@@ -1,6 +1,6 @@
 # Supported Distributions
 
-In short? Ubuntu, its official flavors (Kubuntu,Ubuntu Mate etc), Linux Mint, Debian, Pop!_OS and Elementary.
+In short? Ubuntu, its official flavors (Kubuntu,Ubuntu Mate, Ubuntu Budgie etc.), Linux Mint, Debian and Elementary.
 
 [![Ubuntu](https://static.prasadt.com/logo64/ubuntu.png)](https://www.ubuntu.com/desktop)
 [![Kubuntu](https://static.prasadt.com/logo64/kubuntu.png)](https://kubuntu.org/)
@@ -29,19 +29,20 @@ A Complete  list of supported distributions is given below.
 | Distribution       | Code name/Version      | Supported | Notes
 | :----------------- | :--------------------- | ----------| :------
 | Ubuntu 20.04       | _Focal Fossa_          | Yes       |
-| Ubuntu 20.10       | **Groovy Gorilla**     | Yes       |
+| Ubuntu 20.10       | Groovy Gorilla         | Yes       |
+| Ubuntu 21.04       | **Hirsute Hippo**      | Yes       |
 | Ubuntu 18.04       | Bionic Beaver          | Yes       |
 | Linux Mint 20,20.x | Ulyana, **Ulyssa**     | Yes       |
 | Linux Mint 19,19.X |                        | Yes       |
 | Debian 10          | **Buster**             | Yes       |
 | Debian 9           | Stretch                | Yes       |
-| MX Linux           | 19 (Buster)            | Yes       | Not tested
-| Elementary-OS 5.1  | **Hera**               | Yes       | Tested
+| Elementary-OS 5.1  | **Hera**               | Yes       |
 | Elementary-OS 5.0  | Juno                   | Yes       | Not tested
 | PoP! OS            | **Same as Ubuntu**     | Yes       | Not tested
-| Bodhi Linux        | 5                      | Yes       | (Based on Ubuntu 18.04)
+| MX Linux           | 19 (Buster)            | Yes       | Not tested
+| Bodhi Linux        | 5.1                    | Yes       | (Based on Ubuntu 18.04)
 | KDE Neon           | **Same as Ubuntu LTS** | Yes       | Not Tested
-| Peppermint 9,10    | Based on Ubuntu        | Yes       | Not Tested
+| Peppermint 10,11   | Based on Ubuntu        | Yes       | Not Tested
 
 
 > - _Italics_ : Latest stable LTS release(if any)

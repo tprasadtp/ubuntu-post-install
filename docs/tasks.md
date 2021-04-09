@@ -85,11 +85,11 @@ config:
 
 ### Note about Wine HQ and i386 packages
 
-To install i386 pacakges or packages which have i386 dependencies (eg. wine-stable), you **MUST** enable foreign architectures BEFORE running this script!
+To install i386 pacakges or packages which have i386 dependencies (eg. wine-stable), you **MUST** enable foreign architectures **BEFORE** running this script!
 
-### Note abount PodMan repository
+### Note abount Podman repository
 
-Podman repository(Provided by Kubic project) also provides golang package for some reason (ughhh!) so please be careful while installing go via apt.
+Podman repository(sprovided by Kubic project) also provides golang package for some reason (ughhh!) so please be careful while installing go via apt.
 
 ## Add personal package archives (PPA)
 
@@ -145,7 +145,7 @@ config:
 
 ```
 
-- First part is the URL to the deb file separated by ',' name of the file.
+- First part is the URL to the deb file separated by `,` name of the file.
 
 !!! note "Note on file name in configuration"
     Please note that deb file will be  saved with the name mentioned in the file. (DEB file is named **exactly** as mentioned in the second field. So if you want them to be named with extension .deb include that in the second field and avoid illegal chars)
@@ -236,6 +236,7 @@ config:
     purge: true
     debs: true
     binaries: true
+    snaps: true
 ```
 
 | Name                                                                                       | Key           |
@@ -246,7 +247,7 @@ config:
 | [Install Debian package archives (.deb files)](#install-debian-package-archives-deb-files) | `dev`         |
 | [Install Static binaries to /usr/local/bin](#install-static-binaries-to-usrlocalbin)       | `binaries`    |
 | [Purge Unwanted Packages](#purge-unwanted-packages)                                        | `purge`       |
-| [Installing Snap packages](#installing-snap-packages)                                      | `snap`        |
+| [Installing Snap packages](#installing-snap-packages)                                      | `snaps`       |
 | [All In one](#all-in-one)                                                                  | `all`         |
 
 ## Delete logs
