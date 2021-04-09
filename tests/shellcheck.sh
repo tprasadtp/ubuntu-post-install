@@ -153,8 +153,20 @@ function main()
   # find all executables and run `shellcheck`
   for file in $(find . -type f -not -iwholename '*.git*' -executable | sort -u); do
     # ignore , double  quote strings  2086
-    log_step_info "$(basename "${file}")"
-    shellcheck -e SC2154 -e SC2086 "${file}"
+    file_basename="$(basename "${file}")"
+    log_step_info "$file"
+    docker run \
+      --userns=host \
+			--rm \
+			--workdir=/app/ \
+			--network=none \
+			-v "$(pwd)/${file}:/app/${file_basename}:ro" \
+			koalaman/shellcheck:v0.7.1 \
+			--exclude SC10008 \
+      --exclude SCSC2034 \
+      --exclude SC2154 \
+			--color=always \
+			"/app/${file_basename}"
     res="$?"
     if [[ $res -eq 0 ]]; then
       log_step_success "OK"
