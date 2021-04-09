@@ -236,6 +236,7 @@ config:
     purge: true
     debs: true
     binaries: true
+    snaps: true
 ```
 
 | Name                                                                                       | Key           |
@@ -246,7 +247,7 @@ config:
 | [Install Debian package archives (.deb files)](#install-debian-package-archives-deb-files) | `dev`         |
 | [Install Static binaries to /usr/local/bin](#install-static-binaries-to-usrlocalbin)       | `binaries`    |
 | [Purge Unwanted Packages](#purge-unwanted-packages)                                        | `purge`       |
-| [Installing Snap packages](#installing-snap-packages)                                      | `snap`        |
+| [Installing Snap packages](#installing-snap-packages)                                      | `snaps`        |
 | [All In one](#all-in-one)                                                                  | `all`         |
 
 ## Delete logs

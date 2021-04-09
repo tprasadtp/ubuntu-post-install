@@ -12,7 +12,7 @@ echo "Building Docs"
 docker run \
   --userns=host \
   --workdir=/docs \
-  -v "$(pwd)":/docs squidfunk/mkdocs-material:6.2.4 \
+  -v "$(pwd)":/docs squidfunk/mkdocs-material:7.1.0 \
   build -v -s --config-file /docs/mkdocs.yml
 
 sudo chown -R "$USER" _site/
