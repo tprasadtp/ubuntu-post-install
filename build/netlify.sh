@@ -55,6 +55,16 @@ Usage: netlify-deploy [OPTIONS]
 EOF
 }
 
+function generate_changelog()
+{
+  echo "---> Installing git-chglog (homebrew)"
+  brew tap git-chglog/git-chglog
+  brew install git-chglog
+  echo "---> Generating docs/changelog.md via git-chglog"
+  ./scripts/changelog.sh --changelog --oldest-tag "v7.0.0" --footer-file .chglog/OLD_CHGLOG.md --output docs/changelog.md
+  cat docs/changelog.md
+}
+
 function install_dependencies()
 {
   pip3 install --upgrade pip
