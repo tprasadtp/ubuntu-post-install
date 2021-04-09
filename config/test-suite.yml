@@ -27,7 +27,8 @@ config:
     chrome: true
     docker: true
     edge: true
-    gcsfuse: true
+    # This is really flaky so drop it
+    gcsfuse: false
     github: true
     googlecloud: true
     gvisor: true

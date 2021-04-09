@@ -2,28 +2,6 @@ on:
   push:
     branches:
       - "**"
-    paths-ignore:
-      - ".gitignore"
-      - ".envrc"
-      - ".vscode/**"
-      # Lets face it! Everyone needs more coffee to avoid typos!
-      - "README.md"
-      - "CONTRIBUTING.md"
-      - ".github/workflows/labels.yml"
-      - ".github/labels.toml"
-      - ".github/**/*.md"
-      # Lets ignore release workflow, because we do not really build any
-      # binaries we are fine.
-      - ".github/workflows/release.yml"
-      # Also ignore docs workflow, script has nothing to do with it
-      - ".github/workflows/docs.yml"
-      - "docs/**"
-      - "netlify.toml"
-      - "mkdocs.yml"
-      - "runtime.txt"
-      - "docker-compose.yml"
-    tags-ignore:
-      - "**"
   pull_request:
 name: build
 jobs:
@@ -31,12 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
       - name: Prepare
         run: |
           chmod +x after-effects
           chmod +x tests/*.sh
       - name: Shellcheck
         run: ./tests/shellcheck.sh
+  # Ubuntu
   ubuntu:
     needs: [ "shellcheck"]
     runs-on: ubuntu-latest
@@ -46,8 +28,12 @@ jobs:
         release: ["focal", "bionic", "groovy"]
     steps:
       - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
       - name: Ubuntu ${{ matrix.release }}
         run: ./tests/local.sh --build --debug-trace --fix --distro ubuntu --release "${{ matrix.release }}"
+  # Debian
   debian:
     needs: [ "shellcheck"]
     runs-on: ubuntu-latest
@@ -57,8 +43,12 @@ jobs:
         release: [ "buster", "stretch"]
     steps:
       - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
       - name: Debian ${{ matrix.release }}
         run: ./tests/local.sh --build --debug-trace --distro debian --release "${{ matrix.release }}"
+
   elementary:
     needs: [ "shellcheck"]
     runs-on: ubuntu-latest
@@ -68,8 +58,12 @@ jobs:
         release: [ "juno-stable"]
     steps:
       - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
       - name: Elementary ${{ matrix.release }}
         run:  ./tests/local.sh --build --debug-trace --distro elementary/docker --release "${{ matrix.release }}"
+  # Ubuntu ARM
   arm:
     needs: [ "shellcheck"]
     runs-on: ubuntu-latest
@@ -79,11 +73,11 @@ jobs:
         release: ["focal", "bionic", "groovy"]
     steps:
       - uses: actions/checkout@v2
-      - name: Setup binfmt and register arm binaries
-        run: |
-          sudo apt-get update || true
-          sudo apt-get install -y qemu binfmt-support qemu-user-static
-          sudo docker run --rm --privileged docker/binfmt@sha256:7e54e474ac8998c01367f11edcbe2bbfcb38d9d8bd87defbc407edfa0fd6cca8
+        with:
+          persist-credentials: false
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
 
       - name: Test on ARM64 ${{ matrix.release }}
         run: ./tests/local.sh --build --debug-trace --distro arm64v8/ubuntu --release "${{ matrix.release }}" --cfg config/arm.yml
@@ -96,11 +90,11 @@ jobs:
         release: ["stretch", "buster"]
     steps:
       - uses: actions/checkout@v2
-      - name: Setup binfmt and register arm binaries
-        run: |
-          sudo apt-get update || true
-          sudo apt-get install -y qemu binfmt-support qemu-user-static
-          sudo docker run --rm --privileged docker/binfmt@sha256:7e54e474ac8998c01367f11edcbe2bbfcb38d9d8bd87defbc407edfa0fd6cca8
+        with:
+          persist-credentials: false
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
 
       - name: Test on ARM64 ${{ matrix.release }}
         run: ./tests/local.sh --build --debug-trace --distro arm64v8/debian --release "${{ matrix.release }}" --cfg config/arm.yml
