@@ -14,7 +14,7 @@ The script depends on following utilities which are usually present on a typical
     sudo apt-get install -y --no-install-recommends whiptail coreutils procps wget
     ```
 
-- `whiptail`, to display the menu.
+- `whiptail`, to display the menu (not needed if used with `--autopilot`)
 - `coreutils` cut, tr, grep etc.
 - `wget`, to get deb packages check for updates etc.
 - `procps` to check running processes
@@ -36,11 +36,10 @@ Some tasks might install packages automatically, as required to perform certain 
     - gnupg2
     - software-properties-common
 
-    ### For installing python packages
-    - python-pip (for python 2)
-    - python3-pip (for python 3)
-
     ### For removing PPAs
     - ppa-purge
+
+    ### For snap packages
+    - snapd
 
     Any dependencies of these packages will also be installed.

@@ -1,6 +1,6 @@
 # Supported Distributions
 
-In short? Ubuntu, its official flavors (Kubuntu,Ubuntu Mate, Ubuntu Budgie etc.), Linux Mint, Debian and Elementary.
+In short? Ubuntu, its official flavors (Kubuntu, Ubuntu Mate, Ubuntu Budgie etc.), Linux Mint, Debian and Elementary.
 
 [![Ubuntu](https://static.prasadt.com/logo64/ubuntu.png)](https://www.ubuntu.com/desktop)
 [![Kubuntu](https://static.prasadt.com/logo64/kubuntu.png)](https://kubuntu.org/)
@@ -13,7 +13,7 @@ In short? Ubuntu, its official flavors (Kubuntu,Ubuntu Mate, Ubuntu Budgie etc.)
 [![Debian](https://static.prasadt.com/logo64/debian.png)](https://www.debian.org/)
 [![Elementary-OS](https://static.prasadt.com/logo64/elementary-os.png)](https://elementary.io/)
 
-I have not tested the script on the distros listed below. Because they use Ubuntu as their base,
+Scrip is not tested the script on the distros listed below. Because they use Ubuntu as their base,
 It should work fine. But no promises.
 
 [![Kde-Neon](https://static.prasadt.com/logo64/kde-neon.png)](https://neon.kde.org/)

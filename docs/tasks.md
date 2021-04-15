@@ -43,7 +43,7 @@ This task can add the following repositories.
 
 Example yaml configuration snippet is given below.
 
-```yml
+```yaml
 config:
   # Enabled Tasks
   tasks:
@@ -89,17 +89,17 @@ To install i386 pacakges or packages which have i386 dependencies (eg. wine-stab
 
 ### Note abount Podman repository
 
-Podman repository(sprovided by Kubic project) also provides golang package for some reason (ughhh!) so please be careful while installing go via apt.
+Podman repository(provided by Kubic project) also provides golang package for some reason. So please be careful while installing golang via apt.
 
 ## Add personal package archives (PPA)
 
-- Only one ppa entry per line (No comments or anything else anywhere in the file) in the format ppa:{author}/{ppa} for example `ppa:mozillateam/firefox-next` The file will be read and the PPAs will be added from the list.
+- Array of PPAs including prefix `ppa:`. Inline comments are **NOT** allowed.
 - Logs will  show entry in the format `[date and time] [  PPA-Logs  ] <log>`
 
 
 ## Install apt packages
 
-There are seven list of packages under key config.install.apt.[mentioned from 1-7]
+There are seven list of packages under key config.install.apt.< category >
 
 1. administration - Contains Administrative packages
 2. security - Contains Security related tools and packages
@@ -124,17 +124,18 @@ tend to get to couple of hundreds of lines. Also YAML file should be a valid YAM
 
 ### Special list of packages - Purge list
 
-There is a special package list under key, config.purge  list of apt packages to be
-purged from the system.
+There is a special package list under key, config.purge containig list of packages to be
+purged from the system. This only applies if purge flag is set and purge task is enabled (when autopilot is active)
 
 ## Install Debian package archives (.deb files)
 
 This will install deb files specified in the YAML config under `config.install.debian_packages`.
 
-- Each DEB file to be installed should have following entry.
+- Each element in the list file to be installed should have following entry.
 - URL to the deb file which can be accessed using wget`,`Name of the deb file without any spaces or special chars except hyphen.
 - For example to install Atom Editor the entry should look like below.
 - Some deb packages will add their own apt source entry and add their repository keys to system keyring.
+- Inline comments are **NOT** allowed.
 
 
 ```yaml
@@ -148,7 +149,7 @@ config:
 - First part is the URL to the deb file separated by `,` name of the file.
 
 !!! note "Note on file name in configuration"
-    Please note that deb file will be  saved with the name mentioned in the file. (DEB file is named **exactly** as mentioned in the second field. So if you want them to be named with extension .deb include that in the second field and avoid illegal chars)
+    Please note that deb file will be  saved with the name mentioned in the file. (DEB file is named **exactly** as mentioned in the second field. So if you want them to be named with extension .deb include that in the second field and avoid illegal chars and inline comments)
 
 ## Install Static binaries to /usr/local/bin
 
@@ -208,9 +209,10 @@ This will perform Following actions. (In the following order)
 - Upgrade packages
 - Add repositories
 - Add PPAs
-- Install Apps
+- Install APT packages
 - Install DEB files
-- Install Static binaries
+- Install static binaries
+- Install snap packages
 
 This option will honor --autopilot and --simulate options as individual tasks would do.
 
@@ -234,8 +236,11 @@ config:
     apt: true
     # Whether to purge packages mentioned in config.purge
     purge: true
+    # DEB packages
     debs: true
+    # Staic binaries
     binaries: true
+    # Snap packages
     snaps: true
 ```
 

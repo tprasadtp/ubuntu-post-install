@@ -14,7 +14,8 @@ Using`--autopilot` will run all the tasks specified in the YAML file. The order 
 - Add PPAs [if supported]
 - Install packages
 - Install .deb packages
-- Purge unwanted Packages
+- Purge unwanted packages
+- Install static binaries
 - Install snap packages
 
 ## Reserved Environment Variables

@@ -21,6 +21,7 @@ theme:
   features:
     - navigation.instant
     - navigation.top
+    - header.autohide
   icon:
     logo: material/book
     repo: fontawesome/brands/github-alt

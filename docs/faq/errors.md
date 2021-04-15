@@ -1,11 +1,5 @@
 # Errors
 
-## GCSFUSE, ROS and Duo Security repositories
-
-- Note for 18.10+ users: GCSFuse is not available. Please see this [Github issue](https://github.com/GoogleCloudPlatform/gcsfuse/issues/319) for a fix.
-- Duo Security for unix is only supported on some LTS releases.
-- ROS is only supported on select ubuntu releases.
-
 ## What if I get an error saying Unknown Distribution/Release?
 
 That usually means you are running a Distribution which is not supported, too old or a derivative which is not recognized by the script.
@@ -25,14 +19,6 @@ Well, thats pretty much self explanatory! Please use supported release of Ubuntu
 !!! warning
     Ubuntu ESM versions are considered as EOL
 
-## SSL Errors
-
-```console
-[     Error!    ] Something went wrong while retrieving /tmp/api-version.yml.
-[     Error!    ] Error Getting file.
-```
-
-Try running `wget https://ae.prasadt.com/get/version`. If you see SSL errors, that means that your CA bundle is out of date.
 
 ## Something not mentioned above
 
