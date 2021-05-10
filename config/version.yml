@@ -1,6 +1,8 @@
-# Version Config
-api: 3
-# Configuration
+# This file is required because of legacy update checks use this file.
+# Netlify should handle the redirects from get/v3/version endpoints.
+# This is setup in such a way to force user to upgrade the script,
+# without breaking older versions.
+# Updated versions of the script uses GitHub v3 API endpoints.
 version:
-  number: 700
-  name: 7.0.0
+  number: 65500
+  name: FORCE-UPDATE-TO-8.0.0-AND-ABOVE

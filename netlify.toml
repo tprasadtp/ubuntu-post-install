@@ -74,21 +74,21 @@
 # Avoid breaking old version checks
 [[redirects]]
   from = "/config/version.yml"
-  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml"
+  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/config/version.yml"
   status = 301
   force = true
 
 # /version stuff
 [[redirects]]
   from = "/get/version"
-  to = "/get/v3/version"
+  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/config/version.yml"
   status = 302
   force = true
 
 # /v3/version check stuff
 [[redirects]]
   from = "/get/v3/version"
-  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/version.yml"
+  to = "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/config/version.yml"
   status = 302
   force = true
 
