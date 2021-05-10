@@ -1237,7 +1237,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Universe - Community-maintained free and open-source software.
     if [[ ${add_ubuntu_universe} == "true" ]]; then
       _log_info "Ubuntu/Universe"
-      if add-apt-repository universe |& _log_trace "${_phase_repo}" ; then
+      if add-apt-repository --yes universe  |& _log_trace "${_phase_repo}" ; then
         _log_success "OK"
       else
         _log_error "Failed to add Ubuntu/Universe reposiroty!"
@@ -1249,7 +1249,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Restricted - Proprietary drivers for devices.
     if [[ ${add_ubuntu_restricted} == "true" ]]; then
       _log_info "Ubuntu/Restricted"
-      if add-apt-repository restricted |& _log_trace "${_phase_repo}" ; then
+      if add-apt-repository --yes restricted --yes |& _log_trace "${_phase_repo}" ; then
         _log_success "OK"
       else
         _log_error "Failed to add Ubuntu/Restricted reposiroty!"
@@ -1261,7 +1261,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Multiverse - Software restricted by copyright or legal issues.
     if [[ ${add_ubuntu_multiverse} == "true" ]]; then
       _log_info "Ubuntu/Multiverse"
-      if add-apt-repository multiverse |& _log_trace "${_phase_repo}" ; then
+      if add-apt-repository --yes multiverse |& _log_trace "${_phase_repo}" ; then
         _log_success "OK"
       else
         _log_error "Failed to add Ubuntu/Multiverse reposiroty!"
@@ -1282,7 +1282,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Contrib
     if [[ ${add_debian_contrib} == "true" ]]; then
       _log_info "Debian/Contrib"
-      if add-apt-repository contrib |& _log_trace "${_phase_repo}" ; then
+      if add-apt-repository --yes contrib |& _log_trace "${_phase_repo}" ; then
         _log_success "OK"
       else
         _log_error "Failed to add Debian/Contrib reposiroty!"
@@ -1294,7 +1294,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Non-Free - Proprietary drivers for devices.
     if [[ ${add_debian_nonfree} == "true" ]]; then
       _log_info "Debian/Non-Free"
-      if add-apt-repository non-free |& _log_trace "${_phase_repo}" ; then
+      if add-apt-repository --yes non-free |& _log_trace "${_phase_repo}" ; then
         _log_success "OK"
       else
         _log_error "Failed to add Debian/Non-Free reposiroty!"
