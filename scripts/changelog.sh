@@ -19,7 +19,7 @@ function ctrl_c_handler() {
 
 ## Script Variables
 
-readonly SEMVER_REGEX="^[vV]?(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(\-(0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(\.(0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$"
+declare -gr SEMVER_REGEX="^[vV]?(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(\-(alpha|beta|rc)(\.(0|[1-9][0-9]*))?)?\$"
 
 ## BEGIN AUTO-GENERATED CONTENT ##
 
@@ -171,7 +171,7 @@ function build_regex()
     if [[ $pre == "" ]]; then
         tag_filter="[vV]?[\d]+\.[\d]+\.[\d]+\$"
     else
-        tag_filter="[vV]?${major}\.${minor}\.${patch}-(alpha|beta|rc|qa|migration)([0-9]+)?\$|[0-9]+\.[0-9]+\.[0-9]+\$"
+        tag_filter="^[vV]?(${major}\.${minor}\.${patch})(\-(alpha|beta|rc)(\.(0|[1-9][0-9]*))?)\$|(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\$"
     fi
 
     log_info "build-regex: chglog tag filter regex is ${tag_filter}"
@@ -202,7 +202,7 @@ ${ORANGE}
                           changelog.
 ${GRAY}
 --------------------- Debugging & Help -------------------------${NC}
-[-v | --verbose]          Enable verbose loggging.
+[-d | --debug]            Enable verbose loggging.
 [-h | --help]             Display this help message.
 EOF
 }

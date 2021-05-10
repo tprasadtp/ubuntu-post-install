@@ -17,14 +17,14 @@ options:
         - chore
   commit_groups:
     group_by: Type
-    sort_by: Title
+    sort_by: Custom
     title_order:
       - distro
       - feat
       - fix
-      - perf
       - docs
       - refactor
+      - perf
       - ci
       - chore
     title_maps:
@@ -33,8 +33,8 @@ options:
       fix: "🐛 Bug Fixes"
       perf: "🚀 Performance Improvements"
       docs: "📖 Documentation"
-      refactor: "☀️ Code Refactoring"
-      chore: "🥺 Maintanance"
+      refactor: "🌱 Code Refactoring"
+      chore: "⚙️ Maintanance"
       ci: "🤖 Continuous Integration & Automation"
   header:
     pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s]*)\\))?\\:\\s(.*)$"
