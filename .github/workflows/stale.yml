@@ -8,6 +8,10 @@ on:
         description: "Debug/Dry Run"
         required: true
         default: "false"
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
 
 jobs:
   stale:
@@ -54,7 +58,3 @@ jobs:
           # do not act on following Labels
           exempt-issue-labels: "Actor:Luna,Status:Keep-Open,Status:Pending,Status:Blocked,Priority:Critical"
           exempt-pr-labels: "Actor:Luna,Status:Keep-Open,Status:Pending,Status:Blocked,Priority:Critical"
-
-
-# diana:{diana_urn_flavor}:{remote}:{source}:{version}:{remote_path}:{type}
-# diana:2:github:tprasadtp/templates::github/workflows/stale.yml:static

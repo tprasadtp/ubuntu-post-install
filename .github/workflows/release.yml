@@ -6,6 +6,9 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      # For creating releases
+      contents: write
     steps:
       - uses: actions/checkout@v2
         with:
@@ -123,17 +126,6 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: after-effects.asc
           asset_name: after-effects.asc
-          asset_content_type: text/plain
-
-      - name: Upload Version
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: config/version.yml
-          asset_name: version.yml
           asset_content_type: text/plain
 
       - name: Upload Checksum SHA256
