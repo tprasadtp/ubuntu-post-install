@@ -23,8 +23,9 @@
 |     24     | Not Running the latest version                                                     |
 |     25     | Incompatible arguments                                                             |
 |     26     | Option is obsolete                                                                 |
-|     28     | Getting API response failed                                                        |
+|     28     | Fetching remote file/config failed                                                 |
 |     29     | DEPRECATED_EXIT_CODE                                                               |
+|     31     | Update checks failed                                                               |
 |     35     | Not a valid config file type                                                       |
 |     36     | file defined does not exist/not accessible                                         |
 |     37     | Configuration error. Expects Boolean but found something else.                     |
