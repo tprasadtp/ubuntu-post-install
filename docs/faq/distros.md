@@ -29,7 +29,6 @@ A Complete  list of supported distributions is given below.
 | Distribution       | Code name/Version      | Supported | Notes
 | :----------------- | :--------------------- | ----------| :------
 | Ubuntu 20.04       | _Focal Fossa_          | Yes       |
-| Ubuntu 20.10       | Groovy Gorilla         | Yes       |
 | Ubuntu 21.04       | **Hirsute Hippo**      | Yes       |
 | Ubuntu 18.04       | Bionic Beaver          | Yes       |
 | Linux Mint 20,20.x | Ulyana, **Ulyssa**     | Yes       |
