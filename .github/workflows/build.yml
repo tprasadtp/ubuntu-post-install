@@ -80,7 +80,7 @@ jobs:
         uses: docker/setup-qemu-action@v1
 
       - name: Test on ARM64 ${{ matrix.release }}
-        run: ./tests/local.sh --build --debug-trace --distro arm64v8/ubuntu --release "${{ matrix.release }}" --cfg config/arm.yml
+        run: ./tests/local.sh --build --debug-trace --fix --distro arm64v8/ubuntu --release "${{ matrix.release }}" --cfg config/arm.yml
   arm-debian:
     needs: [ "shellcheck"]
     runs-on: ubuntu-latest
