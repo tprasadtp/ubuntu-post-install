@@ -63,7 +63,7 @@ function generate_changelog()
   brew install git-chglog
 
   echo "---> Pull all tags (workaround)"
-  git fetch --tags
+  git fetch --tags --all
   echo "---> List all tags (workaround)"
   git tag --sort=-version:creatordate --sort=-v:refname --list --merged=master
 
