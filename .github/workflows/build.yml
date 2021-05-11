@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: [ "buster", "stretch"]
+        release: [ "buster" ]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -70,7 +70,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: ["focal", "bionic", "groovy"]
+        release: ["focal", "bionic", "hirsute"]
     steps:
       - uses: actions/checkout@v2
         with:
