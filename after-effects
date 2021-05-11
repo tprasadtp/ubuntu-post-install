@@ -18,7 +18,7 @@ readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 
 # Version
-readonly AE_VERSION="8.0.0-beta.1"
+readonly AE_VERSION="8.0.0"
 
 # Handle Use interrupt
 # trap ctrl-c and call ctrl_c()
