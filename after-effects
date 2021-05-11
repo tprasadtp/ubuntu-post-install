@@ -347,7 +347,7 @@ function _init_script_variables()
   # 404 is a placeholder which is  set when there are
   # no suitable releases which can use this feature or
   # the release is unknown or too early in developement.
-  readonly codename_upcoming_release="404"
+  readonly codename_upcoming_release="impish"
 
   readonly codename_current_lts="focal"
   readonly codename_previous_lts="bionic"
@@ -365,11 +365,10 @@ function _init_script_variables()
   # Allow repo fixes for Upcoming releases of ubuntu and its derivatives.
   bool_fix_repo_not_available_for_upcoming_release="false"
 
-  # Checks for Version
-  # Define API node endpoints
-
+  # By default version checks are enabled
   bool_check_version="true"
 
+  # Not used
   readonly api_version_url="https://ae.prasadt.com/get/v3/version"
 
   # Azure
@@ -517,13 +516,13 @@ function _fix_ubuntu_derivatives()
                                             readonly enable_ppa="true";
                                             log_success "Changed codename to $code_name";
                                             ;;
-      # Current Ubuntu release (Can be non LTS)
-      groovy)                               readonly enable_ppa="true";
+      # Current Ubuntu release
+      hirsute)                              readonly enable_ppa="true";
                                             readonly distro_name="ubuntu";
                                             log_notice "Release is Ubuntu 20.10 Groovy Gorilla"
                                             ;;
       # Upcoming Ubuntu release
-      hirsute)                              readonly enable_ppa="true";
+      impish)                               readonly enable_ppa="true";
                                             readonly distro_name="ubuntu";
                                             log_warn "Release is Ubuntu 21.04 Hirsute Hippo (Unstable!!)"
                                             ;;
