@@ -547,13 +547,11 @@ function _fix_ubuntu_derivatives()
                                             log_notice "PPAs are disabled."
                                             ;;
       # Unsupported releases
-      jessie)                               _eol_message "June  2020";;
+      groovy)                               _eol_message "June 2021";;
       xenial)                               _eol_message "April 2021";;
       sarah | serena | sonya | sylvia)      _eol_message "April 2021";;
       loki)                                 _eol_message "April 2021";;
-      *)                                    log_error "Unknown or unsupported release($code_name) !!"
-                                            _script_exit_log;
-                                            exit 16;
+      *)                                    log_and_exit "Unknown or unsupported release($code_name) !!" "16"
                                             ;;
   esac
 
