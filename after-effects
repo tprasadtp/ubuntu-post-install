@@ -18,7 +18,7 @@ readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 
 # Version
-readonly AE_VERSION="7.2.0"
+readonly AE_VERSION="8.0.0-beta.1"
 
 # Handle Use interrupt
 # trap ctrl-c and call ctrl_c()
@@ -77,6 +77,8 @@ function _init_logging()
   # Only variables necessary for logging & start logging
   # Script related variables are defined in _init_script_variables
   readonly log_file="$dir"/logs/after-effects.log
+  local bool_created_logfile
+
   {
     mkdir -p "$dir"/logs
   } ||
@@ -95,7 +97,7 @@ function _init_logging()
   # if file not exists touch it
   if [[ ! -f ${log_file} ]]; then
     if touch "${log_file}"; then
-      log_info "Created log file"
+      bool_created_logfile="true"
     else
       printf "${RED}✕ Failed to create logfile!${NC}\n"
       exit 2
@@ -105,6 +107,8 @@ function _init_logging()
   # check if logs can be written
   if [[ -w $log_file ]]; then
     {
+      log_debug "$(_line_fill)"
+      [[ $bool_created_logfile == "true" ]] && log_debug "Created log file: ${log_file}"
       log_debug "Initialized logging"
     } ||
     {
@@ -924,13 +928,13 @@ function _version_checks ()
 
     # Evaluate
     case $VCOMPARE_RESULT in
-      1)                      log_error "Thou art running older version of this script (${AE_VERSION})"
+      1)                      log_error "Thou art running older version of this script,"
                               log_error "Please download latest version and try again.";
                               log_and_exit "You can disable version checks by passing --no-version-check" "24";
                               ;;
       0)                      log_success "Running the latest version!";
                               ;;
-      -1)                     log_dev "You are running development version of the script (${AE_VERSION})";
+      -1)                     log_dev "You are running development version of the script";
                               ;;
       ERROR_INVALID_SEMVER_1) log_warn "Script's semver is invalid! Please report this bug!";
                               log_warn "Disabling update checks!";
