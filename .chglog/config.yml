@@ -34,8 +34,8 @@ options:
       perf: "🚀 Performance Improvements"
       docs: "📖 Documentation"
       refactor: "🌱 Code Refactoring"
-      chore: "⚙️ Maintanance"
-      ci: "🤖 Continuous Integration & Automation"
+      chore: "🚧 Maintanance"
+      ci: "🤖 CI/CD & Automation"
   header:
     pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s]*)\\))?\\:\\s(.*)$"
     pattern_maps:

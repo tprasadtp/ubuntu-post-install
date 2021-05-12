@@ -106,13 +106,13 @@
   force = true
 
 [[redirects]]
-  from = "/get/sha256sum"
-  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha256sum.txt"
+  from = "/get/sha256sums"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha256sums.txt"
   status = 302
   force = true
 
 [[redirects]]
-  from = "/get/sha512sum"
-  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha512sum.txt"
+  from = "/get/sha512sums"
+  to = "https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha512sums.txt"
   status = 302
   force = true
