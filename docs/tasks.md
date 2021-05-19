@@ -153,7 +153,7 @@ config:
 
 ## Install Static binaries to /usr/local/bin
 
-This will install binaries `bin.list` or YAML config under `config.install.binaries`.
+This will install binaries in YAML config under `config.install.binaries`.
 
 - **Simulate** option **will** download the package but not install it.
 - Configuration is similar to deb files mentioned above. First part is the URL to the binary file followed by ',' and name of the binary.
@@ -175,7 +175,7 @@ config:
 This will purge Unwanted packages from the system.
 
 - The packages mentioned in `config.purge` in yaml.
-- The format of the purge.list is similar to that of packages, one package per line
+- The format is similar to that of packages, one package per line
 
 !!! warning
     It is necessary to pass command line argument `-d` or  set `config.flags.purge_enabled: true` in config.

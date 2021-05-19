@@ -119,7 +119,6 @@ function main()
       # turn on trace
       set -x
       docker run --rm \
-        --userns=host \
         "${DOCKER_RUN_ARGS[@]}" \
         -e CI \
         -e GITHUB_ACTIONS \
