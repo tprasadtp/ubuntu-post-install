@@ -63,6 +63,10 @@ extra:
       link: https://ae.prasadt.com
     - icon: fontawesome/brands/github-alt
       link: https://github.com/tprasadtp
+  analytics:
+    provider: google
+    property: UA-101760811-5
+
 # Extensions
 markdown_extensions:
   # Nice Admonitions
@@ -117,11 +121,6 @@ nav:
   - Testing: testing.md
   - Changelog: changelog.md
   - License: license.md
-
-# Google Analytics
-google_analytics:
-  - UA-101760811-5
-  - auto
 
 plugins:
   - search

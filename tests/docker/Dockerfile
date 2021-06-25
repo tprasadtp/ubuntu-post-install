@@ -1,11 +1,16 @@
-# Base docker image
+#syntax=docker/dockerfile:1.2
+
 ARG DISTRO
 ARG CODE_NAME
 FROM ${DISTRO}:${CODE_NAME}
+
 LABEL maintainer "Prasad Tengse <tprasadtp@users.noreply.github.com>"
+
 ENV DEBIAN_FRONTEND noninteractive
+
 # Install essentials
 WORKDIR /shared
+
 # hadolint ignore=DL3008
 RUN --mount=type=cache,target=/var/cache/apt/archives \
     apt-get -qq update \
