@@ -25,7 +25,6 @@ function term_signal_handler()
   exit 4
 }
 
-
 #>> diana::snippet:bash-logger:begin <<#
 # shellcheck shell=sh
 # shellcheck disable=SC3043
@@ -234,8 +233,6 @@ log_error()
 }
 #>> diana::snippet:bash-logger:end <<#
 
-
-
 function get_abspath()
 {
   # Generate absolute path from relative path
@@ -265,7 +262,7 @@ function get_abspath()
 # Checks if command is available
 function has_command()
 {
-  if command -v "$1" > /dev/null; then
+  if command -v "$1" >/dev/null; then
     return 0
   else
     return 1
@@ -276,26 +273,26 @@ function has_command()
 function display_usage()
 {
   #Prints out help menu
-  cat << EOF
+  cat <<EOF
 Bash script to run shellcheck usng docker on files specified.
 
-Usage: ${TEAL}${SCRIPT} ${BLUE} [options] ${NC}
-${VIOLET}
-------------------------- Arguments ----------------------------${NC}
+Usage: ${SCRIPT} [options]
+
+------------------------- Arguments ----------------------------
 List of Files to run shellcheck on
-${ORANGE}
----------------- Options with Required Argments-----------------${NC}
+
+---------------- Options with Required Argments-----------------
 None
-${GRAY}
---------------------- Debugging & Help -------------------------${NC}
+
+--------------------- Debugging & Help -------------------------
 [-d | --debug]          Enable debug loggging
 [--stderr]              Log to stderr instead of stdout
-[-h | --help]           Display this help message${NC}
-${TEAL}
-------------------- Environment Variables ----------------------${NC}
-${BLUE}LOG_TO_STDERR${NC}     - Set this to 'true' to log to stderr.
-${BLUE}NO_COLOR${NC}          - Set this to NON-EMPTY to disable all colors.
-${BLUE}CLICOLOR_FORCE${NC}    - Set this to NON-ZERO to force colored output.
+[-h | --help]           Display this help message
+
+------------------- Environment Variables ----------------------
+LOG_TO_STDERR     - Set this to 'true' to log to stderr.
+NO_COLOR          - Set this to NON-EMPTY to disable all colors.
+CLICOLOR_FORCE    - Set this to NON-ZERO to force colored output.
                     Other color related conditions are ignored.
                   - Colors are disabled if output is not a TTY
 EOF
@@ -356,7 +353,7 @@ function main()
   log_notice "Using shellcheck version tag: ${SHELLCHECK_VERSION}"
 
   # check if docker image is available
-  if docker inspect "koalaman/shellcheck:${SHELLCHECK_VERSION}" > /dev/null 2>&1; then
+  if docker inspect "koalaman/shellcheck:${SHELLCHECK_VERSION}" >/dev/null 2>&1; then
     log_debug "Using existing image - koalaman/shellcheck:${SHELLCHECK_VERSION}"
   else
     log_info "Pull docker image: koalaman/shellcheck:${SHELLCHECK_VERSION} "
