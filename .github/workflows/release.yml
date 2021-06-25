@@ -31,55 +31,6 @@ jobs:
           ./scripts/changelog.sh --release-notes --output RELEASE_NOTES.md
           cat RELEASE_NOTES.md
 
-      - name: Build Docs
-        run: |
-          ./build/docs.sh
-          cat ./_site/commit.json
-
-      # Git Settings
-      - name: Setup Git
-        run: |
-          echo "Setting git conf user.email"
-          git config --global user.email "valarie-ci-bot@users.noreply.github.com" && echo "Done"
-          echo "Setting git conf user.name"
-          git config --global user.name "valarie-ci-bot" && echo "Done"
-
-      # Get Current gh-pages
-      - name: Clone gh-pages branch
-        uses: actions/checkout@v2
-        with:
-          ref: gh-pages
-          path: pages
-          fetch-depth: 0
-
-      - name: Copy _site folder to pages
-        run: |
-          rsync -avh --ignore-times --delete --exclude '**/.git/**/*' --exclude '**/.git/' ./_site/ pages/
-
-      - name: Commit Pages Built
-        run: |
-          cd pages
-          git add -A
-          git commit -m "Pages deploy ${GITHUB_SHA:0:7} BUILD-${GITHUB_RUN_NUMBER}"
-          git status
-
-      # Upload site data and checksums to artifacts
-      - name: Artifacts _site
-        uses: actions/upload-artifact@v1
-        with:
-          name: pages
-          path: pages
-
-      - name: Push
-        run: |
-          cd pages/
-          ls -al
-          git status
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} &> /dev/null
-          git remote -v
-          git checkout gh-pages
-          git push -u origin gh-pages
-
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}

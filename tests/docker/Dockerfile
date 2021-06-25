@@ -7,7 +7,8 @@ ENV DEBIAN_FRONTEND noninteractive
 # Install essentials
 WORKDIR /shared
 # hadolint ignore=DL3008
-RUN apt-get -qq update \
+RUN --mount=type=cache,target=/var/cache/apt/archives \
+    apt-get -qq update \
     && apt-get install -qq -y --no-install-recommends \
       wget \
       whiptail \
@@ -19,5 +20,4 @@ RUN apt-get -qq update \
       curl \
       apt-utils \
       gnupg2 \
-      software-properties-common \
-    && apt-get clean
+      software-properties-common

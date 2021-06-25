@@ -1,90 +1,239 @@
 #!/usr/bin/env bash
 # Copyright (c) 2021. Prasad Tengse
 #
+# shellcheck disable=SC2155,SC2034
 
 set -o pipefail
 
 # Script Constants
 readonly CURDIR="$(cd -P -- "$(dirname -- "")" && pwd -P)"
 readonly SCRIPT="$(basename "$0")"
-
-# Handle Use interrupt
-# trap ctrl-c and call ctrl_c()
-trap ctrl_c_handler INT
-
-function ctrl_c_handler() {
-  log_error "User Interrupt! CTRL-C"
-  exit 4
-}
-
-## Script Variables
-
-declare -gr SEMVER_REGEX="^[vV]?(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(\-(alpha|beta|rc)(\.(0|[1-9][0-9]*))?)?\$"
-
-## BEGIN AUTO-GENERATED CONTENT ##
-
-# Basic colors
-readonly YELLOW=$'\e[38;5;221m'
-readonly GREEN=$'\e[38;5;42m'
-readonly RED=$'\e[38;5;197m'
-readonly NC=$'\e[0m'
-
-# Enhanced colors
-
-readonly PINK=$'\e[38;5;212m'
-readonly BLUE=$'\e[38;5;159m'
-readonly ORANGE=$'\e[38;5;208m'
-readonly TEAL=$'\e[38;5;192m'
-readonly VIOLET=$'\e[38;5;219m'
-readonly GRAY=$'\e[38;5;246m'
-readonly DARK_GRAY=$'\e[38;5;242m'
-
-# Script Defaults
+# Default log level (debug logs are disabled)
 LOG_LVL=0
 
-# Default Log Handlers
+# Handle Signals
+# trap ctrl-c and SIGTERM
+trap ctrl_c_signal_handler INT
+trap term_signal_handler SIGTERM
 
-function log_info()
-{
-    printf "• %s \n" "$@" 1>&2
+function ctrl_c_signal_handler() {
+    log_error "User Interrupt! CTRL-C"
+    exit 4
+}
+function term_signal_handler() {
+    log_error "Signal Interrupt! SIGTERM"
+    exit 4
 }
 
-function log_success()
+
+#>> diana::snippet:bash-logger:begin <<#
+# shellcheck shell=sh
+# shellcheck disable=SC3043
+
+# SHELL LOGGING LIBRARY
+# See https://github.com/tprasadtp/dotfiles/libs/logger/README.md
+# If included in other files, contents between snippet markers is
+# automatically updated and all changes between markers wil be ignored.
+
+# Logger core
+__logger_core_event_handler()
 {
-    printf "%s• %s %s\n" "${GREEN}" "$@" "${NC}" 1>&2
+  [ "$#" -lt 2 ] && return
+
+  # Caller is same as level name
+  local lvl_caller="${1:-info}"
+
+  case $lvl_caller in
+    log_trace | trace)
+      lvl_caller="trace"
+      level="0"
+      ;;
+    log_debug | debug)
+      lvl_caller="debug"
+      level="10"
+      ;;
+    log_info | info)
+      lvl_caller="info"
+      level="20"
+      ;;
+    log_success | success | ok)
+      lvl_caller="success"
+      level="20"
+      ;;
+    log_warning | warning | warn)
+      lvl_caller="warning"
+      level="30"
+      ;;
+    log_notice | notice)
+      lvl_caller="notice"
+      level="35"
+      ;;
+    log_error | error)
+      lvl_caller="error"
+      level="40"
+      ;;
+    *)
+      level="40"
+      ;;
+  esac
+
+  # Immediately return if log level is not enabled
+  # If LOG_LVL is not set, defaults to 20 - info level
+  [ "${LOG_LVL:-20}" -gt "$level" ] && return
+
+  shift
+  local lvl_msg="$*"
+
+  # Detect whether to coloring is disabled based on env variables,
+  # and if output Terminal is intractive. This supports both
+  # - https://bixense.com/clicolors/ &
+  # - https://no-color.org/ standards.
+
+  # Forces colored logs
+  # - if CLICOLOR_FORCE is set and non empty and not zero
+  #
+  if [ -n "${CLICOLOR_FORCE}" ] && [ "${CLICOLOR_FORCE}" != "0" ]; then
+    local lvl_colorized="true"
+    # shellcheck disable=SC2155
+    local lvl_color_reset="$(printf '\e[0m')"
+
+  # Disable colors if one of the conditions are true
+  # - CLICOLOR = 0
+  # - NO_COLOR is set to non empty value
+  # - TERM is set to dumb
+  elif [ -n "$NO_COLOR" ] || [ "$CLICOLOR" = "0" ] || [ "$TERM" = "dumb" ]; then
+    local lvl_colorized="false"
+    local lvl_color=""
+    local lvl_color_reset=""
+
+  # Enable colors if not already disabled or forced and terminal is interactive
+  elif [ -t 1 ]; then
+    local lvl_colorized="true"
+    # shellcheck disable=SC2155
+    local lvl_color_reset="$(printf '\e[0m')"
+
+  # Default=disable colors
+  else
+    local lvl_colorized="false"
+    local lvl_color=""
+    local lvl_color_reset=""
+  fi
+
+  # Log and Date formatter
+  if [ "${LOG_FMT:-pretty}" = "pretty" ] && [ "$lvl_colorized" = "true" ]; then
+    local lvl_string="•"
+  elif [ "${LOG_FMT}" = "full" ] || [ "${LOG_FMT}" = "long" ]; then
+    local lvl_prefix="name+ts"
+    # shellcheck disable=SC2155
+    local lvl_ts="$(date --rfc-3339=s)"
+  else
+    local lvl_prefix="name"
+  fi
+
+  # Define level, color and timestamp
+  # By default we do not show log level and timestamp.
+  # However, if LOG_FMT is set to "full" or "long" or if colors are disabled,
+  # we will enable long format with timestamps
+  case "$lvl_caller" in
+    trace)
+      [ "$lvl_prefix" = "name" ] && local lvl_string="[TRACE ]"
+      [ "$lvl_prefix" = "name+ts" ] && local lvl_string="$lvl_ts [TRACE ]"
+      # shellcheck disable=SC2155
+      [ "$lvl_colorized" = "true" ] && local lvl_color="$(printf '\e[38;5;246m')"
+      ;;
+    debug)
+      [ "$lvl_prefix" = "name" ] && local lvl_string="[DEBUG ]"
+      [ "$lvl_prefix" = "name+ts" ] && local lvl_string="$lvl_ts [DEBUG ]"
+      # shellcheck disable=SC2155
+      [ "$lvl_colorized" = "true" ] && local lvl_color="$(printf '\e[38;5;250m')"
+      ;;
+    info)
+      [ "$lvl_prefix" = "name" ] && local lvl_string="[INFO  ]"
+      [ "$lvl_prefix" = "name+ts" ] && local lvl_string="$lvl_ts [INFO  ]"
+      # Avoid printing color reset sequence as this level is not colored
+      [ "$lvl_colorized" = "true" ] && lvl_color_reset=""
+      ;;
+    success)
+      [ "$lvl_prefix" = "name" ] && local lvl_string="[OK    ]"
+      [ "$lvl_prefix" = "name+ts" ] && local lvl_string="$lvl_ts [OK    ]"
+      # shellcheck disable=SC2155
+      [ "$lvl_colorized" = "true" ] && local lvl_color="$(printf '\e[38;5;83m')"
+      ;;
+    warning)
+      [ "$lvl_prefix" = "name" ] && local lvl_string="[WARN  ]"
+      [ "$lvl_prefix" = "name+ts" ] && local lvl_string="$lvl_ts [WARN  ]"
+      # shellcheck disable=SC2155
+      [ "$lvl_colorized" = "true" ] && local lvl_color="$(printf '\e[38;5;214m')"
+      ;;
+    notice)
+      [ "$lvl_prefix" = "name" ] && local lvl_string="[NOTICE]"
+      [ "$lvl_prefix" = "name+ts" ] && local lvl_string="$lvl_ts [NOTICE]"
+      # shellcheck disable=SC2155
+      [ "$lvl_colorized" = "true" ] && local lvl_color="$(printf '\e[38;5;81m')"
+      ;;
+    error)
+      [ "$lvl_prefix" = "name" ] && local lvl_string="[ERROR ]"
+      [ "$lvl_prefix" = "name+ts" ] && local lvl_string="$lvl_ts [ERROR ]"
+      # shellcheck disable=SC2155
+      [ "$lvl_colorized" = "true" ] && local lvl_color="$(printf '\e[38;5;197m')"
+      ;;
+    *)
+      [ "$lvl_prefix" = "name" ] && local lvl_string="[UNKOWN]"
+      [ "$lvl_prefix" = "name+ts" ] && local lvl_string="$lvl_ts [UNKNOWN]"
+      # Avoid printing color reset sequence as this level is not colored
+      [ "$lvl_colorized" = "true" ] && lvl_color_reset=""
+      ;;
+  esac
+
+  if [ "${LOG_TO_STDERR:-false}" = "true" ]; then
+    printf "%s%s %s %s\n" "$lvl_color" "${lvl_string}" "$lvl_msg" "${lvl_color_reset}" 1>&2
+  else
+    printf "%s%s %s %s\n" "$lvl_color" "${lvl_string}" "$lvl_msg" "${lvl_color_reset}"
+  fi
 }
 
-function log_warning()
+# Leveled Loggers
+log_trace()
 {
-    printf "%s• %s %s\n" "${YELLOW}" "$@" "${NC}" 1>&2
+  __logger_core_event_handler "trace" "$@"
 }
 
-function log_error()
+log_debug()
 {
-    printf "%s• %s %s\n" "${RED}" "$@" "${NC}" 1>&2
+  __logger_core_event_handler "debug" "$@"
 }
 
-function log_debug()
+log_info()
 {
-    if [[ $LOG_LVL -gt 0  ]]; then
-        printf "%s• %s %s\n" "${GRAY}" "$@" "${NC}" 1>&2
-    fi
+  __logger_core_event_handler "info" "$@"
 }
 
-function log_notice()
+log_success()
 {
-    printf "%s• %s %s\n" "${TEAL}" "$@" "${NC}" 1>&2
+  __logger_core_event_handler "ok" "$@"
 }
 
-function log_variable()
+log_warning()
 {
-    local var
-    var="$1"
-    if [[ $LOG_LVL -gt 0  ]]; then
-        printf "%s» %-20s - %-10s %s\n" "${GRAY}" "${var}" "${!var}" "${NC}" 1>&2
-    fi
+  __logger_core_event_handler "warn" "$@"
 }
-## END AUTO-GENERATED CONTENT ##
+
+log_warn()
+{
+  __logger_core_event_handler "warn" "$@"
+}
+
+log_notice()
+{
+  __logger_core_event_handler "notice" "$@"
+}
+
+log_error()
+{
+  __logger_core_event_handler "error" "$@"
+}
+#>> diana::snippet:bash-logger:end <<#
+
 
 # Checks if command is available
 function has_command() {
@@ -187,9 +336,11 @@ Changelog and Release Notes generation helper.
 Usage: ${TEAL}${SCRIPT} ${BLUE} [options] ${NC}${VIOLET}
 ------------------------- Options ------------------------------${NC}
 [-c | --changelog]        Generate changelog
-[-r | --release-notes]    Generate release notes
+[-R | --release-notes]    Generate release notes
 ${ORANGE}
 ---------------- Options with Required Argments-----------------${NC}
+[-r | --repository]       Repository URL
+                          (defaults to $PROJECT_SOURCE)
 [-o | --output]           Save changelog to a file specified
 
 [-n | --next]             Specify next version.
@@ -202,10 +353,18 @@ ${ORANGE}
                           changelog.
 ${GRAY}
 --------------------- Debugging & Help -------------------------${NC}
-[-d | --debug]            Enable verbose loggging.
-[-h | --help]             Display this help message.
+[-d | --debug]          Enable debug loggging
+[-h | --help]           Display this help message${NC}
+${TEAL}
+------------------- Environment Variables ----------------------${NC}
+${BLUE}LOG_TO_STDERR${NC}     - Set this to 'true' to log to stderr.
+${BLUE}NO_COLOR${NC}          - Set this to NON-EMPTY to disable all colors.
+${BLUE}CLICOLOR_FORCE${NC}    - Set this to NON-ZERO to force colored output.
+                    Other color related conditions are ignored.
+                  - Colors are disabled if output is not a TTY
 EOF
 }
+
 
 
 function main()
@@ -219,8 +378,9 @@ function main()
     while [[ ${1} != "" ]]; do
         case ${1} in
             -c | --changelog)       mode="changelog";;
-            -r | --release-notes)   mode="release-notes";;
+            -R | --release-notes)   mode="release-notes";;
             # Options
+            -r | --repository)      shift;PROJECT_SOURCE="${1}";;
             -n | --next)            readonly bool_use_next_mode="true";
                                     shift;readonly NEXT_TAG="${1}";;
             # Header and Footer Files
@@ -230,8 +390,9 @@ function main()
             # useful to merge old changelogs with autogenerated ones
             --oldest-tag)           shift;readonly oldest_tag="${1}";;
             # Debugging options
+            --stderr)               LOG_TO_STDERR="true";;
             -d | --debug)           LOG_LVL="1";
-                                    log_info "main: enable verbose logging";;
+                                    log_info "Enable verbose logging";;
             -h | --help )           display_usage;exit 0;;
             * )                     log_error "Invalid argument(s). See usage below.";
                                     display_usage;
@@ -240,10 +401,18 @@ function main()
         shift
     done
 
+
     if [[ -z $mode ]]; then
       log_error "No mode specified!"
       display_usage
       exit 1
+    fi
+
+    if [[ -z $PROJECT_SOURCE ]]; then
+        log_error "Repository URL is not defined!"
+        log_error "Either define PROJECT_SOURCE or use --repository flag"
+        display_usage
+        exit 1
     fi
 
     # validate --next is a valid semver tag
@@ -323,11 +492,13 @@ function main()
 
         if [[ -n ${NEXT_TAG} ]]; then
             CHANGELOG_CONTENT="$(git-chglog \
+                --repository-url="${PROJECT_SOURCE}" \
                 --next-tag="${NEXT_TAG}" \
                 --tag-filter-pattern="${tag_filter}" \
                 "${CHANGELOG_ARGS}")"
         else
             CHANGELOG_CONTENT="$(git-chglog \
+                --repository-url="${PROJECT_SOURCE}" \
                 --tag-filter-pattern="${tag_filter}" \
                 "${CHANGELOG_ARGS}")"
         fi
@@ -351,12 +522,14 @@ function main()
         if [[ -n ${NEXT_TAG} ]]; then
             RN_CONTENT="$(git-chglog \
                 --template "${REPO_ROOT:-.}/.chglog/RELEASE_NOTES.md.tpl" \
+                --repository-url="${PROJECT_SOURCE}" \
                 --next-tag="${NEXT_TAG}" \
                 --tag-filter-pattern="${tag_filter}" \
                 "${tag}")"
         else
             RN_CONTENT="$(git-chglog \
                 --template "${REPO_ROOT:-.}/.chglog/RELEASE_NOTES.md.tpl" \
+                --repository-url="${PROJECT_SOURCE}" \
                 --tag-filter-pattern="${tag_filter}" \
                 "${tag}")"
         fi
@@ -380,3 +553,6 @@ function main()
 }
 
 main "$@"
+
+# diana:{diana_urn_flavor}:{remote}:{source}:{version}:{remote_path}:{type}
+# diana:2:github:tprasadtp/templates::common/scripts/changelog.sh:static

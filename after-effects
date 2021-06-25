@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2059
+# shellcheck disable=SC2059,SC2154,SC2034,SC2155
 # vim: filetype=sh
 
 # Author: Prasad Tengse
@@ -18,7 +18,7 @@ readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 
 # Version
-readonly AE_VERSION="8.0.1"
+readonly AE_VERSION="8.0.2"
 
 # Handle Use interrupt
 # trap ctrl-c and call ctrl_c()
@@ -29,29 +29,27 @@ function ctrl_c_handler() {
   exit 4
 }
 
-function _init_printf_variables()
-{
+function _init_printf_variables() {
   #Initialize printf variables
-  readonly       _phase_repo="(REPO)"
-  readonly        _phase_ppa="(PPA)"
-  readonly    _phase_install="(INST)"
-  readonly      _phase_purge="(PURGE)"
-  readonly        _phase_deb="(DPKG)"
-  readonly        _phase_apt="(APT)"
-  readonly    _phase_apt_key="(KEYS)"
-  readonly       _phase_snap="(SNAP)"
+  readonly _phase_repo="(REPO)"
+  readonly _phase_ppa="(PPA)"
+  readonly _phase_install="(INST)"
+  readonly _phase_purge="(PURGE)"
+  readonly _phase_deb="(DPKG)"
+  readonly _phase_apt="(APT)"
+  readonly _phase_apt_key="(KEYS)"
+  readonly _phase_snap="(SNAP)"
 
   # Log Premitives
-  readonly       _info="[INF]"
-  readonly        _dev="[DEV]"
-  readonly      _debug="[DBG]"
-  readonly    _cleanup="[DEL]"
-  readonly    _success="[ OK]"
-  readonly       _warn="[WRN]"
-  readonly      _error="[ERR]"
-  readonly   _variable="[VAR]"
-  readonly       _crit="[CRT]"
-
+  readonly _info="[INF]"
+  readonly _dev="[DEV]"
+  readonly _debug="[DBG]"
+  readonly _cleanup="[DEL]"
+  readonly _success="[ OK]"
+  readonly _warn="[WRN]"
+  readonly _error="[ERR]"
+  readonly _variable="[VAR]"
+  readonly _crit="[CRT]"
 
   #colors for display
   readonly YELLOW=$'\e[38;5;220m'
@@ -70,9 +68,7 @@ function _init_printf_variables()
   readonly MAGENTA=$'\e[38;5;219m'
 }
 
-
-function _init_logging()
-{
+function _init_logging() {
   # Initialize phase 2
   # Only variables necessary for logging & start logging
   # Script related variables are defined in _init_script_variables
@@ -82,17 +78,19 @@ function _init_logging()
   {
     mkdir -p "$dir"/logs
   } ||
-  {
-    printf "${RED}✕ Failed to create logs folder${NC}\n"; exit 2
-  }
+    {
+      printf "${RED}✕ Failed to create logs folder${NC}\n"
+      exit 2
+    }
   # tmp dir
   {
     rm -rf /tmp/ae/*
     mkdir -p /tmp/ae/
   } ||
-  {
-    printf "${RED}✕ Failed to create tmp folder${NC}\n"; exit 2
-  }
+    {
+      printf "${RED}✕ Failed to create tmp folder${NC}\n"
+      exit 2
+    }
 
   # if file not exists touch it
   if [[ ! -f ${log_file} ]]; then
@@ -111,123 +109,106 @@ function _init_logging()
       [[ $bool_created_logfile == "true" ]] && log_debug "Created log file: ${log_file}"
       log_debug "Initialized logging"
     } ||
-    {
-      printf "${RED}✕ Failed to write to log file ${log_file} ${NC}\n"; exit 2
-    }
+      {
+        printf "${RED}✕ Failed to write to log file ${log_file} ${NC}\n"
+        exit 2
+      }
   else
     printf "${RED}✕ Log file is not writable!${NC}\n"
     exit 2
   fi
 }
 
-
 # Utility Functions
-function _line_fill()
-{
+function _line_fill() {
   printf "_______________________________________________________\n"
 }
 
-function log_and_exit()
-{
+function log_and_exit() {
   # ARG-1 log msg
   # ARG-2 exit code int
   local msg="$1"
   printf "${RED}✖ $msg ${NC}\n"
-  printf "$(date) ${_crit} $msg\n" >> "$log_file"
+  printf "$(date) ${_crit} $msg\n" >>"$log_file"
   exit "$2"
 }
 
-
-function _script_exit_log()
-{
-    # Script time
-    log_stage "Cleanup and Exit"
-    readonly AE_EXEC_END=$(date +%s)
-    readonly AE_EXEC_TIME=$(( AE_EXEC_END - AE_EXEC_START ))
-    log_debug "$SCRIPT took $AE_EXEC_TIME seconds to complete."
-    exit 0
+function _script_exit_log() {
+  # Script time
+  log_stage "Cleanup and Exit"
+  readonly AE_EXEC_END=$(date +%s)
+  readonly AE_EXEC_TIME=$((AE_EXEC_END - AE_EXEC_START))
+  log_debug "$SCRIPT took $AE_EXEC_TIME seconds to complete."
+  exit 0
 }
 
-function log_info()
-{
+function log_info() {
   local msg="$1"
   printf "  • $msg\n"
-  printf "$(date) ${_info} $msg\n" >> "$log_file"
+  printf "$(date) ${_info} $msg\n" >>"$log_file"
 }
 
-
-function log_debug()
-{
+function log_debug() {
   local msg="$1"
   if [[ ${AE_DEBUG} -gt 0 ]]; then
     printf "${GRAY}  • $msg ${NC}\n"
   fi
-  printf "$(date) ${_debug} $msg\n" >> "$log_file"
+  printf "$(date) ${_debug} $msg\n" >>"$log_file"
 }
 
-
-function log_success()
-{
+function log_success() {
   local msg="$1"
   printf "${TEAL}  • $msg ${NC}\n"
-  printf "$(date) ${_success} $msg\n" >> "$log_file"
+  printf "$(date) ${_success} $msg\n" >>"$log_file"
 }
 
-function log_warn()
-{
+function log_warn() {
   local msg="$1"
   printf "${YELLOW}  • $msg ${NC}\n"
-  printf "$(date) ${_warn} $msg\n" >> "$log_file"
+  printf "$(date) ${_warn} $msg\n" >>"$log_file"
 }
 
-function log_stage()
-{
+function log_stage() {
   local msg="$1"
   printf "${MAGENTA}➜ $msg ${NC}\n"
-  printf "$(date) ${_info} $msg\n" >> "$log_file"
+  printf "$(date) ${_info} $msg\n" >>"$log_file"
 }
 
-function log_error()
-{
+function log_error() {
   local msg="$1"
   printf "${RED}  • $msg ${NC}\n"
-  printf "$(date) ${_error} $msg\n" >> "$log_file"
+  printf "$(date) ${_error} $msg\n" >>"$log_file"
 }
 
-function log_dev()
-{
+function log_dev() {
   local msg="$1"
   printf "${ORANGE}  • $msg ${NC}\n"
-  printf "$(date) ${_dev} $msg\n" >> "$log_file"
+  printf "$(date) ${_dev} $msg\n" >>"$log_file"
 }
 
-function log_notice()
-{
+function log_notice() {
   local msg="$1"
   printf "${CYAN}  • $msg${NC}\n"
-  printf "$(date) ${_info} $msg\n" >> "$log_file"
+  printf "$(date) ${_info} $msg\n" >>"$log_file"
 }
 
-function log_var()
-{
+function log_var() {
   local var
   var="$1"
   if [[ $AE_DEBUG -gt 0 ]]; then
     printf "${GRAY}  » %-22s - %-10s${NC}\n" "${var}" "${!var}"
   fi
-  printf "$(date) ${_variable} %-22s - %-10s\n" "${var}" "${!var}" >> "$log_file"
+  printf "$(date) ${_variable} %-22s - %-10s\n" "${var}" "${!var}" >>"$log_file"
 }
 
-function  log_trace()
-{
+function log_trace() {
   # This function adds time stamp to logs without using external utilities
   # Output will be automatically written to $log_file
   # Arguments : 1
   # ARG -1: printf variable for formatting the log
   # Usage command | _add_timestamp_to_logs "$1"
-  while IFS= read -r line;
-  do
-    printf "$(date) [EXT] ${1} %s\n" "$line" &>> "$log_file"
+  while IFS= read -r line; do
+    printf "$(date) [EXT] ${1} %s\n" "$line" &>>"$log_file"
     if [[ $AE_DEBUG -gt 1 ]]; then
       printf "${LOG_GRAY}  » %s %s${NC}\n" "$1" "$line"
     fi
@@ -235,8 +216,7 @@ function  log_trace()
 
 }
 
-function log_property()
-{
+function log_property() {
   # Args (4)
   # Arg 1 : Property name
   # Arg 2 : Property value
@@ -257,19 +237,18 @@ function log_property()
   __msg_string="$(printf "${fmt} : %s" "${desc}" "${value}")"
 
   case ${lvl} in
-    0)            log_debug "${__msg_string}";;
-    1)            log_info "${__msg_string}";;
-    2)            log_notice "${__msg_string}";;
-    3)            log_dev "${__msg_string}";;
-    4)            log_warn "${__msg_string}";;
-    5)            log_error "${__msg_string}";;
-    *)            log_debug "${__msg_string}";;
+  0) log_debug "${__msg_string}" ;;
+  1) log_info "${__msg_string}" ;;
+  2) log_notice "${__msg_string}" ;;
+  3) log_dev "${__msg_string}" ;;
+  4) log_warn "${__msg_string}" ;;
+  5) log_error "${__msg_string}" ;;
+  *) log_debug "${__msg_string}" ;;
   esac
 }
 
 #shellcheck disable=SC2120
-function detect_distribution()
-{
+function detect_distribution() {
   # Read /etc/os-release and get
   local OS_RELEASE_FILE
 
@@ -290,9 +269,7 @@ function detect_distribution()
   fi
 }
 
-
-function _init_script_variables()
-{
+function _init_script_variables() {
   # Function defines Script variables
   # Necessary variables used by the script are initialized here. This function
   # should be called first before choices are made, always.
@@ -304,18 +281,22 @@ function _init_script_variables()
   code_name="${AE_DISTRO_CODENAME}"
   readonly architecture="$(dpkg --print-architecture)"
   case "${architecture}" in
-    amd64)          log_debug "Architecture is 64 bit.";
-                    readonly ARCH="amd64";
-                    ;;
-    armhf)          log_debug "Running on ARM CPU with HW Floating point Processor";
-                    readonly ARCH="armhf";
-                    ;;
-    arm64)           log_debug "This is an ARM64. Please be advised that not all repositories support this arch.";
-                    readonly ARCH="arm64";
-                    ;;
-    * )             log_error "Sorry! This architecture is not supported by this script!"
-                    log_and_exit "Unsupported Architecture. $(architecture)" "11"
-                    ;;
+  amd64)
+    log_debug "Architecture is 64 bit."
+    readonly ARCH="amd64"
+    ;;
+  armhf)
+    log_debug "Running on ARM CPU with HW Floating point Processor"
+    readonly ARCH="armhf"
+    ;;
+  arm64)
+    log_debug "This is an ARM64. Please be advised that not all repositories support this arch."
+    readonly ARCH="arm64"
+    ;;
+  *)
+    log_error "Sorry! This architecture is not supported by this script!"
+    log_and_exit "Unsupported Architecture. $(architecture)" "11"
+    ;;
   esac
 
   # Get Hostname
@@ -325,24 +306,23 @@ function _init_script_variables()
   readonly SOURCES_FILE_DIR=/etc/apt/sources.list.d
 
   # Trusted keys
-  if [[ -v  ${TRUSTED_KEYRINGS_DIR}  ]]; then
+  if [[ -v ${TRUSTED_KEYRINGS_DIR} ]]; then
     log_and_exit "Reserved variable (TRUSTED_KEYRINGS_DIR) is set!" "66"
   else
     readonly TRUSTED_KEYRINGS_DIR=/usr/share/keyrings
   fi
 
   # AE_OBS_PREFIX check
-  if [[ -v  ${AE_OBS_PREFIX}  ]]; then
+  if [[ -v ${AE_OBS_PREFIX} ]]; then
     log_and_exit "Reserved variable (AE_OBS_PREFIX) is set!" "66"
   fi
 
-  if [[ -v  ${AE_BASE_CODENAME}  ]]; then
+  if [[ -v ${AE_BASE_CODENAME} ]]; then
     log_and_exit "Reserved variable (AE_BASE_CODENAME) is set!" "66"
   fi
 
   # Ping URL
   readonly PING_URL="http://connectivitycheck.gstatic.com/generate_204"
-
 
   #-------------------------- Release codenames --------------------------------------
   readonly codename_latest_release="hirsute"
@@ -361,10 +341,8 @@ function _init_script_variables()
 
   #============================ Switches/ booleans & Vars ================================
 
-
   # Fix Repo not available for latest release
   bool_fix_repo_not_available_for_latest="false"
-
 
   # Allow repo fixes for Upcoming releases of ubuntu and its derivatives.
   bool_fix_repo_not_available_for_upcoming_release="false"
@@ -404,18 +382,15 @@ function _init_script_variables()
 
 }
 
-
-
-function _init_print_basic_info()
-{
+function _init_print_basic_info() {
   # This function logs and displays the Necessary details which helps in debugging.
   # Should be used after _init_script_variables function.
-  log_property "Hostname"        "${CLIENT_NAME}" 1
-  log_property "OS"              "${AE_DISTRO_PRETTY_NAME}" 1
-  log_property "Distribution"    "${AE_DISTRO_NAME}" 1
-  log_property "Release"         "${AE_DISTRO_CODENAME}" 1
-  log_property "Architecture"    "${ARCH}" 1
-  log_property "Version"         "${AE_VERSION}" 1
+  log_property "Hostname" "${CLIENT_NAME}" 1
+  log_property "OS" "${AE_DISTRO_PRETTY_NAME}" 1
+  log_property "Distribution" "${AE_DISTRO_NAME}" 1
+  log_property "Release" "${AE_DISTRO_CODENAME}" 1
+  log_property "Architecture" "${ARCH}" 1
+  log_property "Version" "${AE_VERSION}" 1
 
   log_property "SOURCES_FILE_DIR" "${SOURCES_FILE_DIR}"
   log_property "TRUSTED_KEYRINGS_DIR" "${TRUSTED_KEYRINGS_DIR}"
@@ -424,34 +399,30 @@ function _init_print_basic_info()
   histchars=
 }
 
-
-function delete_log_file()
-{
+function delete_log_file() {
   printf "➜ Deleting log file\n"
   if rm "${dir}/logs/after-effects.log"; then
     printf "${GREEN}• Done${NC}\n"
     exit 0
   else
     printf "${RED}• Failed!${NC}\n"
-    exit 1;
+    exit 1
   fi
 }
 
-
-function _check_dependencies()
-{
+function _check_dependencies() {
   #Checks if commands in array are available.
   # Accepts one argument as array.
   local dependencies=("$@")
   local dependency_check_failed_count dependency
-  dependency_check_failed_count=0;
+  dependency_check_failed_count=0
   for dependency in "${dependencies[@]}"; do
-    if command -v "$dependency" > /dev/null; then
+    if command -v "$dependency" >/dev/null; then
       log_property "${dependency}" "INSTALLED"
     else
       log_property "$dependency" "NOT INSTALLED"
-      dependency_check_failed_count=$((dependency_check_failed_count+1))
-   fi
+      dependency_check_failed_count=$((dependency_check_failed_count + 1))
+    fi
   done
 
   if [ "$dependency_check_failed_count" -gt 0 ]; then
@@ -460,9 +431,7 @@ function _check_dependencies()
   fi
 }
 
-
-function _eol_message()
-{
+function _eol_message() {
   # Display EOL Message and upgrade instruction URLs.
   # Arguments: 1
   # ARG 1: EOL Date
@@ -471,9 +440,7 @@ function _eol_message()
   log_and_exit "${AE_DISTRO_PRETTY_NAME} will reach EOL pretty soon ($1)." "12"
 }
 
-
-function _fix_ubuntu_derivatives()
-{
+function _fix_ubuntu_derivatives() {
   # Some Ubuntu based distributions use their own codename (Linux mint, Elementary)
   # Some repositories require that ubuntu codename is used.
   # This function fixes that for
@@ -487,76 +454,88 @@ function _fix_ubuntu_derivatives()
   log_stage "Checking for Ubuntu derivates/Debian"
   log_var "code_name"
   case ${code_name} in
-      # Ubuntu 18.04 and its derivatives
-      bionic )                              readonly enable_ppa="true";
-                                            readonly distro_name="ubuntu";
-                                            log_info "This is a LTS release of Ubuntu (18.04)";
-                                            log_success "Keeping the codename as $code_name.";
-                                            ;;
-      tara | tessa | tina | tricia )        log_info "This is Linux-Mint 19.X.";
-                                            log_info "Setting additional repositories to follow Ubuntu 18.04.";
-                                            code_name="bionic";
-                                            readonly distro_name="ubuntu";
-                                            readonly enable_ppa="true";
-                                            log_success "Changed codename to $code_name";
-                                            ;;
-      juno | hera)                          log_info "This release of Elementary OS is based on Ubuntu 18.04 Bionic.";
-                                            log_info "External repositories will use Ubuntu 18.04.";
-                                            code_name="bionic";
-                                            readonly distro_name="ubuntu";
-                                            readonly enable_ppa="true";
-                                            log_success "Changed codename to $code_name";
-                                            ;;
-      # Ubuntu 20.04 and its derivatives (Current Ubuntu LTS release)
-      focal )                               readonly enable_ppa="true";
-                                            readonly distro_name="ubuntu";
-                                            log_info "This is latest LTS release of Ubuntu";
-                                            log_success "Keeping the codename as $code_name.";
-                                            ;;
-      ulyana | ulyssa )                     log_info "Release is Linux mint 20.X."
-                                            log_info "Setting additional repositories to follow Ubuntu 20.04."
-                                            code_name="focal";
-                                            readonly distro_name="ubuntu";
-                                            readonly enable_ppa="true";
-                                            log_success "Changed codename to $code_name";
-                                            ;;
-      # Current Ubuntu release
-      hirsute)                              readonly enable_ppa="true";
-                                            readonly distro_name="ubuntu";
-                                            log_notice "Release is Ubuntu 20.10 Groovy Gorilla"
-                                            ;;
-      # Upcoming Ubuntu release
-      impish)                               readonly enable_ppa="true";
-                                            readonly distro_name="ubuntu";
-                                            log_warn "Release is Ubuntu 21.10 (Unstable!!)"
-                                            ;;
-      # Old Debian release
-      stretch )                             bool_is_debian="true";
-                                            readonly distro_name="debian";
-                                            readonly enable_ppa="false";
-                                            log_notice "This is Debian. PPAs are disabled."
-                                            ;;
-      # Current Debian release
-      buster )                              bool_is_debian="true";
-                                            readonly distro_name="debian";
-                                            readonly enable_ppa="false";
-                                            log_notice "This is current stable release of Debian. PPAs are disabled."
-                                            ;;
-      # Upcoming Debian release
-      bullseye )                            bool_is_debian="true";
-                                            readonly enable_ppa="false";
-                                            readonly distro_name="debian";
-                                            log_dev "You are running Debian Testing!"
-                                            log_warn "This is pre release version of Debian. Use with caution!"
-                                            log_notice "PPAs are disabled."
-                                            ;;
-      # Unsupported releases
-      groovy)                               _eol_message "June 2021";;
-      xenial)                               _eol_message "April 2021";;
-      sarah | serena | sonya | sylvia)      _eol_message "April 2021";;
-      loki)                                 _eol_message "April 2021";;
-      *)                                    log_and_exit "Unknown or unsupported release($code_name) !!" "16"
-                                            ;;
+  # Ubuntu 18.04 and its derivatives
+  bionic)
+    readonly enable_ppa="true"
+    readonly distro_name="ubuntu"
+    log_info "This is a LTS release of Ubuntu (18.04)"
+    log_success "Keeping the codename as $code_name."
+    ;;
+  tara | tessa | tina | tricia)
+    log_info "This is Linux-Mint 19.X."
+    log_info "Setting additional repositories to follow Ubuntu 18.04."
+    code_name="bionic"
+    readonly distro_name="ubuntu"
+    readonly enable_ppa="true"
+    log_success "Changed codename to $code_name"
+    ;;
+  juno | hera)
+    log_info "This release of Elementary OS is based on Ubuntu 18.04 Bionic."
+    log_info "External repositories will use Ubuntu 18.04."
+    code_name="bionic"
+    readonly distro_name="ubuntu"
+    readonly enable_ppa="true"
+    log_success "Changed codename to $code_name"
+    ;;
+  # Ubuntu 20.04 and its derivatives (Current Ubuntu LTS release)
+  focal)
+    readonly enable_ppa="true"
+    readonly distro_name="ubuntu"
+    log_info "This is latest LTS release of Ubuntu"
+    log_success "Keeping the codename as $code_name."
+    ;;
+  ulyana | ulyssa | uma)
+    log_info "Release is Linux mint 20.X."
+    log_info "Setting additional repositories to follow Ubuntu 20.04."
+    code_name="focal"
+    readonly distro_name="ubuntu"
+    readonly AE_SNAP_REMOVE_APT_BLOCK="true"
+    readonly enable_ppa="true"
+    log_success "Changed codename to $code_name"
+    ;;
+  # Current Ubuntu release
+  hirsute)
+    readonly enable_ppa="true"
+    readonly distro_name="ubuntu"
+    log_notice "Release is Ubuntu 20.10 Groovy Gorilla"
+    ;;
+  # Upcoming Ubuntu release
+  impish)
+    readonly enable_ppa="true"
+    readonly distro_name="ubuntu"
+    log_warn "Release is Ubuntu 21.10 (Unstable!!)"
+    ;;
+  # Old Debian release
+  stretch)
+    bool_is_debian="true"
+    readonly distro_name="debian"
+    readonly enable_ppa="false"
+    log_notice "This is Debian. PPAs are disabled."
+    ;;
+  # Current Debian release
+  buster)
+    bool_is_debian="true"
+    readonly distro_name="debian"
+    readonly enable_ppa="false"
+    log_notice "This is current stable release of Debian. PPAs are disabled."
+    ;;
+  # Upcoming Debian release
+  bullseye)
+    bool_is_debian="true"
+    readonly enable_ppa="false"
+    readonly distro_name="debian"
+    log_dev "You are running Debian Testing!"
+    log_warn "This is pre release version of Debian. Use with caution!"
+    log_notice "PPAs are disabled."
+    ;;
+  # Unsupported releases
+  groovy) _eol_message "June 2021" ;;
+  xenial) _eol_message "April 2021" ;;
+  sarah | serena | sonya | sylvia) _eol_message "April 2021" ;;
+  loki) _eol_message "April 2021" ;;
+  *)
+    log_and_exit "Unknown or unsupported release($code_name) !!" "16"
+    ;;
   esac
 
   log_success "Applied release specific settings and fixes."
@@ -566,12 +545,9 @@ function _fix_ubuntu_derivatives()
   declare -gr AE_BASE_CODENAME="${code_name}"
   log_var "AE_BASE_CODENAME"
 
-
 }
 
-
-function _test_internet_connection ()
-{
+function _test_internet_connection() {
   # Function to check internet connection
   log_info "Checking connectivity"
   if wget --tries=2 --timeout=10 "$PING_URL" -O /dev/null -o /dev/null; then
@@ -583,25 +559,19 @@ function _test_internet_connection ()
   fi
 }
 
-
-function _test_conflicting_apps ()
-{
+function _test_conflicting_apps() {
   # Function checks if any apps like syanptic aptitude are running.
   local lock
-  for lock in synaptic update-manager software-center apt-get dpkg aptitude
-  do
+  for lock in synaptic update-manager software-center apt-get dpkg aptitude; do
     # shellcheck disable=SC2009
-    if ps -U root -u root u | grep $lock | grep -v grep > /dev/null; then
+    if ps -U root -u root u | grep $lock | grep -v grep >/dev/null; then
       log_and_exit "Installation won't work. Please close $lock first then try again." "15"
     else
       log_property "$lock" "not running"
-     fi
-   done
-   log_success "No conflicts detected"
+    fi
+  done
+  log_success "No conflicts detected"
 }
-
-
-
 
 function parse_yaml() {
   local yaml_file="${1}"
@@ -612,17 +582,15 @@ function parse_yaml() {
 
   s='[[:space:]]*'
   w='[a-zA-Z0-9_.-]*'
-  fs="$(echo @|tr @ '\034')"
+  fs="$(echo @ | tr @ '\034')"
 
-    (
-        #shellcheck disable=SC1003
-        sed -e '/- [^\"]'"[^\']"'.*: /s|\([ ]*\)- \([[:space:]]*\)|\1-\'$'\n''  \1\2|g' |
-
-        sed -ne '/^--/s|--||g; s|\"|\\\"|g; s/[[:space:]]*$//g;' \
-            -e "/#.*[\"\']/!s| #.*||g; /^#/s|#.*||g;" \
-            -e "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
-            -e "s|^\($s\)\($w\)${s}[:-]$s\(.*\)$s\$|\1$fs\2$fs\3|p" |
-
+  (
+    #shellcheck disable=SC1003
+    sed -e '/- [^\"]'"[^\']"'.*: /s|\([ ]*\)- \([[:space:]]*\)|\1-\'$'\n''  \1\2|g' |
+      sed -ne '/^--/s|--||g; s|\"|\\\"|g; s/[[:space:]]*$//g;' \
+        -e "/#.*[\"\']/!s| #.*||g; /^#/s|#.*||g;" \
+        -e "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
+        -e "s|^\($s\)\($w\)${s}[:-]$s\(.*\)$s\$|\1$fs\2$fs\3|p" |
       awk -F"$fs" '{
           indent = length($1)/2;
           if (length($2) == 0) { conj[indent]="+";} else {conj[indent]="";}
@@ -633,10 +601,8 @@ function parse_yaml() {
                   printf("%s%s%s%s=(\"%s\")\n", "'"$prefix"'",vn, $2, conj[indent-1],$3);
               }
           }' |
-
-        sed -e 's/_=/+=/g' |
-
-        awk 'BEGIN {
+      sed -e 's/_=/+=/g' |
+      awk 'BEGIN {
                 FS="=";
                 OFS="="
             }
@@ -644,12 +610,10 @@ function parse_yaml() {
                 gsub("-|\\.", "_", $1)
             }
             { print }'
-) < "$yaml_file"
+  ) <"$yaml_file"
 }
 
-
-function _get_remote_file()
-{
+function _get_remote_file() {
   # Function to get remote file/response
   # exits script if it fails.
   # Accepts 2 arguments.
@@ -663,7 +627,7 @@ function _get_remote_file()
 
   if [ "$#" -eq 2 ]; then
     # Remote files
-    wget -q "${file_url}" -O "$file_name" >> $"$log_file"
+    wget -q "${file_url}" -O "$file_name" >>$"$log_file"
     exit_status="$?"
 
     log_property "Exit code (wget)" "$exit_status"
@@ -677,9 +641,7 @@ function _get_remote_file()
 
 }
 
-
-function compare_versions()
-{
+function compare_versions() {
   # Function to compare two semver version strings.
   #
   # REQUIRED ARGUMENTS:
@@ -728,7 +690,7 @@ function compare_versions()
   declare -g VCOMPARE_RESULT="ERROR_INCOMPLETE_EVAL"
 
   # Check if log_debug function is defined
-  if ! declare -F "log_debug" > /dev/null; then
+  if ! declare -F "log_debug" >/dev/null; then
     VCOMPARE_RESULT="ERROR_DEPENDENCY"
     return
   fi
@@ -804,7 +766,7 @@ function compare_versions()
     return
   elif [[ ${upstream_patch} -lt ${current_patch} ]]; then
     log_debug "Current version is newer than upstream available ${upstream_patch} < ${current_patch} (patch)"
-    VCOMPARE_RESULT="1"
+    VCOMPARE_RESULT="-1"
     return
   fi
 
@@ -855,7 +817,7 @@ function compare_versions()
   # Spec 11.4.4: A larger set of pre-release fields has a higher precedence than a smaller set,
   #              if all of the preceding identifiers are equal.
   # check if both PRERELEASE_VERSION fields are empty, if so both versions are equal.
-  if  [[ -z $upstream_pre_num ]] && [[ -z $current_pre_num ]]; then
+  if [[ -z $upstream_pre_num ]] && [[ -z $current_pre_num ]]; then
     log_debug "pre-release version identifiers are empty for both fields. (all)"
     VCOMPARE_RESULT="0"
     return
@@ -894,9 +856,7 @@ function compare_versions()
   VCOMPARE_RESULT="ERROR_UNHANDLED_CONDITION"
 }
 
-
-function _version_checks ()
-{
+function _version_checks() {
   # Checks if its running latest version.
   # Also suggest updating to latest version if current version is not latest,
   # Allows to deprecate old version as it can be suggested.
@@ -926,23 +886,29 @@ function _version_checks ()
 
     # Evaluate
     case $VCOMPARE_RESULT in
-      1)                      log_error "Thou art running older version of this script,"
-                              log_error "Please download latest version and try again.";
-                              log_and_exit "You can disable version checks by passing --no-version-check" "24";
-                              ;;
-      0)                      log_success "Running the latest version!";
-                              ;;
-      -1)                     log_dev "You are running development version of the script";
-                              ;;
-      ERROR_INVALID_SEMVER_1) log_warn "Script's semver is invalid! Please report this bug!";
-                              log_warn "Disabling update checks!";
-                              ;;
-      ERROR_INVALID_SEMVER_2) log_warn "Latest version is invalid! Please report this bug!";
-                              log_warn "Disabling update checks!";
-                              ;;
-      *)                      log_error "Failed to evaluate version check result- ${VCOMPARE_RESULT}";
-                              log_warn "Disabling update checks!";
-                              ;;
+    1)
+      log_error "Thou art running older version of this script,"
+      log_error "Please download latest version and try again."
+      log_and_exit "You can disable version checks by passing --no-version-check" "24"
+      ;;
+    0)
+      log_success "Running the latest version!"
+      ;;
+    -1)
+      log_dev "You are running development version of the script"
+      ;;
+    ERROR_INVALID_SEMVER_1)
+      log_warn "Script's semver is invalid! Please report this bug!"
+      log_warn "Disabling update checks!"
+      ;;
+    ERROR_INVALID_SEMVER_2)
+      log_warn "Latest version is invalid! Please report this bug!"
+      log_warn "Disabling update checks!"
+      ;;
+    *)
+      log_error "Failed to evaluate version check result- ${VCOMPARE_RESULT}"
+      log_warn "Disabling update checks!"
+      ;;
     esac
 
   # If version checks have been disabled
@@ -952,9 +918,7 @@ function _version_checks ()
 
 }
 
-
-function _check_bool()
-{
+function _check_bool() {
   # Function to check if config has valid values for bool.
   # Accepted values are true and false
   # If invalid, defaults to false.
@@ -969,24 +933,22 @@ function _check_bool()
   g_var="${1}"
   param_bool="${2}"
   case "${param_bool}" in
-    true | True | TRUE | Yes | yes | YES | 1 )  # shellcheck disable=SC2086
-                                                declare -g ${g_var}="true"
-                                                log_var "$g_var"
-                                                ;;
-    false | False | FALSE | No | no | NO | 0 )  # shellcheck disable=SC2086
-                                                declare -g ${g_var}="false"
-                                                log_var "$g_var"
-                                                ;;
-    * )                                         # shellcheck disable=SC2086
-                                                declare -g ${g_var}="${default_val}"
-                                                log_var "$g_var"
-                                                ;;
+  true | True | TRUE | Yes | yes | YES | 1) # shellcheck disable=SC2086
+    declare -g ${g_var}="true"
+    log_var "$g_var"
+    ;;
+  false | False | FALSE | No | no | NO | 0) # shellcheck disable=SC2086
+    declare -g ${g_var}="false"
+    log_var "$g_var"
+    ;;
+  *) # shellcheck disable=SC2086
+    declare -g ${g_var}="${default_val}"
+    log_var "$g_var"
+    ;;
   esac
 }
 
-
-function _set_yaml_config()
-{
+function _set_yaml_config() {
   local config_yaml_file
   # Get and parse the file
   log_stage "Processing configuration"
@@ -1006,7 +968,6 @@ function _set_yaml_config()
   # Parse YAML to variables
   log_property "Parsing config" "$config_yaml_file" 2
   eval "$(parse_yaml "$config_yaml_file")"
-
 
   # Repo flags
   #################################################################################
@@ -1056,7 +1017,6 @@ function _set_yaml_config()
   _check_bool "add_ubuntu_multiverse" "${config__add_repo__ubuntu_multiverse[0]}"
   _check_bool "add_ubuntu_restricted" "${config__add_repo__ubuntu_restricted[0]}"
 
-
   # Other Script Flags
   #################################################################################
 
@@ -1097,7 +1057,6 @@ function _set_yaml_config()
   _check_bool "ae_task_bin" "${config__tasks__binaries[0]}"
 
   _check_bool "ae_task_snaps" "${config__tasks__snaps[0]}"
-
 
   #################################################################################
   #                              Parse Arrays
@@ -1183,13 +1142,11 @@ function _set_yaml_config()
 
 }
 
-
-function _clean_apt_cache()
-{
+function _clean_apt_cache() {
   # Function to clean apt package cache. Takes care of -k flag in all the installs.
   # Honor -k flag
   # Delete DEBs
-  if [ "$bool_preserve_debs" != "true" ];then
+  if [ "$bool_preserve_debs" != "true" ]; then
     log_debug "Removing cached APT packages"
     apt-get -q -o=Dpkg::Use-Pty=0 clean | log_trace "${_phase_apt}"
   else
@@ -1198,9 +1155,7 @@ function _clean_apt_cache()
 
 }
 
-
-function _install_dependencies()
-{
+function _install_dependencies() {
   # Install packages mentioned in the arguments.
   # If installation fails exit the script.
   # ARG 1: Packages in quote separated by space.
@@ -1208,25 +1163,24 @@ function _install_dependencies()
   log_debug "Installing Packages ${packages[*]}"
   # Check if array is empty
   if [[ ${#packages[@]} -eq 0 ]]; then
-    log_warn "Package array is empty!" "19"
+    log_warn "Package array is empty!"
+    return 19
   else
-    apt-get -q -o=Dpkg::Use-Pty=0 -y --no-install-recommends install "${packages[@]}" |& log_trace "${_phase_apt}"  \
-    || log_and_exit "Failed to install dependencies. Script cannot continue!!" "21"
-
+    apt-get -q -o=Dpkg::Use-Pty=0 -y --no-install-recommends install "${packages[@]}" |& log_trace "${_phase_apt}"
     exit_status=$?
     if [ $exit_status -eq 0 ]; then
-       log_success "Installed"
+      log_success "Installed"
+      _clean_apt_cache
+      return 0
     else
-      log_error "Something went wrong while installing dependencies."
-      log_and_exit "Please see the log file for more details." "21"
+      log_error "Failed to install dependencies: ${packages[*]}"
+      log_error "Please see the log file for more details."
+      return 21
     fi
-  _clean_apt_cache
   fi
 }
 
-
-function _install_pre_requisites()
-{
+function _install_pre_requisites() {
   # This function installs required packages for adding apt repositories
   # These should be present in your base Ubuntu install. If not present then, this function
   # will install them.
@@ -1235,13 +1189,15 @@ function _install_pre_requisites()
   # curl, software-properties-common
   local pre_requisite_packages=(apt-transport-https ca-certificates curl gnupg2)
   log_info "Installing necessary dependencies"
-  _install_dependencies "${pre_requisite_packages[@]}"
+  if _install_dependencies "${pre_requisite_packages[@]}"; then
+    log_debug "Installed dependencies"
+  else
+    log_and_exit "Dependency packages failed to install!" "21"
+  fi
 
 }
 
-
-function _fix_repo_not_available()
-{
+function _fix_repo_not_available() {
   # If repository is not available for latest Ubuntu release, this uses last stable release
   # (may not be LTS) for adding repository
 
@@ -1249,17 +1205,17 @@ function _fix_repo_not_available()
   if [ "$bool_fix_repo_not_available_for_latest" == "true" ]; then
     # Check LTS fallback flag is being used
     # if running on current LTS, and fix mode is LTS fallback to last LTS.
-    if [[ $bool_fix_repo_lts == "true" ]] && [[ $code_name == "${codename_current_lts}" ]] ; then
+    if [[ $bool_fix_repo_lts == "true" ]] && [[ $code_name == "${codename_current_lts}" ]]; then
       log_warn "Using Previous LTS release ::${codename_previous_lts}::"
       code_name="$codename_previous_lts"
       # note applied fix
       bool_codename_fix_appied="true"
 
-    elif [[ $bool_fix_repo_lts != "true" ]] && [[ $code_name == "${codename_latest_release}" ]] ; then
+    elif [[ $bool_fix_repo_lts != "true" ]] && [[ $code_name == "${codename_latest_release}" ]]; then
       log_warn "Using previous release ${codename_previous_release} as fallback"
 
       # fallback is non LTS so it might disapper/become unsupported! warn
-      if [[ $codename_previous_release != "$codename_current_lts"  ]]; then
+      if [[ $codename_previous_release != "$codename_current_lts" ]]; then
         log_warn "Fallback Ubuntu (${codename_latest_release}) is a non LTS release!"
       fi
       code_name="$codename_previous_release"
@@ -1275,15 +1231,13 @@ function _fix_repo_not_available()
   fi # fix
 }
 
-function _warn_about_fix_codename()
-{
+function _warn_about_fix_codename() {
   log_warn "Repositories from older Ubuntu release are being used."
   log_warn "You need to modify this in Software and Updates,\n"
   log_warn "when they become available for ${codename_upcoming_release}${NC}\n"
 }
 
-function _fix_repo_not_available_upcoming_release()
-{
+function _fix_repo_not_available_upcoming_release() {
   # If repository is not available for upcoming  release, this uses last stable release
   # Aka if the pre-release release is 18.04 it might use 17.10 if used with --fix, it will use 18.04 repos.
   # With Debian If release is 11, when used with this flag we will use Debian 10 repos.
@@ -1322,31 +1276,29 @@ function _fix_repo_not_available_upcoming_release()
   fi
 }
 
-
-function _map_to_obs_repos()
-{
+function _map_to_obs_repos() {
   # This function maps code_name to OBS repos
   # This MUST be called AFTER code name fixes are applied.
   # but BEFORE adding any OBS repos
   log_debug "Mapping code_name to OBS prefix"
 
   # AE_OBS_PREFIX check
-  if [[ -v  ${AE_OBS_PREFIX}  ]]; then
+  if [[ -v ${AE_OBS_PREFIX} ]]; then
     log_and_exit "Reserved variable (AE_OBS_PREFIX) is set!" "66"
   fi
 
   # We dont need mint/elementary here because we dont use them as base anyway!
   case ${code_name} in
-    # Ubuntu
-    bionic)     readonly AE_OBS_PREFIX="xUbuntu_18.04";;
-    focal)      readonly AE_OBS_PREFIX="xUbuntu_20.04";;
-    groovy)     readonly AE_OBS_PREFIX="xUbuntu_20.10";;
-    hirsute)    readonly AE_OBS_PREFIX="xUbuntu_21.04";;
-    # Debian
-    stretch)    readonly AE_OBS_PREFIX="Debian_9";;
-    buster)     readonly AE_OBS_PREFIX="Debian_10";;
-    bullseye)   readonly AE_OBS_PREFIX="Debian_Testing";;
-    *)          log_and_exit "Internal Error in ${FUNCNAME[0]}, Failed to match AE_OBS_PREFIX for ${code_name}" "67";;
+  # Ubuntu
+  bionic) readonly AE_OBS_PREFIX="xUbuntu_18.04" ;;
+  focal) readonly AE_OBS_PREFIX="xUbuntu_20.04" ;;
+  groovy) readonly AE_OBS_PREFIX="xUbuntu_20.10" ;;
+  hirsute) readonly AE_OBS_PREFIX="xUbuntu_21.04" ;;
+  # Debian
+  stretch) readonly AE_OBS_PREFIX="Debian_9" ;;
+  buster) readonly AE_OBS_PREFIX="Debian_10" ;;
+  bullseye) readonly AE_OBS_PREFIX="Debian_Testing" ;;
+  *) log_and_exit "Internal Error in ${FUNCNAME[0]}, Failed to match AE_OBS_PREFIX for ${code_name}" "67" ;;
 
   esac
 
@@ -1355,19 +1307,24 @@ function _map_to_obs_repos()
 
 }
 
-function add_ppas()
-{
+function add_ppas() {
   # Function to add ppa by reading ppas from ppa.list of from YAML key config.ppa
   # List/Config file should contain ppas in following format
   # ppa:ppa:<author>/<ppa> for example, ppa:mozillateam/firefox-nex for adding firefox next/Beta PPA
   log_stage "Adding PPAs"
-  local index;
+  local index
   local _ppa_dependencies=(apt-transport-https ca-certificates curl gnupg2 software-properties-common)
   # Function Reads the file ${dir}/data/ppa.index and adds the ppa one by one.
   # Install dependencies required
   if [ "$bool_is_debian" != "true" ]; then
     log_info "Installing dependencies"
-    _install_dependencies "${_ppa_dependencies[@]}"
+    if _install_dependencies "${_ppa_dependencies[@]}"; then
+      log_debug "Installed dependency packages: ${_ppa_dependencies[*]}"
+    else
+      log_error "Failed to install dependency packages for PPAs"
+      log_error "PPAs cannot be installed with this error!"
+      return 21
+    fi
 
     for index in "${parsed_ppa_list[@]}"; do
       log_info "Setting up PPA - $index"
@@ -1376,7 +1333,7 @@ function add_ppas()
         log_debug "Found and empty entry, moving on to next"
         continue
       fi
-      if add-apt-repository -y "$index" |& log_trace "${_phase_ppa}" ; then
+      if add-apt-repository -y "$index" |& log_trace "${_phase_ppa}"; then
         log_success "Success!"
       else
         log_error "Some error occured while adding $index.\n"
@@ -1388,9 +1345,7 @@ function add_ppas()
 
 }
 
-
-function add_repositories()
-{
+function add_repositories() {
   # This function adds repositories for several apps like
   # Google Chrome, Spotify, Google Cloud SDK, GCSFUSE(Part of google cloud),
   # Skype, Docker, Skype, Microsoft Visual Studio Code, Insync client, Wine-HQ etc
@@ -1411,7 +1366,6 @@ function add_repositories()
   else
     log_debug "No need to modify UMASK"
   fi
-
 
   local exit_status
   local sources_list_bak_ts
@@ -1436,19 +1390,19 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
 deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
 
   # install dependencies required
-  _install_pre_requisites;
+  _install_pre_requisites
   # if repository is not available for latest ubuntu release, use previous release
   # Be careful, things might not be compatible
-  _fix_repo_not_available_upcoming_release;
-  _fix_repo_not_available;
+  _fix_repo_not_available_upcoming_release
+  _fix_repo_not_available
 
   # OBS
   _map_to_obs_repos
 
   # Backup sources.list if it will be modified
-  if [[ $add_ubuntu_multiverse == "true" ]] || [[ $add_ubuntu_universe == "true" ]] \
-  || [[ $add_ubuntu_restricted == "true" ]] || [[ $add_debian_contrib == "true" ]] \
-  || [[ $add_debian_nonfree == "true" ]]; then
+  if [[ $add_ubuntu_multiverse == "true" ]] || [[ $add_ubuntu_universe == "true" ]] ||
+    [[ $add_ubuntu_restricted == "true" ]] || [[ $add_debian_contrib == "true" ]] ||
+    [[ $add_debian_nonfree == "true" ]]; then
     log_warn "Configuration will modify etc/apt/sources.list"
     sources_list_bak_ts="$(date +'%Y%m%d-%H%M%S')"
     log_info "Backing up with suffix - ${sources_list_bak_ts}.ae.bak"
@@ -1467,7 +1421,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Universe - Community-maintained free and open-source software.
     if [[ ${add_ubuntu_universe} == "true" ]]; then
       log_info "Ubuntu/Universe"
-      if add-apt-repository --yes universe  |& log_trace "${_phase_repo}" ; then
+      if add-apt-repository --yes universe |& log_trace "${_phase_repo}"; then
         log_success "OK"
       else
         log_error "Failed to add Ubuntu/Universe reposiroty!"
@@ -1479,7 +1433,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Restricted - Proprietary drivers for devices.
     if [[ ${add_ubuntu_restricted} == "true" ]]; then
       log_info "Ubuntu/Restricted"
-      if add-apt-repository --yes restricted --yes |& log_trace "${_phase_repo}" ; then
+      if add-apt-repository --yes restricted --yes |& log_trace "${_phase_repo}"; then
         log_success "OK"
       else
         log_error "Failed to add Ubuntu/Restricted reposiroty!"
@@ -1491,7 +1445,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Multiverse - Software restricted by copyright or legal issues.
     if [[ ${add_ubuntu_multiverse} == "true" ]]; then
       log_info "Ubuntu/Multiverse"
-      if add-apt-repository --yes multiverse |& log_trace "${_phase_repo}" ; then
+      if add-apt-repository --yes multiverse |& log_trace "${_phase_repo}"; then
         log_success "OK"
       else
         log_error "Failed to add Ubuntu/Multiverse reposiroty!"
@@ -1500,11 +1454,10 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       log_debug "Skipped adding Ubuntu/Multiverse repository"
     fi
 
-
   else
+
     log_debug "Distro is not Ubuntu, skip adding ubuntu specific components!"
   fi # ubuntu check
-
 
   # Debian Additional repos
   if [[ ${distro_name} == "debian" ]]; then
@@ -1512,7 +1465,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Contrib
     if [[ ${add_debian_contrib} == "true" ]]; then
       log_info "Debian/Contrib"
-      if add-apt-repository --yes contrib |& log_trace "${_phase_repo}" ; then
+      if add-apt-repository --yes contrib |& log_trace "${_phase_repo}"; then
         log_success "OK"
       else
         log_error "Failed to add Debian/Contrib reposiroty!"
@@ -1524,7 +1477,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Non-Free - Proprietary drivers for devices.
     if [[ ${add_debian_nonfree} == "true" ]]; then
       log_info "Debian/Non-Free"
-      if add-apt-repository --yes non-free |& log_trace "${_phase_repo}" ; then
+      if add-apt-repository --yes non-free |& log_trace "${_phase_repo}"; then
         log_success "OK"
       else
         log_error "Failed to add Debian/Non-Free reposiroty!"
@@ -1548,10 +1501,10 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     if [ "$add_chrome_repo" == "true" ]; then
       log_info "Google Chrome"
       log_debug "Adding Google package signing Key"
-      wget -q  https://dl.google.com/linux/linux_signing_key.pub -O /tmp/ae/google_signing_key.pub >> $"$log_file"
-      apt-key add /tmp/ae/google_signing_key.pub |& log_trace "${_phase_apt_key}" \
-      || log_error "Adding trusted keys for Google failed."
-      if echo "${GOOGLE_CHROME_SOURCE_FILE_CONTENT}" > ${SOURCES_FILE_DIR}/google-chrome.list; then
+      wget -q https://dl.google.com/linux/linux_signing_key.pub -O /tmp/ae/google_signing_key.pub >>$"$log_file"
+      apt-key add /tmp/ae/google_signing_key.pub |& log_trace "${_phase_apt_key}" ||
+        log_error "Adding trusted keys for Google failed."
+      if echo "${GOOGLE_CHROME_SOURCE_FILE_CONTENT}" >${SOURCES_FILE_DIR}/google-chrome.list; then
         log_success "OK"
       else
         log_error "Adding Google Chrome Repository failed"
@@ -1560,7 +1513,6 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       log_debug "Skipped Google chrome repository"
     fi
 
-
     # Spotify client
     if [ "$add_spotify_repo" == "true" ]; then
       log_info "Spotify"
@@ -1568,7 +1520,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "spotify" \
         --key-url https://download.spotify.com/debian/pubkey_0D811D58.gpg
 
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/spotify.gpg] http://repository.spotify.com stable non-free #Spotify" > ${SOURCES_FILE_DIR}/after-effects-spotify.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/spotify.gpg] http://repository.spotify.com stable non-free #Spotify" >${SOURCES_FILE_DIR}/after-effects-spotify.list; then
         log_success "OK"
       else
         log_error "Adding Spotify Repository Failed"
@@ -1578,7 +1530,6 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       log_debug "Skipped adding Spotify repository"
     fi
 
-
     # Skype
     if [ "$add_skype_repo" == "true" ]; then
       log_info "Skype"
@@ -1586,7 +1537,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "skype" \
         --key-url https://repo.skype.com/data/SKYPE-GPG-KEY
 
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/skype.gpg] https://repo.skype.com/deb stable main #Skype" > ${SOURCES_FILE_DIR}/after-effects-skype.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/skype.gpg] https://repo.skype.com/deb stable main #Skype" >${SOURCES_FILE_DIR}/after-effects-skype.list; then
         log_success "OK"
       else
         log_error "Adding Skype for linux repository failed"
@@ -1603,7 +1554,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "signal-desktop" \
         --key-url https://updates.signal.org/desktop/apt/keys.asc
 
-      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/signal-desktop.gpg] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop"  > ${SOURCES_FILE_DIR}/after-effects-signal.list; then
+      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/signal-desktop.gpg] https://updates.signal.org/desktop/apt xenial main #Signal-for-Desktop" >${SOURCES_FILE_DIR}/after-effects-signal.list; then
         log_success "OK"
       else
         log_error "Failed to addd Signal for desktop repository!"
@@ -1616,11 +1567,11 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Mendeley Desktop App
     if [ "$add_mendeley_repo" == "true" ]; then
       log_info "Mendeley desktop"
-      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 |& log_trace "${_phase_apt_key}" \
-      || log_error "Adding Mendeley Desktop Key Failed"
+      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 |& log_trace "${_phase_apt_key}" ||
+        log_error "Adding Mendeley Desktop Key Failed"
 
       # DO NOT RENAME THE FILE!
-      if echo "${MENDELEY_SOURCE_FILE_CONTENT}" > ${SOURCES_FILE_DIR}/mendeleydesktop.list; then
+      if echo "${MENDELEY_SOURCE_FILE_CONTENT}" >${SOURCES_FILE_DIR}/mendeleydesktop.list; then
         log_success "OK"
       else
         log_error "Failed to add mendeley repository!"
@@ -1630,16 +1581,15 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       log_debug "Skipped adding Mendeley repository"
     fi
 
-
     #Wine HQ
     if [ "$add_winehq_repo" == "true" ]; then
       log_info "WineHQ"
-      if [[ ${code_name} == "focal" ]] || [[ ${code_name} == "groovy" ]] \
-        || [[ ${code_name} == "hirsute" ]] || [[ ${code_name} == "bullseye" ]]; then
+      if [[ ${code_name} == "focal" ]] || [[ ${code_name} == "groovy" ]] ||
+        [[ ${code_name} == "hirsute" ]] || [[ ${code_name} == "bullseye" ]]; then
         __add_repo_keys --format "asc" \
           --file-prefix "wine-hq" \
           --key-url https://dl.winehq.org/wine-builds/winehq.key
-        if echo "deb [signed-by=${TRUSTED_KEYRINGS_DIR}/wine-hq.gpg] https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" > ${SOURCES_FILE_DIR}/after-effects-winehq.list; then
+        if echo "deb [signed-by=${TRUSTED_KEYRINGS_DIR}/wine-hq.gpg] https://dl.winehq.org/wine-builds/${distro_name}/ ${code_name} main #WineHQ" >${SOURCES_FILE_DIR}/after-effects-winehq.list; then
           log_success "OK"
         else
           log_error "Adding WineHQ repository failed"
@@ -1658,7 +1608,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
 
   # Google Cloud SDK
   # shellcheck disable=SC2235
-  if [[ $add_gcp_repo == "true" ]] || ( [[ ${add_gcsfuse_repo} == "true" ]] && [[ ${ARCH} == "amd64" ]] ) ; then
+  if [[ $add_gcp_repo == "true" ]] || ([[ ${add_gcsfuse_repo} == "true" ]] && [[ ${ARCH} == "amd64" ]]); then
     log_debug "Adding GCP packaging keys"
     __add_repo_keys --format "gpg" \
       --file-prefix "google-cloud-packaging" \
@@ -1670,7 +1620,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   # Google Cloud SDK
   if [ "$add_gcp_repo" == "true" ]; then
     log_info "Google-Cloud-SDK"
-    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/google-cloud-packaging.gpg] http://packages.cloud.google.com/apt cloud-sdk main #Google-Cloud-SDK" > ${SOURCES_FILE_DIR}/after-effects-googlecloud.list; then
+    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/google-cloud-packaging.gpg] http://packages.cloud.google.com/apt cloud-sdk main #Google-Cloud-SDK" >${SOURCES_FILE_DIR}/after-effects-googlecloud.list; then
       log_success "OK"
     else
       log_error "Adding Google Cloud SDK Repository failed"
@@ -1684,7 +1634,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
 
     if [[ $ARCH == "amd64" ]]; then
       log_info "GCSFUSE"
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/google-cloud-packaging.gpg] http://packages.cloud.google.com/apt gcsfuse-${code_name} main #GCSFUSE" > ${SOURCES_FILE_DIR}/after-effects-gcsfuse.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/google-cloud-packaging.gpg] http://packages.cloud.google.com/apt gcsfuse-${code_name} main #GCSFUSE" >${SOURCES_FILE_DIR}/after-effects-gcsfuse.list; then
         log_success "OK"
       else
         log_error "Adding GCSFUSE repository failed"
@@ -1699,7 +1649,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
 
   # Microsoft Keys
   # shellcheck disable=SC2235
-  if ( [[ $add_azurecli_repo == "true" ]] || [[ ${add_vscode_repo} == "true"  ]] || [[ ${add_edge_repo} == "true"  ]] || [[ ${add_msteams_repo} == "true"  ]]  ) &&  [[ $ARCH == "amd64" ]]; then
+  if ([[ $add_azurecli_repo == "true" ]] || [[ ${add_vscode_repo} == "true" ]] || [[ ${add_edge_repo} == "true" ]] || [[ ${add_msteams_repo} == "true" ]]) && [[ $ARCH == "amd64" ]]; then
     log_debug "Adding Microsoft keys."
     __add_repo_keys --format "asc" \
       --file-prefix "microsoft" \
@@ -1709,10 +1659,10 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   fi
 
   # VSCode
-  if [[ ${add_vscode_repo} == "true"  ]]; then
+  if [[ ${add_vscode_repo} == "true" ]]; then
     log_info "VSCode"
     if [[ ${ARCH} == "amd64" ]]; then
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" > ${SOURCES_FILE_DIR}/after-effects-vscode.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" >${SOURCES_FILE_DIR}/after-effects-vscode.list; then
         log_success "OK"
       else
         log_error "Failed to addd VSCode repository!"
@@ -1727,10 +1677,10 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   fi
 
   # Azure cli
-  if [[ ${add_azurecli_repo} == "true"  ]] ; then
+  if [[ ${add_azurecli_repo} == "true" ]]; then
     if [[ ${ARCH} == "amd64" ]]; then
       log_info "Azure CLI"
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ ${code_name} main #Azure CLI" > ${SOURCES_FILE_DIR}/after-effects-azurecli.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ ${code_name} main #Azure CLI" >${SOURCES_FILE_DIR}/after-effects-azurecli.list; then
         log_success "OK"
       else
         log_error "Failed to addd Azure CLI repository!"
@@ -1744,10 +1694,10 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   fi
 
   # Microsoft Edge
-  if [[ ${add_edge_repo} == "true"  ]] ; then
+  if [[ ${add_edge_repo} == "true" ]]; then
     if [[ ${ARCH} == "amd64" ]]; then
       log_info "Microsoft Edge"
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main #Microsoft Edge" > ${SOURCES_FILE_DIR}/after-effects-edge.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main #Microsoft Edge" >${SOURCES_FILE_DIR}/after-effects-edge.list; then
         log_success "OK"
       else
         log_error "Failed to addd Microsoft Edge repository!"
@@ -1760,10 +1710,10 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   fi
 
   # Microsoft Teams
-  if [[ ${add_msteams_repo} == "true"  ]] ; then
+  if [[ ${add_msteams_repo} == "true" ]]; then
     if [[ ${ARCH} == "amd64" ]]; then
       log_info "Microsoft Teams"
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/ms-teams stable main #Microsoft Edge" > ${SOURCES_FILE_DIR}/after-effects-teams.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/ms-teams stable main #Microsoft Edge" >${SOURCES_FILE_DIR}/after-effects-teams.list; then
         log_success "OK"
       else
         log_error "Failed to addd Microsoft Teams repository!"
@@ -1783,7 +1733,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       --key-url https://download.docker.com/linux/"${distro_name}"/gpg
     log_debug "Adding Docker(Docker Inc) sources .list"
 
-    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/docker-ce.gpg] https://download.docker.com/linux/${distro_name}  ${code_name} stable #Docker-Community-Edition" > ${SOURCES_FILE_DIR}/after-effects-docker.list; then
+    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/docker-ce.gpg] https://download.docker.com/linux/${distro_name}  ${code_name} stable #Docker-Community-Edition" >${SOURCES_FILE_DIR}/after-effects-docker.list; then
       log_success "OK"
     else
       log_error "Adding Docker-CE repository failed"
@@ -1799,10 +1749,10 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   if [ "$add_gh_repo" == "true" ]; then
     log_info "GitHub CLI"
     # TODO: Waiting for fix https://github.com/cli/cli/issues/3513 to use keys directly.
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C99B11DEB97541F0 |& log_trace "${_phase_apt_key}" \
-   || log_error "Adding Github CLI keys failed"
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C99B11DEB97541F0 |& log_trace "${_phase_apt_key}" ||
+      log_error "Adding Github CLI keys failed"
 
-    if echo "deb https://cli.github.com/packages  ${code_name}  main #GitHub-CLI" > ${SOURCES_FILE_DIR}/after-effects-github.list; then
+    if echo "deb https://cli.github.com/packages  ${code_name}  main #GitHub-CLI" >${SOURCES_FILE_DIR}/after-effects-github.list; then
       log_success "OK"
     else
       log_error "Adding GH CLi repository failed"
@@ -1820,7 +1770,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "hashicorp" \
         --key-url https://apt.releases.hashicorp.com/gpg
 
-      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/hashicorp.gpg] https://apt.releases.hashicorp.com ${code_name} main#Hashicorp-Packages" > ${SOURCES_FILE_DIR}/after-effects-hashicorp.list; then
+      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/hashicorp.gpg] https://apt.releases.hashicorp.com ${code_name} main#Hashicorp-Packages" >${SOURCES_FILE_DIR}/after-effects-hashicorp.list; then
         log_success "OK"
       else
         log_error "Failed to add hashicorp repository"
@@ -1841,7 +1791,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "bazel" \
         --key-url https://bazel.build/bazel-release.pub.gpg
 
-      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/bazel.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8 #Bazel" > ${SOURCES_FILE_DIR}/after-effects-bazel.list; then
+      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/bazel.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8 #Bazel" >${SOURCES_FILE_DIR}/after-effects-bazel.list; then
         log_success "OK"
       else
         log_error "Failed to add bazel repository"
@@ -1854,7 +1804,6 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     log_debug "Skipped adding Bazel repository"
   fi
 
-
   # gVisor container Runtime
   if [[ $add_gvisor_repo == "true" ]]; then
 
@@ -1866,7 +1815,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "gvisor" \
         --key-url https://gvisor.dev/archive.key
 
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/gvisor.gpg] https://storage.googleapis.com/gvisor/releases release main #gVisor-Container-Runtime"  > ${SOURCES_FILE_DIR}/after-effects-gvisor.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/gvisor.gpg] https://storage.googleapis.com/gvisor/releases release main #gVisor-Container-Runtime" >${SOURCES_FILE_DIR}/after-effects-gvisor.list; then
         log_success "OK"
       else
         log_error "Adding gVisor repository failed!"
@@ -1891,7 +1840,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       __add_repo_keys --format "asc" \
         --file-prefix "obs-podman-${code_name}" \
         --key-url https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_OBS_PREFIX}/Release.key
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/obs-podman-${code_name}.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_OBS_PREFIX}/ / #Podman (via OBS)"  > ${SOURCES_FILE_DIR}/after-effects-podman.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/obs-podman-${code_name}.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_OBS_PREFIX}/ / #Podman (via OBS)" >${SOURCES_FILE_DIR}/after-effects-podman.list; then
         log_success "OK"
       else
         log_error "Adding Podman repository failed!"
@@ -1910,7 +1859,6 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     log_debug "Skipped addinng Podman repository."
   fi
 
-
   # Sublime Text
   if [ "$add_sublimetext_repo" == "true" ]; then
     if [ "$ARCH" == "amd64" ]; then
@@ -1919,7 +1867,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "sublimetext" \
         --key-url https://download.sublimetext.com/sublimehq-pub.gpg
 
-      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/sublimetext.gpg] https://download.sublimetext.com/ apt/stable/ #SublimeText Editor" > ${SOURCES_FILE_DIR}/after-effects-sublimetext.list; then
+      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/sublimetext.gpg] https://download.sublimetext.com/ apt/stable/ #SublimeText Editor" >${SOURCES_FILE_DIR}/after-effects-sublimetext.list; then
         log_success "OK"
       else
         log_error "Failed to add SublimeText repository"
@@ -1961,7 +1909,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "ros2" \
         --key-url https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc
 
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/ros2.gpg]  http://packages.ros.org/ros2/ubuntu ${code_name} main #ROS-Repository" > $SOURCES_FILE_DIR/ros2.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/ros2.gpg]  http://packages.ros.org/ros2/ubuntu ${code_name} main #ROS-Repository" >$SOURCES_FILE_DIR/ros2.list; then
         log_success "OK"
       else
         log_error "Adding ROS repository failed!"
@@ -1974,7 +1922,6 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   else
     log_debug "Skipped ROS2"
   fi # add_ros_repo
-
 
   # ROS
   # Arch support varies on distro so lot of ugly elifs.
@@ -2015,8 +1962,8 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     if [[ $ros_arch_supported == "true" ]]; then
       log_info "Adding ROS repositories"
       log_debug "Adding ROS repo key (latest)"
-      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 |& log_trace "${_phase_apt_key}"  \
-       || log_error "Adding ROS repository key failed!"
+      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 |& log_trace "${_phase_apt_key}" ||
+        log_error "Adding ROS repository key failed!"
 
       if [[ $bool_use_uf_mirror == "true" ]]; then
         log_warn "UF ROS Repo is no loger syncing with upstream."
@@ -2024,7 +1971,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         log_warn "Till then, upstream is being used!"
       fi
 
-      if echo "deb http://packages.ros.org/ros/ubuntu ${code_name} main #ROS-Repository" > $SOURCES_FILE_DIR/ros.list; then
+      if echo "deb http://packages.ros.org/ros/ubuntu ${code_name} main #ROS-Repository" >$SOURCES_FILE_DIR/ros.list; then
         log_success "OK"
       else
         log_error "Adding ROS repository failed!"
@@ -2050,12 +1997,9 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
 
   update_repos
 
-
 }
 
-
-function __fix_permissions()
-{
+function __fix_permissions() {
 
   # Fix permissions
   # Expects 2 args
@@ -2064,7 +2008,6 @@ function __fix_permissions()
 
   local check_path expected_permissions
   local path_attrs
-
 
   if [[ $# -lt 2 ]]; then
     log_and_exit "Internal Error in ${FUNCNAME[0]}, expected 2 args, got $#" "19"
@@ -2090,7 +2033,7 @@ function __fix_permissions()
   path_attrs="$(stat -L -c %a "${check_path}")"
   if [[ ${path_attrs} != "${expected_permissions}" ]]; then
     log_warn "${check_path} has INCORRECT permissions(${path_attrs})!"
-    if chmod "${expected_permissions}" "${check_path}" |& log_trace "${_phase_apt_key}" ; then
+    if chmod "${expected_permissions}" "${check_path}" |& log_trace "${_phase_apt_key}"; then
       log_success "Fixed!"
     else
       log_error "Failed to fix permissions!"
@@ -2102,9 +2045,7 @@ function __fix_permissions()
   fi
 }
 
-
-function __add_repo_keys()
-{
+function __add_repo_keys() {
   if [[ $# -ne 6 ]]; then
     log_and_exit "Internal Error! Expected 6 args (got $#) for ${FUNCNAME[0]}!" "19"
   fi
@@ -2114,21 +2055,28 @@ function __add_repo_keys()
 
   while [ "${1}" != "" ]; do
     case ${1} in
-      -k | --key-url)       shift;key_url="${1}"
-                            ;;
-      -p | --file-prefix)   shift;key_file_prefix="${1}"
-                            ;;
-      -f | --format)        shift;key_format="${1}"
-                            ;;
-      *)                    log_and_exit "Invalid internal function arguments for ${FUNCNAME[0]}!" "19"
-                            ;;
+    -k | --key-url)
+      shift
+      key_url="${1}"
+      ;;
+    -p | --file-prefix)
+      shift
+      key_file_prefix="${1}"
+      ;;
+    -f | --format)
+      shift
+      key_format="${1}"
+      ;;
+    *)
+      log_and_exit "Invalid internal function arguments for ${FUNCNAME[0]}!" "19"
+      ;;
     esac
     shift
   done
 
-  log_property "Key file URL"    "${key_url}"
+  log_property "Key file URL" "${key_url}"
   log_property "Key file Format" "${key_format}"
-  log_property "Key file name"   "${key_file_prefix}.${key_format}"
+  log_property "Key file name" "${key_file_prefix}.${key_format}"
 
   # check if format is valid
   if [[ ! ${key_format} =~ ^(gpg|asc)$ ]]; then
@@ -2152,7 +2100,6 @@ function __add_repo_keys()
     log_error "${TRUSTED_KEYRINGS_DIR} is missing!!"
     log_and_exit "Your installation of ${AE_DISTRO_NAME} is broken!" "64"
   fi
-
 
   # fetch key
   if [[ -e ${TRUSTED_KEYRINGS_DIR}/${key_file_prefix}.gpg ]]; then
@@ -2199,9 +2146,7 @@ function __add_repo_keys()
 
 }
 
-
-function update_repos()
-{
+function update_repos() {
   local exit_status
   log_info "Running apt-get update"
   apt-get -q -o=Dpkg::Use-Pty=0 update |& log_trace "${_phase_apt}"
@@ -2216,29 +2161,27 @@ function update_repos()
   fi
 }
 
-function update_repos_as_task()
-{
+function update_repos_as_task() {
   log_stage "Update repository metadata"
   update_repos
 }
 
-function upgrade_apps()
-{
+function upgrade_apps() {
   # This function will list up-gradable apps and upgrade it.
   # IF Simulate is set to true this will only list the apps but no upgrade action will be performed.
   local exit_status
   log_stage "Upgrade Packages"
   log_info "Checking and upgrading packages"
   # upgradable is not available in apt-get ignore warning about apt being unstable
-  apt list --upgradable |& log_trace "${_phase_apt}"  \
-  || log_info "Something went wrong while listing upgradable packages. Please see the log file or run in debug mode for details."
+  apt list --upgradable |& log_trace "${_phase_apt}" ||
+    log_info "Something went wrong while listing upgradable packages. Please see the log file or run in debug mode for details."
 
   # only do upgrades if simulate is set to false
   if [ "$simulate_apt_install" != "true" ]; then
 
     DEBIAN_FRONTEND=noninteractive apt-get -q -o=Dpkg::Use-Pty=0 -y upgrade |& log_trace "${_phase_apt}"
-    DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --allow-remove-essential --allow-change-held-packages -fuy dist-upgrade \
-    | log_trace "${_phase_apt}"
+    DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --allow-remove-essential --allow-change-held-packages -fuy dist-upgrade |
+      log_trace "${_phase_apt}"
     exit_status=$?
   else
     # If  simulate is true, set exit status as 0
@@ -2254,22 +2197,17 @@ function upgrade_apps()
     log_error "Most of the times its either missing keys or wrongly configured repositories."
   fi
   # Cleanup APT cache (-k)
-  _clean_apt_cache;
-
+  _clean_apt_cache
 
 }
 
-
-function  upgrade_system()
-{
+function upgrade_system() {
   log_stage "Update repository index/metadata "
-  update_repos;
-  upgrade_apps;
+  update_repos
+  upgrade_apps
 }
 
-
-function purge_not_required()
-{
+function purge_not_required() {
   # This function purges not required packages from the list ${dir}/data/purge.list
   # A flag -d MUST be passed for this option to work
   # Not passing a flag and choosing purge will result in error and action being aborted.
@@ -2284,12 +2222,12 @@ function purge_not_required()
     log_stage "Purging packages"
 
     if [[ ${#parsed_purge_packages[@]} -eq 0 ]]; then
-      log_error "Packages to purge is empty!";
-      return;
+      log_error "Packages to purge is empty!"
+      return
     else
       if [ "$simulate_apt_install" == "true" ]; then
         log_warn "SIM - using --dry-run"
-      apt-get -q -o=Dpkg::Use-Pty=0 -y remove --purge --dry-run "${parsed_purge_packages[@]}" |& log_trace "${_phase_apt}"
+        apt-get -q -o=Dpkg::Use-Pty=0 -y remove --purge --dry-run "${parsed_purge_packages[@]}" |& log_trace "${_phase_apt}"
       else
         apt-get -q -o=Dpkg::Use-Pty=0 -y purge "${parsed_purge_packages[@]}" |& log_trace "${_phase_apt}"
       fi
@@ -2307,12 +2245,9 @@ function purge_not_required()
     log_and_exit "Purge switch is set to false. Did you pass -d along with the command?" "20"
   fi
 
-
 }
 
-
-function install_apps()
-{
+function install_apps() {
   # Function to install apps mentioned in arrays
   # external-repos should always be at last to avoid any errors in previous .
   # No checks are being made on any of the files for validity. One entry per line is recommended.
@@ -2321,35 +2256,35 @@ function install_apps()
   log_stage "Install packages"
   update_repos
 
-  echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true |  debconf-set-selections
+  echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
   #Install starts here
   local packages exit_status index
   #shellcheck disable=SC2034
   readonly local package_arrays=(
-                              administration
-                              security
-                              productivity
-                              multimedia
-                              development
-                              other
-                              external
-                              )
+    administration
+    security
+    productivity
+    multimedia
+    development
+    other
+    external
+  )
   for array in "${package_arrays[@]}"; do
     local apt_extra_args=()
     case "${array}" in
-      administration)         packages=("${parsed_administration_packages[@]}");;
-      security)               packages=("${parsed_secutity_packages[@]}");;
-      productivity)           packages=("${parsed_productivity_packages[@]}");;
-      multimedia)             packages=("${parsed_multimedia_packages[@]}");;
-      development)            packages=("${parsed_development_packages[@]}");;
-      other)                  packages=("${parsed_other_packages[@]}");;
-      external)               packages=("${parsed_external_packages[@]}");;
-      *)                      log_and_exit "Internal error. Invalid array type" "19";;
+    administration) packages=("${parsed_administration_packages[@]}") ;;
+    security) packages=("${parsed_secutity_packages[@]}") ;;
+    productivity) packages=("${parsed_productivity_packages[@]}") ;;
+    multimedia) packages=("${parsed_multimedia_packages[@]}") ;;
+    development) packages=("${parsed_development_packages[@]}") ;;
+    other) packages=("${parsed_other_packages[@]}") ;;
+    external) packages=("${parsed_external_packages[@]}") ;;
+    *) log_and_exit "Internal error. Invalid array type" "19" ;;
     esac
 
     # Chek if array is empty
     if [[ ${#packages[@]} -eq 0 ]]; then
-      log_debug "Ignoring empty list of packages in $array";
+      log_debug "Ignoring empty list of packages in $array"
       continue
     else
       log_info "Installing $array packages"
@@ -2362,27 +2297,23 @@ function install_apps()
       apt-get -q -o=Dpkg::Use-Pty=0 -y install "${apt_extra_args[@]}" "${packages[@]}" | log_trace "${_phase_apt}"
 
       exit_status=$?
-      unset packages;
+      unset packages
       if [[ $exit_status -eq 0 ]]; then
         log_success "Done!"
       else
-      log_error "Something went wrong while installing packages in set - $array."
-      log_error "Please see the log file for more details."
+        log_error "Something went wrong while installing packages in set - $array."
+        log_error "Please see the log file for more details."
       fi
 
     fi
     unset packages
   done
   # Delete DEBs
-  _clean_apt_cache;
-
+  _clean_apt_cache
 
 }
 
-
-
-function install_debs ()
-{
+function install_debs() {
 
   # Function to get the deb files from DEB_URL in the ${dir}/data/deb_files.list
   # The list file has following format
@@ -2393,8 +2324,8 @@ function install_debs ()
   local exit_status
   log_debug "Option: Install DEB Files, Function name: install_debs"
   for index in "${parsed_deb_files_list[@]}"; do
-    deb_url=$(echo "$index" | cut -d ',' -f1 )
-    deb_file_name=$(echo "$index" | cut -d ',' -f2 )
+    deb_url=$(echo "$index" | cut -d ',' -f1)
+    deb_file_name=$(echo "$index" | cut -d ',' -f2)
     log_var "deb_url"
     log_var "deb_file_name"
 
@@ -2405,22 +2336,22 @@ function install_debs ()
 
     log_property "Downloading" "$deb_file_name" "1"
     {
-      wget -q "$deb_url" -O "${deb_file_name}" >> "$log_file"
+      wget -q "$deb_url" -O "${deb_file_name}" >>"$log_file"
     } ||
-    {
-      log_error "Failed!"
-      continue
-    }
+      {
+        log_error "Failed!"
+        continue
+      }
 
     log_property "Installing" "$deb_file_name" "1"
-   # Check if simulate is true
-   if [ "$simulate_apt_install" == "true" ]; then
-     log_warn "SIM - $deb_file_name Installation!!"
-     dpkg -i --dry-run "$deb_file_name" |& log_trace "${_phase_deb}"
+    # Check if simulate is true
+    if [ "$simulate_apt_install" == "true" ]; then
+      log_warn "SIM - $deb_file_name Installation!!"
+      dpkg -i --dry-run "$deb_file_name" |& log_trace "${_phase_deb}"
 
-     log_debug "Installing missing packages"
-     apt-get -q -o=Dpkg::Use-Pty=0 -y install -f |& log_trace "${_phase_apt}"
-     exit_status=$?
+      log_debug "Installing missing packages"
+      apt-get -q -o=Dpkg::Use-Pty=0 -y install -f |& log_trace "${_phase_apt}"
+      exit_status=$?
     else
       dpkg -i "$deb_file_name" |& log_trace "${_phase_deb}"
       log_debug "Installing missing packages"
@@ -2429,30 +2360,27 @@ function install_debs ()
     fi
 
     # shellcheck disable=SC2181
-     if [ "$exit_status" = "0" ]; then
+    if [ "$exit_status" = "0" ]; then
       log_success "Done"
-     else
+    else
       log_error "Some error occurred during downloading and installing $index."
-      $?="0"
     fi
     # Delete DEBs
-    if [ "$bool_preserve_debs" == "false" ];then
+    if [ "$bool_preserve_debs" == "false" ]; then
       log_debug "Clean up downloaded packages"
       (
-        rm -f "${dir}/${deb_file_name}" >> "$log_file"
+        rm -f "${dir}/${deb_file_name}" >>"$log_file"
       )
     else
       log_notice "Keeping downloaded packages"
     fi
   done
 
-  _clean_apt_cache;
+  _clean_apt_cache
 
 }
 
-
-function install_binaries ()
-{
+function install_binaries() {
 
   # Function to get the binaries files from URL in the ${dir}/data/bin.list
   # The list file has following format
@@ -2467,8 +2395,8 @@ function install_binaries ()
   log_debug "Option: Install static binaries, Function name: install_binaries"
   # Check if simulate is true
   for index in "${parsed_bin_packages[@]}"; do
-    bin_url=$(echo "$index" | cut -d ',' -f1 )
-    bin_name=$(echo "$index" | cut -d ',' -f2 )
+    bin_url=$(echo "$index" | cut -d ',' -f1)
+    bin_name=$(echo "$index" | cut -d ',' -f2)
     log_var "bin_url"
     log_var "bin_name"
 
@@ -2477,19 +2405,19 @@ function install_binaries ()
       continue
     fi
     log_info "Downloading - $bin_name"
-    wget -q "$bin_url" -O "/tmp/ae/${bin_name}" >> "$log_file"
+    wget -q "$bin_url" -O "/tmp/ae/${bin_name}" >>"$log_file"
     exit_status="$?"
     if [ $exit_status -eq 0 ]; then
       log_success "OK"
       log_info "Installing  - $bin_name"
-       if [ "$simulate_apt_install" == "true" ]; then
-         log_warn "SIM - Skipping install"
-       else
+      if [ "$simulate_apt_install" == "true" ]; then
+        log_warn "SIM - Skipping install"
+      else
         {
           cp -rf "/tmp/ae/${bin_name}" /usr/local/bin/"${bin_name}"
-        } || log_error "Failed to copy $bin_name";
+        } || log_error "Failed to copy $bin_name"
         log_debug "Setting Permissions"
-        chmod +x /usr/local/bin/"$bin_name" >> "${log_file}"
+        chmod +x /usr/local/bin/"$bin_name" >>"${log_file}"
       fi
     else
       log_error "Failed to download $bin_name."
@@ -2498,42 +2426,43 @@ function install_binaries ()
 
 }
 
-
-function __install_snaps()
-{
+function __install_snaps() {
   #Install Snap packages
   local exit_status index snapd_options
   local snap_type
   snap_type="$1"
 
   case ${snap_type} in
-    classic)    snapd_options=("--color=never" "--classic")
-                parsed_snaps_list=("${parsed_snap_classic_packages[@]}")
-                ;;
-    edge)       snapd_options=("--color=never" "--edge")
-                parsed_snaps_list=("${parsed_snap_edge_packages[@]}")
-                ;;
-    normal)     snapd_options=("--color=never")
-                parsed_snaps_list=("${parsed_snap_normal_packages[@]}")
-                ;;
-    * )         log_and_exit "Internal Function Error. Arguments for snap type." "19";;
+  classic)
+    snapd_options=("--color=never" "--classic")
+    parsed_snaps_list=("${parsed_snap_classic_packages[@]}")
+    ;;
+  edge)
+    snapd_options=("--color=never" "--edge")
+    parsed_snaps_list=("${parsed_snap_edge_packages[@]}")
+    ;;
+  normal)
+    snapd_options=("--color=never")
+    parsed_snaps_list=("${parsed_snap_normal_packages[@]}")
+    ;;
+  *) log_and_exit "Internal Function Error. Arguments for snap type." "19" ;;
   esac
 
   if [[ ${#parsed_snaps_list[@]} -eq 0 ]]; then
-      log_warn "Snaps array is empty!" "19"
+    log_warn "Snaps array is empty!" "19"
   else
     for index in "${parsed_snaps_list[@]}"; do
       log_info "Installing snap - $index"
       if [ "$index" == "" ] || [ "$index" == " " ]; then
         log_warn "Found an empty entry, Ignoring"
-        continue;
+        continue
       fi
 
       if [ "$simulate_apt_install" == "true" ]; then
         log_warn "SIM - skipping installation"
       else
         log_debug "Options are ${snapd_options[*]}"
-        if snap install "${snapd_options[@]}" "$index"  |& log_trace "${_phase_snap}"  ; then
+        if snap install "${snapd_options[@]}" "$index" |& log_trace "${_phase_snap}"; then
           log_success "$line installed successfully."
         else
           log_error "Failed!"
@@ -2543,9 +2472,7 @@ function __install_snaps()
   fi
 }
 
-
-function install_snaps()
-{
+function install_snaps() {
   local dependency_packages
   dependency_packages=(snapd)
 
@@ -2554,8 +2481,27 @@ function install_snaps()
   if [ "$simulate_apt_install" == "true" ]; then
     log_warn "SIM - Skipped installing dependencies!"
   else
-    _install_dependencies "${dependency_packages[@]}"
-  fi
+    if [[ -f /etc/apt/preferences.d/nosnap.pref ]] && [[ $AE_SNAP_REMOVE_APT_BLOCK == "true" ]]; then
+      log_notice "Removing APT preferences which block snapd install"
+      if rm /etc/apt/preferences.d/nosnap.pref; then
+        log_success "Snapd is instalable again"
+      else
+        log_error "Failed to remove APT block on snapd package (LinuxMint-Ovrride)"
+        log_error "Snap packages cannot be installed!"
+        return 21
+      fi
+    fi
+
+    log_info "Install dependencies"
+    if _install_dependencies "${dependency_packages[@]}"; then
+      log_debug "Installed dependency packages: ${dependency_packages[*]}"
+    else
+      log_error "Failed to install dependency packages for snaps"
+      log_error "Snaps cannot be installed with this error!"
+      return 21
+    fi
+
+  fi # simulate check
 
   log_stage "Install snap packages (default confinement)"
   __install_snaps "normal"
@@ -2566,8 +2512,7 @@ function install_snaps()
 
 }
 
-function _autopilot_check_task_flag_and_run()
-{
+function _autopilot_check_task_flag_and_run() {
   # checks flags set for each task/function and runs it
   # Arguments Two
   # ARG -1 : global flag variable to check
@@ -2584,33 +2529,29 @@ function _autopilot_check_task_flag_and_run()
   unset runnable
 }
 
-
-function all_in_one()
-{
+function all_in_one() {
   #Wrapper for all options
   log_debug "Option: ALL IN ONE, function name: all_in_one"
-  update_repos_as_task;
-  upgrade_apps;
-  add_ppas;
-  add_repositories;
-  install_apps;
-  install_debs;
-  purge_not_required;
-  install_binaries;
-  install_snaps;
+  update_repos_as_task
+  upgrade_apps
+  add_ppas
+  add_repositories
+  install_apps
+  install_debs
+  purge_not_required
+  install_binaries
+  install_snaps
 
 }
 
-
-function _prompt_confirmation()
-{
+function _prompt_confirmation() {
   # Function to confirm whether action selected should be performed or not.
   # Accepts 2 arguments
   # ARG-2 Message to be displayed in confirmation box
   # ARG-2 name of the function to execute
   # Depends on whiptail
   # To overide and say yes to all dialog pass -y as command line option while running the script.
-  local confirm_msg="${1}" #Message shown in Confirmation dialogue
+  local confirm_msg="${1}"   #Message shown in Confirmation dialogue
   local exec_function="${2}" #Function to run if user selected yes
   COLUMNS=$(tput cols)
   LINES=$(tput lines)
@@ -2618,25 +2559,23 @@ function _prompt_confirmation()
   if [[ ${AE_AUTOPILOT} == "true" ]]; then
     log_debug "Yes to all: No confirm dialog to be displayed."
     log_debug "Executing: $exec_function"
-    $exec_function;
+    $exec_function
   else
     log_debug "Confirming  $exec_function."
     # shellcheck disable=SC2086
-    if (whiptail  --title "Ubuntu Post-Install Script"  --yesno "$confirm_msg" $LINES $COLUMNS $(( LINES - 12 ))) then
-        # execute the function
-        log_debug "Executing: $exec_function"
-        $exec_function
+    if (whiptail --title "Ubuntu Post-Install Script" --yesno "$confirm_msg" $LINES $COLUMNS $((LINES - 12))); then
+      # execute the function
+      log_debug "Executing: $exec_function"
+      $exec_function
     else
-        log_debug "Selected No for $name_of_task, Returning to main menu."
-        _process_menu;
+      log_debug "Selected No for $name_of_task, Returning to main menu."
+      _process_menu
     fi
   fi
   unset exec_function
 }
 
-
-function _process_menu()
-{
+function _process_menu() {
   local whiptail_exitstatus task COLUMNS LINES
   log_debug "Displaying Main menu"
   COLUMNS=$(tput cols)
@@ -2644,23 +2583,23 @@ function _process_menu()
   #export COLUMNS LINES
   # shellcheck disable=SC2086
   task=$(whiptail \
-      --notags \
-      --backtitle "$SCRIPT" \
-      --title "Ubuntu Post-Install Script" \
-      --menu "\nWhat would you like me to do?" \
-      --cancel-button "Quit" \
-      $LINES $COLUMNS $(( LINES - 12 )) \
-      update     'Update Repository Metadata' \
-      upgrade    'Upgrade Packages' \
-      repo       'Add Repositories' \
-      ppas       'Add PPAs' \
-      apps       'Install APT Packages' \
-      debs       'Install DEB packages' \
-      bin        'Install static binaries' \
-      snaps      'Install snap packages' \
-      purge      'Purge not required packages' \
-      all        'All the tasks mentioned above' \
-      3>&1 1>&2 2>&3)
+    --notags \
+    --backtitle "$SCRIPT" \
+    --title "Ubuntu Post-Install Script" \
+    --menu "\nWhat would you like me to do?" \
+    --cancel-button "Quit" \
+    $LINES $COLUMNS $((LINES - 12)) \
+    update 'Update Repository Metadata' \
+    upgrade 'Upgrade Packages' \
+    repo 'Add Repositories' \
+    ppas 'Add PPAs' \
+    apps 'Install APT Packages' \
+    debs 'Install DEB packages' \
+    bin 'Install static binaries' \
+    snaps 'Install snap packages' \
+    purge 'Purge not required packages' \
+    all 'All the tasks mentioned above' \
+    3>&1 1>&2 2>&3)
 
   __menu_info_add_repo="
   Settings for additional repositories is set as follows.
@@ -2806,28 +2745,38 @@ function _process_menu()
   whiptail_exitstatus=$?
   log_debug "Whiptail Exit status is : $whiptail_exitstatus"
   if [ $whiptail_exitstatus = 0 ]; then
-      log_debug "Whiptail Task is: $task"
-      case $task in
-      update)     _prompt_confirmation "$__menu_info_update" "update_repos_as_task"
-                  ;;
-      upgrade)    _prompt_confirmation "${__menu_info_upgrade}" "upgrade_apps"
-                  ;;
-      ppas)       _prompt_confirmation "${__menu_info_ppa}" "add_ppas"
-                  ;;
-      repo)       _prompt_confirmation "$__menu_info_add_repo" "add_repositories"
-                  ;;
-      apps)       _prompt_confirmation "$__menu_info_apps" "install_apps"
-                  ;;
-      purge)      _prompt_confirmation "${__menu_info_purge}" "purge_not_required"
-                  ;;
-      all)        _prompt_confirmation "${__menu_info_all}" "all_in_one"
-                  ;;
-      debs)       _prompt_confirmation "${__menu_info_debs}" "install_debs"
-                  ;;
-      bin)        _prompt_confirmation "${__menu_info_bin}" "install_binaries"
-                  ;;
-      snaps)      _prompt_confirmation "${__menu_info_snaps}" "install_snaps"
-                  ;;
+    log_debug "Whiptail Task is: $task"
+    case $task in
+    update)
+      _prompt_confirmation "$__menu_info_update" "update_repos_as_task"
+      ;;
+    upgrade)
+      _prompt_confirmation "${__menu_info_upgrade}" "upgrade_apps"
+      ;;
+    ppas)
+      _prompt_confirmation "${__menu_info_ppa}" "add_ppas"
+      ;;
+    repo)
+      _prompt_confirmation "$__menu_info_add_repo" "add_repositories"
+      ;;
+    apps)
+      _prompt_confirmation "$__menu_info_apps" "install_apps"
+      ;;
+    purge)
+      _prompt_confirmation "${__menu_info_purge}" "purge_not_required"
+      ;;
+    all)
+      _prompt_confirmation "${__menu_info_all}" "all_in_one"
+      ;;
+    debs)
+      _prompt_confirmation "${__menu_info_debs}" "install_debs"
+      ;;
+    bin)
+      _prompt_confirmation "${__menu_info_bin}" "install_binaries"
+      ;;
+    snaps)
+      _prompt_confirmation "${__menu_info_snaps}" "install_snaps"
+      ;;
     esac
   else
     log_debug "Whiptail Exit code : $whiptail_exitstatus"
@@ -2835,9 +2784,7 @@ function _process_menu()
   fi
 }
 
-
-function _ci_cloud_and_container_checks()
-{
+function _ci_cloud_and_container_checks() {
 
   if [ "$bool_skip_env_checks" == "true" ]; then
     log_debug "Skipping Run environment checks"
@@ -2884,10 +2831,10 @@ function _ci_cloud_and_container_checks()
       log_dev "Running on EC2"
 
     #------------------------------- GCP ---------------------------------------------
-    elif wget -q -O- --timeout=1 --tries=1 -nc --header="Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/virtual-clock/drift-token > /dev/null; then
+    elif wget -q -O- --timeout=1 --tries=1 -nc --header="Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/virtual-clock/drift-token >/dev/null; then
       log_dev "Running on Google Compute"
 
-    elif wget -q -O- --timeout=1 --tries=1 -nc  http://169.254.169.254/metadata/v1/id; then
+    elif wget -q -O- --timeout=1 --tries=1 -nc http://169.254.169.254/metadata/v1/id; then
       log_dev "Running on Digital Ocean droplet"
 
     elif AZURE_REGION="$(wget -q -O- --timeout=1 --tries=1 --header "Metadata:true" "${AZURE_METADATA_URL}")"; then
@@ -2901,17 +2848,14 @@ function _ci_cloud_and_container_checks()
 
 }
 
-function display_version()
-{
+function display_version() {
   printf "%-15s : %s\n" "Version" "${AE_VERSION}"
   printf "%-15s : %s\n" "Executable" "${SCRIPT}"
 }
 
-
-function display_usage()
-{
-#Prints out help menu
-cat <<EOF
+function display_usage() {
+  #Prints out help menu
+  cat <<EOF
 
 A Post Installation Script for Ubuntu, Debian,
 Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.${NC}
@@ -2972,47 +2916,47 @@ License : ${ORANGE}GPLv3${NC}
 EOF
 }
 
-function _process_non_root_options()
-{
+function _process_non_root_options() {
   # Process command line arguments which does not require root.
-  if [[  $# -eq 0 ]]; then
+  if [[ $# -eq 0 ]]; then
     printf "${RED}✕ No arguments specified! See Usage Below${NC}\n"
     display_usage
     exit 1
-  elif [[  $# -eq 1 ]]; then
+  elif [[ $# -eq 1 ]]; then
     while [ "${1}" != "" ]; do
       case ${1} in
-        -v | --version)     display_version;
-                            exit 0;
-                            ;;
-        -l | --delete-log)  delete_log_file;
-                            ;;
-        -h | --help)        display_usage;
-                            exit 0;
-                            ;;
-        *)                  printf "${RED}✕ This does not appear to be a valid option${NC}\n";
-                            printf "${RED}✕ Non action options take more than one argument!${NC}\n";
-                            exit 1;
-                            ;;
+      -v | --version)
+        display_version
+        exit 0
+        ;;
+      -l | --delete-log)
+        delete_log_file
+        ;;
+      -h | --help)
+        display_usage
+        exit 0
+        ;;
+      *)
+        printf "${RED}✕ This does not appear to be a valid option${NC}\n"
+        printf "${RED}✕ Non action options take more than one argument!${NC}\n"
+        exit 1
+        ;;
       esac
       shift
     done
   fi
 }
 
-
-function process_no_exec_option()
-{
+function process_no_exec_option() {
   while [ "${1}" != "" ]; do
     case ${1} in
-      -n | --nx)      readonly AE_INTERNAL_NO_EXECUTE="true";;
+    -n | --nx) readonly AE_INTERNAL_NO_EXECUTE="true" ;;
     esac
     shift
   done
 }
 
-function main()
-{
+function main() {
   _init_printf_variables
 
   # Non root options
@@ -3031,7 +2975,7 @@ function main()
     printf "${RED}✕ Insufficient privileges!!${NC}\n"
     printf "${RED}✕ This script must be run as root.\n"
     printf "${RED}✕ Please use sudo ${dir}/$SCRIPT to run this as root.\n"
-    exit 2;
+    exit 2
   else
     # We were not running in NX mode, and we are root.
     _init_logging
@@ -3039,71 +2983,84 @@ function main()
   fi
 
   # Init vars
-  _init_script_variables;
+  _init_script_variables
 
   # Process command line arguments.
   while [ "${1}" != "" ]; do
     case ${1} in
-      -s | --simulate)        readonly simulate_apt_install="true";
-                              log_property "Simulate" "ENABLED" "3";
-                              ;;
-      -f | --fix)             bool_fix_repo_not_available_for_latest="true";
-                              log_property "Fix" "ENABLED" "2";
-                              ;;
-      --fix-mode-lts)         bool_fix_repo_lts="true";
-                              log_property "FIX MODE" "LTS" "2";
-                              ;;
-      -p | --pre-release)     bool_fix_repo_not_available_for_upcoming_release="true";
-                              log_property "FIX MODE" "PRE-RELEASE" "2";
-                              ;;
-      -d | --purge)           bool_purge_pkgs="true";
-                              log_notice "Purge packages is set to true."
-                              log_warn "No checks are being made on the packages in the list."
-                              log_warn "Use carefully!. Purging system packages is a stupid idea!"
-                              ;;
-      -y | --yes)             log_warn "-y | --yes is no longer available, Use Autopilot instead";
-                              ;;
-      -k | --keep-debs)       bool_preserve_debs="true";
-                              log_notice "Will keep downloaded DEB packages."
-                              ;;
-      -V | --no-version-check) bool_check_version="false";
-                              ;;
-      -r | --remote-yaml)     log_property "Config file" "REMOTE" 4
-                              readonly bool_remote_yaml="true";
-                              shift;
-                              readonly url_remote_yaml="${1}";
-                              ;;
-      -c | --config-file | --config)  shift;
-                              readonly local_config_file="${1}";
-                              readonly bool_local_config="true";
-                              log_property "Config file" "LOCAL" 2
-                              ;;
-      -H | --hide-config)     log_warn "-H/--hide-config is no longer supported."
-                              log_and_exit "Use --debug or --debug-trace" "26"
-                              ;;
-      -A | --autopilot)       log_property "Autopilot" "ENABLED" "2";
-                              readonly AE_AUTOPILOT="true";
-                              ;;
-      --use-uf-mirror)        log_warn "Will use Uni-Freiburg mirror(s) if available";
-                              readonly bool_use_uf_mirror="true";
-                              ;;
-      -E | --skip-env-checks) readonly bool_skip_env_checks="true";;
-      # Debug options
-      --debug)                AE_DEBUG=1;;
-      --debug-ci)             AE_DEBUG=2;;
-      --debug-trace)          AE_DEBUG=3;;
-      --debug-ci-mode)        set -eo pipefail;
-                              ;;
-      -n | --nx)              :;;
-      # The following arguments should always be used as the only arguments.
-      -l | --delete-logfile)  log_and_exit "-l or --delete-logfile should be the only argument." "23";;
-      -v | --version)         log_and_exit "-v or --version should be the only argument." "23";;
-      -h | --help)            log_and_exit "-h or --help should be the only argument." "23";;
-       *)                     log_and_exit "Invalid option: $1" "22";;
+    -s | --simulate)
+      readonly simulate_apt_install="true"
+      log_property "Simulate" "ENABLED" "3"
+      ;;
+    -f | --fix)
+      bool_fix_repo_not_available_for_latest="true"
+      log_property "Fix" "ENABLED" "2"
+      ;;
+    --fix-mode-lts)
+      bool_fix_repo_lts="true"
+      log_property "FIX MODE" "LTS" "2"
+      ;;
+    -p | --pre-release)
+      bool_fix_repo_not_available_for_upcoming_release="true"
+      log_property "FIX MODE" "PRE-RELEASE" "2"
+      ;;
+    -d | --purge)
+      bool_purge_pkgs="true"
+      log_notice "Purge packages is set to true."
+      log_warn "No checks are being made on the packages in the list."
+      log_warn "Use carefully!. Purging system packages is a stupid idea!"
+      ;;
+    -y | --yes)
+      log_warn "-y | --yes is no longer available, Use Autopilot instead"
+      ;;
+    -k | --keep-debs)
+      bool_preserve_debs="true"
+      log_notice "Will keep downloaded DEB packages."
+      ;;
+    -V | --no-version-check)
+      bool_check_version="false"
+      ;;
+    -r | --remote-yaml)
+      log_property "Config file" "REMOTE" 4
+      readonly bool_remote_yaml="true"
+      shift
+      readonly url_remote_yaml="${1}"
+      ;;
+    -c | --config-file | --config)
+      shift
+      readonly local_config_file="${1}"
+      readonly bool_local_config="true"
+      log_property "Config file" "LOCAL" 2
+      ;;
+    -H | --hide-config)
+      log_warn "-H/--hide-config is no longer supported."
+      log_and_exit "Use --debug or --debug-trace" "26"
+      ;;
+    -A | --autopilot)
+      log_property "Autopilot" "ENABLED" "2"
+      readonly AE_AUTOPILOT="true"
+      ;;
+    --use-uf-mirror)
+      log_warn "Will use Uni-Freiburg mirror(s) if available"
+      readonly bool_use_uf_mirror="true"
+      ;;
+    -E | --skip-env-checks) readonly bool_skip_env_checks="true" ;;
+    # Debug options
+    --debug) AE_DEBUG=1 ;;
+    --debug-ci) AE_DEBUG=2 ;;
+    --debug-trace) AE_DEBUG=3 ;;
+    --debug-ci-mode)
+      set -eo pipefail
+      ;;
+    -n | --nx) : ;;
+    # The following arguments should always be used as the only arguments.
+    -l | --delete-logfile) log_and_exit "-l or --delete-logfile should be the only argument." "23" ;;
+    -v | --version) log_and_exit "-v or --version should be the only argument." "23" ;;
+    -h | --help) log_and_exit "-h or --help should be the only argument." "23" ;;
+    *) log_and_exit "Invalid option: $1" "22" ;;
     esac
     shift
   done
-
 
   # Check dependencies
   declare -ar after_effects_core_dependencies=(wget ping ps grep cut tr awk)
@@ -3111,7 +3068,7 @@ function main()
   log_info "Checking dependencies"
 
   if [[ ${AE_AUTOPILOT} != "true" ]]; then
-    if command -v whiptail > /dev/null; then
+    if command -v whiptail >/dev/null; then
       log_property "whiptail" "INSTALLED"
     else
       log_property "whiptail" "NOT INSTALLED" "4"
@@ -3124,10 +3081,10 @@ function main()
 
   _check_dependencies "${after_effects_core_dependencies[@]}"
 
-  _init_print_basic_info;
+  _init_print_basic_info
 
   # Did I tell you that I need to call My friends over internet?
-  _test_internet_connection;
+  _test_internet_connection
 
   log_info "Checking configuration"
 
@@ -3153,18 +3110,16 @@ function main()
 
   log_success "OK"
 
-
-
   # Checks CI & Containers If running on EC2/GCP/Azure/DO
-  _ci_cloud_and_container_checks;
+  _ci_cloud_and_container_checks
 
   # Take care of Mint and other distros
-  _fix_ubuntu_derivatives;
+  _fix_ubuntu_derivatives
 
   # Get Remote Config File/s, check version & configure
-  _version_checks;
+  _version_checks
 
-  _set_yaml_config;
+  _set_yaml_config
 
   log_stage "Check AUTOPILOT requirements"
   if [[ ! -t 1 ]] && [[ $AE_AUTOPILOT != "true" ]]; then
@@ -3177,11 +3132,11 @@ function main()
   # I don't like when someone else is occupying my room
   # Test if any apt-get ops are running
   log_stage "Check for conflicting apps"
-  _test_conflicting_apps;
+  _test_conflicting_apps
 
   if [[ $AE_INTERNAL_NO_EXECUTE == "true" ]]; then
     log_dev "Will not execute any tasks!"
-    _script_exit_log;
+    _script_exit_log
     exit 255
   fi
 
@@ -3189,7 +3144,7 @@ function main()
   log_stage "Checking for Autopilot"
   if [[ ${AE_AUTOPILOT} == "true" ]]; then
     log_success "Autopilot is ENABLED"
-    sleep 3;
+    sleep 3
     #log_and_exit "Because I can" "255"
     _autopilot_check_task_flag_and_run "$ae_task_update" "update_repos_as_task"
     _autopilot_check_task_flag_and_run "$ae_task_upgrade" "upgrade_apps"
@@ -3203,10 +3158,10 @@ function main()
   else
     sleep 2
     log_notice "Autopilot is Inactive"
-    _process_menu;
+    _process_menu
   fi
 
-  _script_exit_log;
+  _script_exit_log
 }
 
 #Run Main

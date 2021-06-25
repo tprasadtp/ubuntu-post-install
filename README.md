@@ -16,10 +16,18 @@ Effortless way to setup your fresh Ubuntu, Linux Mint and Debian installation.
 
 ### 1. Get the script
 
+#### Using latest stable version (Recommended)
+
 ```console
 wget https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O after-effects
 wget https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha256sums.txt -O sha256sums.txt
-sha256sum -c sha256sums.txt --strict
+sha256sum -c sha256sums.txt
+```
+
+#### Using latest master branch
+
+```bash
+wget https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/after-effects -o after-effects
 ```
 
 ### 2. Setup your YAML configuration file
