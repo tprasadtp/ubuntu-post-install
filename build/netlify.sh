@@ -33,7 +33,12 @@ function generate_changelog()
   git tag --sort=-version:creatordate --sort=-v:refname --list --merged=master
 
   echo "---> Generating docs/changelog.md via git-chglog"
-  ./scripts/changelog.sh --changelog --oldest-tag "v7.0.0" --footer-file .chglog/OLD_CHGLOG.md --output docs/changelog.md
+  ./scripts/changelog.sh \
+    --changelog \
+    --oldest-tag "v7.0.0" \
+    --footer-file .chglog/OLD_CHGLOG.md \
+    --output docs/changelog.md \
+    --repository "https://github.com/tprasadtp/ubuntu-post-install"
   cat docs/changelog.md
 }
 
