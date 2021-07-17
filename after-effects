@@ -1166,7 +1166,7 @@ function _install_dependencies() {
     log_warn "Package array is empty!"
     return 19
   else
-    apt-get -q -o=Dpkg::Use-Pty=0 -y --no-install-recommends install "${packages[@]}" |& log_trace "${_phase_apt}"
+    apt-get -q -o=Dpkg::Use-Pty=0 -y --no-install-recommends install "${packages[@]}" 2>&1 | log_trace "${_phase_apt}"
     exit_status=$?
     if [ $exit_status -eq 0 ]; then
       log_success "Installed"
@@ -1333,7 +1333,7 @@ function add_ppas() {
         log_debug "Found and empty entry, moving on to next"
         continue
       fi
-      if add-apt-repository -y "$index" |& log_trace "${_phase_ppa}"; then
+      if add-apt-repository -y "$index" 2>&1 | log_trace "${_phase_ppa}"; then
         log_success "Success!"
       else
         log_error "Some error occured while adding $index.\n"
@@ -1406,7 +1406,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     log_warn "Configuration will modify etc/apt/sources.list"
     sources_list_bak_ts="$(date +'%Y%m%d-%H%M%S')"
     log_info "Backing up with suffix - ${sources_list_bak_ts}.ae.bak"
-    if cp /etc/apt/sources.list "/etc/apt/sources.list.${sources_list_bak_ts}.ae.bak" |& log_trace "${_phase_repo}"; then
+    if cp /etc/apt/sources.list "/etc/apt/sources.list.${sources_list_bak_ts}.ae.bak" 2>&1 | log_trace "${_phase_repo}"; then
       log_success "Backed up!"
     else
       log_and_exit "Failed to create backup of sources.list before modification!" "68"
@@ -1421,7 +1421,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Universe - Community-maintained free and open-source software.
     if [[ ${add_ubuntu_universe} == "true" ]]; then
       log_info "Ubuntu/Universe"
-      if add-apt-repository --yes universe |& log_trace "${_phase_repo}"; then
+      if add-apt-repository --yes universe 2>&1 | log_trace "${_phase_repo}"; then
         log_success "OK"
       else
         log_error "Failed to add Ubuntu/Universe reposiroty!"
@@ -1433,7 +1433,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Restricted - Proprietary drivers for devices.
     if [[ ${add_ubuntu_restricted} == "true" ]]; then
       log_info "Ubuntu/Restricted"
-      if add-apt-repository --yes restricted --yes |& log_trace "${_phase_repo}"; then
+      if add-apt-repository --yes restricted --yes 2>&1 | log_trace "${_phase_repo}"; then
         log_success "OK"
       else
         log_error "Failed to add Ubuntu/Restricted reposiroty!"
@@ -1445,7 +1445,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Multiverse - Software restricted by copyright or legal issues.
     if [[ ${add_ubuntu_multiverse} == "true" ]]; then
       log_info "Ubuntu/Multiverse"
-      if add-apt-repository --yes multiverse |& log_trace "${_phase_repo}"; then
+      if add-apt-repository --yes multiverse 2>&1 | log_trace "${_phase_repo}"; then
         log_success "OK"
       else
         log_error "Failed to add Ubuntu/Multiverse reposiroty!"
@@ -1465,7 +1465,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Contrib
     if [[ ${add_debian_contrib} == "true" ]]; then
       log_info "Debian/Contrib"
-      if add-apt-repository --yes contrib |& log_trace "${_phase_repo}"; then
+      if add-apt-repository --yes contrib 2>&1 | log_trace "${_phase_repo}"; then
         log_success "OK"
       else
         log_error "Failed to add Debian/Contrib reposiroty!"
@@ -1477,7 +1477,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Non-Free - Proprietary drivers for devices.
     if [[ ${add_debian_nonfree} == "true" ]]; then
       log_info "Debian/Non-Free"
-      if add-apt-repository --yes non-free |& log_trace "${_phase_repo}"; then
+      if add-apt-repository --yes non-free 2>&1 | log_trace "${_phase_repo}"; then
         log_success "OK"
       else
         log_error "Failed to add Debian/Non-Free reposiroty!"
@@ -1502,7 +1502,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       log_info "Google Chrome"
       log_debug "Adding Google package signing Key"
       wget -q https://dl.google.com/linux/linux_signing_key.pub -O /tmp/ae/google_signing_key.pub >>$"$log_file"
-      apt-key add /tmp/ae/google_signing_key.pub |& log_trace "${_phase_apt_key}" ||
+      apt-key add /tmp/ae/google_signing_key.pub 2>&1 | log_trace "${_phase_apt_key}" ||
         log_error "Adding trusted keys for Google failed."
       if echo "${GOOGLE_CHROME_SOURCE_FILE_CONTENT}" >${SOURCES_FILE_DIR}/google-chrome.list; then
         log_success "OK"
@@ -1567,7 +1567,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Mendeley Desktop App
     if [ "$add_mendeley_repo" == "true" ]; then
       log_info "Mendeley desktop"
-      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 |& log_trace "${_phase_apt_key}" ||
+      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 2>&1 | log_trace "${_phase_apt_key}" ||
         log_error "Adding Mendeley Desktop Key Failed"
 
       # DO NOT RENAME THE FILE!
@@ -1749,7 +1749,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   if [ "$add_gh_repo" == "true" ]; then
     log_info "GitHub CLI"
     # TODO: Waiting for fix https://github.com/cli/cli/issues/3513 to use keys directly.
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C99B11DEB97541F0 |& log_trace "${_phase_apt_key}" ||
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C99B11DEB97541F0 2>&1 | log_trace "${_phase_apt_key}" ||
       log_error "Adding Github CLI keys failed"
 
     if echo "deb https://cli.github.com/packages  ${code_name}  main #GitHub-CLI" >${SOURCES_FILE_DIR}/after-effects-github.list; then
@@ -1962,7 +1962,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     if [[ $ros_arch_supported == "true" ]]; then
       log_info "Adding ROS repositories"
       log_debug "Adding ROS repo key (latest)"
-      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 |& log_trace "${_phase_apt_key}" ||
+      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 2>&1 | log_trace "${_phase_apt_key}" ||
         log_error "Adding ROS repository key failed!"
 
       if [[ $bool_use_uf_mirror == "true" ]]; then
@@ -2033,7 +2033,7 @@ function __fix_permissions() {
   path_attrs="$(stat -L -c %a "${check_path}")"
   if [[ ${path_attrs} != "${expected_permissions}" ]]; then
     log_warn "${check_path} has INCORRECT permissions(${path_attrs})!"
-    if chmod "${expected_permissions}" "${check_path}" |& log_trace "${_phase_apt_key}"; then
+    if chmod "${expected_permissions}" "${check_path}" 2>&1 | log_trace "${_phase_apt_key}"; then
       log_success "Fixed!"
     else
       log_error "Failed to fix permissions!"
@@ -2108,7 +2108,7 @@ function __add_repo_keys() {
   else
     log_debug "Fetching key"
 
-    curl -sSfL -m 20 -o "${TRUSTED_KEYRINGS_DIR}/${key_file_prefix}.${key_format}" "${key_url}" |& log_trace "${_phase_apt_key}"
+    curl -sSfL -m 20 -o "${TRUSTED_KEYRINGS_DIR}/${key_file_prefix}.${key_format}" "${key_url}" 2>&1 | log_trace "${_phase_apt_key}"
     exit_code="$?"
     if [[ $exit_code -eq 0 ]]; then
       log_debug "OK"
@@ -2128,7 +2128,7 @@ function __add_repo_keys() {
       log_warn "Dearmored file already exists!"
       log_warn "Script will *NOT* overwrite it to avoid deleting keys."
     else
-      gpg --dearmor --output "${TRUSTED_KEYRINGS_DIR}/${key_file_prefix}.gpg" "${TRUSTED_KEYRINGS_DIR}/${key_file_prefix}.asc" |& log_trace "${_phase_apt_key}"
+      gpg --dearmor --output "${TRUSTED_KEYRINGS_DIR}/${key_file_prefix}.gpg" "${TRUSTED_KEYRINGS_DIR}/${key_file_prefix}.asc" 2>&1 | log_trace "${_phase_apt_key}"
       exit_code="$?"
       if [[ $exit_code -eq 0 ]]; then
         log_debug "Successfully converted ascii armored GPG key file."
@@ -2149,7 +2149,7 @@ function __add_repo_keys() {
 function update_repos() {
   local exit_status
   log_info "Running apt-get update"
-  apt-get -q -o=Dpkg::Use-Pty=0 update |& log_trace "${_phase_apt}"
+  apt-get -q -o=Dpkg::Use-Pty=0 update 2>&1 | log_trace "${_phase_apt}"
   exit_status=$?
   if [[ $exit_status -eq 0 ]]; then
     log_success "Success!"
@@ -2173,13 +2173,13 @@ function upgrade_apps() {
   log_stage "Upgrade Packages"
   log_info "Checking and upgrading packages"
   # upgradable is not available in apt-get ignore warning about apt being unstable
-  apt list --upgradable |& log_trace "${_phase_apt}" ||
+  apt list --upgradable 2>&1 | log_trace "${_phase_apt}" ||
     log_info "Something went wrong while listing upgradable packages. Please see the log file or run in debug mode for details."
 
   # only do upgrades if simulate is set to false
   if [ "$simulate_apt_install" != "true" ]; then
 
-    DEBIAN_FRONTEND=noninteractive apt-get -q -o=Dpkg::Use-Pty=0 -y upgrade |& log_trace "${_phase_apt}"
+    DEBIAN_FRONTEND=noninteractive apt-get -q -o=Dpkg::Use-Pty=0 -y upgrade 2>&1 | log_trace "${_phase_apt}"
     DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --allow-remove-essential --allow-change-held-packages -fuy dist-upgrade |
       log_trace "${_phase_apt}"
     exit_status=$?
@@ -2227,9 +2227,9 @@ function purge_not_required() {
     else
       if [ "$simulate_apt_install" == "true" ]; then
         log_warn "SIM - using --dry-run"
-        apt-get -q -o=Dpkg::Use-Pty=0 -y remove --purge --dry-run "${parsed_purge_packages[@]}" |& log_trace "${_phase_apt}"
+        apt-get -q -o=Dpkg::Use-Pty=0 -y remove --purge --dry-run "${parsed_purge_packages[@]}" 2>&1 | log_trace "${_phase_apt}"
       else
-        apt-get -q -o=Dpkg::Use-Pty=0 -y purge "${parsed_purge_packages[@]}" |& log_trace "${_phase_apt}"
+        apt-get -q -o=Dpkg::Use-Pty=0 -y purge "${parsed_purge_packages[@]}" 2>&1 | log_trace "${_phase_apt}"
       fi
       exit_status=$?
 
@@ -2347,15 +2347,15 @@ function install_debs() {
     # Check if simulate is true
     if [ "$simulate_apt_install" == "true" ]; then
       log_warn "SIM - $deb_file_name Installation!!"
-      dpkg -i --dry-run "$deb_file_name" |& log_trace "${_phase_deb}"
+      dpkg -i --dry-run "$deb_file_name" 2>&1 | log_trace "${_phase_deb}"
 
       log_debug "Installing missing packages"
-      apt-get -q -o=Dpkg::Use-Pty=0 -y install -f |& log_trace "${_phase_apt}"
+      apt-get -q -o=Dpkg::Use-Pty=0 -y install -f 2>&1 | log_trace "${_phase_apt}"
       exit_status=$?
     else
-      dpkg -i "$deb_file_name" |& log_trace "${_phase_deb}"
+      dpkg -i "$deb_file_name" 2>&1 | log_trace "${_phase_deb}"
       log_debug "Installing missing packages"
-      apt-get -q -o=Dpkg::Use-Pty=0 -y install -f |& log_trace "${_phase_apt}"
+      apt-get -q -o=Dpkg::Use-Pty=0 -y install -f 2>&1 | log_trace "${_phase_apt}"
       exit_status=$?
     fi
 
@@ -2462,7 +2462,7 @@ function __install_snaps() {
         log_warn "SIM - skipping installation"
       else
         log_debug "Options are ${snapd_options[*]}"
-        if snap install "${snapd_options[@]}" "$index" |& log_trace "${_phase_snap}"; then
+        if snap install "${snapd_options[@]}" "$index" 2>&1 | log_trace "${_phase_snap}"; then
           log_success "$line installed successfully."
         else
           log_error "Failed!"

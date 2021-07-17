@@ -65,7 +65,7 @@ extra:
       link: https://github.com/tprasadtp
   analytics:
     provider: google
-    property: UA-101760811-5
+    property: G-XBZN2CTE07
 
 # Extensions
 markdown_extensions:

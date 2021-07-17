@@ -105,7 +105,6 @@ function main()
     if [[ $give_shell == "true" ]]; then
       echo "# Dropping you in ${docker_tag}"
       docker run --rm \
-        --userns=host \
         -it \
         -e CI \
         -e GITHUB_ACTIONS \
