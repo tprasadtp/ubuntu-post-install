@@ -72,9 +72,9 @@ It should work fine. But no promises.
 - Installing packages from system repositories
 - Installing statically linked binaries
 - Remove Preinstalled packages
-- Install PIP packages. (You should use `virtualenv` for your projects, **ONLY** install pip packages which are absolutely essential.)
 - Add PPAs (Ubuntu & Ubuntu derivatives only)
 - Debian (.deb) packages
+- Install Static binaries like kubectl
 - Snap packages
 
 [build-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/build/badge.svg

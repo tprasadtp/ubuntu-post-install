@@ -227,7 +227,7 @@ Usage: <font color="#D7FF87"> [sudo] ./after-effects </font><font color="#FF8700
 [-r | --remote-yaml]  Use config yaml from a URL.
 
 <font color="#AFFFFF">The following options are &quot;action&quot; options and will</font>
-<font color="#AFFFFF">make changes to your system depending on tasks selcted.</font>
+<font color="#AFFFFF">make changes to your system depending on tasks selected.</font>
 <font color="#AFFFFF">---------------------------------------------------------</font>
 [-d | --purge]        Enable Purging packages
 [-f | --fix]          Fix codenames for new releases

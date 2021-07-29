@@ -55,7 +55,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: [ "juno-stable"]
+        release: [ "stable"]
     steps:
       - uses: actions/checkout@v2
         with:

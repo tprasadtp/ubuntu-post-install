@@ -24,11 +24,13 @@ config:
   add_repo:
     azurecli: true
     bazel: true
+    brave_browser: true
     chrome: true
     docker: true
     edge: true
     # This is really flaky so drop it
     gcsfuse: false
+    #
     github: true
     googlecloud: true
     gvisor: true
@@ -128,3 +130,5 @@ config:
         - apt-xapian-index
         # Non-free in debian, multiverse in Ubuntu(canonical partner repos)
         - unrar
+        # Brave
+        - brave-browser

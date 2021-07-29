@@ -6,7 +6,8 @@
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/ubuntu-post-install
 # Requirements - Bash v4 and above
-#              - whiptail, wget, awk, sed, grep
+#              - coreutils
+#              - whiptail
 #
 
 set -o pipefail
@@ -20,12 +21,19 @@ readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 # Version
 readonly AE_VERSION="8.0.2"
 
-# Handle Use interrupt
-# trap ctrl-c and call ctrl_c()
-trap ctrl_c_handler INT
+# Handle Signals
+# trap ctrl-c and SIGTERM
+trap ctrl_c_signal_handler INT
+trap term_signal_handler SIGTERM
 
-function ctrl_c_handler() {
-  printf "${RED}• User Interrupt! CTRL-C${NC}\n"
+function ctrl_c_signal_handler()
+{
+  log_error "User Interrupt! CTRL-C"
+  exit 4
+}
+function term_signal_handler()
+{
+  log_error "Signal Interrupt! SIGTERM"
   exit 4
 }
 
@@ -505,28 +513,32 @@ function _fix_ubuntu_derivatives() {
     readonly distro_name="ubuntu"
     log_warn "Release is Ubuntu 21.10 (Unstable!!)"
     ;;
-  # Old Debian release
+  # Debian
   stretch)
     bool_is_debian="true"
     readonly distro_name="debian"
     readonly enable_ppa="false"
     log_notice "This is Debian. PPAs are disabled."
     ;;
-  # Current Debian release
   buster)
     bool_is_debian="true"
     readonly distro_name="debian"
     readonly enable_ppa="false"
-    log_notice "This is current stable release of Debian. PPAs are disabled."
+    log_notice "This is Debian 10 Buster. PPAs are disabled."
     ;;
   # Upcoming Debian release
   bullseye)
     bool_is_debian="true"
     readonly enable_ppa="false"
     readonly distro_name="debian"
+    log_notice "This is Debian 11 Bullseye. PPAs are disabled."
+    ;;
+  bookworm)
+    bool_is_debian="true"
+    readonly enable_ppa="false"
+    readonly distro_name="debian"
     log_dev "You are running Debian Testing!"
-    log_warn "This is pre release version of Debian. Use with caution!"
-    log_notice "PPAs are disabled."
+    log_notice "This is Debian 12 Bookworm. PPAs are disabled."
     ;;
   # Unsupported releases
   groovy) _eol_message "June 2021" ;;

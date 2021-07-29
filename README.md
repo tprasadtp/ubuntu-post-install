@@ -96,7 +96,8 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 
 | Name                    | Key               | Packages                                                     |
 | ----------------------- | ----------------- | ------------------------------------------------------------ |
-| Docker                  | docker            | docker-ce, containerd.io, docker-ce-cli                      |
+| [Brave Browser][]       | brave_browser     | brave-browser                                                |
+| Docker                  | docker            | docker-ce, docker-ce-rootless-extras, docker-ce-cli          |
 | [GitHub - CLI][]        | github            | gh                                                           |
 | [Google - Bazel][]      | bazel             | bazel                                                        |
 | Google - Chrome         | chrome            | google-chrome-stable, google-chrome-beta                     |
@@ -165,6 +166,8 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [gpl-badge]: https://img.shields.io/badge/License-GPLv3-ff69b4
 [license]: https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE
 
+
+[Brave Browser]: https://brave.com/linux/
 [GitHub - CLI]: https://cli.github.com
 [Google - gVisor]: https://gvisor.dev
 [Podman]: https://podmain.io

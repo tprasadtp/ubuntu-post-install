@@ -26,6 +26,7 @@ config:
     snaps: true
   # Repository Flags
   add_repo:
+    brave_browser: true
     azurecli: true
     bazel: true
     chrome: true

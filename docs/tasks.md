@@ -6,7 +6,8 @@ This task can add the following repositories.
 
 | Name                    | Key               | Packages                                                     |
 | ----------------------- | ----------------- | ------------------------------------------------------------ |
-| Docker                  | docker            | docker-ce, containerd.io, docker-ce-cli                      |
+| [Brave Browser][]       | brave_browser     | brave-browser                                                |
+| Docker                  | docker            | docker-ce, docker-ce-rootless-extras, docker-ce-cli          |
 | [GitHub - CLI][]        | github            | gh                                                           |
 | [Google - Bazel][]      | bazel             | bazel                                                        |
 | Google - Chrome         | chrome            | google-chrome-stable, google-chrome-beta                     |
@@ -53,6 +54,7 @@ config:
     repo: true
   # Repository Flags
   add_repo:
+    brave_browser: true
     azurecli: true
     bazel: true
     chrome: true
@@ -85,9 +87,9 @@ config:
 
 ### Note about Wine HQ and i386 packages
 
-To install i386 pacakges or packages which have i386 dependencies (eg. wine-stable), you **MUST** enable foreign architectures **BEFORE** running this script!
+To install i386 packages or packages which have i386 dependencies (eg. wine-stable), you **MUST** enable foreign architectures **BEFORE** running this script!
 
-### Note abount Podman repository
+### Note about Podman repository
 
 Podman repository(provided by Kubic project) also provides golang package for some reason. So please be careful while installing golang via apt.
 
@@ -105,14 +107,14 @@ There are seven list of packages under key config.install.apt.< category >
 2. security - Contains Security related tools and packages
 3. productivity - Office tools, writing tools, LateX, document tools and other
 productivity tools, Email clients, browsers, IM clients etc.
-4. multimedia - Multimedia tools like media players, audio converters and playes etc.
-5. development - IDEs [Spyder, Jetbeans etc], languages [go, python, ruby, rust, java etc],
+4. multimedia - Multimedia tools like media players, audio converters and players etc.
+5. development - IDEs, languages [go, python, ruby, rust, java etc],
 Containers [docker lxc rkt etc], Python libraries, compilers [gcc, clang]
 SDKs [AWS SDK, Google Cloud SDK, open-jdk, Tensor Flow], headers and libraries[ocl-icd-dev],
-Anything related to development and -dev or -devl packages.
+Anything related to development and `-dev` or `-devl` packages.
 6. other - Everything which does not fit in the above categories.
 Themes, Tools, Utilities etc.
-7. external - Any packages which are provided by ppas, or repositories not present in
+7. external - Any packages which are provided by PPAs, or repositories not present in
 base Ubuntu distribution. There's a possibility that the repository might not
 be added or may be unavailable or offline. So Keeping the list separate from
 others packages minimizes errors if there are any.
@@ -124,7 +126,7 @@ tend to get to couple of hundreds of lines. Also YAML file should be a valid YAM
 
 ### Special list of packages - Purge list
 
-There is a special package list under key, config.purge containig list of packages to be
+There is a special package list under key, config.purge containing list of packages to be
 purged from the system. This only applies if purge flag is set and purge task is enabled (when autopilot is active)
 
 ## Install Debian package archives (.deb files)
@@ -182,8 +184,8 @@ This will purge Unwanted packages from the system.
 
 ## Installing Snap packages
 
-Script can install snap packages from snapstore. For example check the default config file.
-You should specify the classic snaps under `install.snaps.calssic`,
+Script can install snap packages from snap-store. For example check the default config file.
+You should specify the classic snaps under `install.snaps.classic`,
 edge snaps under `install.snaps.edge` and normal snaps under `install.snaps.normal` in the yaml file.
 
 
