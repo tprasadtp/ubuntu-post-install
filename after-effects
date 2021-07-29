@@ -526,7 +526,6 @@ function _fix_ubuntu_derivatives() {
     readonly enable_ppa="false"
     log_notice "This is Debian 10 Buster. PPAs are disabled."
     ;;
-  # Upcoming Debian release
   bullseye)
     bool_is_debian="true"
     readonly enable_ppa="false"
@@ -1396,11 +1395,6 @@ function add_repositories() {
 
 deb https://desktop-download.mendeley.com/download/apt stable main"
 
-  # shellcheck disable=SC2034
-  declare -r GOOGLE_CHROME_SOURCE_FILE_CONTENT="#  # # THIS FILE IS AUTOMATICALLY CONFIGURED ###
-# You may comment out this entry, but any other modifications may be lost.
-deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
-
   # install dependencies required
   _install_pre_requisites
   # if repository is not available for latest ubuntu release, use previous release
@@ -1512,11 +1506,20 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     # Add Google Chrome
     if [ "$add_chrome_repo" == "true" ]; then
       log_info "Google Chrome"
-      log_debug "Adding Google package signing Key"
-      wget -q https://dl.google.com/linux/linux_signing_key.pub -O /tmp/ae/google_signing_key.pub >>$"$log_file"
-      apt-key add /tmp/ae/google_signing_key.pub 2>&1 | log_trace "${_phase_apt_key}" ||
-        log_error "Adding trusted keys for Google failed."
-      if echo "${GOOGLE_CHROME_SOURCE_FILE_CONTENT}" >${SOURCES_FILE_DIR}/google-chrome.list; then
+      log_debug "Adding Google package signing keys"
+
+      __add_repo_keys --format "asc" \
+        --file-prefix "google" \
+        --key-url https://dl.google.com/linux/linux_signing_key.pub
+
+      log_debug "Create defaults file for google chrome"
+      if printf "repo_add_once=\"false\"\nrepo_reenable_on_distupgrade=\"true\"" >/etc/default/google-chrome; then
+        log_success "OK"
+      else
+        log_warn "Configured sources.list  file might be overwritten by Google-Chrome!"
+      fi
+
+      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/google.gpg] http://dl.google.com/linux/chrome/deb/ stable main #Google-Chrome" >${SOURCES_FILE_DIR}/google-chrome.list; then
         log_success "OK"
       else
         log_error "Adding Google Chrome Repository failed"
@@ -1532,7 +1535,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "spotify" \
         --key-url https://download.spotify.com/debian/pubkey_0D811D58.gpg
 
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/spotify.gpg] http://repository.spotify.com stable non-free #Spotify" >${SOURCES_FILE_DIR}/after-effects-spotify.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/spotify.gpg] http://repository.spotify.com stable non-free #Spotify" >${SOURCES_FILE_DIR}/spotify.list; then
         log_success "OK"
       else
         log_error "Adding Spotify Repository Failed"
@@ -1549,7 +1552,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "skype" \
         --key-url https://repo.skype.com/data/SKYPE-GPG-KEY
 
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/skype.gpg] https://repo.skype.com/deb stable main #Skype" >${SOURCES_FILE_DIR}/after-effects-skype.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/skype.gpg] https://repo.skype.com/deb stable main #Skype" >${SOURCES_FILE_DIR}/microsoft-skype.list; then
         log_success "OK"
       else
         log_error "Adding Skype for linux repository failed"
@@ -1582,7 +1585,6 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 2>&1 | log_trace "${_phase_apt_key}" ||
         log_error "Adding Mendeley Desktop Key Failed"
 
-      # DO NOT RENAME THE FILE!
       if echo "${MENDELEY_SOURCE_FILE_CONTENT}" >${SOURCES_FILE_DIR}/mendeleydesktop.list; then
         log_success "OK"
       else
@@ -1667,21 +1669,16 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       --file-prefix "microsoft" \
       --key-url https://packages.microsoft.com/keys/microsoft.asc
   else
-    log_debug "Both azurecli and vscode will not be added. So no need to add microsoft keys."
+    log_debug "None of the MS repos are being added, So no need to add microsoft keys."
   fi
 
   # VSCode
   if [[ ${add_vscode_repo} == "true" ]]; then
     log_info "VSCode"
-    if [[ ${ARCH} == "amd64" ]]; then
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main #Visual-Studio-Code" >${SOURCES_FILE_DIR}/after-effects-vscode.list; then
-        log_success "OK"
-      else
-        log_error "Failed to addd VSCode repository!"
-      fi
+    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/code stable main #Visual-Studio-Code" >${SOURCES_FILE_DIR}/after-effects-vscode.list; then
+      log_success "OK"
     else
-      log_error "VSCode repositories are not supported on this architecture!($ARCH)"
-      log_warn "Visit https://code.visualstudio.com/#alt-downloads"
+      log_error "Failed to addd VSCode repository!"
     fi
 
   else
@@ -1692,7 +1689,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   if [[ ${add_azurecli_repo} == "true" ]]; then
     if [[ ${ARCH} == "amd64" ]]; then
       log_info "Azure CLI"
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ ${code_name} main #Azure CLI" >${SOURCES_FILE_DIR}/after-effects-azurecli.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ ${code_name} main #Azure CLI" >${SOURCES_FILE_DIR}/microsoft-azurecli.list; then
         log_success "OK"
       else
         log_error "Failed to addd Azure CLI repository!"
@@ -1709,7 +1706,17 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   if [[ ${add_edge_repo} == "true" ]]; then
     if [[ ${ARCH} == "amd64" ]]; then
       log_info "Microsoft Edge"
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main #Microsoft Edge" >${SOURCES_FILE_DIR}/after-effects-edge.list; then
+      log_debug "Create /etc/default files"
+
+      log_debug "Create defaults file for edge browser"
+      if printf "repo_add_once=\"false\"\nrepo_reenable_on_distupgrade=\"false\"" >/etc/default/microsoft-edge-beta; then
+        log_success "OK"
+      else
+        log_warn "Failed to write /etc/default/etc/default/microsoft-edge-beta"
+        log_warn "Configured sources.list  file might be overwritten by Microsoft Edge Browser!"
+      fi
+
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main #Microsoft Edge" >${SOURCES_FILE_DIR}/microsoft-edge.list; then
         log_success "OK"
       else
         log_error "Failed to addd Microsoft Edge repository!"
@@ -1725,7 +1732,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   if [[ ${add_msteams_repo} == "true" ]]; then
     if [[ ${ARCH} == "amd64" ]]; then
       log_info "Microsoft Teams"
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/ms-teams stable main #Microsoft Edge" >${SOURCES_FILE_DIR}/after-effects-teams.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/ms-teams stable main #Microsoft Teams" >${SOURCES_FILE_DIR}/microsoft-teams.list; then
         log_success "OK"
       else
         log_error "Failed to addd Microsoft Teams repository!"
@@ -1745,7 +1752,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       --key-url https://download.docker.com/linux/"${distro_name}"/gpg
     log_debug "Adding Docker(Docker Inc) sources .list"
 
-    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/docker-ce.gpg] https://download.docker.com/linux/${distro_name}  ${code_name} stable #Docker-Community-Edition" >${SOURCES_FILE_DIR}/after-effects-docker.list; then
+    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/docker-ce.gpg] https://download.docker.com/linux/${distro_name}  ${code_name} stable #Docker-Community-Edition" >${SOURCES_FILE_DIR}/docker-ce.list; then
       log_success "OK"
     else
       log_error "Adding Docker-CE repository failed"
@@ -1756,15 +1763,14 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
   fi
 
   # Github CLI
-  #gh
 
   if [ "$add_gh_repo" == "true" ]; then
     log_info "GitHub CLI"
-    # TODO: Waiting for fix https://github.com/cli/cli/issues/3513 to use keys directly.
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C99B11DEB97541F0 2>&1 | log_trace "${_phase_apt_key}" ||
-      log_error "Adding Github CLI keys failed"
+    __add_repo_keys --format "gpg" \
+      --file-prefix "githubcli-archive-keyring" \
+      --key-url https://cli.github.com/packages/githubcli-archive-keyring.gpg
 
-    if echo "deb https://cli.github.com/packages  ${code_name}  main #GitHub-CLI" >${SOURCES_FILE_DIR}/after-effects-github.list; then
+    if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/githubcli-archive-keyring.gpg ] https://cli.github.com/packages stable main #GitHub-CLI" >${SOURCES_FILE_DIR}/github-cli.list; then
       log_success "OK"
     else
       log_error "Adding GH CLi repository failed"
@@ -1782,7 +1788,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "hashicorp" \
         --key-url https://apt.releases.hashicorp.com/gpg
 
-      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/hashicorp.gpg] https://apt.releases.hashicorp.com ${code_name} main#Hashicorp-Packages" >${SOURCES_FILE_DIR}/after-effects-hashicorp.list; then
+      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/hashicorp.gpg] https://apt.releases.hashicorp.com ${code_name} main#Hashicorp-Packages" >${SOURCES_FILE_DIR}/hashicorp.list; then
         log_success "OK"
       else
         log_error "Failed to add hashicorp repository"
@@ -1803,7 +1809,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "bazel" \
         --key-url https://bazel.build/bazel-release.pub.gpg
 
-      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/bazel.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8 #Bazel" >${SOURCES_FILE_DIR}/after-effects-bazel.list; then
+      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/bazel.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8 #Bazel" >${SOURCES_FILE_DIR}/bazel.list; then
         log_success "OK"
       else
         log_error "Failed to add bazel repository"
@@ -1827,7 +1833,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "gvisor" \
         --key-url https://gvisor.dev/archive.key
 
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/gvisor.gpg] https://storage.googleapis.com/gvisor/releases release main #gVisor-Container-Runtime" >${SOURCES_FILE_DIR}/after-effects-gvisor.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/gvisor.gpg] https://storage.googleapis.com/gvisor/releases release main #gVisor-Container-Runtime" >${SOURCES_FILE_DIR}/gvisor.list; then
         log_success "OK"
       else
         log_error "Adding gVisor repository failed!"
@@ -1852,7 +1858,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
       __add_repo_keys --format "asc" \
         --file-prefix "obs-podman-${code_name}" \
         --key-url https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_OBS_PREFIX}/Release.key
-      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/obs-podman-${code_name}.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_OBS_PREFIX}/ / #Podman (via OBS)" >${SOURCES_FILE_DIR}/after-effects-podman.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/obs-podman-${code_name}.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_OBS_PREFIX}/ / #Podman (via OBS)" >${SOURCES_FILE_DIR}/podman.list; then
         log_success "OK"
       else
         log_error "Adding Podman repository failed!"
@@ -1879,7 +1885,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         --file-prefix "sublimetext" \
         --key-url https://download.sublimetext.com/sublimehq-pub.gpg
 
-      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/sublimetext.gpg] https://download.sublimetext.com/ apt/stable/ #SublimeText Editor" >${SOURCES_FILE_DIR}/after-effects-sublimetext.list; then
+      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/sublimetext.gpg] https://download.sublimetext.com/ apt/stable/ #SublimeText Editor" >${SOURCES_FILE_DIR}/sublimetext.list; then
         log_success "OK"
       else
         log_error "Failed to add SublimeText repository"
@@ -1973,8 +1979,11 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
 
     if [[ $ros_arch_supported == "true" ]]; then
       log_info "Adding ROS repositories"
-      log_debug "Adding ROS repo key (latest)"
-      apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 2>&1 | log_trace "${_phase_apt_key}" ||
+      log_debug "Adding ROS repo key "
+      __add_repo_keys --format "asc" \
+        --file-prefix "ros" \
+        --key-url https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc
+
         log_error "Adding ROS repository key failed!"
 
       if [[ $bool_use_uf_mirror == "true" ]]; then
@@ -1983,7 +1992,7 @@ deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
         log_warn "Till then, upstream is being used!"
       fi
 
-      if echo "deb http://packages.ros.org/ros/ubuntu ${code_name} main #ROS-Repository" >$SOURCES_FILE_DIR/ros.list; then
+      if echo "deb [arch=$ARCH signed-by=${TRUSTED_KEYRINGS_DIR}/ros.gpg] http://packages.ros.org/ros/ubuntu ${code_name} main #ROS-Repository" >$SOURCES_FILE_DIR/ros.list; then
         log_success "OK"
       else
         log_error "Adding ROS repository failed!"
@@ -2885,7 +2894,7 @@ Configuration Options
 [-r | --remote-yaml]  Use config yaml from a URL.
 ${LIGHT_BLUE}
 The following options are "action" options and will
-make changes to your system depending on tasks selcted.
+make changes to your system depending on tasks selected.
 ---------------------------------------------------------${NC}
 [-d | --purge]        Enable Purging packages
 [-f | --fix]          Fix codenames for new releases
