@@ -19,7 +19,7 @@ readonly SCRIPT=$(basename "$0")
 readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 
 # Version
-readonly AE_VERSION="8.0.2"
+readonly AE_VERSION="8.1.0"
 
 # Handle Signals
 # trap ctrl-c and SIGTERM
@@ -1018,6 +1018,7 @@ function _set_yaml_config() {
   _check_bool "add_skype_repo" "${config__add_repo__skype[0]}"
   _check_bool "add_vscode_repo" "${config__add_repo__vscode[0]}"
   _check_bool "add_msteams_repo" "${config__add_repo__teams[0]}"
+  _check_bool "add_brave_browser_repo" "${config__add_repo__brave_browser[0]}"
 
   # Debian Components
   _check_bool "add_debian_nonfree" "${config__add_repo__debian_nonfree[0]}"
@@ -1898,6 +1899,34 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
     log_debug "Skipped adding SublimeText repository"
   fi
 
+  # Brave Browser
+  if [ "$add_brave_browser_repo" == "true" ]; then
+    if [ "$ARCH" == "amd64" ]; then
+      log_info "Brave Browser"
+      __add_repo_keys --format "asc" \
+        --file-prefix "brave-browser" \
+        --key-url https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+
+      log_debug "Create defaults file for brave browser"
+      if printf "repo_add_once=\"false\"\nrepo_reenable_on_distupgrade=\"false\"" >/etc/default/brave-browser; then
+        log_success "OK"
+      else
+        log_warn "Failed to write /etc/default/brave-browser"
+        log_warn "Configured sources.list  file might be overwritten by Brave Browser!"
+      fi
+      if echo "deb [arch=amd64 signed-by=${TRUSTED_KEYRINGS_DIR}/brave-browser.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main #Brave browser" >${SOURCES_FILE_DIR}/brave-browser.list; then
+        log_success "OK"
+      else
+        log_error "Failed to add Brave Browser repository"
+      fi
+
+    else
+      log_error "Brave Browser repository is not supported on this architecture($ARCH)!"
+    fi
+  else
+    log_debug "Skipped adding Brave Browser repository"
+  fi
+
   # ROS2
   # Arch support varies on distro so lot of ugly elifs.
   ros2_supported="false"
@@ -2641,6 +2670,7 @@ function _process_menu() {
   Microsoft - Teams            : $add_msteams_repo
   Microsoft - VSCode           : $add_vscode_repo
   Podman (via from Kubic OBS)  : $add_podman_repo
+  Brave Browser                : $add_brave_browser_repo
   ROS                          : $add_ros_repo
   ROS2                         : $add_ros2_repo
   Signal for Desktop           : $add_signal_repo
