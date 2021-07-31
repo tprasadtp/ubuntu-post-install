@@ -1294,6 +1294,7 @@ function _map_to_obs_repos() {
   # Ubuntu
   bionic) readonly AE_RUN_OBS_PREFIX="xUbuntu_18.04" ;;
   focal) readonly AE_RUN_OBS_PREFIX="xUbuntu_20.04" ;;
+  groovy) readonly AE_RUN_OBS_PREFIX="xUbuntu_20.10" ;;
   hirsute) readonly AE_RUN_OBS_PREFIX="xUbuntu_21.04" ;;
   impish) readonly AE_RUN_OBS_PREFIX="xUbuntu_21.10" ;;
   # Debian
