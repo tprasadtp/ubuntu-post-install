@@ -256,7 +256,7 @@ Usage: <font color="#D7FF87"> [sudo] ./after-effects </font><font color="#FF8700
 <font color="#949494">[-nx | --nx]          Just process config but do not</font>
 <font color="#949494">                      make any changes to the system.</font>
 <font color="#949494">[--debug]             Prints debug logs.</font>
-<font color="#949494">[--debug-trace]       Prints trace level logs which</font>
+<font color="#949494">[--trace]       Prints trace level logs which</font>
 <font color="#949494">                      includes output from apt-get</font>
 <font color="#949494">                      and other commands.</font>
 

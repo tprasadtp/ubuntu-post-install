@@ -5,7 +5,7 @@ config:
   # like `/bin/bash -l`, `ls`, or any other commands
   # the default is bash for Linux
   # or powershell.exe for Windows
-  command: docker run -it --rm --name=ubuntu-focal --hostname=ubuntu-focal -v $(pwd):/shared ae:ubuntu-focal ./after-effects --autopilot --debug-trace --config config/recorder.yml
+  command: docker run -it --rm --name=ubuntu-focal --hostname=ubuntu-focal -v $(pwd):/shared ae:ubuntu-focal ./after-effects --autopilot --trace --config config/recorder.yml
 
   # Specify the current working directory path
   # the default is the current working directory path

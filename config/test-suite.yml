@@ -1,5 +1,5 @@
 # Install Config
-api: 2
+api: 3
 name: Test-Suite
 author: Prasad T
 # Configuration
@@ -30,7 +30,6 @@ config:
     edge: true
     # This is really flaky so drop it
     gcsfuse: false
-    #
     github: true
     googlecloud: true
     gvisor: true
@@ -42,6 +41,7 @@ config:
     signal: true
     skype: true
     spotify: true
+    slack: true
     sublimetext: true
     teams: true
     vscode: true
@@ -75,10 +75,8 @@ config:
     binaries:
       - https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/amd64/kubectl,kubectl
     snaps:
-      normal:
         - htop
-      classic:
-        - hugo
+        - hugo::classic
     apt:
       # Admin related Stuff
       administration:
@@ -132,3 +130,9 @@ config:
         - unrar
         # Brave
         - brave-browser
+        # Slack
+        - slack-desktop
+    snaps:
+      - htop
+      - classic::vscode
+      - classic::edge::hugo

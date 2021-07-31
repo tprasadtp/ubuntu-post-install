@@ -14,13 +14,14 @@ function display_usage()
 cat <<EOF
 Bash script to run test containers
 
-Usage: ${YELLOW}${SCRIPT}   [options]${NC}
-[-d --distro]          [Distribution Base (ubuntu/debian)]
-[-r --release]         [Distribution Release (focal/buster etc..)]
-[-s --shell]           [Drop into a bash shell]
-[--cfg]                [Specify custom config]
-[--debug --debug-trace][Debug Modes]
-[-h --help]            [Display this help message]
+Usage: ${SCRIPT}  [options]
+-d --distro          Distribution Base (ubuntu/debian)
+-r --release         Distribution Release (focal/buster etc..)
+-s --shell           Drop into a bash shell
+--cfg                Specify custom config
+--debug              Debug
+--trace              Trace
+-h --help            Display this help message
 
 EOF
 }
@@ -48,7 +49,7 @@ function main()
       --pre)                EXTRA_ARGS+=('--pre-release');;
       --sv)                 EXTRA_ARGS+=('--no-version-check');;
       --debug)              EXTRA_ARGS+=('--debug');;
-      --debug-trace)        EXTRA_ARGS+=('--debug-trace');;
+      --trace)              EXTRA_ARGS+=('--trace');;
       --cfg)                shift;
                             readonly bool_custom_config_file="true";
                             cfg_file="${1}";;
@@ -127,7 +128,6 @@ function main()
         ./after-effects \
         --simulate \
         --autopilot \
-        --debug-ci-mode \
         --config-file "${cfg_file}" \
         "${EXTRA_ARGS[@]}"
         exit_code="$?"

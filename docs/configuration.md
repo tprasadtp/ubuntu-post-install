@@ -3,6 +3,7 @@
 This Script is designed to be flexible. use `--config-file FILENAME`
 
 - Check [Sample YAML](/yaml) configuration file [here.](/yaml)
+- Current config API version is 3.
 
 ## Autopilot mode
 

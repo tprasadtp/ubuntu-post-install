@@ -32,7 +32,7 @@ jobs:
           persist-credentials: false
 
       - name: Ubuntu ${{ matrix.release }}
-        run: ./tests/local.sh --build --debug-trace --fix --distro ubuntu --release "${{ matrix.release }}"
+        run: ./tests/local.sh --build --trace --fix --distro ubuntu --release "${{ matrix.release }}"
   # Debian
   debian:
     needs: [ "shellcheck"]
@@ -47,7 +47,7 @@ jobs:
           persist-credentials: false
 
       - name: Debian ${{ matrix.release }}
-        run: ./tests/local.sh --build --debug-trace --distro debian --release "${{ matrix.release }}"
+        run: ./tests/local.sh --build --trace --distro debian --release "${{ matrix.release }}"
 
   elementary:
     needs: [ "shellcheck"]
@@ -62,7 +62,7 @@ jobs:
           persist-credentials: false
 
       - name: Elementary ${{ matrix.release }}
-        run:  ./tests/local.sh --build --debug-trace --distro elementary/docker --release "${{ matrix.release }}"
+        run:  ./tests/local.sh --build --trace --distro elementary/docker --release "${{ matrix.release }}"
   # Ubuntu ARM
   arm:
     needs: [ "shellcheck"]
@@ -80,7 +80,7 @@ jobs:
         uses: docker/setup-qemu-action@v1
 
       - name: Test on ARM64 ${{ matrix.release }}
-        run: ./tests/local.sh --build --debug-trace --fix --distro arm64v8/ubuntu --release "${{ matrix.release }}" --cfg config/arm.yml
+        run: ./tests/local.sh --build --trace --fix --distro arm64v8/ubuntu --release "${{ matrix.release }}" --cfg config/arm.yml
   arm-debian:
     needs: [ "shellcheck"]
     runs-on: ubuntu-latest
@@ -97,4 +97,4 @@ jobs:
         uses: docker/setup-qemu-action@v1
 
       - name: Test on ARM64 ${{ matrix.release }}
-        run: ./tests/local.sh --build --debug-trace --distro arm64v8/debian --release "${{ matrix.release }}" --cfg config/arm.yml
+        run: ./tests/local.sh --build --trace --distro arm64v8/debian --release "${{ matrix.release }}" --cfg config/arm.yml

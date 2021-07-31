@@ -25,6 +25,7 @@ This task can add the following repositories.
 | ROS2                    | ros2              |                                                              |
 | Signal                  | signal            | signal-desktop                                               |
 | Spotify Client          | spotify           | spotify-client                                               |
+| Slack Desktop           | slack             | slack-desktop                                                |
 | Sublime Text Editor     | sublimetext       | sublime-text                                                 |
 | Wine HQ                 | winehq            | winehq-stable, winehq-staging                                |
 | [Ubuntu - Universe][]   | ubuntu_universe   |                                                              |
@@ -45,6 +46,7 @@ This task can add the following repositories.
 Example yaml configuration snippet is given below.
 
 ```yaml
+api: 3
 config:
   # Enabled Tasks
   tasks:
@@ -141,6 +143,7 @@ This will install deb files specified in the YAML config under `config.install.d
 
 
 ```yaml
+api: 3
 config:
   install:
     debian_packages:
@@ -162,6 +165,7 @@ This will install binaries in YAML config under `config.install.binaries`.
 - For example, to install `docker-compose`, the entry should look like below.
 
 ```yaml
+api: 3
 config:
   install:
     binaries:
@@ -184,24 +188,19 @@ This will purge Unwanted packages from the system.
 
 ## Installing Snap packages
 
-Script can install snap packages from snap-store. For example check the default config file.
-You should specify the classic snaps under `install.snaps.classic`,
-edge snaps under `install.snaps.edge` and normal snaps under `install.snaps.normal` in the yaml file.
-
+Script can install snap packages from snap-store. You should specify the classic snaps with suffix `classic::` See example below. Edge snaps MUST be prefixed with `edge::`
 
 ```yaml
+api: 3
 config:
   install:
     snaps:
-      normal:
-        - htop
-      classic:
-        - vscode
+      - htop
+      - classic::vscode
+      - classic::edge::hugo
+
 
 ```
-
-!!! warning
-    - Its responsibility of the user to separate classic snaps, edge and normal snaps.
 
 ## All In one
 
@@ -224,6 +223,7 @@ Using `--autopilot` will skip all UI prompts and confirmations.
 This mode requires you to specify tasks to be run if using YAML config. Example snippet is given below.
 
 ```yaml
+api: 3
 config:
   # Enabled Tasks
   tasks:

@@ -43,5 +43,6 @@
 |     64     | Required basefiles/directories are missing (Your installation of Ubuntu is broken) |
 |     66     |                                                                                    |
 |     67     | Failed to map code_name to AE_OBS_PREFIX                                           |
+|     68     | Failed to fix file permissions                                                     |
 |    255     | Test Exit code                                                                     |
 |            |                                                                                    |

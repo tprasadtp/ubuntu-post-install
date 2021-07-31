@@ -7,7 +7,7 @@ Logs are written to a file `<current-dir>/logs/after-effects.log`.
 You can chose from multiple debug modes.
 
 - `--debug` Only prints debug messages
-- `--debug-trace` Prints debug messages and apt/dpkg/snap/ppa logs.
+- `--trace` Prints debug messages and apt/dpkg/snap/ppa logs.
 Please note that This can generate a lot of output.
 
 ![debug](/assets/recordings/ubuntu-focal-debug.gif)

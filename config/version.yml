@@ -1,4 +1,4 @@
-# This file is required because, legacy update checks use this file.
+# This file is required for legacy update checks.
 # Netlify should handle the redirects from get/v3/version endpoints.
 # This config is setup in such a way, that user is to forced to
 # upgrade the script, without breaking update check mechanisms.

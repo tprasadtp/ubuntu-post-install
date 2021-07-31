@@ -114,6 +114,7 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 | ROS                     | ros               |                                                              |
 | ROS2                    | ros2              |                                                              |
 | Signal                  | signal            | signal-desktop                                               |
+| Slack Desktop           | slack             | slack-desktop                                                |
 | Spotify Client          | spotify           | spotify-client                                               |
 | Sublime Text Editor     | sublimetext       | sublime-text                                                 |
 | Wine HQ                 | winehq            | winehq-stable, winehq-staging                                |
@@ -165,7 +166,6 @@ See [Contributing and forks](/CONTRIBUTING.md)
 
 [gpl-badge]: https://img.shields.io/badge/License-GPLv3-ff69b4
 [license]: https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE
-
 
 [Brave Browser]: https://brave.com/linux/
 [GitHub - CLI]: https://cli.github.com

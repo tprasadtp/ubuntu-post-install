@@ -3,9 +3,10 @@
 The configuration file is pretty much self explanatory. All Boolean fields are optional and if not provided or if found to be invalid, fallback to false. Sample configs can be found in config directory.
 
 ```yaml
-api: 2
-name: Minimal
-author: Prasad T
+# Config API version
+api: 3
+name: Config Name
+author: Name of Author
 # Configuration
 config:
   # Enabled Tasks
@@ -92,10 +93,6 @@ config:
         - gufw
       # Productivity & Office Tools.
       productivity:
-        - empathy
-        - evolution
-        - realmd
-        - pandoc-data
         - pandoc
         - texstudio
         - texlive-fonts-extra
@@ -107,12 +104,10 @@ config:
         - texlive-luatex
         - texlive-pstricks
         - texlive-science
-        - texlive-extra-utils
         - texlive-lang-english
         - texlive-lang-other
         - texlive-font-utils
         - texlive-publishers
-        - gummi
       # Multimedia Tools. Photo Editors Converting tools etc.
       multimedia:
         - audacity
@@ -123,15 +118,11 @@ config:
         - rawtherapee
         - darktable
         - mpv
-        - pavucontrol
-        - cheese
       # Tools related to development.
       development:
         - curl
         - git
         - shellcheck
-        - ocl-icd-dev
-        - putty
         - python3-pip
       # Everything Else
       other:
@@ -146,5 +137,9 @@ config:
         - runsc
         - azure-cli
         - microsoft-edge-dev
+    snaps:
+      - htop
+      - classic::vscode
+      - classic::edge::hugo
 
 ```
