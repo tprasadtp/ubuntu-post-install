@@ -74,9 +74,6 @@ config:
       - https://github.com/sharkdp/bat/releases/download/v0.17.1/bat_0.17.1_amd64.deb,bat.deb
     binaries:
       - https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/amd64/kubectl,kubectl
-    snaps:
-        - htop
-        - hugo::classic
     apt:
       # Admin related Stuff
       administration:

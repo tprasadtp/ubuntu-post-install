@@ -10,8 +10,8 @@ set -eo pipefail
 
 function display_usage()
 {
-#Prints out help menu
-cat <<EOF
+  #Prints out help menu
+  cat <<EOF
 Bash script to run test containers
 
 Usage: ${SCRIPT}  [options]
@@ -30,7 +30,7 @@ function main()
 {
   # No args just run the setup function
   if [[ $# -eq 0 ]]; then
-    echo -e "\e[91mNot enought arguments See usage below. \e[39m";
+    echo -e "\e[91mNot enought arguments See usage below. \e[39m"
     display_usage
     exit 1
   fi
@@ -39,23 +39,36 @@ function main()
   declare -a DOCKER_RUN_ARGS
   while [[ ${1} != "" ]]; do
     case ${1} in
-      -h | --help )         display_usage;exit 0;;
-      -d | --distro)        shift;distro_name=${1};;
-      -r | --release)       shift;release_name=${1};;
-      -s | --shell)         give_shell="true";;
-      -b | --build)         build_image="true";;
-      --fix)                EXTRA_ARGS+=('--fix');;
-      --fix-lts)            EXTRA_ARGS+=('--fix-mode-lts');;
-      --pre)                EXTRA_ARGS+=('--pre-release');;
-      --sv)                 EXTRA_ARGS+=('--no-version-check');;
-      --debug)              EXTRA_ARGS+=('--debug');;
-      --trace)              EXTRA_ARGS+=('--trace');;
-      --cfg)                shift;
-                            readonly bool_custom_config_file="true";
-                            cfg_file="${1}";;
-      * )                   echo -e "\e[91mInvalid argument(s). See usage below. \e[39m";
-                            display_usage;
-                            exit 1;;
+      -h | --help)
+        display_usage
+        exit 0
+        ;;
+      -d | --distro)
+        shift
+        distro_name=${1}
+        ;;
+      -r | --release)
+        shift
+        release_name=${1}
+        ;;
+      -s | --shell) give_shell="true" ;;
+      -b | --build) build_image="true" ;;
+      --fix) EXTRA_ARGS+=('--fix') ;;
+      --fix-lts) EXTRA_ARGS+=('--fix-mode-lts') ;;
+      --pre) EXTRA_ARGS+=('--pre-release') ;;
+      --sv) EXTRA_ARGS+=('--no-version-check') ;;
+      --debug) EXTRA_ARGS+=('--debug') ;;
+      --trace) EXTRA_ARGS+=('--trace') ;;
+      --cfg)
+        shift
+        readonly bool_custom_config_file="true"
+        cfg_file="${1}"
+        ;;
+      *)
+        echo -e "\e[91mInvalid argument(s). See usage below. \e[39m"
+        display_usage
+        exit 1
+        ;;
     esac
     if [[ $# -ne 0 ]]; then
       shift
@@ -65,18 +78,17 @@ function main()
   # check if cfg override is present
   if [[ $bool_custom_config_file == "true" ]]; then
     if [[ -z $cfg_file ]] || [[ $cfg_file == "" ]]; then
-      echo -e "\e[91m- Custom config file is not readable/not specified! \e[39m";
+      echo -e "\e[91m- Custom config file is not readable/not specified! \e[39m"
       exit 10
     else
-      echo -e "\e[93mOverriding default test config ($cfg_file) \e[39m";
+      echo -e "\e[93mOverriding default test config ($cfg_file) \e[39m"
     fi
   else
     cfg_file="config/test-suite.yml"
   fi
 
-
   if [[ -z $distro_name ]] || [[ -z $release_name ]]; then
-    echo -e "\e[91m--distro or --release not specified. See usage below. \e[39m";
+    echo -e "\e[91m--distro or --release not specified. See usage below. \e[39m"
     display_usage
     exit 1
   else
@@ -101,7 +113,6 @@ function main()
         --build-arg CODE_NAME="${release_name}" \
         ./tests/docker
     fi
-
 
     if [[ $give_shell == "true" ]]; then
       echo "# Dropping you in ${docker_tag}"
@@ -128,9 +139,9 @@ function main()
         ./after-effects \
         --simulate \
         --autopilot \
-        --config-file "${cfg_file}" \
-        "${EXTRA_ARGS[@]}"
-        exit_code="$?"
+        "${EXTRA_ARGS[@]}" \
+        "${cfg_file}"
+      exit_code="$?"
       # turn of trace
       set +x
 
@@ -139,8 +150,8 @@ function main()
       if [[ $exit_code -ne 0 ]]; then
         exit "$exit_code"
       fi # exit code
-    fi # shell
-  fi # args
+    fi   # shell
+  fi     # args
 }
 
 main "$@"

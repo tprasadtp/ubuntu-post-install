@@ -16,7 +16,7 @@ This script is built for one purpose only. Automating post installation tasks on
 
 ## Usage
 
-## Step 1: Get the script and verify its integrity
+## Step 1: Get the script
 
 ```bash
 wget https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O after-effects
@@ -34,7 +34,7 @@ Run the script as **root**.
 
 ```bash
 chmod +x after-effects
-sudo ./after-effects -c <your config.yml>
+sudo ./after-effects <config-file|config-url>
 ```
 
 ## See in Action

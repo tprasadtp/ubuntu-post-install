@@ -12,80 +12,48 @@
 
 set -o pipefail
 
-AE_RUN_VARLIST_CHECK_OUTPUT="${!AE_*}"
-if [[ -n ${AE_RUN_VARLIST_CHECK_OUTPUT} ]]; then
-  printf "${RED}✕ Following reserved env variables are set [${AE_RUN_VARLIST_CHECK_OUTPUT}]!${NC}\n"
-  printf "${RED}✕ Script cannot continue as it might intefere with its functions!${NC}\n"
-  exit 3
-fi
-
-# Script
-readonly AE_SCRIPT=$(basename "$0")
-# Start tik
-readonly AE_EXEC_START=$(date +%s)
-# Version
-readonly AE_VERSION="9.0.0-beta.1"
-# config Version
-readonly AE_CONFIG_API="3"
-
-#colors for display
-readonly YELLOW=$'\e[38;5;220m'
-readonly GREEN=$'\e[32m'
-readonly RED=$'\e[31m'
-readonly BLUE=$'\e[34m'
-readonly LIGHT_BLUE=$'\e[38;5;159m'
-readonly CYAN=$'\e[38;5;51m'
-readonly NC=$'\e[0m'
-readonly ORANGE=$'\e[38;5;208m'
-readonly TEAL=$'\e[38;5;192m'
-readonly PINK=$'\e[38;5;212m'
-readonly GRAY=$'\e[38;5;246m'
-readonly LOG_GRAY=$'\e[38;5;240m'
-readonly LIGHT_GRAY=$'\e[38;5;242m'
-readonly MAGENTA=$'\e[38;5;219m'
-
-# Handle Signals
-trap term_exit_handler EXIT
-trap ctrl_c_signal_handler INT
-trap term_signal_handler SIGTERM TERM
-
-function ctrl_c_signal_handler() {
-  printf "${RED}✕ User Interrupt! CTRL-C\n"
-  exit 4
-}
-function term_signal_handler() {
-  printf "${RED}✕ Signal Interrupt! SIGTERM\n"
-  exit 4
-}
-
-function term_exit_handler() {
-  declare cleanup_status=0
-  printf "${MAGENTA}➜ Cleanup and Exit${NC}\n"
-  if [[ -d ${AE_RUN_TMP_DIR} ]]; then
-    if ! rm -f "${AE_RUN_TMP_DIR}"/*; then
-      cleanup_status=1
-    fi
-
-    if ! rmdir "${AE_RUN_TMP_DIR}"; then
-      cleanup_status=1
-    fi
-  fi
-
-  if [[ $cleanup_status -gt 0 ]]; then
-    printf "${YELLOW}✕ Failed to remove temporary files.\n"
-    printf "${YELLOW}✕ Ignoring this error as they will be cleaned up by systemd\n"
-  fi
-
-  readonly AE_EXEC_END="$(date +%s)"
-  readonly AE_EXEC_TIME="$((AE_EXEC_END - AE_EXEC_START))"
-  if [[ $AE_DEBUG -gt 1 ]]; then
-    printf "${GRAY}•  $AE_SCRIPT took $AE_EXEC_TIME seconds to complete."
-  fi
-}
-
 function _init_core_variables() {
-  # AE_SCRIPT METADATA
-  readonly dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+  declare -r AE_RUN_VARLIST_CHECK_OUTPUT="${!AE_*}"
+  if [[ -n ${AE_RUN_VARLIST_CHECK_OUTPUT} ]]; then
+    printf "\e[31m✕ Following reserved variables are set [${AE_RUN_VARLIST_CHECK_OUTPUT}]! \e[0m \n"
+    printf "\e[31m✕ Script cannot continue as it might intefere with its functions! \e[0m \n"
+    exit 3
+  fi
+
+  # Script
+  readonly AE_SCRIPT=$(basename "$0")
+  # Start tik
+  readonly AE_EXEC_START=$(date +%s)
+  # Version
+  readonly AE_VERSION="9.0.0-beta.1"
+  # config Version
+  readonly AE_CONFIG_API="3"
+
+  #colors for display
+  readonly AE_COLOR_YELLOW=$'\e[38;5;220m'
+  readonly AE_COLOR_GREEN=$'\e[32m'
+  readonly AE_COLOR_RED=$'\e[31m'
+  readonly AE_COLOR_NC=$'\e[0m'
+
+  # Log handler indicator
+  AE_RUN_LOGGER_ACTIVE="false"
+
+  # Handle Signals
+  trap term_exit_handler EXIT
+  trap ctrl_c_signal_handler INT
+  trap term_signal_handler SIGTERM TERM
+
+  # Extra colors
+  readonly AE_COLOR_LBLUE=$'\e[38;5;159m'
+  readonly AE_COLOR_CYAN=$'\e[38;5;51m'
+  readonly AE_COLOR_ORANGE=$'\e[38;5;208m'
+  readonly AE_COLOR_TEAL=$'\e[38;5;192m'
+  readonly AE_COLOR_PINK=$'\e[38;5;212m'
+  readonly AE_COLOR_GRAY=$'\e[38;5;246m'
+  readonly AE_COLOR_LGRAY=$'\e[38;5;240m'
+  readonly AE_COLOR_MAGENTA=$'\e[38;5;219m'
+
+  readonly AE_RUN_BASE_DIR="$(pwd -P)"
 
   #Initialize printf variables
   readonly AE_LOG_PHASE_REPO="(REPO)"
@@ -95,32 +63,63 @@ function _init_core_variables() {
   readonly AE_LOG_PHASE_APT="(APT)"
   readonly AE_LOG_PHASE_APTKEY="(KEYS)"
   readonly AE_LOG_PHASE_SNAP="(SNAP)"
+}
 
-  # Log Premitives
-  readonly _info="[INF]"
-  readonly _dev="[DEV]"
-  readonly _debug="[DBG]"
-  readonly _cleanup="[DEL]"
-  readonly _success="[ OK]"
-  readonly _warn="[WRN]"
-  readonly _error="[ERR]"
-  readonly _variable="[VAR]"
-  readonly _crit="[CRT]"
+# Signal handler
+function ctrl_c_signal_handler() {
+  if [[ $AE_RUN_LOGGER_ACTIVE == "true" ]]; then
+    log_error "User Interrupt! CTRL-C"
+  else
+    printf "${AE_COLOR_RED}✕ User Interrupt! CTRL-C\n"
+  fi
+  exit 4
+}
 
+# Signal handler
+function term_signal_handler() {
+  if [[ $AE_RUN_LOGGER_ACTIVE == "true" ]]; then
+    log_error "User Interrupt! SIGTERM"
+  else
+    printf "${AE_COLOR_RED}✕ User Interrupt! SIGTERM\n"
+  fi
+  exit 4
+}
+
+# Cleanup handler
+function term_exit_handler() {
+  if [[ $AE_RUN_ENABLE_CLEANUP_HANDLER == "true" ]]; then
+    declare cleanup_status=0
+    log_stage "Cleanup and Exit"
+    if [[ -d ${AE_RUN_TMP_DIR} ]]; then
+      if ! rm -f "${AE_RUN_TMP_DIR}"/*; then
+        cleanup_status=1
+      fi
+
+      if ! rmdir "${AE_RUN_TMP_DIR}"; then
+        cleanup_status=1
+      fi
+    fi
+
+    if [[ $cleanup_status -gt 0 ]]; then
+      log_error "Failed to remove temporary files"
+      log_error "Ignoring this error as they will be cleaned up by systemd"
+    fi
+
+    readonly AE_EXEC_END="$(date +%s)"
+    readonly AE_EXEC_TIME="$((AE_EXEC_END - AE_EXEC_START))"
+    log_debug "$AE_SCRIPT took $AE_EXEC_TIME seconds to complete."
+  fi
 }
 
 function _init_logging() {
-  # Initialize phase 2
-  # Only variables necessary for logging & start logging
-  # Script related variables are defined in _init_script_variables
-  readonly AE_LOG_FILE="$dir"/logs/after-effects.log
+  readonly AE_LOG_FILE="${AE_RUN_BASE_DIR}/logs/after-effects.log"
   local bool_created_logfile
 
   {
-    mkdir -p "$dir"/logs
+    mkdir -p "${AE_RUN_BASE_DIR}/logs"
   } ||
     {
-      printf "${RED}✕ Failed to create logs folder${NC}\n"
+      printf "${AE_COLOR_RED}✕ Failed to create logs folder${AE_COLOR_NC}\n"
       exit 2
     }
   # tmp dir
@@ -128,7 +127,7 @@ function _init_logging() {
     tmp_dir="$(mktemp -d)"
   } ||
     {
-      printf "${RED}✕ Failed to create tmp folder${NC}\n"
+      printf "${AE_COLOR_RED}✕ Failed to create tmp folder${AE_COLOR_NC}\n"
       exit 2
     }
 
@@ -139,7 +138,7 @@ function _init_logging() {
     if touch "${AE_LOG_FILE}"; then
       bool_created_logfile="true"
     else
-      printf "${RED}✕ Failed to create logfile!${NC}\n"
+      printf "${AE_COLOR_RED}✕ Failed to create logfile!${AE_COLOR_NC}\n"
       exit 2
     fi
   fi
@@ -149,19 +148,21 @@ function _init_logging() {
     {
       log_debug "$(_line_fill)"
       [[ $bool_created_logfile == "true" ]] && log_debug "Created log file: ${AE_LOG_FILE}"
+      AE_RUN_LOGGER_ACTIVE="true"
       log_debug "Initialized logging"
     } ||
       {
-        printf "${RED}✕ Failed to write to log file ${AE_LOG_FILE} ${NC}\n"
+        AE_RUN_LOGGER_ACTIVE="false"
+        printf "${AE_COLOR_RED}✕ Failed to write to log file ${AE_LOG_FILE} ${AE_COLOR_NC}\n"
         exit 2
       }
   else
-    printf "${RED}✕ Log file is not writable!${NC}\n"
+    printf "${AE_COLOR_RED}✕ Log file is not writable!${AE_COLOR_NC}\n"
     exit 2
   fi
 }
 
-# Utility Functions
+# Utility functions
 function _line_fill() {
   printf "_______________________________________________________\n"
 }
@@ -171,68 +172,68 @@ function log_and_exit() {
   # ARG-2 exit code int
   local msg="$1"
   local code="${2:-1}"
-  printf "${RED}✖ $msg ${NC}\n"
-  printf "$(date) ${_crit} $msg\n" >>"$AE_LOG_FILE"
+  printf "${AE_COLOR_RED}✖ $msg ${AE_COLOR_NC}\n"
+  printf "$(date) %-10s %s\n" "[CRITICAL]" "$msg" >>"$AE_LOG_FILE"
   exit "${code}"
 }
 
 function log_info() {
   local msg="$1"
   printf "  • $msg\n"
-  printf "$(date) ${_info} $msg\n" >>"$AE_LOG_FILE"
+  printf "$(date) %-10s %s\n" "[INFO]" "$msg" >>"$AE_LOG_FILE"
 }
 
 function log_debug() {
   local msg="$1"
   if [[ ${AE_DEBUG} -gt 0 ]]; then
-    printf "${GRAY}  • $msg ${NC}\n"
+    printf "${AE_COLOR_GRAY}  • $msg ${AE_COLOR_NC}\n"
   fi
-  printf "$(date) ${_debug} $msg\n" >>"$AE_LOG_FILE"
+  printf "$(date) %-10s %s\n" "[DEBUG]" "$msg" >>"$AE_LOG_FILE"
 }
 
 function log_success() {
   local msg="$1"
-  printf "${TEAL}  • $msg ${NC}\n"
-  printf "$(date) ${_success} $msg\n" >>"$AE_LOG_FILE"
+  printf "${AE_COLOR_TEAL}  • $msg ${AE_COLOR_NC}\n"
+  printf "$(date) %-10s %s\n" "[SUCCESS]" "$msg" >>"$AE_LOG_FILE"
 }
 
 function log_warn() {
   local msg="$1"
-  printf "${YELLOW}  • $msg ${NC}\n"
-  printf "$(date) ${_warn} $msg\n" >>"$AE_LOG_FILE"
+  printf "${AE_COLOR_YELLOW}  • $msg ${AE_COLOR_NC}\n"
+  printf "$(date) %-10s %s\n" "[WARNING]" "$msg" >>"$AE_LOG_FILE"
 }
 
 function log_stage() {
   local msg="$1"
-  printf "${MAGENTA}➜ $msg ${NC}\n"
-  printf "$(date) ${_info} $msg\n" >>"$AE_LOG_FILE"
+  printf "${AE_COLOR_MAGENTA}➜ $msg ${AE_COLOR_NC}\n"
+  printf "$(date) %-10s %s\n" "[INFO]" "$msg" >>"$AE_LOG_FILE"
 }
 
 function log_error() {
   local msg="$1"
-  printf "${RED}  • $msg ${NC}\n"
-  printf "$(date) ${_error} $msg\n" >>"$AE_LOG_FILE"
+  printf "${AE_COLOR_RED}  • $msg ${AE_COLOR_NC}\n"
+  printf "$(date) %-10s %s\n" "[ERROR]" "$msg" >>"$AE_LOG_FILE"
 }
 
 function log_dev() {
   local msg="$1"
-  printf "${ORANGE}  • $msg ${NC}\n"
-  printf "$(date) ${_dev} $msg\n" >>"$AE_LOG_FILE"
+  printf "${AE_COLOR_ORANGE}  • $msg ${AE_COLOR_NC}\n"
+  printf "$(date) %-10s %s\n" "[NOTICE]" "$msg" >>"$AE_LOG_FILE"
 }
 
 function log_notice() {
   local msg="$1"
-  printf "${CYAN}  • $msg${NC}\n"
-  printf "$(date) ${_info} $msg\n" >>"$AE_LOG_FILE"
+  printf "${AE_COLOR_CYAN}  • $msg${AE_COLOR_NC}\n"
+  printf "$(date) %-10s %s\n" "[NOTICE]" "$msg" >>"$AE_LOG_FILE"
 }
 
 function log_var() {
   local var
   var="$1"
-  if [[ $AE_DEBUG -gt 0 ]]; then
-    printf "${GRAY}  » %-35s - %-10s${NC}\n" "${var}" "${!var}"
+  if [[ $AE_DEBUG -gt 1 ]]; then
+    printf "${AE_COLOR_GRAY}  » %-35s - %-10s${AE_COLOR_NC}\n" "${var}" "${!var}"
   fi
-  printf "$(date) ${_variable} %-22s - %-10s\n" "${var}" "${!var}" >>"$AE_LOG_FILE"
+  printf "$(date) %-10s %-22s - %-10s\n" "[VERBOSE]" "${var}" "${!var}" >>"$AE_LOG_FILE"
 }
 
 function log_trace() {
@@ -242,9 +243,9 @@ function log_trace() {
   # ARG -1: printf variable for formatting the log
   # Usage command | _add_timestamp_to_logs "$1"
   while IFS= read -r line; do
-    printf "$(date) [EXT] ${1} %s\n" "$line" &>>"$AE_LOG_FILE"
+    printf "$(date) %-10s ${1} %s\n" "[VERBOSE]" "$line" &>>"$AE_LOG_FILE"
     if [[ $AE_DEBUG -gt 1 ]]; then
-      printf "${LOG_GRAY}  » %s %s${NC}\n" "$1" "$line"
+      printf "${AE_COLOR_LGRAY}  » %s %s${AE_COLOR_NC}\n" "$1" "$line"
     fi
   done
 
@@ -281,9 +282,12 @@ function log_property() {
   esac
 }
 
-#shellcheck disable=SC2120
-function detect_distribution() {
-  # Read /etc/os-release and get
+function _init_script_variables() {
+  # Function defines Script variables
+  # Necessary variables used by the script are initialized here. This function
+  # should be called first before choices are made, always.
+
+  # Read /etc/os-release
   local OS_RELEASE_FILE
 
   OS_RELEASE_FILE="${1:-/etc/os-release}"
@@ -301,15 +305,6 @@ function detect_distribution() {
     log_error "Hey, What kind of system is this?"
     log_and_exit "I cannot determine distro/codename!" "5"
   fi
-}
-
-function _init_script_variables() {
-  # Function defines Script variables
-  # Necessary variables used by the script are initialized here. This function
-  # should be called first before choices are made, always.
-
-  #shellcheck disable=SC2119
-  detect_distribution
 
   declare -r architecture="$(dpkg --print-architecture)"
   case "${architecture}" in
@@ -394,9 +389,19 @@ function _init_script_variables() {
 
 }
 
-function _init_print_basic_info() {
+function delete_log_file() {
+  printf "➜ Deleting log file\n"
+  if rm "${AE_RUN_BASE_DIR}/logs/after-effects.log"; then
+    printf "${AE_COLOR_GREEN}• Done${AE_COLOR_NC}\n"
+    exit 0
+  else
+    printf "${AE_COLOR_RED}• Failed!${AE_COLOR_NC}\n"
+    exit 1
+  fi
+}
+
+function __print_runtime_info() {
   # This function logs and displays the Necessary details which helps in debugging.
-  # Should be used after _init_script_variables function.
   log_property "Hostname" "$(hostname)" 1
   log_property "OS" "${AE_DISTRO_PRETTY_NAME}" 1
   log_property "Distribution" "${AE_DISTRO_NAME}" 1
@@ -407,17 +412,8 @@ function _init_print_basic_info() {
 
   log_property "AE_APT_SOURCES_DIR" "${AE_APT_SOURCES_DIR}"
   log_property "AE_APT_KEYRINGS_DIR" "${AE_APT_KEYRINGS_DIR}"
-}
-
-function delete_log_file() {
-  printf "➜ Deleting log file\n"
-  if rm "${dir}/logs/after-effects.log"; then
-    printf "${GREEN}• Done${NC}\n"
-    exit 0
-  else
-    printf "${RED}• Failed!${NC}\n"
-    exit 1
-  fi
+  log_property "AE_RUN_BASE_DIR" "${AE_RUN_BASE_DIR}"
+  log_property "AE_LOG_FILE" "${AE_LOG_FILE}"
 }
 
 function _check_dependencies() {
@@ -1318,7 +1314,6 @@ function add_ppas() {
   log_stage "Adding PPAs"
   local index
   local _ppa_dependencies=(apt-transport-https ca-certificates curl gnupg2 software-properties-common)
-  # Function Reads the file ${dir}/data/ppa.index and adds the ppa one by one.
   # Install dependencies required
   if [ "$AE_RUN_IS_DEBIAN" != "true" ]; then
     log_info "Installing dependencies"
@@ -2284,7 +2279,7 @@ function upgrade_apps() {
     log_info "Something went wrong while listing upgradable packages. Please see the log file or run in debug mode for details."
 
   # only do upgrades if simulate is set to false
-  if [ "$simulate_apt_install" != "true" ]; then
+  if [ "$AE_RUN_CONFIG_SIMULATE" != "true" ]; then
 
     DEBIAN_FRONTEND=noninteractive apt-get -q -o=Dpkg::Use-Pty=0 -y upgrade 2>&1 | log_trace "${AE_LOG_PHASE_APT}"
     DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --allow-remove-essential --allow-change-held-packages -fuy dist-upgrade |
@@ -2315,7 +2310,7 @@ function upgrade_system() {
 }
 
 function purge_not_required() {
-  # This function purges not required packages from the list ${dir}/data/purge.list
+  # This function purges not required packages from the list
   # A flag -d MUST be passed for this option to work
   # Not passing a flag and choosing purge will result in error and action being aborted.
   # Simulate is not properly tested and use it with caution!
@@ -2332,7 +2327,7 @@ function purge_not_required() {
       log_error "Packages to purge is empty!"
       return
     else
-      if [ "$simulate_apt_install" == "true" ]; then
+      if [ "$AE_RUN_CONFIG_SIMULATE" == "true" ]; then
         log_warn "SIMULATE - using --dry-run"
         apt-get -q -o=Dpkg::Use-Pty=0 -y remove --purge --dry-run "${AE_RUN_PARSED_PURGE_PKGS[@]}" 2>&1 | log_trace "${AE_LOG_PHASE_APT}"
       else
@@ -2396,7 +2391,7 @@ function install_apps() {
     else
       log_info "Installing $array packages"
       # Check if simulate is true
-      if [ "$simulate_apt_install" == "true" ]; then
+      if [ "$AE_RUN_CONFIG_SIMULATE" == "true" ]; then
         log_warn "SIMULATE - Using --dry-run"
         apt_extra_args+=("--dry-run")
       fi
@@ -2421,8 +2416,6 @@ function install_apps() {
 }
 
 function install_debs() {
-
-  # Function to get the deb files from DEB_URL in the ${dir}/data/deb_files.list
   # The list file has following format
   # URL to get the deb file  <space or tab> NAME_OF_THE_APP(without spaces)
 
@@ -2452,7 +2445,7 @@ function install_debs() {
 
     log_property "Installing" "$deb_file_name" "1"
     # Check if simulate is true
-    if [ "$simulate_apt_install" == "true" ]; then
+    if [ "$AE_RUN_CONFIG_SIMULATE" == "true" ]; then
       log_warn "SIMULATE - $deb_file_name Installation!"
       dpkg -i --dry-run "$deb_file_name" 2>&1 | log_trace "${AE_LOG_PHASE_DEB}"
 
@@ -2476,7 +2469,7 @@ function install_debs() {
     if [ "$AE_RUN_CONFIG_FLAG_PRESERVE_DEBS" == "false" ]; then
       log_debug "Clean up downloaded packages"
       (
-        rm -f "${dir}/${deb_file_name}" >>"$AE_LOG_FILE"
+        rm -f "${AE_RUN_BASE_DIR}/${deb_file_name}" >>"$AE_LOG_FILE"
       )
     else
       log_notice "Keeping downloaded packages"
@@ -2488,8 +2481,6 @@ function install_debs() {
 }
 
 function install_binaries() {
-
-  # Function to get the binaries files from URL in the ${dir}/data/bin.list
   # The list file has following format
   # <URL>,<filename>
   # If you want to specify relative path you
@@ -2517,7 +2508,7 @@ function install_binaries() {
     if [ $exit_status -eq 0 ]; then
       log_success "OK"
       log_info "Installing  - $bin_name"
-      if [ "$simulate_apt_install" == "true" ]; then
+      if [ "$AE_RUN_CONFIG_SIMULATE" == "true" ]; then
         log_warn "SIMULATE - Skipping install"
       else
         {
@@ -2544,7 +2535,7 @@ function install_snaps() {
 
   log_stage "Install snap packages"
 
-  if [ "$simulate_apt_install" == "true" ]; then
+  if [ "$AE_RUN_CONFIG_SIMULATE" == "true" ]; then
     log_warn "SIMULATE - Skipped installing dependencies!"
   else
     if [[ -f /etc/apt/preferences.d/nosnap.pref ]] && [[ $AE_RUN_SNAP_REMOVE_APT_BLOCK == "true" ]]; then
@@ -2595,7 +2586,7 @@ function install_snaps() {
       fi
       log_debug "Options for ${index} are ${snapd_options[*]}"
 
-      if [ "$simulate_apt_install" == "true" ]; then
+      if [ "$AE_RUN_CONFIG_SIMULATE" == "true" ]; then
         log_warn "SIMULATE - skipping ${index} installation"
       else
 
@@ -2719,7 +2710,7 @@ function _process_menu() {
   Microsoft - Skype            : $AE_RUN_CONFIG_REPO_SKYPE
   Microsoft - Teams            : $AE_RUN_CONFIG_REPO_MSTEAMS
   Microsoft - VSCode           : $AE_RUN_CONFIG_REPO_VSCODE
-  Podman (via from Kubic OBS)  : $AE_RUN_CONFIG_REPO_PODMAN
+  Podman (from Kubic Project)  : $AE_RUN_CONFIG_REPO_PODMAN
   ROS                          : $AE_RUN_CONFIG_REPO_ROS
   ROS2                         : $AE_RUN_CONFIG_REPO_ROS2
   Signal for Desktop           : $AE_RUN_CONFIG_REPO_SIGNAL
@@ -2956,77 +2947,52 @@ function _ci_cloud_and_container_checks() {
 }
 
 function display_version() {
-  printf "%-15s : %s\n" "Version" "${AE_VERSION}"
-  printf "%-15s : %s\n" "Executable" "${AE_SCRIPT}"
+  printf "${AE_SCRIPT} version ${AE_VERSION}"
 }
 
 function display_usage() {
   #Prints out help menu
   cat <<EOF
-
 A Post Installation Script for Ubuntu, Debian,
-Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.${NC}
+Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.
 
-Usage: ${TEAL} [sudo] ./${SCRIPT} ${ORANGE}  [options]${NC}
-${YELLOW}
-Non-Action options (can be run as non-root user)
----------------------------------------------------------${NC}
-[-v | --version]      Display version info.
-[-h | --help]         Display this help message.
-${YELLOW}
-Configuration Options
----------------------------------------------------------${NC}
-[-c | --config-file]  Local yaml config file.
-[-r | --remote-yaml]  Use config yaml from a URL.
-${LIGHT_BLUE}
-The following options are "action" options and will
-make changes to your system depending on tasks selected.
----------------------------------------------------------${NC}
-[-d | --purge]        Enable Purging packages
-[-f | --fix]          Fix codenames for new releases
-[-p | --pre-release]  Same as --fix but for beta/alpha
-                      releases of Ubuntu and Debian.
-[--fix-mode-lts]      Similar to --fix but fallback to
-                      last LTS. MUST be used with --fix.
-                      Only works on Ubuntu and Debian.
-[-k | --keep-debs]    Do not invoke apt-clean & do not
-                      delete downloaded deb packages.
-[-l | --delete-log]   Deletes the logfile.
-                      (log/after-effects.log)
-[-s | --simulate]     Try not to make changes to system
-                      and use --dry-run Please read the
-                      documentation, to know its limits
-                      as everything cannot be simulated.
-${YELLOW}
-Other Options
----------------------------------------------------------${NC}
-[--no-env-checks]     Skip some env checks.
-[--no-version-check]  Skip checking for latest version
-[-A | --autopilot]    Enables AUTOPILOT mode(No Prompts).
-${GRAY}
-Debugging Options
----------------------------------------------------------
-[-nx | --nx]          Just process config but do not
-                      make any changes to the system.
-[--debug]             Prints debug logs.
-[--trace]             Prints trace level logs which
-                      includes output from apt-get
-                      and other commands.
-${TEAL}
-Documentation, License and Version Information
----------------------------------------------------------${NC}
-Version : ${ORANGE}${AE_VERSION}${NC}
-GitHub  : ${LIGHT_BLUE}https://git.io/ubuntu-post-install${NC}
-Docs    : ${LIGHT_BLUE}https://ae.prasadt.com${NC}
-License : ${ORANGE}GPLv3${NC}
----------------------------------------------------------${NC}
+${AE_COLOR_YELLOW}Usage: ${AE_COLOR_NC}
+  [sudo] ./${AE_SCRIPT} [OPTION]... config-file|config-url
+
+${AE_COLOR_TEAL}Options:${AE_COLOR_NC}
+  -v,  --version      Display version info.
+  -h,  --help         Display this help message.
+
+${AE_COLOR_ORANGE}Configuration:${AE_COLOR_NC}
+  -A, --autopilot     Enables AUTOPILOT mode(No Prompts).
+  -d, --purge         Enable Purging packages
+  -f, --fix           Fix codenames for new releases
+  --fix-mode-lts      Use prevoous LTS release as fallback when using --fix(Ubutnu only)
+  -p, --pre-release   Same as --fix but for beta/alpha releases of Ubuntu and Debian.
+  -k, --keep-debs     Do not invoke apt-clean after installing packages.
+  -l, --delete-log    Delete the logfile. (./log/after-effects.log)
+
+${AE_COLOR_PINK}Logging:${AE_COLOR_NC}
+  --debug             Prints debug logs.
+  --trace             Prints trace level logs which includes output from apt-get and other commands.
+
+${AE_COLOR_GRAY}Debugging:
+  -s, --simulate      Try not to make changes to system. See Docs for limitaions!
+  --no-env-checks     Skip some env checks.
+  --no-version-check  Skip checking for latest version
+  --nx                Just process config and exit.
+${AE_COLOR_NC}
+${AE_COLOR_CYAN}Documentation & Bugs: ${AE_COLOR_NC}
+  Report bugs to      ${AE_COLOR_CYAN}https://ae.prasadt.com/issues${AE_COLOR_NC}
+  Documentation       ${AE_COLOR_CYAN}https://ae.prasadt.com${AE_COLOR_NC}
+  License             ${AE_COLOR_ORANGE}GPLv3${AE_COLOR_NC}
 EOF
 }
 
 function _process_non_root_options() {
   # Process command line arguments which does not require root.
   if [[ $# -eq 0 ]]; then
-    printf "${RED}✕ No arguments specified! See Usage Below${NC}\n"
+    printf "${AE_COLOR_RED}✕ No arguments specified! See Usage Below${AE_COLOR_NC}\n"
     display_usage
     exit 1
   elif [[ $# -eq 1 ]]; then
@@ -3036,6 +3002,9 @@ function _process_non_root_options() {
         display_version
         exit 0
         ;;
+      --nx)
+        readonly AE_INTERNAL_NO_EXECUTE="true"
+        ;;
       -l | --delete-log)
         delete_log_file
         ;;
@@ -3044,8 +3013,8 @@ function _process_non_root_options() {
         exit 0
         ;;
       *)
-        printf "${RED}✕ This does not appear to be a valid option${NC}\n"
-        printf "${RED}✕ Non action options take more than one argument!${NC}\n"
+        printf "${AE_COLOR_RED}✕ This does not appear to be a valid option${AE_COLOR_NC}\n"
+        printf "${AE_COLOR_RED}✕ Non action options take more than one argument!${AE_COLOR_NC}\n"
         exit 1
         ;;
       esac
@@ -3054,24 +3023,14 @@ function _process_non_root_options() {
   fi
 }
 
-function process_no_exec_option() {
-  while [ "${1}" != "" ]; do
-    case ${1} in
-    -n | --nx) readonly AE_INTERNAL_NO_EXECUTE="true" ;;
-    esac
-    shift
-  done
-}
-
 function main() {
-  printf "${MAGENTA}➜ Initialization & checks${NC}\n"
-
+  # MASK Exit handler
   _init_core_variables
 
   # Non root options
   _process_non_root_options "$@"
 
-  process_no_exec_option "$@"
+  printf "${MAGENTA}➜ Initialization & checks${NC}\n"
 
   printf "  • Permission checks\n"
 
@@ -3082,11 +3041,14 @@ function main() {
   elif [[ $EUID -ne 0 ]]; then
     printf "${RED}✕ Insufficient privileges!${NC}\n"
     printf "${RED}✕ This script must be run as root.\n"
-    printf "${RED}✕ Please use sudo ${dir}/$AE_SCRIPT to run this as root.\n"
+    printf "${RED}✕ Please use sudo ${AE_RUN_BASE_DIR}/$AE_SCRIPT to run this as root.\n"
     exit 2
   else
     # We were not running in NX mode, and we are root.
     _init_logging
+    AE_RUN_LOGGER_ACTIVE="true"
+    AE_RUN_ENABLE_CLEANUP_HANDLER="true"
+
     log_success "OK! Running as root"
   fi
 
@@ -3094,10 +3056,11 @@ function main() {
   _init_script_variables
 
   # Process command line arguments.
+  declare -a NON_OPTION_ARGS
   while [ "${1}" != "" ]; do
     case ${1} in
     -s | --simulate)
-      readonly simulate_apt_install="true"
+      readonly AE_RUN_CONFIG_SIMULATE="true"
       log_property "Simulate" "ENABLED" "3"
       ;;
     -f | --fix)
@@ -3125,21 +3088,6 @@ function main() {
     -V | --no-version-check)
       AE_RUN_VERSION_CHECK="false"
       ;;
-    -r | --remote-yaml)
-      log_property "Config file" "REMOTE" 4
-      readonly AE_RUN_REMOTE_CONFIG="true"
-      shift
-      readonly AE_REMOTE_CONFIG_URL="${1}"
-      ;;
-    -c | --config-file | --config)
-      shift
-      readonly AE_CONFIG_FILE="${1}"
-      readonly AE_RUN_LOCAL_CONFIG="true"
-      log_property "Config file" "LOCAL" 2
-      ;;
-    -H | --hide-config)
-      log_warn "-H/--hide-config is no longer supported."
-      ;;
     -A | --autopilot)
       log_property "Autopilot" "ENABLED" "2"
       readonly AE_AUTOPILOT="true"
@@ -3157,10 +3105,33 @@ function main() {
     -l | --delete-logfile) log_and_exit "-l or --delete-logfile should be the only argument." "23" ;;
     -v | --version) log_and_exit "-v or --version should be the only argument." "23" ;;
     -h | --help) log_and_exit "-h or --help should be the only argument." "23" ;;
-    *) log_and_exit "Invalid option: $1" "22" ;;
+    -* | --*) log_and_exit "Invalid option: $1" "22" ;;
+    *) NON_OPTION_ARGS+=("${1}") ;;
     esac
     shift
   done
+
+  log_property "Arguments: ${NON_OPTION_ARGS[*]}"
+
+  if [[ ${#NON_OPTION_ARGS[@]} -ne 1 ]]; then
+    log_and_exit "Invalid number of arguments: ${#NON_OPTION_ARGS[@]}, expected 1" 7
+  else
+    log_debug "Validate config"
+    declare -r config_arg="${NON_OPTION_ARGS[0]}"
+
+    case $config_arg in
+    http://* | https://*)
+      log_property "Config file" "REMOTE" 4
+      readonly AE_RUN_REMOTE_CONFIG="true"
+      readonly AE_REMOTE_CONFIG_URL="${config_arg}"
+      ;;
+    *)
+      readonly AE_CONFIG_FILE="${config_arg}"
+      readonly AE_RUN_LOCAL_CONFIG="true"
+      log_property "Config file" "LOCAL" 2
+      ;;
+    esac
+  fi
 
   # Check dependencies
   declare -ar after_effects_core_dependencies=(wget ping ps grep cut tr awk)
@@ -3181,9 +3152,9 @@ function main() {
 
   _check_dependencies "${after_effects_core_dependencies[@]}"
 
-  _init_print_basic_info
+  # Print Runtime Info
+  __print_runtime_info
 
-  # Did I tell you that I need to call My friends over internet?
   _test_internet_connection
 
   log_info "Checking configuration"
@@ -3195,20 +3166,12 @@ function main() {
   log_var "AE_REMOTE_CONFIG_URL"
 
   if [[ -z ${AE_CONFIG_FILE} ]] && [[ -z ${AE_REMOTE_CONFIG_URL} ]]; then
-    log_error "Undefined configuration!"
-    log_and_exit "Did you forget to pass --config-file/--remote-yaml option?" "63"
-
-  fi
-
-  if [ "$AE_RUN_LOCAL_CONFIG" == "true" ] && [ "$AE_RUN_REMOTE_CONFIG" == "true" ]; then
-    log_and_exit "Cannot use local config (-c) with remote YAML (-r) Use one of them." "25"
+    log_error "Undefined configuration!" 63
   fi
 
   if [ "$AE_RUN_LOCAL_CONFIG" == "true" ] && [ ! -f "$AE_CONFIG_FILE" ]; then
     log_and_exit "Config file you have specified is not found or not accessible" "36"
   fi
-
-  log_success "OK"
 
   # Checks CI & Containers If running on EC2/GCP/Azure/DO
   _ci_cloud_and_container_checks
