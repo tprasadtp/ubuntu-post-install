@@ -167,86 +167,147 @@ function _line_fill() {
   printf "_______________________________________________________\n"
 }
 
+function __logger_core() {
+  if [[ $# -ne 2 ]]; then
+    return
+  else
+    declare -r lvl="${1}"
+    declare -r lvl_msg="${2}"
+    declare -r lvl_ts="$(date)"
+    declare lvl_console="1"
+    declare lvl_prefix="  "
+    declare lvl_nc="${AE_COLOR_NC}"
+
+    case ${lvl} in
+    stage)
+      declare -r lvl_str="INFO"
+      declare -r lvl_sym="➜"
+      declare -r lvl_color="${AE_COLOR_MAGENTA}"
+      declare -r lvl_prefix=""
+      ;;
+    trace)
+      declare -r lvl_str="VERBOSE"
+      declare -r lvl_sym="»"
+      declare -r lvl_color="${AE_COLOR_LGRAY}"
+      [[ ${AE_DEBUG} -lt 2 ]] && lvl_console="0"
+      ;;
+    variable | var)
+      declare -r lvl_str="VERBOSE"
+      declare -r lvl_sym="»"
+      declare -r lvl_color="${AE_COLOR_LGRAY}"
+      [[ ${AE_DEBUG} -lt 2 ]] && lvl_console="0"
+      ;;
+    debug)
+      declare -r lvl_str="DEBUG"
+      declare -r lvl_sym="•"
+      declare -r lvl_color="${AE_COLOR_GRAY}"
+      [[ ${AE_DEBUG} -lt 1 ]] && lvl_console="0"
+      ;;
+    info)
+      declare -r lvl_str="INFO"
+      declare -r lvl_sym="•"
+      declare -r lvl_color=""
+      declare -r lvl_nc=""
+      declare -r lvl_console="1"
+      ;;
+    success)
+      declare -r lvl_str="INFO"
+      declare -r lvl_sym="•"
+      declare -r lvl_color="${AE_COLOR_TEAL}"
+      ;;
+    dev)
+      declare -r lvl_str="NOTICE"
+      declare -r lvl_sym="•"
+      declare -r lvl_color="${AE_COLOR_ORANGE}"
+      ;;
+    notice)
+      declare -r lvl_str="NOTICE"
+      declare -r lvl_sym="•"
+      declare -r lvl_color="${AE_COLOR_CYAN}"
+      ;;
+    warn | warning)
+      declare -r lvl_str="WARNING"
+      declare -r lvl_sym="•"
+      declare -r lvl_color="${AE_COLOR_YELLOW}"
+      ;;
+    error)
+      declare -r lvl_str="ERROR"
+      declare -r lvl_sym="✖"
+      declare -r lvl_color="${AE_COLOR_RED}"
+      ;;
+    critical)
+      declare -r lvl_str="CRITICAL"
+      declare -r lvl_sym="✖"
+      declare -r lvl_color="${AE_COLOR_RED}"
+      declare -r lvl_prefix=""
+      ;;
+    esac
+  fi
+
+  if [[ $lvl_console -eq 1 ]]; then
+    printf "%s%s%s %s %s\n" "${lvl_color}" "${lvl_prefix}" "${lvl_sym}" "${lvl_msg}" "${lvl_nc}"
+  fi
+  printf "%s %-30s %-10s %s\n" "${lvl_ts}" "(${FUNCNAME[2]})" "[${lvl_str}]" "$lvl_msg" >>"$AE_LOG_FILE"
+
+}
+
 function log_and_exit() {
   # ARG-1 log msg
   # ARG-2 exit code int
   local msg="$1"
   local code="${2:-1}"
-  printf "${AE_COLOR_RED}✖ $msg ${AE_COLOR_NC}\n"
-  printf "$(date) %-10s %s\n" "[CRITICAL]" "$msg" >>"$AE_LOG_FILE"
+  __logger_core "critical" "$msg"
   exit "${code}"
 }
 
 function log_info() {
-  local msg="$1"
-  printf "  • $msg\n"
-  printf "$(date) %-10s %s\n" "[INFO]" "$msg" >>"$AE_LOG_FILE"
+  __logger_core "info" "${1}"
 }
 
 function log_debug() {
-  local msg="$1"
-  if [[ ${AE_DEBUG} -gt 0 ]]; then
-    printf "${AE_COLOR_GRAY}  • $msg ${AE_COLOR_NC}\n"
-  fi
-  printf "$(date) %-10s %s\n" "[DEBUG]" "$msg" >>"$AE_LOG_FILE"
+  __logger_core "debug" "${1}"
 }
 
 function log_success() {
-  local msg="$1"
-  printf "${AE_COLOR_TEAL}  • $msg ${AE_COLOR_NC}\n"
-  printf "$(date) %-10s %s\n" "[SUCCESS]" "$msg" >>"$AE_LOG_FILE"
+  __logger_core "success" "${1}"
 }
 
 function log_warn() {
-  local msg="$1"
-  printf "${AE_COLOR_YELLOW}  • $msg ${AE_COLOR_NC}\n"
-  printf "$(date) %-10s %s\n" "[WARNING]" "$msg" >>"$AE_LOG_FILE"
+  __logger_core "warn" "${1}"
 }
 
 function log_stage() {
   local msg="$1"
-  printf "${AE_COLOR_MAGENTA}➜ $msg ${AE_COLOR_NC}\n"
-  printf "$(date) %-10s %s\n" "[INFO]" "$msg" >>"$AE_LOG_FILE"
+  __logger_core "stage" "${msg}"
 }
 
 function log_error() {
-  local msg="$1"
-  printf "${AE_COLOR_RED}  • $msg ${AE_COLOR_NC}\n"
-  printf "$(date) %-10s %s\n" "[ERROR]" "$msg" >>"$AE_LOG_FILE"
+  __logger_core "error" "${1}"
 }
 
 function log_dev() {
-  local msg="$1"
-  printf "${AE_COLOR_ORANGE}  • $msg ${AE_COLOR_NC}\n"
-  printf "$(date) %-10s %s\n" "[NOTICE]" "$msg" >>"$AE_LOG_FILE"
+  __logger_core "dev" "${1}"
 }
 
 function log_notice() {
-  local msg="$1"
-  printf "${AE_COLOR_CYAN}  • $msg${AE_COLOR_NC}\n"
-  printf "$(date) %-10s %s\n" "[NOTICE]" "$msg" >>"$AE_LOG_FILE"
+  __logger_core "notice" "${1}"
 }
 
 function log_var() {
   local var
   var="$1"
-  if [[ $AE_DEBUG -gt 1 ]]; then
-    printf "${AE_COLOR_GRAY}  » %-35s - %-10s${AE_COLOR_NC}\n" "${var}" "${!var}"
-  fi
-  printf "$(date) %-10s %-22s - %-10s\n" "[VERBOSE]" "${var}" "${!var}" >>"$AE_LOG_FILE"
+  __logger_core "variable" "$(printf "%-35s - %-10s\n" "${var}" "${!var}")"
 }
 
 function log_trace() {
+  local line msg
   # This function adds time stamp to logs without using external utilities
   # Output will be automatically written to $AE_LOG_FILE
   # Arguments : 1
   # ARG -1: printf variable for formatting the log
   # Usage command | _add_timestamp_to_logs "$1"
   while IFS= read -r line; do
-    printf "$(date) %-10s ${1} %s\n" "[VERBOSE]" "$line" &>>"$AE_LOG_FILE"
-    if [[ $AE_DEBUG -gt 1 ]]; then
-      printf "${AE_COLOR_LGRAY}  » %s %s${AE_COLOR_NC}\n" "$1" "$line"
-    fi
+    __logger_core "trace" "$(printf "%s %s" "${1:-UNKNOWN}" "$line")"
   done
 
 }
@@ -272,25 +333,22 @@ function log_property() {
   __msg_string="$(printf "${fmt} : %s" "${desc}" "${value}")"
 
   case ${lvl} in
-  0) log_debug "${__msg_string}" ;;
-  1) log_info "${__msg_string}" ;;
-  2) log_notice "${__msg_string}" ;;
-  3) log_dev "${__msg_string}" ;;
-  4) log_warn "${__msg_string}" ;;
-  5) log_error "${__msg_string}" ;;
-  *) log_debug "${__msg_string}" ;;
+  0) __logger_core "debug" "${__msg_string}" ;;
+  1) __logger_core "info" "${__msg_string}" ;;
+  2) __logger_core "notice" "${__msg_string}" ;;
+  3) __logger_core "dev" "${__msg_string}" ;;
+  4) __logger_core "warn" "${__msg_string}" ;;
+  5) __logger_core "error" "${__msg_string}" ;;
+  *) __logger_core "debug" "${__msg_string}" ;;
   esac
 }
 
-function _init_script_variables() {
+function __setup_platform_variables() {
   # Function defines Script variables
   # Necessary variables used by the script are initialized here. This function
   # should be called first before choices are made, always.
+  declare -r OS_RELEASE_FILE="/etc/os-release"
 
-  # Read /etc/os-release
-  local OS_RELEASE_FILE
-
-  OS_RELEASE_FILE="${1:-/etc/os-release}"
   if [[ -r "${OS_RELEASE_FILE}" ]]; then
     log_debug "Found os-release file ${OS_RELEASE_FILE}"
     # Read Version Code Name
@@ -560,7 +618,7 @@ function _fix_ubuntu_derivatives() {
 
 }
 
-function _test_internet_connection() {
+function __test_internet() {
   # Function to check internet connection
   log_info "Checking connectivity"
   if wget --tries=2 --timeout=10 "$AE_PING_URL" -O /dev/null -o /dev/null; then
@@ -1235,7 +1293,7 @@ function _warn_about_fix_codename() {
   log_warn "when they become available for ${AE_UBUNTU_CODENAME_UPCOMING}${NC}\n"
 }
 
-function _fix_repo_not_available_upcoming_release() {
+function __fix_prerelease() {
   # If repository is not available for upcoming  release, this uses last stable release
   # Aka if the pre-release release is 18.04 it might use 17.10 if used with --fix, it will use 18.04 repos.
   # With Debian If release is 11, when used with this flag we will use Debian 10 repos.
@@ -1270,7 +1328,6 @@ function _fix_repo_not_available_upcoming_release() {
   else
     log_debug "Feature --pre-release is disabled."
     AE_RUN_FIX_ACTIVE="false"
-
   fi
 }
 
@@ -1387,7 +1444,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
   _install_pre_requisites
   # if repository is not available for latest ubuntu release, use previous release
   # Be careful, things might not be compatible
-  _fix_repo_not_available_upcoming_release
+  __fix_prerelease
   _fix_repo_not_available
 
   # OBS
@@ -1484,41 +1541,36 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
     log_debug "Distro is not Debian, skip adding debian specific components!"
   fi # debian check
 
-  # AMD64 only
-  if [ "$AE_ARCH" != "amd64" ]; then
-    log_warn "Google Chrome, Spotify, Mendeley, Signal and WineHQ are only supported on amd64 architecture!"
-  else
-
-    log_debug "Arch is 64 Bit. Enabled adding 64 bit repos."
-    # 64 bit Only REPOS
-    # Add Google Chrome
-    if [ "$AE_RUN_CONFIG_REPO_CHROME" == "true" ]; then
+  # Add Google Chrome
+  if [ "$AE_RUN_CONFIG_REPO_CHROME" == "true" ]; then
+    if [[ ${AE_ARCH} == "amd64" ]]; then
       log_info "Google Chrome"
-      log_debug "Adding Google package signing keys"
+      log_debug "Adding Google Linux pacakage signing keys"
 
-      __add_repo_keys --format "asc" \
+      __add_repo_keys \
+        --format "asc" \
         --file-prefix "google" \
         --key-url https://dl.google.com/linux/linux_signing_key.pub
 
       log_debug "Create defaults file for google chrome(stable)"
       if printf "repo_add_once=\"false\"\nrepo_reenable_on_distupgrade=\"true\"" >/etc/default/google-chrome; then
-        log_success "OK"
+        log_debug "Added /etc/default/google-chrome"
       else
-        log_warn "Configured sources.list  file might be overwritten by Google-Chrome!"
+        log_warn "Configured sources might be overwritten by Google-Chrome!"
       fi
 
       log_debug "Create defaults file for google chrome(beta)"
       if printf "repo_add_once=\"false\"\nrepo_reenable_on_distupgrade=\"true\"" >/etc/default/google-chrome-beta; then
-        log_success "OK"
+        log_debug "Added /etc/default/google-chrome-beta"
       else
-        log_warn "Configured sources.list  file might be overwritten by Google-Chrome!"
+        log_warn "Configured sources might be overwritten by Google-Chrome!"
       fi
 
       log_debug "Create defaults file for google chrome(dev)"
       if printf "repo_add_once=\"false\"\nrepo_reenable_on_distupgrade=\"true\"" >/etc/default/google-chrome-dev; then
-        log_success "OK"
+        log_debug "Added /etc/default/google-chrome-dev"
       else
-        log_warn "Configured sources.list  file might be overwritten by Google-Chrome!"
+        log_warn "Configured sources might be overwritten by Google-Chrome!"
       fi
 
       if echo "deb [arch=amd64 signed-by=${AE_APT_KEYRINGS_DIR}/google.gpg] http://dl.google.com/linux/chrome/deb/ stable main #Google-Chrome" >${AE_APT_SOURCES_DIR}/google-chrome.list; then
@@ -1526,12 +1578,17 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       else
         log_error "Adding Google Chrome Repository failed"
       fi
-    else
-      log_debug "Skipped Google chrome repository"
-    fi
 
-    # Spotify client
-    if [ "$AE_RUN_CONFIG_REPO_SPOTIFY" == "true" ]; then
+    else
+      log_error "Google Chrome is not supported on this architecture($AE_ARCH)"
+    fi
+  else
+    log_debug "Skipped Google chrome repository"
+  fi
+
+  # Spotify client
+  if [ "$AE_RUN_CONFIG_REPO_SPOTIFY" == "true" ]; then
+    if [[ ${AE_ARCH} == "amd64" ]]; then
       log_info "Spotify"
       __add_repo_keys --format "asc" \
         --file-prefix "spotify" \
@@ -1542,13 +1599,16 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       else
         log_error "Adding Spotify Repository Failed"
       fi
-
     else
-      log_debug "Skipped adding Spotify repository"
+      log_error "Spotify Desktop is not supported on this architecture(${AE_ARCH})"
     fi
+  else
+    log_debug "Skipped adding Spotify repository"
+  fi
 
-    # Skype
-    if [ "$AE_RUN_CONFIG_REPO_SKYPE" == "true" ]; then
+  # Skype
+  if [ "$AE_RUN_CONFIG_REPO_SKYPE" == "true" ]; then
+    if [[ ${AE_ARCH} == "amd64" ]]; then
       log_info "Skype"
       __add_repo_keys --format "asc" \
         --file-prefix "skype" \
@@ -1559,13 +1619,16 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       else
         log_error "Adding Skype for linux repository failed"
       fi
-
     else
-      log_debug "Skipped Skype for Linux."
+      log_error "Skype for Linux is not supported on this architecture(${AE_ARCH})"
     fi
+  else
+    log_debug "Skipped Skype for Linux."
+  fi
 
-    # Signal App
-    if [ "$AE_RUN_CONFIG_REPO_SIGNAL" == "true" ]; then
+  # Signal App
+  if [ "$AE_RUN_CONFIG_REPO_SIGNAL" == "true" ]; then
+    if [[ ${AE_ARCH} == "amd64" ]]; then
       log_info "Signal for Desktop"
       __add_repo_keys --format "asc" \
         --file-prefix "signal-desktop" \
@@ -1576,13 +1639,17 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       else
         log_error "Failed to addd Signal for desktop repository!"
       fi
-
     else
-      log_debug "Skipped adding Signal for desktop repository"
+      log_error "Signal for Desktop is not supported on this architecture(${AE_ARCH})"
     fi
+  else
+    log_debug "Skipped adding Signal for desktop repository"
+  fi
 
-    # Mendeley Desktop App
-    if [ "$AE_RUN_CONFIG_REPO_MENDELEY" == "true" ]; then
+  # Mendeley Desktop App
+  if [ "$AE_RUN_CONFIG_REPO_MENDELEY" == "true" ]; then
+    if [[ ${AE_ARCH} == "amd64" ]]; then
+
       log_info "Mendeley desktop"
       apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6F036044 2>&1 | log_trace "${AE_LOG_PHASE_APTKEY}" ||
         log_error "Adding Mendeley Desktop Key Failed"
@@ -1592,13 +1659,17 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       else
         log_error "Failed to add mendeley repository!"
       fi
-
     else
-      log_debug "Skipped adding Mendeley repository"
+      log_error "Mendeley Desktop is not supported on this architecture(${AE_ARCH})"
     fi
 
-    #Wine HQ
-    if [ "$AE_RUN_CONFIG_REPO_WINEHQ" == "true" ]; then
+  else
+    log_debug "Skipped adding Mendeley repository"
+  fi
+
+  #Wine HQ
+  if [ "$AE_RUN_CONFIG_REPO_WINEHQ" == "true" ]; then
+    if [[ ${AE_ARCH} == "amd64" ]]; then
       log_info "WineHQ"
       if [[ ${AE_RUN_CODENAME} == "focal" ]] || [[ ${AE_RUN_CODENAME} == "groovy" ]] ||
         [[ ${AE_RUN_CODENAME} == "hirsute" ]] || [[ ${AE_RUN_CODENAME} == "bullseye" ]]; then
@@ -1616,10 +1687,10 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
         log_warn "For more information visit https://forum.winehq.org/viewtopic.php?f=8&t=32192"
       fi
     else
-      log_info "Skipped adding WineHQ."
+      log_error "WineHQ is not supported on this architecture(${AE_ARCH})"
     fi
-
-  # End if AE_ARCH==64 Check
+  else
+    log_info "Skipped adding WineHQ."
   fi
 
   # Google Cloud SDK
@@ -1630,7 +1701,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       --file-prefix "google-cloud-packaging" \
       --key-url https://packages.cloud.google.com/apt/doc/apt-key.gpg
   else
-    log_debug "Not adding Google cloud APT keys"
+    log_debug "Not adding Google Cloud Package keys"
   fi
 
   # Google Cloud SDK
@@ -1656,7 +1727,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
         log_error "Adding GCSFUSE repository failed"
       fi
     else
-      log_error "GCSFUSE is not supported on this architecture!"
+      log_error "GCSFUSE is not supported on this architecture(${AE_ARCH})"
     fi
 
   else
@@ -1667,7 +1738,8 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
   # shellcheck disable=SC2235
   if [[ ($AE_ARCH == "amd64") && ($AE_RUN_CONFIG_REPO_AZURECLI == "true" || ${AE_RUN_CONFIG_REPO_EDGE} == "true" || ${AE_RUN_CONFIG_REPO_MSTEAMS} == "true") ]]; then
     log_debug "Adding Microsoft keys."
-    __add_repo_keys --format "asc" \
+    __add_repo_keys \
+      --format "asc" \
       --file-prefix "microsoft" \
       --key-url https://packages.microsoft.com/keys/microsoft.asc
   elif [[ ${AE_RUN_CONFIG_REPO_VSCODE} == "true" ]]; then
@@ -1717,26 +1789,26 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
 
       log_debug "Create defaults file for edge browser(stable)"
       if printf "repo_add_once=\"false\"\nrepo_reenable_on_distupgrade=\"false\"" >/etc/default/microsoft-edge; then
-        log_success "OK"
+        log_debug "Added /etc/default/microsoft-edge"
       else
         log_warn "Failed to write /etc/default/etc/default/microsoft-edge"
-        log_warn "Configured sources.list  file might be overwritten by Microsoft Edge Browser!"
+        log_warn "Configured sources might be overwritten by Microsoft Edge Browser!"
       fi
 
       log_debug "Create defaults file for edge browser(beta)"
       if printf "repo_add_once=\"false\"\nrepo_reenable_on_distupgrade=\"false\"" >/etc/default/microsoft-edge-beta; then
-        log_success "OK"
+        log_debug "Added /etc/default/microsoft-edge-beta"
       else
         log_warn "Failed to write /etc/default/etc/default/microsoft-edge-beta"
-        log_warn "Configured sources.list  file might be overwritten by Microsoft Edge Browser!"
+        log_warn "Configured sources might be overwritten by Microsoft Edge Browser!"
       fi
 
       log_debug "Create defaults file for edge browser(dev)"
       if printf "repo_add_once=\"false\"\nrepo_reenable_on_distupgrade=\"false\"" >/etc/default/microsoft-edge-dev; then
-        log_success "OK"
+        log_debug "Added /etc/default/microsoft-edge-dev"
       else
         log_warn "Failed to write /etc/default/etc/default/microsoft-edge"
-        log_warn "Configured sources.list  file might be overwritten by Microsoft Edge Browser!"
+        log_warn "Configured sources might be overwritten by Microsoft Edge Browser!"
       fi
 
       if echo "deb [arch=$AE_ARCH signed-by=${AE_APT_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main #Microsoft Edge" >${AE_APT_SOURCES_DIR}/microsoft-edge.list; then
@@ -1786,7 +1858,6 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
   fi
 
   # Github CLI
-
   if [ "$AE_RUN_CONFIG_REPO_GH" == "true" ]; then
     log_info "GitHub CLI"
     __add_repo_keys --format "gpg" \
@@ -1932,10 +2003,10 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
 
       log_debug "Create defaults file for brave browser"
       if printf "repo_add_once=\"false\"\nrepo_reenable_on_distupgrade=\"false\"" >/etc/default/brave-browser; then
-        log_success "OK"
+        log_debug "Added /etc/default/brave-browser"
       else
         log_warn "Failed to write /etc/default/brave-browser"
-        log_warn "Configured sources.list  file might be overwritten by Brave Browser!"
+        log_warn "Configured sources might be overwritten by Brave Browser!"
       fi
       # We do not add beta and nightly as they have different signing keys!
 
@@ -2602,7 +2673,7 @@ function install_snaps() {
 
 }
 
-function _autopilot_check_task_flag_and_run() {
+function __autopilot_run_task() {
   # checks flags set for each task/function and runs it
   # Arguments Two
   # ARG -1 : global flag variable to check
@@ -2881,7 +2952,7 @@ function _process_menu() {
   fi
 }
 
-function _ci_cloud_and_container_checks() {
+function __runtime_env_checks() {
 
   if [ "$bool_skip_env_checks" == "true" ]; then
     log_debug "Skipping Run environment checks"
@@ -2956,14 +3027,14 @@ function display_usage() {
 A Post Installation Script for Ubuntu, Debian,
 Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.
 
-${AE_COLOR_YELLOW}Usage: ${AE_COLOR_NC}
+${AE_COLOR_YELLOW}USAGE: ${AE_COLOR_NC}
   [sudo] ./${AE_SCRIPT} [OPTION]... config-file|config-url
 
-${AE_COLOR_TEAL}Options:${AE_COLOR_NC}
+${AE_COLOR_TEAL}OPTIONS:${AE_COLOR_NC}
   -v,  --version      Display version info.
   -h,  --help         Display this help message.
 
-${AE_COLOR_ORANGE}Configuration:${AE_COLOR_NC}
+${AE_COLOR_ORANGE}CONFIGURATION:${AE_COLOR_NC}
   -A, --autopilot     Enables AUTOPILOT mode(No Prompts).
   -d, --purge         Enable Purging packages
   -f, --fix           Fix codenames for new releases
@@ -2972,11 +3043,11 @@ ${AE_COLOR_ORANGE}Configuration:${AE_COLOR_NC}
   -k, --keep-debs     Do not invoke apt-clean after installing packages.
   -l, --delete-log    Delete the logfile. (./log/after-effects.log)
 
-${AE_COLOR_PINK}Logging:${AE_COLOR_NC}
+${AE_COLOR_PINK}LOGS:${AE_COLOR_NC}
   --debug             Prints debug logs.
   --trace             Prints trace level logs which includes output from apt-get and other commands.
 
-${AE_COLOR_GRAY}Debugging:
+${AE_COLOR_GRAY}DEBUG:
   -s, --simulate      Try not to make changes to system. See Docs for limitaions!
   --no-env-checks     Skip some env checks.
   --no-version-check  Skip checking for latest version
@@ -3012,7 +3083,7 @@ function _process_non_root_options() {
         display_usage
         exit 0
         ;;
-      *)
+      -*)
         printf "${AE_COLOR_RED}✕ This does not appear to be a valid option${AE_COLOR_NC}\n"
         printf "${AE_COLOR_RED}✕ Non action options take more than one argument!${AE_COLOR_NC}\n"
         exit 1
@@ -3027,10 +3098,10 @@ function main() {
   # MASK Exit handler
   _init_core_variables
 
-  # Non root options
+  # Non root optionsoptions
   _process_non_root_options "$@"
 
-  printf "${MAGENTA}➜ Initialization & checks${NC}\n"
+  printf "${AE_COLOR_MAGENTA}➜ Initialization & checks${AE_COLOR_NC}\n"
 
   printf "  • Permission checks\n"
 
@@ -3053,7 +3124,7 @@ function main() {
   fi
 
   # Init vars
-  _init_script_variables
+  __setup_platform_variables
 
   # Process command line arguments.
   declare -a NON_OPTION_ARGS
@@ -3105,7 +3176,7 @@ function main() {
     -l | --delete-logfile) log_and_exit "-l or --delete-logfile should be the only argument." "23" ;;
     -v | --version) log_and_exit "-v or --version should be the only argument." "23" ;;
     -h | --help) log_and_exit "-h or --help should be the only argument." "23" ;;
-    -* | --*) log_and_exit "Invalid option: $1" "22" ;;
+    -*) log_and_exit "Invalid option: $1" "22" ;;
     *) NON_OPTION_ARGS+=("${1}") ;;
     esac
     shift
@@ -3155,7 +3226,7 @@ function main() {
   # Print Runtime Info
   __print_runtime_info
 
-  _test_internet_connection
+  __test_internet
 
   log_info "Checking configuration"
 
@@ -3174,7 +3245,7 @@ function main() {
   fi
 
   # Checks CI & Containers If running on EC2/GCP/Azure/DO
-  _ci_cloud_and_container_checks
+  __runtime_env_checks
 
   # Take care of Mint and other distros
   _fix_ubuntu_derivatives
@@ -3208,15 +3279,15 @@ function main() {
     log_success "Autopilot is ENABLED"
     sleep 3
     #log_and_exit "Because I can" "255"
-    _autopilot_check_task_flag_and_run "$AE_RUN_CONFIG_TASK_UPDATE" "update_repos_as_task"
-    _autopilot_check_task_flag_and_run "$AE_RUN_CONFIG_TASK_UPGRADE" "upgrade_apps"
-    _autopilot_check_task_flag_and_run "$AE_RUN_CONFIG_TASK_REPO" "add_repositories"
-    _autopilot_check_task_flag_and_run "$AE_RUN_CONFIG_TASK_PPA" "add_ppas"
-    _autopilot_check_task_flag_and_run "$AE_RUN_CONFIG_TASK_APT" "install_apps"
-    _autopilot_check_task_flag_and_run "$AE_RUN_CONFIG_TASK_DEBS" "install_debs"
-    _autopilot_check_task_flag_and_run "$AE_RUN_CONFIG_TASK_PURGE" "purge_not_required"
-    _autopilot_check_task_flag_and_run "$AE_RUN_CONFIG_TASK_BIN" "install_binaries"
-    _autopilot_check_task_flag_and_run "$AE_RUN_CONFIG_TASK_SNAPS" "install_snaps"
+    __autopilot_run_task "$AE_RUN_CONFIG_TASK_UPDATE" "update_repos_as_task"
+    __autopilot_run_task "$AE_RUN_CONFIG_TASK_UPGRADE" "upgrade_apps"
+    __autopilot_run_task "$AE_RUN_CONFIG_TASK_REPO" "add_repositories"
+    __autopilot_run_task "$AE_RUN_CONFIG_TASK_PPA" "add_ppas"
+    __autopilot_run_task "$AE_RUN_CONFIG_TASK_APT" "install_apps"
+    __autopilot_run_task "$AE_RUN_CONFIG_TASK_DEBS" "install_debs"
+    __autopilot_run_task "$AE_RUN_CONFIG_TASK_PURGE" "purge_not_required"
+    __autopilot_run_task "$AE_RUN_CONFIG_TASK_BIN" "install_binaries"
+    __autopilot_run_task "$AE_RUN_CONFIG_TASK_SNAPS" "install_snaps"
   else
     sleep 2
     log_notice "Autopilot is Inactive"
