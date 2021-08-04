@@ -18,13 +18,24 @@ This script is built for one purpose only. Automating post installation tasks on
 
 ## Step 1: Get the script
 
+### Latest Stable Release (Recommended)
+
 ```bash
 wget https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O after-effects
 wget https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha256sums.txt -O sha256sums.txt
 sha256sum -c sha256sums.txt
 ```
 
-## Step 2: Update the config
+### Master Branch
+
+```bash
+wget https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/after-effects -O after-effects
+```
+
+!!! warning "Unstable"
+    - This code might not have passed all CI checks and should be considered as unstable!
+
+## Step 2: Update/Create config
 
 Update the config file to suit your needs. Please see [Configuration](/configuration/) & [Tasks](/tasks/) for more details. Some example configs can be found [here](https://github.com/tprasadtp/ubuntu-post-install/tree/master/config).
 

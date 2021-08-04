@@ -64,7 +64,10 @@ config:
     - gnome-mines
   # PPA
   ppa:
+    # With prefix ppa:
     - ppa:yubico/stable
+    # No PRefix ppa:
+    - kicad/kicad-5.1-releases
   # Install components
   # APT Packages, Python Modules, Debian packages
   install:

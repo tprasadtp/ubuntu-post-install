@@ -26,8 +26,8 @@ sha256sum -c sha256sums.txt
 
 #### Using latest master branch
 
-```bash
-wget https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/after-effects -o after-effects
+```console
+wget https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/after-effects -O after-effects
 ```
 
 ### 2. Setup your YAML configuration file
@@ -46,7 +46,7 @@ Sample configuration can be found in `config` directory.
 
 ```console
   chmod +x after-effects
-  sudo ./after-effects --config-file <path-to-your-config>
+  sudo ./after-effects <path-to-your-config or url to config file>
 ```
 
 ## See in Action

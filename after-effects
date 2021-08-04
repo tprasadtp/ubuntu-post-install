@@ -1389,6 +1389,14 @@ function add_ppas() {
         log_debug "Found and empty entry, moving on to next"
         continue
       fi
+
+      if [[ ! $index =~ ^ppa:* ]]; then
+        log_debug "PPA - ${index} does not start with prefix ppa: adding it."
+        index="ppa:${index}"
+      else
+        log_debug "PPA - ${index} starts with prefix ppa:"
+      fi
+
       if add-apt-repository -y "$index" 2>&1 | log_trace "${AE_LOG_PHASE_PPA}"; then
         log_success "Success!"
       else

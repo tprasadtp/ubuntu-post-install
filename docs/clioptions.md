@@ -1,5 +1,47 @@
 # Command line options
 
+## Help
+
+Displays this help option.
+
+<pre><font color="#005FD7">./after-effects</font> <font color="#00AFFF">--help</font>
+A Post Installation Script for Ubuntu, Debian,
+Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.
+
+<font color="#FFD700">Usage: </font>
+  [sudo] ./after-effects [OPTION]... config-file|config-url
+
+<font color="#D7FF87">Options:</font>
+  -v,  --version      Display version info.
+  -h,  --help         Display this help message.
+
+<font color="#FF8700">Configuration:</font>
+  -A, --autopilot     Enables AUTOPILOT mode(No Prompts).
+  -d, --purge         Enable Purging packages
+  -f, --fix           Fix codenames for new releases
+  --fix-mode-lts      Use prevoous LTS release as fallback when using --fix(Ubutnu only)
+  -p, --pre-release   Same as --fix but for beta/alpha releases of Ubuntu and Debian.
+  -k, --keep-debs     Do not invoke apt-clean after installing packages.
+  -l, --delete-log    Delete the logfile. (./log/after-effects.log)
+
+<font color="#FF87D7">Logging:</font>
+  --debug             Prints debug logs.
+  --trace             Prints trace level logs which includes output from apt-get and other commands.
+
+<font color="#949494">Debugging:</font>
+<font color="#949494">  -s, --simulate      Try not to make changes to system. See Docs for limitaions!</font>
+<font color="#949494">  --no-env-checks     Skip some env checks.</font>
+<font color="#949494">  --no-version-check  Skip checking for latest version</font>
+<font color="#949494">  --nx                Just process config and exit.</font>
+
+<font color="#00FFFF">Documentation &amp; Bugs: </font>
+  Report bugs to      <font color="#00FFFF">https://ae.prasadt.com/issues</font>
+  Documentation       <font color="#00FFFF">https://ae.prasadt.com</font>
+  License             <font color="#FF8700">GPLv3</font>
+
+</pre>
+
+
 ## Simulating package installation
 
 !!! snippet "Usage"
@@ -181,45 +223,3 @@ Autopilot mode is designed to run the script in a non interactive manner. Please
     ```console
     ./after-effects --autopilot <config-file|config-url>
     ```
-
-
-## Help
-
-Displays this help option.
-
-<pre><font color="#005FD7">./after-effects</font> <font color="#00AFFF">--help</font>
-A Post Installation Script for Ubuntu, Debian,
-Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.
-
-<font color="#FFD700">Usage: </font>
-  [sudo] ./after-effects [OPTION]... config-file|config-url
-
-<font color="#D7FF87">Options:</font>
-  -v,  --version      Display version info.
-  -h,  --help         Display this help message.
-
-<font color="#FF8700">Configuration:</font>
-  -A, --autopilot     Enables AUTOPILOT mode(No Prompts).
-  -d, --purge         Enable Purging packages
-  -f, --fix           Fix codenames for new releases
-  --fix-mode-lts      Use prevoous LTS release as fallback when using --fix(Ubutnu only)
-  -p, --pre-release   Same as --fix but for beta/alpha releases of Ubuntu and Debian.
-  -k, --keep-debs     Do not invoke apt-clean after installing packages.
-  -l, --delete-log    Delete the logfile. (./log/after-effects.log)
-
-<font color="#FF87D7">Logging:</font>
-  --debug             Prints debug logs.
-  --trace             Prints trace level logs which includes output from apt-get and other commands.
-
-<font color="#949494">Debugging:</font>
-<font color="#949494">  -s, --simulate      Try not to make changes to system. See Docs for limitaions!</font>
-<font color="#949494">  --no-env-checks     Skip some env checks.</font>
-<font color="#949494">  --no-version-check  Skip checking for latest version</font>
-<font color="#949494">  --nx                Just process config and exit.</font>
-
-<font color="#00FFFF">Documentation &amp; Bugs: </font>
-  Report bugs to      <font color="#00FFFF">https://ae.prasadt.com/issues</font>
-  Documentation       <font color="#00FFFF">https://ae.prasadt.com</font>
-  License             <font color="#FF8700">GPLv3</font>
-
-</pre>

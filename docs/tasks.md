@@ -97,9 +97,8 @@ Podman repository(provided by Kubic project) also provides golang package for so
 
 ## Add personal package archives (PPA)
 
-- Array of PPAs including prefix `ppa:`. Inline comments are **NOT** allowed.
+- List of PPAs
 - Logs will  show entry in the format `[date and time] [  PPA-Logs  ] <log>`
-
 
 ## Install apt packages
 
