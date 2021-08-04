@@ -4,18 +4,18 @@
 
 Displays this help option.
 
-<pre><font color="#005FD7">./after-effects</font> <font color="#00AFFF">--help</font>
+<pre>./after-effects <font color="#00AFFF">-h</font>
 A Post Installation Script for Ubuntu, Debian,
 Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.
 
-<font color="#FFD700">Usage: </font>
+<font color="#FFD700">USAGE: </font>
   [sudo] ./after-effects [OPTION]... config-file|config-url
 
-<font color="#D7FF87">Options:</font>
+<font color="#D7FF87">OPTIONS:</font>
   -v,  --version      Display version info.
   -h,  --help         Display this help message.
 
-<font color="#FF8700">Configuration:</font>
+<font color="#FF8700">CONFIGURATION:</font>
   -A, --autopilot     Enables AUTOPILOT mode(No Prompts).
   -d, --purge         Enable Purging packages
   -f, --fix           Fix codenames for new releases
@@ -24,11 +24,11 @@ Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.
   -k, --keep-debs     Do not invoke apt-clean after installing packages.
   -l, --delete-log    Delete the logfile. (./log/after-effects.log)
 
-<font color="#FF87D7">Logging:</font>
+<font color="#FF87D7">LOGS:</font>
   --debug             Prints debug logs.
   --trace             Prints trace level logs which includes output from apt-get and other commands.
 
-<font color="#949494">Debugging:</font>
+<font color="#949494">DEBUG:</font>
 <font color="#949494">  -s, --simulate      Try not to make changes to system. See Docs for limitaions!</font>
 <font color="#949494">  --no-env-checks     Skip some env checks.</font>
 <font color="#949494">  --no-version-check  Skip checking for latest version</font>
