@@ -1912,7 +1912,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
   # gVisor container Runtime
   if [[ $AE_RUN_CONFIG_REPO_GVISOR == "true" ]]; then
 
-    if [[ $AE_ARCH == "amd64" ]]; then
+    if [[ $AE_ARCH == "amd64"  ]] || [[ $AE_ARCH == "amd64"  ]] ; then
       log_info "gVisor"
 
       # Adding gVisor Keys
@@ -1942,7 +1942,8 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
     if [[ ${AE_ARCH} == "amd64" ]] && [[ $AE_RUN_DISTRO_NAME == "ubuntu" ]]; then
 
       log_info "Podman"
-      __add_repo_keys --format "asc" \
+      __add_repo_keys \
+        --format "asc" \
         --file-prefix "obs-podman-${AE_RUN_CODENAME}" \
         --key-url https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_RUN_OBS_PREFIX}/Release.key
       if echo "deb [arch=$AE_ARCH signed-by=${AE_APT_KEYRINGS_DIR}/obs-podman-${AE_RUN_CODENAME}.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_RUN_OBS_PREFIX}/ / #Podman (via OBS)" >${AE_APT_SOURCES_DIR}/podman.list; then
