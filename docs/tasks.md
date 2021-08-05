@@ -121,9 +121,7 @@ be added or may be unavailable or offline. So Keeping the list separate from
 others packages minimizes errors if there are any.
 
 This classification is only for ease of use and need not be strictly followed. You can put
-'vlc' package in 'security', it will still install fine. This classification helps
-while writing configs and editing them. Its advised to follow it if your configs
-tend to get to couple of hundreds of lines. Also YAML file should be a valid YAML & indented by 2 spaces.
+`vlc` package in `security`, it will still install without complaints.
 
 ### Special list of packages - Purge list
 
@@ -137,9 +135,7 @@ This will install deb files specified in the YAML config under `config.install.d
 - Each element in the list file to be installed should have following entry.
 - URL to the deb file which can be accessed using wget`,`Name of the deb file without any spaces or special chars except hyphen.
 - For example to install Atom Editor the entry should look like below.
-- Some deb packages will add their own apt source entry and add their repository keys to system keyring.
-- Inline comments are **NOT** allowed.
-
+- Please be aware that, some deb packages will add their own apt source entry and add their repository keys to system keyring.
 
 ```yaml
 api: 3
@@ -152,16 +148,13 @@ config:
 
 - First part is the URL to the deb file separated by `,` name of the file.
 
-!!! note "Note on file name in configuration"
-    Please note that deb file will be  saved with the name mentioned in the file. (DEB file is named **exactly** as mentioned in the second field. So if you want them to be named with extension .deb include that in the second field and avoid illegal chars and inline comments)
-
 ## Install Static binaries to /usr/local/bin
 
 This will install binaries in YAML config under `config.install.binaries`.
 
 - **Simulate** option **will** download the package but not install it.
 - Configuration is similar to deb files mentioned above. First part is the URL to the binary file followed by ',' and name of the binary.
-- For example, to install `docker-compose`, the entry should look like below.
+- For example, to install `kubectl`, the entry should look like below.
 
 ```yaml
 api: 3
@@ -187,7 +180,7 @@ This will purge Unwanted packages from the system.
 
 ## Installing Snap packages
 
-Script can install snap packages from snap-store. You should specify the classic snaps with suffix `classic::` See example below. Edge snaps MUST be prefixed with `edge::`
+Script can install snap packages from snap-store. You **MUST** specify the classic snaps with prefix `classic::` See example below. Edge snaps **MUST** be prefixed with `edge::`
 
 ```yaml
 api: 3

@@ -1,9 +1,11 @@
 # Overview of Configuration files
 
-This Script is designed to be flexible.
+This Script is designed to be flexible and uses YAML to declare its configurations.
 
 - Check [Sample YAML](/yaml) configuration file [here.](/yaml)
 - Current config API version is 3.
+- Configuration YAML **MUST** declare its API version via `api:` key. Currently only supported version is `3`.
+- YAML file should be a valid YAML & indented with **2 SPACES**.
 
 ## Autopilot mode
 

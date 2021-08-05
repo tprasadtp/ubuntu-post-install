@@ -3,8 +3,7 @@
 ## Help
 
 Displays this help option.
-
-<pre>./after-effects <font color="#00AFFF">-h</font>
+<pre>./after-effects<font color="#00AFFF">-h</font>
 A Post Installation Script for Ubuntu, Debian,
 Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.
 
@@ -17,9 +16,9 @@ Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.
 
 <font color="#FF8700">CONFIGURATION:</font>
   -A, --autopilot     Enables AUTOPILOT mode(No Prompts).
-  -d, --purge         Enable Purging packages
-  -f, --fix           Fix codenames for new releases
-  --fix-mode-lts      Use prevoous LTS release as fallback when using --fix(Ubutnu only)
+  -d, --purge         Enable Purging packages.
+  -f, --fix           Fix codenames for new releases.
+  --fix-mode-lts      Use prevoous LTS release as fallback when using --fix (Ubutnu only).
   -p, --pre-release   Same as --fix but for beta/alpha releases of Ubuntu and Debian.
   -k, --keep-debs     Do not invoke apt-clean after installing packages.
   -l, --delete-log    Delete the logfile. (./log/after-effects.log)
@@ -31,16 +30,15 @@ Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.
 <font color="#949494">DEBUG:</font>
 <font color="#949494">  -s, --simulate      Try not to make changes to system. See Docs for limitaions!</font>
 <font color="#949494">  --no-env-checks     Skip some env checks.</font>
-<font color="#949494">  --no-version-check  Skip checking for latest version</font>
+<font color="#949494">  --no-version-check  Skip checking for latest version.</font>
 <font color="#949494">  --nx                Just process config and exit.</font>
 
-<font color="#00FFFF">Documentation &amp; Bugs: </font>
+<font color="#FFAFFF">DOCUMENTATION &amp; BUGS: </font>
   Report bugs to      <font color="#00FFFF">https://ae.prasadt.com/issues</font>
   Documentation       <font color="#00FFFF">https://ae.prasadt.com</font>
-  License             <font color="#FF8700">GPLv3</font>
+  License             <font color="#00FFFF">GPLv3</font>
 
 </pre>
-
 
 ## Simulating package installation
 
@@ -75,10 +73,9 @@ Please do have a look at exceptions, as all tasks cannot be simulated.
 ??? bug "Exceptions - Not everything can be simulated"
 
       - **Simulate flag will not simulate adding Repositories or PPAs.**
-      - If you want to revert the changes please use **Reset Repositories** option.
-      - PPAs and repositories **will** be added regardless of the flag.
       - APT package upgrades and apt repository metadata updates cannot be simulated.
       - Snap package installation cannot be simulated
+      - In case of static binaries, file will be downloaded, but installation will be skipped.
 
 ## Skip Version Checks
 
@@ -105,19 +102,18 @@ Script will warn you and exit if you are not running latest version of the scrip
     ./after-effects --fix <config-file|config-url>
     ```
 
-??? tip "This flag/option applies to following repositories"
-
-     - Google Cloud SDK
-     - GCSFUSE
-     - Docker Community Edition
-     - Wine HQ
-
 Usually it takes a while for additional repositories (Docker,etc) to add support for latest release of Ubuntu. However we can use the previous release for which packages might be available. Using packages built for previous release works fine most of the time.
 
 - Repositories like Spotify and Google Chrome do not use code names in their repository URLs. So the above workaround is not necessary.
-- Derivatives of Ubuntu will use the code name of Ubuntu on which they are based. For example Linux mint 18.2 Serena will use code name `xenial` as it is based on Ubuntu 16.04 Xenial Xerus
+- Derivatives of Ubuntu will use the code name of Ubuntu on which they are based. For example Linux mint 20.2 Uma will use code name `focal` as it is based on Ubuntu 20.04 Focal Fossa
 - This option applies only for the latest release and will be ignored if the release is not latest.
 - This options cannot be applied for PPAs
+
+??? danger "Note for Pre-Release/ development version of Ubuntu/Debian"
+
+    - If you are using a pre-release version of Ubuntu, you can use `--pre-release` flag to apply the above mentioned fix to pre-release version of Ubuntu.
+    - This flag can be used independent of `--fix`. If both are used together then both flags will be applied if the release is upcoming-release.
+    - If the release is stable, only `--fix` flag will be valid and `--pre-release` is ignored.
 
 ## Fix fallback to LTS
 
@@ -129,11 +125,6 @@ Usually it takes a while for additional repositories (Docker,etc) to add support
 
 Use LTS as fallback. This flag should be used in conjunction with `--fix` Otherwise it will be ignored. Instead of using previous Ubuntu release this will use the last LTS release. i.e if you are on `21.04` and `20.04` repositories will be used. Please use this with caution as it may not work. This has no effect on Debian and its derivatives.
 
-??? danger "Note for Pre-Release/ development version of Ubuntu/Debian"
-
-    - If you are using a pre-release version of Ubuntu, you can use `--pre-release` flag to apply the above mentioned fix to pre-release version of Ubuntu.
-    - This flag can be used independent of `--fix`. If both are used together then both flags will be applied if the release is upcoming-release.
-    - If the release is stable, only `--fix` flag will be valid and `--pre-release` is ignored.
 
 ## Purge not required packages
 
@@ -189,8 +180,7 @@ Just a quick way to delete logs generated by this script.
     ./after-effects --keep-debs <config-file|config-url>
     ```
 
-Keeps packages cached by APT and downloaded DEB packages.
-Default behavior is to clean apt cache and delete downloaded DEB packages.
+Keeps packages cached by APT. Default behavior is to clean apt cache.
 
 ## Version
 

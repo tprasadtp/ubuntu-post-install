@@ -32,7 +32,7 @@ wget https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/afte
 
 ### 2. Setup your YAML configuration file
 
-Setup YAML file to suit your needs. Change PPAs, add or delete packages to list, tweak flags etc.
+Setup YAML file to suit your needs. Change PPAs, add or delete packages to list etc.
 Please see [Configuration](https://ae.prasadt.com/configuration/) & [Tasks](https://ae.prasadt.com/tasks/).
 
 [![Configuration-Page](https://img.shields.io/badge/Info-Configuration-blue.svg)](https://ae.prasadt.com/configuration/)

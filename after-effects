@@ -12,7 +12,7 @@
 
 set -o pipefail
 
-function _init_core_variables() {
+function __init_core_variables() {
   declare -r AE_RUN_VARLIST_CHECK_OUTPUT="${!AE_*}"
   if [[ -n ${AE_RUN_VARLIST_CHECK_OUTPUT} ]]; then
     printf "\e[31m✕ Following reserved variables are set [${AE_RUN_VARLIST_CHECK_OUTPUT}]! \e[0m \n"
@@ -36,7 +36,7 @@ function _init_core_variables() {
   readonly AE_COLOR_NC=$'\e[0m'
 
   # Log handler indicator
-  AE_RUN_LOGGER_ACTIVE="false"
+  AE_RUN_FILELOGGER_ACTIVE="false"
 
   # Handle Signals
   trap term_exit_handler EXIT
@@ -67,21 +67,13 @@ function _init_core_variables() {
 
 # Signal handler
 function ctrl_c_signal_handler() {
-  if [[ $AE_RUN_LOGGER_ACTIVE == "true" ]]; then
-    log_error "User Interrupt! CTRL-C"
-  else
-    printf "${AE_COLOR_RED}✕ User Interrupt! CTRL-C\n"
-  fi
+  log_error "User Interrupt! CTRL-C"
   exit 4
 }
 
 # Signal handler
 function term_signal_handler() {
-  if [[ $AE_RUN_LOGGER_ACTIVE == "true" ]]; then
-    log_error "User Interrupt! SIGTERM"
-  else
-    printf "${AE_COLOR_RED}✕ User Interrupt! SIGTERM\n"
-  fi
+  log_error "User Interrupt! SIGTERM"
   exit 4
 }
 
@@ -111,25 +103,20 @@ function term_exit_handler() {
   fi
 }
 
-function _init_logging() {
+function __init_logfile() {
   readonly AE_LOG_FILE="${AE_RUN_BASE_DIR}/logs/after-effects.log"
   local bool_created_logfile
 
-  {
-    mkdir -p "${AE_RUN_BASE_DIR}/logs"
-  } ||
-    {
-      printf "${AE_COLOR_RED}✕ Failed to create logs folder${AE_COLOR_NC}\n"
-      exit 2
-    }
+  if ! mkdir -p "${AE_RUN_BASE_DIR}/logs"; then
+    log_and_exit "Failed to create Failed to create logs folder" 2
+  fi
+
   # tmp dir
-  {
-    tmp_dir="$(mktemp -d)"
-  } ||
-    {
-      printf "${AE_COLOR_RED}✕ Failed to create tmp folder${AE_COLOR_NC}\n"
-      exit 2
-    }
+  if tmp_dir="$(mktemp -d)"; then
+    AE_RUN_ENABLE_CLEANUP_HANDLER="true"
+  else
+    log_and_exit "Failed to create tmp folder" 2
+  fi
 
   declare -gr AE_RUN_TMP_DIR="${tmp_dir}"
 
@@ -138,27 +125,23 @@ function _init_logging() {
     if touch "${AE_LOG_FILE}"; then
       bool_created_logfile="true"
     else
-      printf "${AE_COLOR_RED}✕ Failed to create logfile!${AE_COLOR_NC}\n"
-      exit 2
+      log_and_exit "Failed to create logfile!${AE_COLOR_NC}" 2
     fi
   fi
 
   # check if logs can be written
   if [[ -w $AE_LOG_FILE ]]; then
-    {
-      log_debug "$(_line_fill)"
+    if touch "${AE_LOG_FILE}"; then
+      AE_RUN_FILELOGGER_ACTIVE="true"
       [[ $bool_created_logfile == "true" ]] && log_debug "Created log file: ${AE_LOG_FILE}"
-      AE_RUN_LOGGER_ACTIVE="true"
       log_debug "Initialized logging"
-    } ||
-      {
-        AE_RUN_LOGGER_ACTIVE="false"
-        printf "${AE_COLOR_RED}✕ Failed to write to log file ${AE_LOG_FILE} ${AE_COLOR_NC}\n"
-        exit 2
-      }
+    else
+      AE_RUN_FILELOGGER_ACTIVE="false"
+      log_error "Failed to write to log file ${AE_LOG_FILE}"
+      exit 2
+    fi
   else
-    printf "${AE_COLOR_RED}✕ Log file is not writable!${AE_COLOR_NC}\n"
-    exit 2
+    log_and_exit "Log file - ${AE_LOG_FILE} is not writable!" 2
   fi
 }
 
@@ -247,7 +230,9 @@ function __logger_core() {
   if [[ $lvl_console -eq 1 ]]; then
     printf "%s%s%s %s %s\n" "${lvl_color}" "${lvl_prefix}" "${lvl_sym}" "${lvl_msg}" "${lvl_nc}"
   fi
-  printf "%s %-30s %-10s %s\n" "${lvl_ts}" "(${FUNCNAME[2]})" "[${lvl_str}]" "$lvl_msg" >>"$AE_LOG_FILE"
+  if [[ $AE_RUN_FILELOGGER_ACTIVE == "true" ]]; then
+    printf "%s %-25s %-10s %s\n" "${lvl_ts}" "${FUNCNAME[2]}" "[${lvl_str}]" "$lvl_msg" >>"$AE_LOG_FILE"
+  fi
 
 }
 
@@ -343,7 +328,7 @@ function log_property() {
   esac
 }
 
-function __setup_platform_variables() {
+function __setup_platform_vars() {
   # Function defines Script variables
   # Necessary variables used by the script are initialized here. This function
   # should be called first before choices are made, always.
@@ -3044,9 +3029,9 @@ ${AE_COLOR_TEAL}OPTIONS:${AE_COLOR_NC}
 
 ${AE_COLOR_ORANGE}CONFIGURATION:${AE_COLOR_NC}
   -A, --autopilot     Enables AUTOPILOT mode(No Prompts).
-  -d, --purge         Enable Purging packages
-  -f, --fix           Fix codenames for new releases
-  --fix-mode-lts      Use prevoous LTS release as fallback when using --fix(Ubutnu only)
+  -d, --purge         Enable Purging packages.
+  -f, --fix           Fix codenames for new releases.
+  --fix-mode-lts      Use prevoous LTS release as fallback when using --fix(Ubutnu only).
   -p, --pre-release   Same as --fix but for beta/alpha releases of Ubuntu and Debian.
   -k, --keep-debs     Do not invoke apt-clean after installing packages.
   -l, --delete-log    Delete the logfile. (./log/after-effects.log)
@@ -3058,17 +3043,17 @@ ${AE_COLOR_PINK}LOGS:${AE_COLOR_NC}
 ${AE_COLOR_GRAY}DEBUG:
   -s, --simulate      Try not to make changes to system. See Docs for limitaions!
   --no-env-checks     Skip some env checks.
-  --no-version-check  Skip checking for latest version
+  --no-version-check  Skip checking for latest version.
   --nx                Just process config and exit.
 ${AE_COLOR_NC}
-${AE_COLOR_CYAN}Documentation & Bugs: ${AE_COLOR_NC}
+${AE_COLOR_MAGENTA}DOCUMENTATION & BUGS: ${AE_COLOR_NC}
   Report bugs to      ${AE_COLOR_CYAN}https://ae.prasadt.com/issues${AE_COLOR_NC}
   Documentation       ${AE_COLOR_CYAN}https://ae.prasadt.com${AE_COLOR_NC}
-  License             ${AE_COLOR_ORANGE}GPLv3${AE_COLOR_NC}
+  License             ${AE_COLOR_CYAN}GPLv3${AE_COLOR_NC}
 EOF
 }
 
-function _process_non_root_options() {
+function __process_priority_flags() {
   # Process command line arguments which does not require root.
   if [[ $# -eq 0 ]]; then
     printf "${AE_COLOR_RED}✕ No arguments specified! See Usage Below${AE_COLOR_NC}\n"
@@ -3081,9 +3066,6 @@ function _process_non_root_options() {
         display_version
         exit 0
         ;;
-      --nx)
-        readonly AE_INTERNAL_NO_EXECUTE="true"
-        ;;
       -l | --delete-log)
         delete_log_file
         ;;
@@ -3092,8 +3074,8 @@ function _process_non_root_options() {
         exit 0
         ;;
       -*)
-        printf "${AE_COLOR_RED}✕ This does not appear to be a valid option${AE_COLOR_NC}\n"
-        printf "${AE_COLOR_RED}✕ Non action options take more than one argument!${AE_COLOR_NC}\n"
+        log_error "This does not appear to be a valid option"
+        log_error "Non action options take more than one argument!"
         exit 1
         ;;
       esac
@@ -3102,37 +3084,41 @@ function _process_non_root_options() {
   fi
 }
 
+function __process_nx_flag() {
+  while [ "${1}" != "" ]; do
+    case ${1} in
+    -n | --nx) declare -gr AE_RUN_NX="true" ;;
+    esac
+    shift
+  done
+}
+
 function main() {
   # MASK Exit handler
-  _init_core_variables
+  __init_core_variables
 
-  # Non root optionsoptions
-  _process_non_root_options "$@"
+  # Options L2 and L2 Processing
+  __process_priority_flags "$@"
+  __process_nx_flag "$@"
 
-  printf "${AE_COLOR_MAGENTA}➜ Initialization & checks${AE_COLOR_NC}\n"
+  log_stage "Initialization & checks"
+  log_info "Permission checks"
 
-  printf "  • Permission checks\n"
-
-  if [[ $AE_INTERNAL_NO_EXECUTE == "true" ]]; then
-    # Actual logging starts
-    _init_logging
+  if [[ $AE_RUN_NX == "true" ]]; then
+    __init_logfile
     log_dev "Running in NX mode"
   elif [[ $EUID -ne 0 ]]; then
-    printf "${RED}✕ Insufficient privileges!${NC}\n"
-    printf "${RED}✕ This script must be run as root.\n"
-    printf "${RED}✕ Please use sudo ${AE_RUN_BASE_DIR}/$AE_SCRIPT to run this as root.\n"
+    log_error "Insufficient privileges!"
+    log_error "This script must be run as root"
+    log_error "Please use sudo ./$AE_SCRIPT to run this as root."
     exit 2
   else
-    # We were not running in NX mode, and we are root.
-    _init_logging
-    AE_RUN_LOGGER_ACTIVE="true"
-    AE_RUN_ENABLE_CLEANUP_HANDLER="true"
-
+    __init_logfile
     log_success "OK! Running as root"
   fi
 
   # Init vars
-  __setup_platform_variables
+  __setup_platform_vars
 
   # Process command line arguments.
   declare -a NON_OPTION_ARGS
@@ -3180,6 +3166,10 @@ function main() {
     --debug) AE_DEBUG=1 ;;
     --trace) AE_DEBUG=2 ;;
     -n | --nx) : ;;
+    --config | -c | --config-file | --remote-yaml | -r | -R)
+      log_error "Option ${1} was removed in version 9.x"
+      log_and_exit "Please specify path to config file or URL as an argument, not as flag/option" 26
+      ;;
     # The following arguments should always be used as the only arguments.
     -l | --delete-logfile) log_and_exit "-l or --delete-logfile should be the only argument." "23" ;;
     -v | --version) log_and_exit "-v or --version should be the only argument." "23" ;;
@@ -3231,9 +3221,8 @@ function main() {
 
   _check_dependencies "${after_effects_core_dependencies[@]}"
 
-  # Print Runtime Info
+  # Prime and Print Runtime Info
   __print_runtime_info
-
   __test_internet
 
   log_info "Checking configuration"
@@ -3276,7 +3265,7 @@ function main() {
   log_stage "Check for conflicting apps"
   _test_conflicting_apps
 
-  if [[ $AE_INTERNAL_NO_EXECUTE == "true" ]]; then
+  if [[ $AE_RUN_NX == "true" ]]; then
     log_dev "Will not execute any tasks!"
     exit 255
   fi
