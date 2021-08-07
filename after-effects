@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2059,SC2154,SC2034,SC2155
+# shellcheck disable=SC2059,SC2154,SC2155
 # vim: filetype=sh
 
 # Author: Prasad Tengse
 # Licence: GPLv3
 # Github Repository: https://github.com/tprasadtp/ubuntu-post-install
-# Requirements - Bash v4 and above
+# Requirements - Bash v4.2 and above
 #              - coreutils
-#              - whiptail
+#              - whiptail (if not using autopilot)
 #
 
 set -o pipefail
 
 function __init_core_variables() {
-  declare -r AE_RUN_VARLIST_CHECK_OUTPUT="${!AE_*}"
+  declare AE_RUN_VARLIST_CHECK_OUTPUT="${!AE_*}"
   if [[ -n ${AE_RUN_VARLIST_CHECK_OUTPUT} ]]; then
     printf "\e[31m✕ Following reserved variables are set [${AE_RUN_VARLIST_CHECK_OUTPUT}]! \e[0m \n"
     printf "\e[31m✕ Script cannot continue as it might intefere with its functions! \e[0m \n"
@@ -26,8 +26,11 @@ function __init_core_variables() {
   readonly AE_EXEC_START=$(date +%s)
   # Version
   readonly AE_VERSION="9.0.0-beta.1"
-  # config Version
+  # Config Version
   readonly AE_CONFIG_API="3"
+
+  # ERR
+  declare -a AE_RUN_STACK_ERR
 
   #colors for display
   readonly AE_COLOR_YELLOW=$'\e[38;5;220m'
@@ -44,7 +47,7 @@ function __init_core_variables() {
   trap term_signal_handler SIGTERM TERM
 
   # Extra colors
-  readonly AE_COLOR_LBLUE=$'\e[38;5;159m'
+  readonly AE_COLOR_BLUE=$'\e[38;5;159m'
   readonly AE_COLOR_CYAN=$'\e[38;5;51m'
   readonly AE_COLOR_ORANGE=$'\e[38;5;208m'
   readonly AE_COLOR_TEAL=$'\e[38;5;192m'
@@ -58,11 +61,12 @@ function __init_core_variables() {
   #Initialize printf variables
   readonly AE_LOG_PHASE_REPO="(REPO)"
   readonly AE_LOG_PHASE_PPA="(PPA)"
-  readonly AE_LOG_PHASE_INSTALL="(INST)"
   readonly AE_LOG_PHASE_DEB="(DPKG)"
   readonly AE_LOG_PHASE_APT="(APT)"
   readonly AE_LOG_PHASE_APTKEY="(KEYS)"
   readonly AE_LOG_PHASE_SNAP="(SNAP)"
+  readonly AE_LOG_PHASE_BIN="(BIN)"
+
 }
 
 # Signal handler
@@ -79,9 +83,11 @@ function term_signal_handler() {
 
 # Cleanup handler
 function term_exit_handler() {
+  declare -r exit_code="$?"
   if [[ $AE_RUN_ENABLE_CLEANUP_HANDLER == "true" ]]; then
     declare cleanup_status=0
     log_stage "Cleanup and Exit"
+    log_debug "Removing temporary files"
     if [[ -d ${AE_RUN_TMP_DIR} ]]; then
       if ! rm -f "${AE_RUN_TMP_DIR}"/*; then
         cleanup_status=1
@@ -100,6 +106,20 @@ function term_exit_handler() {
     readonly AE_EXEC_END="$(date +%s)"
     readonly AE_EXEC_TIME="$((AE_EXEC_END - AE_EXEC_START))"
     log_debug "$AE_SCRIPT took $AE_EXEC_TIME seconds to complete."
+
+    if [[ ${#AE_RUN_STACK_ERR} -gt 0 ]]; then
+      log_error "Some Errors occured during installation!"
+      for i in "${!AE_RUN_STACK_ERR[@]}"; do
+        log_error "ERR-$((i + 1)) - ${AE_RUN_STACK_ERR[$i]}"
+        # error did not lead to exit but we will exit with non zero indicating error occured
+        # otherwise dont alter it
+        if [[ $exit_code -eq 0 ]]; then
+          return 1
+        fi
+      done
+    else
+      log_debug "Error stack is clean :)"
+    fi
   fi
 }
 
@@ -404,7 +424,7 @@ function __setup_platform_vars() {
   AE_RUN_VERSION_CHECK="true"
 
   # Not used
-  readonly AE_DEPRECATED_VERSION_URL="https://ae.prasadt.com/get/v3/version"
+  # readonly AE_DEPRECATED_VERSION_URL="https://ae.prasadt.com/get/v3/version"
 
   # Achtung!
   # ========================================================================================= #
@@ -508,7 +528,6 @@ function _fix_ubuntu_derivatives() {
   case ${AE_RUN_CODENAME} in
   # Ubuntu 18.04 and its derivatives
   bionic)
-    readonly AE_RUN_ENABLE_PPA="true"
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     log_info "This is a LTS release of Ubuntu (18.04)"
     log_success "Keeping the codename as $AE_RUN_CODENAME."
@@ -518,7 +537,6 @@ function _fix_ubuntu_derivatives() {
     log_info "Setting additional repositories to follow Ubuntu 18.04."
     AE_RUN_CODENAME="bionic"
     readonly AE_RUN_DISTRO_NAME="ubuntu"
-    readonly AE_RUN_ENABLE_PPA="true"
     log_success "Changed codename to $AE_RUN_CODENAME"
     ;;
   juno | hera)
@@ -526,12 +544,10 @@ function _fix_ubuntu_derivatives() {
     log_info "External repositories will use Ubuntu 18.04."
     AE_RUN_CODENAME="bionic"
     readonly AE_RUN_DISTRO_NAME="ubuntu"
-    readonly AE_RUN_ENABLE_PPA="true"
     log_success "Changed codename to $AE_RUN_CODENAME"
     ;;
   # Ubuntu 20.04 and its derivatives (Current Ubuntu LTS release)
   focal)
-    readonly AE_RUN_ENABLE_PPA="true"
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     log_info "This is latest LTS release of Ubuntu"
     log_success "Keeping the codename as $AE_RUN_CODENAME."
@@ -542,18 +558,15 @@ function _fix_ubuntu_derivatives() {
     AE_RUN_CODENAME="focal"
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     readonly AE_RUN_SNAP_REMOVE_APT_BLOCK="true"
-    readonly AE_RUN_ENABLE_PPA="true"
     log_success "Changed codename to $AE_RUN_CODENAME"
     ;;
   # Current Ubuntu release
   hirsute)
-    readonly AE_RUN_ENABLE_PPA="true"
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     log_notice "Release is Ubuntu 21.04 Hirsute Hippo"
     ;;
   # Upcoming Ubuntu release
   impish)
-    readonly AE_RUN_ENABLE_PPA="true"
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     log_warn "Release is Ubuntu 21.10 (Unstable!)"
     ;;
@@ -561,24 +574,20 @@ function _fix_ubuntu_derivatives() {
   stretch)
     AE_RUN_IS_DEBIAN="true"
     readonly AE_RUN_DISTRO_NAME="debian"
-    readonly AE_RUN_ENABLE_PPA="false"
     log_notice "This is Debian. PPAs are disabled."
     ;;
   buster)
     AE_RUN_IS_DEBIAN="true"
     readonly AE_RUN_DISTRO_NAME="debian"
-    readonly AE_RUN_ENABLE_PPA="false"
     log_notice "This is Debian 10 Buster. PPAs are disabled."
     ;;
   bullseye)
     AE_RUN_IS_DEBIAN="true"
-    readonly AE_RUN_ENABLE_PPA="false"
     readonly AE_RUN_DISTRO_NAME="debian"
     log_notice "This is Debian 11 Bullseye. PPAs are disabled."
     ;;
   bookworm)
     AE_RUN_IS_DEBIAN="true"
-    readonly AE_RUN_ENABLE_PPA="false"
     readonly AE_RUN_DISTRO_NAME="debian"
     log_dev "You are running Debian Testing!"
     log_notice "This is Debian 12 Bookworm. PPAs are disabled."
@@ -597,6 +606,7 @@ function _fix_ubuntu_derivatives() {
   log_var "AE_RUN_CODENAME"
 
   # Save a copy of AE_RUN_CODENAME
+  # shellcheck disable=SC2034
   declare -gr AE_BASE_CODENAME="${AE_RUN_CODENAME}"
   log_var "AE_BASE_CODENAME"
   log_var "AE_RUN_IS_DEBIAN"
@@ -998,10 +1008,40 @@ function _set_yaml_config() {
   log_property "Parsing config" "$config_yaml_file" 2
   eval "$(parse_yaml "$config_yaml_file" "AE_RUN__")"
 
-  # Repo flags
-  #################################################################################
+  # error count
+  declare AE_RUN_CFG_BUILD_ERRORS=0
+
   declare -gr AE_RUN_CONFIG_API="${AE_RUN__api[0]}"
   log_var "AE_RUN_CONFIG_API"
+
+  log_info "Validating Config Version"
+  if [[ $AE_RUN_CONFIG_API -eq 3 ]]; then
+    log_success "OK"
+  elif [[ -z $AE_RUN_CONFIG_API ]]; then
+    log_error "[v3] Missing config API version identifier."
+    log_error "[v3] Suggeted Action: Please include api: ${AE_CONFIG_API} in your config file."
+  else
+    log_error "Config API version mismatch!"
+    log_error "Expected: ${AE_CONFIG_API} Got: ${AE_RUN_CONFIG_API}"
+    log_error "api key MUST be set to ${AE_CONFIG_API}"
+    log_error "[v3] Suggeted Action: Please ensure api: ${AE_CONFIG_API} is set in your config file."
+    AE_RUN_CFG_BUILD_ERRORS=$((AE_RUN_CFG_BUILD_ERRORS + 1))
+  fi
+
+  # Repo flags
+  #################################################################################
+
+  declare -r debian_packages_deprecation_chck="${!AE_RUN__config__install__debian_packages*}"
+  if [[ -n ${debian_packages_deprecation_chck} ]]; then
+    log_error "[v3] config.install.debian_packages[] is obsolete, use config.install.debs[]"
+    AE_RUN_CFG_BUILD_ERRORS=$((AE_RUN_CFG_BUILD_ERRORS + 1))
+  fi
+
+  declare -r tasks_repos_deprecation_chck="${!AE_RUN__config__tasks__repo*}"
+  if [[ -n ${tasks_repos_deprecation_chck} ]]; then
+    log_error "[v3] config.tasks.repo is obsolete, use config.tasks.add_repo"
+    AE_RUN_CFG_BUILD_ERRORS=$((AE_RUN_CFG_BUILD_ERRORS + 1))
+  fi
 
   _check_bool "AE_RUN_CONFIG_REPO_DOCKER" "${AE_RUN__config__add_repo__docker[0]}"
 
@@ -1041,6 +1081,8 @@ function _set_yaml_config() {
   _check_bool "AE_RUN_CONFIG_REPO_MSTEAMS" "${AE_RUN__config__add_repo__teams[0]}"
   _check_bool "AE_RUN_CONFIG_REPO_BRAVE_BROWSER" "${AE_RUN__config__add_repo__brave_browser[0]}"
   _check_bool "AE_RUN_CONFIG_REPO_SLACK" "${AE_RUN__config__add_repo__slack[0]}"
+  _check_bool "AE_RUN_CONFIG_REPO_VIVALDI" "${AE_RUN__config__add_repo__vivaldi[0]}"
+  _check_bool "AE_RUN_CONFIG_REPO_PROTONVPN" "${AE_RUN__config__add_repo__protonvpn[0]}"
 
   # Debian Components
   _check_bool "AE_RUN_CONFIG_REPO_DEBIAN_NONFREE" "${AE_RUN__config__add_repo__debian_nonfree[0]}"
@@ -1078,7 +1120,7 @@ function _set_yaml_config() {
 
   _check_bool "AE_RUN_CONFIG_TASK_UPGRADE" "${AE_RUN__config__tasks__upgrade[0]}"
 
-  _check_bool "AE_RUN_CONFIG_TASK_REPO" "${AE_RUN__config__tasks__repo[0]}"
+  _check_bool "AE_RUN_CONFIG_TASK_REPO" "${AE_RUN__config__tasks__add_repo[0]}"
 
   _check_bool "AE_RUN_CONFIG_TASK_PPA" "${AE_RUN__config__tasks__ppa[0]}"
 
@@ -1157,10 +1199,10 @@ function _set_yaml_config() {
   #                             Debian packages
   #--------------------------------------------------------------------------------
   # Config file contains list of DEB packages to be downloaded & installed under key
-  # config.install.debian_packages
+  # config.install.debs
   # The configuration is not simple URL its csv. <URL to Deb file>,<Name of the Package>
   # This is for compatiblity reasons
-  declare -gar AE_RUN_PARSED_DEBFILES=("${AE_RUN__config__install__debian_packages_[@]}")
+  declare -gar AE_RUN_PARSED_DEBFILES=("${AE_RUN__config__install__debs_[@]}")
 
   #--------------------------------------------------------------------------------
   #                             Static binaries
@@ -1172,13 +1214,10 @@ function _set_yaml_config() {
   #--------------------------------------------------------------------------------
   declare -gar AE_RUN_PARSED_SNAPS=("${AE_RUN__config__install__snaps_[@]}")
 
-  log_info "Validating Config Version"
-  if [[ $AE_RUN_CONFIG_API -eq 3 ]]; then
-    log_success "OK"
+  if [[ ${AE_RUN_CFG_BUILD_ERRORS} -eq 0 ]]; then
+    log_debug "Parsed config w/o errors"
   else
-    log_warn "Config API version mismatch!"
-    log_warn "Expected: ${AE_CONFIG_API} Got: ${AE_RUN_CONFIG_API}"
-    log_warn "api key MUST be set to ${AE_CONFIG_API}"
+    log_and_exit "Configuration error, Please fix your configuration and try again!" 71
   fi
 
 }
@@ -1411,6 +1450,7 @@ function add_repositories() {
     if ! umask 0022; then
       log_error "Failed to set UMASK to 0022 for task: Repositories"
       log_error "This may result in errors while updating repositories via packagekit"
+      AE_RUN_STACK_ERR+=("umask-error::config.tasks.add_repos")
     fi
   else
     log_debug "No need to modify UMASK"
@@ -1912,7 +1952,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
   # gVisor container Runtime
   if [[ $AE_RUN_CONFIG_REPO_GVISOR == "true" ]]; then
 
-    if [[ $AE_ARCH == "amd64"  ]] || [[ $AE_ARCH == "amd64"  ]] ; then
+    if [[ $AE_ARCH == "amd64" ]] || [[ $AE_ARCH == "amd64" ]]; then
       log_info "gVisor"
 
       # Adding gVisor Keys
@@ -2045,6 +2085,54 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
     fi
   else
     log_debug "Skipped adding Slack repository"
+  fi
+
+  # Vivaldi Browser
+  if [ "$AE_RUN_CONFIG_REPO_BRAVE_BROWSER" == "true" ]; then
+    if [ "$AE_ARCH" == "amd64" ]; then
+      log_info "Vivaldi Browser"
+      __add_repo_keys \
+        --format "asc" \
+        --file-prefix "vivaldi-stable-keyring" \
+        --key-url https://repo.vivaldi.com/archive/linux_signing_key.pub
+
+      log_debug "Create defaults file for vivaldi browser"
+      if printf "repo_add_once=\"false\"\nrepo_reenable_on_distupgrade=\"false\"" >/etc/default/vivaldi; then
+        log_debug "Added /etc/default/vivaldi"
+      else
+        log_warn "Failed to write /etc/default/vivaldi"
+        log_warn "Configured sources might be overwritten by Vivaldi Browser!"
+      fi
+      # We do not add beta and nightly as they have different signing keys!
+
+      if echo "deb [arch=amd64 signed-by=${AE_APT_KEYRINGS_DIR}/vivaldi-stable-keyring.gpg] https://repo.vivaldi.com/archive/deb/ stable main #Vivaldi-Browser" >${AE_APT_SOURCES_DIR}/vivaldi.list; then
+        log_success "OK"
+      else
+        log_error "Failed to add Vivaldi Browser repository"
+      fi
+
+    else
+      log_error "Vivaldi Browser repository is not supported on this architecture($AE_ARCH)!"
+    fi
+  else
+    log_debug "Skipped adding Vivaldi Browser repository"
+  fi
+
+  # ProtonVPN
+  if [ "$AE_RUN_CONFIG_REPO_PROTONVPN" == "true" ]; then
+    log_info "ProtonVPN Client"
+    __add_repo_keys \
+      --format "asc" \
+      --file-prefix "protonvpn-stable-archive-keyring" \
+      --key-url https://repo.protonvpn.com/debian/public_key.asc
+
+    if echo "deb [arch=${AE_ARCH} signed-by=${AE_APT_KEYRINGS_DIR}/protonvpn-stable-archive-keyring.gpg] https://repo.protonvpn.com/debian stable main #ProtonVPN-Client" >${AE_APT_SOURCES_DIR}/protonvpn-stable.list; then
+      log_success "OK"
+    else
+      log_error "Failed to add ProtonVPN repository"
+    fi
+  else
+    log_debug "Skipped adding ProtonVPN repository"
   fi
 
   # ROS2
@@ -2482,67 +2570,61 @@ function install_apps() {
 
 function install_debs() {
   # The list file has following format
-  # URL to get the deb file  <space or tab> NAME_OF_THE_APP(without spaces)
+  # URL to get the deb file
 
   log_stage "Install DEB packages"
-  local index deb_url line deb_file_name
-  local exit_status
-  log_debug "Option: Install DEB Files, Function name: install_debs"
-  for index in "${AE_RUN_PARSED_DEBFILES[@]}"; do
-    deb_url=$(echo "$index" | cut -d ',' -f1)
-    deb_file_name=$(echo "$index" | cut -d ',' -f2)
-    log_var "deb_url"
-    log_var "deb_file_name"
-
-    if [[ -z $deb_url ]] || [[ -z $deb_file_name ]]; then
-      log_error "Malformed entry either URL or name is empty!"
+  local index deb_url deb_file_name
+  local exit_status apt_fix_status
+  for index in "${!AE_RUN_PARSED_DEBFILES[@]}"; do
+    deb_url="${AE_RUN_PARSED_DEBFILES[$index]}"
+    deb_file="${AE_RUN_TMP_DIR}/$RANDOM$RANDOM.deb"
+    if [[ $deb_url =~ ^(https?):\/\/(.*)$ ]]; then
+      log_var "deb_url"
+      log_var "deb_file"
+    else
+      log_error "Invalid DEB URL - $deb_url"
+      AE_RUN_STACK_ERR+=("config-error::config.install.deb_packages[$index]: ${deb_url}")
       continue
     fi
 
-    log_property "Downloading" "$deb_file_name" "1"
-    {
-      wget -q "$deb_url" -O "${deb_file_name}" >>"$AE_LOG_FILE"
-    } ||
-      {
-        log_error "Failed!"
-        continue
-      }
+    log_debug "Downloading"
+    if wget -q "$deb_url" -O "${deb_file}" 2>&1 | log_trace "${AE_LOG_PHASE_DEB}"; then
+      log_debug "Downloaded"
+    else
+      log_error "Failed to download deb file!"
+      AE_RUN_STACK_ERR+=("download-error::config.install.deb_packages[$index]: ${deb_url}")
+      continue
+    fi
 
-    log_property "Installing" "$deb_file_name" "1"
     # Check if simulate is true
     if [ "$AE_RUN_CONFIG_SIMULATE" == "true" ]; then
-      log_warn "SIMULATE - $deb_file_name Installation!"
-      dpkg -i --dry-run "$deb_file_name" 2>&1 | log_trace "${AE_LOG_PHASE_DEB}"
-
-      log_debug "Installing missing packages"
-      apt-get -q -o=Dpkg::Use-Pty=0 -y install -f 2>&1 | log_trace "${AE_LOG_PHASE_APT}"
+      log_warn "SIMULATE - $deb_file Installation!"
+      dpkg -i --dry-run "$deb_file" 2>&1 | log_trace "${AE_LOG_PHASE_DEB}"
       exit_status=$?
+      apt_fix_status=0
     else
       dpkg -i "$deb_file_name" 2>&1 | log_trace "${AE_LOG_PHASE_DEB}"
+      exit_status=$?
+
       log_debug "Installing missing packages"
       apt-get -q -o=Dpkg::Use-Pty=0 -y install -f 2>&1 | log_trace "${AE_LOG_PHASE_APT}"
-      exit_status=$?
+      apt_fix_status=$?
     fi
 
-    # shellcheck disable=SC2181
-    if [ "$exit_status" = "0" ]; then
-      log_success "Done"
-    else
-      log_error "Some error occurred during downloading and installing $index."
+    if [[ $apt_fix_status -eq 0 ]] && [[ $exit_status -eq 0 ]]; then
+      log_success "Installed!"
     fi
-    # Delete DEBs
-    if [ "$AE_RUN_CONFIG_FLAG_PRESERVE_DEBS" == "false" ]; then
-      log_debug "Clean up downloaded packages"
-      (
-        rm -f "${AE_RUN_BASE_DIR}/${deb_file_name}" >>"$AE_LOG_FILE"
-      )
-    else
-      log_notice "Keeping downloaded packages"
+
+    if [[ $exit_code -ne 0 ]]; then
+      log_error "Some error occurred while installing $index."
+      AE_RUN_STACK_ERR+=("deb-install-error::config.install.deb_packages[$index]: ${deb_url}")
+    fi
+
+    if [[ $apt_fix_status -ne 0 ]]; then
+      log_error "Some error occurred while running apt-get install -f, after installing $index."
+      AE_RUN_STACK_ERR+=("apt-fix-error::config.install.deb_packages[$index]: ${deb_url}")
     fi
   done
-
-  _clean_apt_cache
-
 }
 
 function install_binaries() {
@@ -2555,42 +2637,58 @@ function install_binaries() {
 
   local index bin_url line bin_name
   local exit_status
-  log_debug "Option: Install static binaries, Function name: install_binaries"
-  # Check if simulate is true
-  for index in "${AE_RUN_PARSED_BINS[@]}"; do
-    bin_url=$(echo "$index" | cut -d ',' -f1)
-    bin_name=$(echo "$index" | cut -d ',' -f2)
-    log_var "bin_url"
-    log_var "bin_name"
+  for index in "${!AE_RUN_PARSED_BINS[@]}"; do
 
-    if [[ -z $bin_url ]] || [[ -z $bin_name ]]; then
-      log_error "Malformed entry either URL or name is empty!"
+    entry="${AE_RUN_PARSED_BINS[$index]}"
+    bin_name="${entry%%::*}"
+    bin_url="${entry##*::}"
+
+    if [[ $bin_url =~ ^(https?):\/\/(.*)$ ]]; then
+      log_var "bin_url"
+    else
+      log_error "Invalid binary file URL - $bin_url"
+      AE_RUN_STACK_ERR+=("config-error::config.install.binaries[$index]: ${entry}")
       continue
     fi
+
+    if [[ $bin_name =~ ^([a-zA-z0-9_-]+)$ ]]; then
+      log_var "bin_name"
+    else
+      log_error "Invalid binary file name - $bin_name (MUST match regex - ^([a-zA-z0-9_-]+)\$)"
+      AE_RUN_STACK_ERR+=("config-error::config.install.binaries[$index]: ${entry}")
+      continue
+    fi
+
     log_info "Downloading - $bin_name"
-    wget -q "$bin_url" -O "${AE_RUN_TMP_DIR}/${bin_name}.static" >>"$AE_LOG_FILE"
-    exit_status="$?"
-    if [ $exit_status -eq 0 ]; then
+    if wget -q "$bin_url" -O "${AE_RUN_TMP_DIR}/${bin_name}.static" 2>&1 | log_trace "${AE_LOG_PHASE_BIN}"; then
       log_success "OK"
       log_info "Installing  - $bin_name"
       if [ "$AE_RUN_CONFIG_SIMULATE" == "true" ]; then
         log_warn "SIMULATE - Skipping install"
       else
-        {
-          cp -rf "${AE_RUN_TMP_DIR}/${bin_name}.static" /usr/local/bin/"${bin_name}"
-        } || log_error "Failed to copy $bin_name"
-        log_debug "Setting Permissions"
-        chmod 755 /usr/local/bin/"$bin_name" >>"${AE_LOG_FILE}"
+        if cp -rf "${AE_RUN_TMP_DIR}/${bin_name}.static" /usr/local/bin/"${bin_name}" 2>&1 | log_trace "${AE_LOG_PHASE_BIN}"; then
+          log_debug "Copied to /usr.local/bin"
+          log_debug "Setting Permissions"
+          if __fix_permissions "/usr/local/bin/$bin_name" "755"; then
+            log_debug "Successfully set required permissions"
+          else
+            log_error "Failed to set permission on /usr/local/bin/$bin_name"
+            AE_RUN_STACK_ERR+=("set-permissions-error::config.install.binaries[$index]: ${entry}")
+          fi
+        else
+          log_error "Failed to copy $bin_name to /usr/local/bin"
+          AE_RUN_STACK_ERR+=("install-error::config.install.binaries[$index]: ${entry}")
+        fi
       fi
     else
       log_error "Failed to download $bin_name."
+      AE_RUN_STACK_ERR+=("download-error::config.install.binaries[$index]: ${entry}")
     fi
   done
-
 }
 
 function install_snaps() {
-  local dependency_packages snapd_options
+  local dependency_packages snapd_options index entry
   dependency_packages=(snapd)
 
   declare -r snap_edge_suffix="::edge"
@@ -2610,6 +2708,7 @@ function install_snaps() {
       else
         log_error "Failed to remove APT block on snapd package (LinuxMint-Ovrride)"
         log_error "Snap packages cannot be installed!"
+        AE_RUN_STACK_ERR+=("snapd-blocked::config.install.snaps:*")
         return 21
       fi
     fi
@@ -2626,11 +2725,12 @@ function install_snaps() {
   fi # simulate check
 
   if [[ ${#AE_RUN_PARSED_SNAPS[@]} -eq 0 ]]; then
-    log_warn "Snaps array is empty!" "19"
+    log_warn "Snaps array is empty!"
   else
-    for index in "${AE_RUN_PARSED_SNAPS[@]}"; do
-      log_info "Installing snap - $index"
-      if [ "$index" == "" ] || [ "$index" == " " ]; then
+    for index in "${!AE_RUN_PARSED_SNAPS[@]}"; do
+      entry="${AE_RUN_PARSED_SNAPS[$index]}"
+      log_info "Installing snap - $entry"
+      if [ "$entry" == "" ] || [ "$entry" == " " ]; then
         log_warn "Found an empty entry, Ignoring"
         continue
       fi
@@ -2638,29 +2738,29 @@ function install_snaps() {
       # Reset options
       declare -a snapd_options=("--color=never")
       # Build snap cli command
-      if [[ ${index} == *"classic::"* ]] || [[ ${index} == *"::classic"* ]]; then
+      if [[ ${entry} == *"classic::"* ]] || [[ ${entry} == *"::classic"* ]]; then
         snapd_options+=("--classic")
-        index="${index#$snap_classic_prefix}"
-        index="${index%$snap_classic_suffix}"
+        entry="${entry#$snap_classic_prefix}"
+        entry="${entry%$snap_classic_suffix}"
       fi
 
-      if [[ ${index} == *"edge::"* || ${index} == *"::edge"* ]]; then
+      if [[ ${entry} == *"edge::"* || ${entry} == *"::edge"* ]]; then
         snapd_options+=("--edge")
-        index="${index#$snap_edge_prefix}"
-        index="${index%$snap_edge_suffix}"
+        entry="${entry#$snap_edge_prefix}"
+        entry="${entry%$snap_edge_suffix}"
       fi
-      log_debug "Options for ${index} are ${snapd_options[*]}"
+      log_debug "Options for ${entry} are ${snapd_options[*]}"
 
       if [ "$AE_RUN_CONFIG_SIMULATE" == "true" ]; then
-        log_warn "SIMULATE - skipping ${index} installation"
+        log_warn "SIMULATE - skipping ${entry} installation"
       else
 
-        if snap install "${snapd_options[@]}" "$index" 2>&1 | log_trace "${AE_LOG_PHASE_SNAP}"; then
-          log_success "$line installed successfully."
+        if snap install "${snapd_options[@]}" "$entry" 2>&1 | log_trace "${AE_LOG_PHASE_SNAP}"; then
+          log_success "$entry installed successfully."
         else
           log_error "Failed!"
+          AE_RUN_STACK_ERR+=("install-error::config.install.snaps[$index]: ${entry}")
         fi
-
       fi
     done
   fi
@@ -2710,24 +2810,21 @@ function _prompt_confirmation() {
   local exec_function="${2}" #Function to run if user selected yes
   COLUMNS=$(tput cols)
   LINES=$(tput lines)
-  export COLUMNS LINES
   if [[ ${AE_AUTOPILOT} == "true" ]]; then
-    log_debug "Yes to all: No confirm dialog to be displayed."
-    log_debug "Executing: $exec_function"
+    log_debug "Executing: $exec_function (AUTOPILOT)"
     $exec_function
   else
     log_debug "Confirming  $exec_function."
     # shellcheck disable=SC2086
     if (whiptail --title "Ubuntu Post-Install Script" --yesno "$confirm_msg" $LINES $COLUMNS $((LINES - 12))); then
       # execute the function
-      log_debug "Executing: $exec_function"
+      log_debug "Executing: $exec_function (WHIPTAIL)"
       $exec_function
     else
-      log_debug "Selected No for $name_of_task, Returning to main menu."
+      log_debug "User selected No for $exec_function, Returning to main menu."
       _process_menu
     fi
   fi
-  unset exec_function
 }
 
 function _process_menu() {
@@ -2776,12 +2873,14 @@ function _process_menu() {
   Microsoft - Teams            : $AE_RUN_CONFIG_REPO_MSTEAMS
   Microsoft - VSCode           : $AE_RUN_CONFIG_REPO_VSCODE
   Podman (from Kubic Project)  : $AE_RUN_CONFIG_REPO_PODMAN
+  ProtonVPN Client             : $AE_RUN_CONFIG_REPO_PROTONVPN
   ROS                          : $AE_RUN_CONFIG_REPO_ROS
   ROS2                         : $AE_RUN_CONFIG_REPO_ROS2
   Signal for Desktop           : $AE_RUN_CONFIG_REPO_SIGNAL
   Spotify                      : $AE_RUN_CONFIG_REPO_SPOTIFY
   Slack                        : $AE_RUN_CONFIG_REPO_SLACK
-  SublimeText Editor           : $AE_RUN_CONFIG_REPO_SUBLIMETEXT"
+  SublimeText Editor           : $AE_RUN_CONFIG_REPO_SUBLIMETEXT
+  Vivaldi Browser              : $AE_RUN_CONFIG_REPO_VIVALDI"
 
   if [[ $AE_RUN_IS_DEBIAN != "true" ]]; then
     __menu_info_add_repo="$__menu_info_add_repo
@@ -2927,9 +3026,6 @@ function _process_menu() {
     purge)
       _prompt_confirmation "${__menu_info_purge}" "purge_not_required"
       ;;
-    all)
-      _prompt_confirmation "${__menu_info_all}" "all_in_one"
-      ;;
     debs)
       _prompt_confirmation "${__menu_info_debs}" "install_debs"
       ;;
@@ -2938,6 +3034,9 @@ function _process_menu() {
       ;;
     snaps)
       _prompt_confirmation "${__menu_info_snaps}" "install_snaps"
+      ;;
+    all)
+      _prompt_confirmation "${__menu_info_all}" "all_in_one"
       ;;
     esac
   else
@@ -3024,7 +3123,7 @@ Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.
 ${AE_COLOR_YELLOW}USAGE: ${AE_COLOR_NC}
   [sudo] ./${AE_SCRIPT} [OPTION]... config-file|config-url
 
-${AE_COLOR_TEAL}OPTIONS:${AE_COLOR_NC}
+${AE_COLOR_BLUE}OPTIONS:${AE_COLOR_NC}
   -v,  --version      Display version info.
   -h,  --help         Display this help message.
 
@@ -3057,7 +3156,7 @@ EOF
 function __process_priority_flags() {
   # Process command line arguments which does not require root.
   if [[ $# -eq 0 ]]; then
-    printf "${AE_COLOR_RED}✕ No arguments specified! See Usage Below${AE_COLOR_NC}\n"
+    log_error "No arguments specified! See Usage Below"
     display_usage
     exit 1
   elif [[ $# -eq 1 ]]; then
@@ -3098,7 +3197,7 @@ function main() {
   # MASK Exit handler
   __init_core_variables
 
-  # Options L2 and L2 Processing
+  # Options L1 and L2 Processing
   __process_priority_flags "$@"
   __process_nx_flag "$@"
 
@@ -3192,6 +3291,7 @@ function main() {
     case $config_arg in
     http://* | https://*)
       log_property "Config file" "REMOTE" 4
+      # shellcheck disable=SC2034
       readonly AE_RUN_REMOTE_CONFIG="true"
       readonly AE_REMOTE_CONFIG_URL="${config_arg}"
       ;;
@@ -3261,13 +3361,13 @@ function main() {
     log_success "OK"
   fi
 
-  # I don't like when someone else is occupying my room
   # Test if any apt-get ops are running
   log_stage "Check for conflicting apps"
   _test_conflicting_apps
 
   if [[ $AE_RUN_NX == "true" ]]; then
     log_dev "Will not execute any tasks!"
+    AE_RUN_STACK_ERR+=("nx-mode-default::cli.nx")
     exit 255
   fi
 
@@ -3275,7 +3375,6 @@ function main() {
   log_stage "Checking for Autopilot"
   if [[ ${AE_AUTOPILOT} == "true" ]]; then
     log_success "Autopilot is ENABLED"
-    sleep 3
     #log_and_exit "Because I can" "255"
     __autopilot_run_task "$AE_RUN_CONFIG_TASK_UPDATE" "update_repos_as_task"
     __autopilot_run_task "$AE_RUN_CONFIG_TASK_UPGRADE" "upgrade_apps"

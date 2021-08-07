@@ -140,12 +140,12 @@ Use LTS as fallback. This flag should be used in conjunction with `--fix` Otherw
     ./after-effects --purge <config-file|config-url>
     ```
 
-Usually Ubuntu comes with some pre-installed games, packages which you might not need. This option is a switch to used in purging these packages mentioned in the subsequent sections. Since it is possible that user might purge necessary packages like sudo or other core system components, these just acts like a barrier from accidentally doing so.
+Usually Ubuntu comes with some pre-installed games, packages which you might not need. This option is a switch to used in purging these packages mentioned in the subsequent sections.
 
 !!! warning
 
     - This flag **MUST** be passed, if you intend to purge packages from system. Otherwise you will receive an error.
-    - If you are using YML config file you **MUST** set   `purge_enabled: true` under config.flags. See Example YAML file for more info.
+    - If you are using YML config file you **MUST** set `purge_enabled: true` under config.flags. See Example YAML file for more info.
 
 ## Delete log file
 

@@ -1,5 +1,4 @@
 # Install Config
-api: 3
 name: Test-Suite-ARM
 author: Prasad T
 # Configuration
@@ -10,7 +9,7 @@ config:
     upgrade: false
     # Add Repos
     # individual repos flags are mentioned under config.add_repo key
-    repo: true
+    add_repo: true
     # Add PPAs
     ppa: true
     # APT Packages
@@ -53,15 +52,13 @@ config:
   purge:
     - gnome-mines
   install:
-    debian_packages:
-      - https://github.com/sharkdp/bat/releases/download/v0.17.1/bat_0.17.1_arm64.deb,bat.deb
-    binaries:
-      - https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/arm64/kubectl,kubectl
     snaps:
-      normal:
-        - htop
-      classic:
-        - hugo
+      - htop
+      - classic::vscode
+    debs:
+      - https://github.com/sharkdp/bat/releases/download/v0.17.1/bat_0.17.1_arm64.deb
+    binaries:
+      - kubectl::https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/arm64/kubectl
     apt:
       # Admin related Stuff
       administration:
@@ -83,3 +80,5 @@ config:
         - docker-ce
         # Github
         - gh
+        # ProtonVPN
+        - protonvpn

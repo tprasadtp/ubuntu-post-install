@@ -21,12 +21,14 @@ This task can add the following repositories.
 | Microsoft - Teams       | teams             | teams, teams-insiders                                        |
 | Microsoft - VSCode      | vscode            | code, code-insiders, code-exploration                        |
 | [Podman][] (via OBS)    | podman            | podman, podman-plugins, cri-o-runc, cri-tools, buildah, crun |
+| ProtonVPN Client        | protonvpn         | protonvpn                                                    |
 | ROS                     | ros               |                                                              |
 | ROS2                    | ros2              |                                                              |
 | Signal                  | signal            | signal-desktop                                               |
 | Spotify Client          | spotify           | spotify-client                                               |
 | Slack Desktop           | slack             | slack-desktop                                                |
 | Sublime Text Editor     | sublimetext       | sublime-text                                                 |
+| Vivaldi                 | vivaldi           | vivaldi-stable                                               |
 | Wine HQ                 | winehq            | winehq-stable, winehq-staging                                |
 | [Ubuntu - Universe][]   | ubuntu_universe   |                                                              |
 | [Ubuntu - Multiverse][] | ubuntu_multiverse |                                                              |
@@ -55,7 +57,7 @@ config:
     # individual repos flags are mentioned under config.add_repo key
     repo: true
   # Repository Flags
-  add_repo:
+  repositories:
     brave_browser: true
     azurecli: true
     bazel: true
@@ -111,7 +113,7 @@ productivity tools, Email clients, browsers, IM clients etc.
 4. multimedia - Multimedia tools like media players, audio converters and players etc.
 5. development - IDEs, languages [go, python, ruby, rust, java etc],
 Containers [docker lxc rkt etc], Python libraries, compilers [gcc, clang]
-SDKs [AWS SDK, Google Cloud SDK, open-jdk, Tensor Flow], headers and libraries[ocl-icd-dev],
+SDKs [AWS SDK, Google Cloud SDK, open-jdk, Tensor Flow], headers and libraries.
 Anything related to development and `-dev` or `-devl` packages.
 6. other - Everything which does not fit in the above categories.
 Themes, Tools, Utilities etc.
@@ -121,27 +123,24 @@ be added or may be unavailable or offline. So Keeping the list separate from
 others packages minimizes errors if there are any.
 
 This classification is only for ease of use and need not be strictly followed. You can put
-`vlc` package in `security`, it will still install without complaints.
+`vlc` package in `security`, it will be installed without issues.
 
 ### Special list of packages - Purge list
 
-There is a special package list under key, config.purge containing list of packages to be
+There is a special package list `config.purge` containing list of packages to be
 purged from the system. This only applies if purge flag is set and purge task is enabled (when autopilot is active)
 
 ## Install Debian package archives (.deb files)
 
-This will install deb files specified in the YAML config under `config.install.debian_packages`.
+This will install deb files specified in the YAML config under `config.install.debs`.
 
-- Each element in the list file to be installed should have following entry.
-- URL to the deb file which can be accessed using wget`,`Name of the deb file without any spaces or special chars except hyphen.
-- For example to install Atom Editor the entry should look like below.
-- Please be aware that, some deb packages will add their own apt source entry and add their repository keys to system keyring.
+- Each entry is URL to the deb file. URL MUST be `http` or `https`, ftp UTLs are not supported!
 
 ```yaml
 api: 3
 config:
   install:
-    debian_packages:
+    debs:
       - https://atom-installer.github.com/v1.21.1/atom-amd64.deb,ATOM-Editor.deb
 
 ```
@@ -153,7 +152,7 @@ config:
 This will install binaries in YAML config under `config.install.binaries`.
 
 - **Simulate** option **will** download the package but not install it.
-- Configuration is similar to deb files mentioned above. First part is the URL to the binary file followed by ',' and name of the binary.
+- Configuration is of format `binary-name::URL`. Binary name **MUST** mach regex `^([a-zA-z0-9_-]+)$`.
 - For example, to install `kubectl`, the entry should look like below.
 
 ```yaml
@@ -161,7 +160,7 @@ api: 3
 config:
   install:
     binaries:
-      - https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/amd64/kubectl,kubectl
+      - kubectl::https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/amd64/kubectl
 
 ```
 

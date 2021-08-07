@@ -2,25 +2,24 @@
 
 ## What if I get an error saying Unknown Distribution/Release?
 
-That usually means you are running a Distribution which is not supported, too old or a derivative which is not recognized by the script.
-consider opening an issue on GitHub.
+That usually means you are running a distribution which is not supported, too old or a derivative which is not recognized by the script. Consider opening an issue on GitHub, if it is not the case.
 
-## What if I get an error saying this release of Ubuntu is no longer supported?
+## Configuration Errors
 
-<pre>[  Derivatives  ] Checking...
-<font color="#F92672">[      EOL      ] This version of Ubuntu is no longer supported. </font>
-<font color="#F92672">[      EOL      ] Ubuntu 19.04 reached EOL on January 23rd, 2020.</font>
-_______________________________________________________
-Exit code is 12
-</pre>
+<pre><font color="#FFAFFF">➜ Processing configuration </font>
+<font color="#00FFFF">  • Config file            : config/arm.yml </font>
+<font color="#00FFFF">  • Parsing config         : config/arm.yml </font>
+  • Validating Config Version
+<font color="#CC241D">  ✖ Config API version mismatch! </font>
+<font color="#CC241D">  ✖ Expected: 3 Got:  </font>
+<font color="#CC241D">  ✖ api key MUST be set to 3 </font>
+<font color="#CC241D">  ✖ [v3] config.install.debian_packages[] is obsolete, use config.install.debs[] </font>
+<font color="#CC241D">  ✖ [v3] config.tasks.repo is obsolete, use config.tasks.add_repo </font>
+<font color="#CC241D">✖ Configuration error!, Please fix your configuration and try again! </font></pre>
 
-Well, thats pretty much self explanatory! Please use supported release of Ubuntu/Mint/Debian.
+You are using v2 or older config which is not compatible with newer versions of the script. Update your config to v3 format.
 
-!!! warning
-    Ubuntu ESM versions are considered as EOL
-
-
-## Something not mentioned above
+## Something(s) not mentioned above
 
 !!! question "Report"
     Well, that shouldn't have happened. Please open an issue on [Github](https://github.com/tprasadtp/ubuntu-post-install/issues/new).

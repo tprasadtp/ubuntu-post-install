@@ -10,7 +10,7 @@ config:
     upgrade: false
     # Add Repos
     # individual repos flags are mentioned under config.add_repo key
-    repo: true
+    add_repo: true
     # Add PPAs
     ppa: true
     # APT Packages
@@ -36,6 +36,7 @@ config:
     hashicorp: true
     mendeley: false
     podman: true
+    protonvpn: true
     ros: true
     ros2: true
     signal: true
@@ -44,6 +45,7 @@ config:
     slack: true
     sublimetext: true
     teams: true
+    vivaldi: true
     vscode: true
     winehq: true
     # Debian
@@ -66,17 +68,20 @@ config:
   ppa:
     # With prefix ppa:
     - ppa:yubico/stable
-    # No PRefix ppa:
+    # No Prefix ppa:
     - kicad/kicad-5.1-releases
   # Install components
   # APT Packages, Python Modules, Debian packages
   install:
-    # Debian packages.deb files
-    # CSV format
-    debian_packages:
-      - https://github.com/sharkdp/bat/releases/download/v0.17.1/bat_0.17.1_amd64.deb,bat.deb
+    snaps:
+      - htop
+      - classic::vscode
+      - classic::edge::hugo
+    # Debian packages/.deb files
+    debs:
+      - https://github.com/sharkdp/bat/releases/download/v0.17.1/bat_0.17.1_amd64.deb
     binaries:
-      - https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/amd64/kubectl,kubectl
+      - kubectl::https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/amd64/kubectl
     apt:
       # Admin related Stuff
       administration:
@@ -115,7 +120,7 @@ config:
         # Skype
         - skypeforlinux
         # WineHQ
-        # - winehq-stable
+        # - wine-stable
         # Bazel
         - bazel
         # Edge
@@ -132,7 +137,7 @@ config:
         - brave-browser
         # Slack
         - slack-desktop
-    snaps:
-      - htop
-      - classic::vscode
-      - classic::edge::hugo
+        # Vivaldi
+        - vivaldi-stable
+        # ProtonVPN
+        - protonvpn

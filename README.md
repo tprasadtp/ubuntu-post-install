@@ -111,12 +111,14 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 | Microsoft - Teams       | teams             | teams, teams-insiders                                        |
 | Microsoft - VSCode      | vscode            | code, code-insiders, code-exploration                        |
 | [Podman][] (via OBS)    | podman            | podman, podman-plugins, cri-o-runc, cri-tools, buildah, crun |
+| ProtonVPN Client        | protonvpn         | protonvpn                                                    |
 | ROS                     | ros               |                                                              |
 | ROS2                    | ros2              |                                                              |
 | Signal                  | signal            | signal-desktop                                               |
 | Slack Desktop           | slack             | slack-desktop                                                |
 | Spotify Client          | spotify           | spotify-client                                               |
 | Sublime Text Editor     | sublimetext       | sublime-text                                                 |
+| Vivaldi                 | vivaldi           | vivaldi-stable                                               |
 | Wine HQ                 | winehq            | winehq-stable, winehq-staging                                |
 | [Ubuntu - Universe][]   | ubuntu_universe   |                                                              |
 | [Ubuntu - Multiverse][] | ubuntu_multiverse |                                                              |
