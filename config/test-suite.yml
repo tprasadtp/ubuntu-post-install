@@ -35,6 +35,8 @@ config:
     gvisor: true
     hashicorp: true
     mendeley: false
+    miniconda: true
+    neurodebian: true
     podman: true
     protonvpn: true
     ros: true
@@ -120,7 +122,7 @@ config:
         # Skype
         - skypeforlinux
         # WineHQ
-        # - wine-stable
+        - wine-stable
         # Bazel
         - bazel
         # Edge
@@ -141,3 +143,5 @@ config:
         - vivaldi-stable
         # ProtonVPN
         - protonvpn
+        # Miniconda
+        - conda

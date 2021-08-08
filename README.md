@@ -110,6 +110,8 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 | Microsoft - Skype       | skype             | skypeforlinux                                                |
 | Microsoft - Teams       | teams             | teams, teams-insiders                                        |
 | Microsoft - VSCode      | vscode            | code, code-insiders, code-exploration                        |
+| [Miniconda][]           | miniconda         | conda                                                        |
+| NeuroDebian             | neurodebian       | https://neuro.debian.net/                                    |
 | [Podman][] (via OBS)    | podman            | podman, podman-plugins, cri-o-runc, cri-tools, buildah, crun |
 | ProtonVPN Client        | protonvpn         | protonvpn                                                    |
 | ROS                     | ros               |                                                              |
@@ -172,6 +174,7 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [Brave Browser]: https://brave.com/linux/
 [GitHub - CLI]: https://cli.github.com
 [Google - gVisor]: https://gvisor.dev
+[Miniconda]: https://www.anaconda.com/blog/rpm-and-debian-repositories-for-miniconda
 [Podman]: https://podmain.io
 [Google - Bazel]: https://bazel.build
 [Ubuntu - Universe]: https://help.ubuntu.com/community/Repositories/Ubuntu

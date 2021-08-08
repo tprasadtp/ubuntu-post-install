@@ -59,6 +59,7 @@ function __init_core_variables() {
   readonly AE_RUN_BASE_DIR="$(pwd -P)"
 
   #Initialize printf variables
+  readonly AE_LOG_PHASE_REPO="(CORE)"
   readonly AE_LOG_PHASE_REPO="(REPO)"
   readonly AE_LOG_PHASE_PPA="(PPA)"
   readonly AE_LOG_PHASE_DEB="(DPKG)"
@@ -610,7 +611,6 @@ function _fix_ubuntu_derivatives() {
   declare -gr AE_BASE_CODENAME="${AE_RUN_CODENAME}"
   log_var "AE_BASE_CODENAME"
   log_var "AE_RUN_IS_DEBIAN"
-
 }
 
 function __test_internet() {
@@ -691,9 +691,9 @@ function _get_remote_file() {
   local file_url="${2}"
   log_property "URL is set to" "${file_url}"
 
-  if [ "$#" -eq 2 ]; then
+  if [[ $# -eq 2 ]]; then
     # Remote files
-    wget -q "${file_url}" -O "$file_name" >>$"$AE_LOG_FILE"
+    wget -q "${file_url}" -O "$file_name" 2>&1 | log_trace "${AE_LOG_PHASE_CORE}"
     exit_status="$?"
 
     log_property "Exit code (wget)" "$exit_status"
@@ -1016,14 +1016,14 @@ function _set_yaml_config() {
 
   log_info "Validating Config Version"
   if [[ $AE_RUN_CONFIG_API -eq 3 ]]; then
-    log_success "OK"
+    log_success "[v3] OK"
   elif [[ -z $AE_RUN_CONFIG_API ]]; then
     log_error "[v3] Missing config API version identifier."
     log_error "[v3] Suggeted Action: Please include api: ${AE_CONFIG_API} in your config file."
   else
-    log_error "Config API version mismatch!"
-    log_error "Expected: ${AE_CONFIG_API} Got: ${AE_RUN_CONFIG_API}"
-    log_error "api key MUST be set to ${AE_CONFIG_API}"
+    log_error "[v3] Config API version mismatch!"
+    log_error "[v3] Expected: ${AE_CONFIG_API} Got: ${AE_RUN_CONFIG_API}"
+    log_error "[v3] api key MUST be set to ${AE_CONFIG_API}"
     log_error "[v3] Suggeted Action: Please ensure api: ${AE_CONFIG_API} is set in your config file."
     AE_RUN_CFG_BUILD_ERRORS=$((AE_RUN_CFG_BUILD_ERRORS + 1))
   fi
@@ -1083,6 +1083,8 @@ function _set_yaml_config() {
   _check_bool "AE_RUN_CONFIG_REPO_SLACK" "${AE_RUN__config__add_repo__slack[0]}"
   _check_bool "AE_RUN_CONFIG_REPO_VIVALDI" "${AE_RUN__config__add_repo__vivaldi[0]}"
   _check_bool "AE_RUN_CONFIG_REPO_PROTONVPN" "${AE_RUN__config__add_repo__protonvpn[0]}"
+  _check_bool "AE_RUN_CONFIG_REPO_NEURODEBIAN" "${AE_RUN__config__add_repo__neurodebian[0]}"
+  _check_bool "AE_RUN_CONFIG_REPO_MINICONDA" "${AE_RUN__config__add_repo__miniconda[0]}"
 
   # Debian Components
   _check_bool "AE_RUN_CONFIG_REPO_DEBIAN_NONFREE" "${AE_RUN__config__add_repo__debian_nonfree[0]}"
@@ -1538,8 +1540,18 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       log_debug "Skipped adding Ubuntu/Multiverse repository"
     fi
 
-  else
+    # # Partner Repositories
+    # if [[ $AE_RUN_DISTRO_ROOT == "ubuntu" ]]; then
+    #   log_debug "Checking for entries in sources.list"
+    #   if grep -q "^deb http://archive.canonical.com/ubuntu $AE_BASE_CODENAME} partner" /etc/apt/sources.list; then
+    #     log_success "Partner repositories are already enabled!"
+    #   elif grep -qE "^[[:space:]]*#+[[:space:]]*deb[[:space:]]+http:\/\/archive\.canonical\.com\/ubuntu $AE_BASE_CODENAME} partner" /etc/apt/sources.list; then
+    #     log_debug "Found commented out entry in sources.list file, enabling it"
+    #     sed -i 's/\(# \)\(deb .*ubuntu '${DISTRO}' partner\)/\2/g' /etc/apt/sources.list
+    #   fi
+    # fi
 
+  else
     log_debug "Distro is not Ubuntu, skip adding ubuntu specific components!"
   fi # ubuntu check
 
@@ -1704,20 +1716,27 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
   if [ "$AE_RUN_CONFIG_REPO_WINEHQ" == "true" ]; then
     if [[ ${AE_ARCH} == "amd64" ]]; then
       log_info "WineHQ"
-      if [[ ${AE_RUN_CODENAME} == "focal" ]] || [[ ${AE_RUN_CODENAME} == "groovy" ]] ||
-        [[ ${AE_RUN_CODENAME} == "hirsute" ]] || [[ ${AE_RUN_CODENAME} == "bullseye" ]]; then
+      if [[ ${AE_RUN_CODENAME} == "bionic" ]] || [[ ${AE_RUN_CODENAME} == "buster" ]] ||
+        [[ ${AE_RUN_CODENAME} == "stretch" ]]; then
+        log_error "Latest version of WINE depends on libfaudio0 package,"
+        log_error "which is not available on your distribution!"
+        log_warn "For more information visit https://forum.winehq.org/viewtopic.php?f=8&t=32192"
+      else
         __add_repo_keys --format "asc" \
           --file-prefix "wine-hq" \
           --key-url https://dl.winehq.org/wine-builds/winehq.key
         if echo "deb [signed-by=${AE_APT_KEYRINGS_DIR}/wine-hq.gpg] https://dl.winehq.org/wine-builds/${AE_RUN_DISTRO_NAME}/ ${AE_RUN_CODENAME} main #WineHQ" >${AE_APT_SOURCES_DIR}/winehq.list; then
           log_success "OK"
+          log_info "Enabling i386 architecture"
+          if dpkg --add-architecture i386 2>&1 | log_trace ${AE_LOG_PHASE_REPO}; then
+            log_success "OK"
+          else
+            log_error "Failed to enable i386 architecture! WineHQ packages cannot be installed!"
+            AE_RUN_STACK_ERR+=("repo-winehq-add-arch-error::config.add_repo.winehq")
+          fi
         else
           log_error "Adding WineHQ repository failed"
         fi
-      else
-        log_error "Latest version of WINE depends on libfaudio0 package,"
-        log_error "which is not available on your distribution!"
-        log_warn "For more information visit https://forum.winehq.org/viewtopic.php?f=8&t=32192"
       fi
     else
       log_error "WineHQ is not supported on this architecture(${AE_ARCH})"
@@ -2130,9 +2149,60 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       log_success "OK"
     else
       log_error "Failed to add ProtonVPN repository"
+      AE_RUN_STACK_ERR+=("repo-add-error::config.add_repo.protonvpn")
     fi
   else
     log_debug "Skipped adding ProtonVPN repository"
+  fi
+
+  # Anaconda
+  if [ "$AE_RUN_CONFIG_REPO_MINICONDA" == "true" ]; then
+    if [ "$AE_ARCH" == "amd64" ]; then
+      log_info "Miniconda"
+      __add_repo_keys \
+        --format "asc" \
+        --file-prefix "anaconda-archive-keyring" \
+        --key-url "https://repo.anaconda.com/pkgs/misc/gpgkeys/anaconda.asc"
+
+      if echo "deb [arch=${AE_ARCH} signed-by=${AE_APT_KEYRINGS_DIR}/anaconda-archive-keyring.gpg] https://repo.anaconda.com/pkgs/misc/debrepo/conda stable main" >${AE_APT_SOURCES_DIR}/miniconda.list; then
+        log_success "OK"
+      else
+        log_error "Failed to add Miniconda repository"
+        AE_RUN_STACK_ERR+=("repo-add-error::config.add_repo.miniconda")
+      fi
+    else
+      log_error "Miniconda repository is not supported on this architecture($AE_ARCH)!"
+      AE_RUN_STACK_ERR+=("repo-unsupported-error::config.add_repo.miniconda")
+    fi
+  else
+    log_debug "Skipped adding Miniconda repository"
+  fi
+
+  # NeuroDebian
+  if [ "$AE_RUN_CONFIG_REPO_NEURODEBIAN" == "true" ]; then
+    if [ "$AE_ARCH" == "amd64" ]; then
+      log_info "NeuroDebian"
+      __add_repo_keys \
+        --format "asc" \
+        --file-prefix "neurodebian-archive-keyring" \
+        --key-url "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xdd95cc430502e37ef840aceea5d32f012649a5a9"
+
+      declare -r AE_RUN_REPO_NEURODEBIAN_SOURCES_CONTENT="# NeuroDebian Repositories
+deb [signed-by=${AE_APT_KEYRINGS_DIR}/neurodebian-archive-keyring.gpg] http://neuro.debian.net/debian data main contrib non-free #NeuroDebian-Data
+deb [signed-by=${AE_APT_KEYRINGS_DIR}/neurodebian-archive-keyring.gpg] http://neuro.debian.net/debian ${AE_RUN_CODENAME} main contrib non-free #NeuroDebian"
+
+      if echo "${AE_RUN_REPO_NEURODEBIAN_SOURCES_CONTENT}" >${AE_APT_SOURCES_DIR}/neurodebian.list; then
+        log_success "OK"
+      else
+        log_error "Failed to add NeuroDebian repository"
+        AE_RUN_STACK_ERR+=("repo-add-error::config.add_repo.neurodebian")
+      fi
+    else
+      log_error "NeuroDebian repository is not supported on this architecture($AE_ARCH)!"
+      AE_RUN_STACK_ERR+=("repo-unsupported-error::config.add_repo.neurodebian")
+    fi
+  else
+    log_debug "Skipped adding NeuroDebian repository"
   fi
 
   # ROS2
@@ -2153,12 +2223,11 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
     if [[ $AE_RUN_DISTRO_NAME == "ubuntu" ]]; then
       if [[ $AE_RUN_CODENAME == "focal" ]]; then
         ros2_supported="true"
-        log_success "ROS2 is available on focal/$AE_ARCH"
+        log_debug "ROS2 is available on Focal/$AE_ARCH"
       fi
     fi #ubuntu
 
     if [[ $ros2_supported == "true" ]]; then
-      log_info "Adding ROS2 repositories"
       log_debug "Adding ROS2 repo key"
       __add_repo_keys --format "asc" \
         --file-prefix "ros2" \
@@ -2196,13 +2265,13 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
     if [[ $AE_RUN_DISTRO_NAME == "ubuntu" ]]; then
       if [[ $AE_RUN_CODENAME == "bionic" ]]; then
         ros_arch_supported="true"
-        log_success "ROS is available on Bionic/$AE_ARCH"
+        log_debug "ROS is available on Bionic/$AE_ARCH"
       elif [[ $AE_RUN_CODENAME == "xenial" ]]; then
         ros_arch_supported="true"
-        log_success "ROS is available on Xenial/$AE_ARCH"
+        log_debug "ROS is available on Xenial/$AE_ARCH"
       elif [[ $AE_RUN_CODENAME == "focal" ]]; then
         ros_arch_supported="true"
-        log_success "ROS is available on Focal/$AE_ARCH"
+        log_debug "ROS is available on Focal/$AE_ARCH"
       fi
     fi #ubuntu
 
@@ -2210,12 +2279,11 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       # Check architectures
       if [[ $AE_RUN_CODENAME == "stretch" ]] || [[ $AE_RUN_CODENAME == "buster" ]]; then
         ros_arch_supported="true"
-        log_success "ROS is available on Debian ${AE_RUN_CODENAME}/$AE_ARCH"
+        log_debug "ROS is available on Debian ${AE_RUN_CODENAME}/$AE_ARCH"
       fi
     fi #debian
 
     if [[ $ros_arch_supported == "true" ]]; then
-      log_info "Adding ROS repositories"
       log_debug "Adding ROS repo key "
       __add_repo_keys --format "asc" \
         --file-prefix "ros" \
@@ -2856,7 +2924,6 @@ function _process_menu() {
   __menu_info_add_repo="
   Settings for additional repositories is set as follows.
   -------------------------------------------------------
-
   Brave Browser                : $AE_RUN_CONFIG_REPO_BRAVE_BROWSER
   Docker Community Edition     : $AE_RUN_CONFIG_REPO_DOCKER
   GitHub CLI                   : $AE_RUN_CONFIG_REPO_GH
@@ -2872,6 +2939,8 @@ function _process_menu() {
   Microsoft - Skype            : $AE_RUN_CONFIG_REPO_SKYPE
   Microsoft - Teams            : $AE_RUN_CONFIG_REPO_MSTEAMS
   Microsoft - VSCode           : $AE_RUN_CONFIG_REPO_VSCODE
+  Miniconda (anaconda)         : $AE_RUN_CONFIG_REPO_MINICONDA
+  NeuroDebian                  : $AE_RUN_CONFIG_REPO_NEURODEBIAN
   Podman (from Kubic Project)  : $AE_RUN_CONFIG_REPO_PODMAN
   ProtonVPN Client             : $AE_RUN_CONFIG_REPO_PROTONVPN
   ROS                          : $AE_RUN_CONFIG_REPO_ROS
@@ -3353,12 +3422,11 @@ function main() {
 
   _set_yaml_config
 
-  log_stage "Check AUTOPILOT requirements"
   if [[ ! -t 1 ]] && [[ $AE_AUTOPILOT != "true" ]]; then
     log_error "Terminal is not interactive, yet you have not specified --autopilot flag!"
     log_and_exit "Non-interactive terminal requires --autopilot" "54"
   else
-    log_success "OK"
+    log_debug "Terminal is interactive, no need to enforce autopilot usage"
   fi
 
   # Test if any apt-get ops are running
@@ -3372,7 +3440,7 @@ function main() {
   fi
 
   # Autopilot
-  log_stage "Checking for Autopilot"
+  log_stage "Checking for AUTOPILOT"
   if [[ ${AE_AUTOPILOT} == "true" ]]; then
     log_success "Autopilot is ENABLED"
     #log_and_exit "Because I can" "255"
