@@ -15,7 +15,7 @@ config:
     upgrade: false
     # Add Repos
     # individual repos flags are mentioned under config.add_repo key
-    repo: true
+    add_repo: true
     # Add PPAs
     ppa: true
     # APT Packages
@@ -27,28 +27,40 @@ config:
     snaps: true
   # Repository Flags
   add_repo:
-    brave_browser: true
     azurecli: true
     bazel: true
+    brave_browser: true
     chrome: true
     docker: true
     edge: true
-    gcsfuse: true
+    gcsfuse: false
     github: true
     googlecloud: true
     gvisor: true
     hashicorp: true
     mendeley: false
+    miniconda: true
+    neurodebian: true
     podman: true
+    protonvpn: true
     ros: true
     ros2: true
     signal: true
     skype: true
     spotify: true
+    slack: true
     sublimetext: true
     teams: true
+    vivaldi: true
     vscode: true
     winehq: true
+    # Debian
+    debian_nonfree: true
+    debian_contrib: true
+    # Ubuntu
+    ubuntu_universe: true
+    ubuntu_multiverse: true
+    ubuntu_restricted: true
 
   # Flags
   flags:
@@ -64,33 +76,31 @@ config:
   # PPA List
   ppa:
     - ppa:yubico/stable
+    - kicad/kicad-5.1-releases
   # Install components
   # APT Packages, Python Modules, Debian packages
   install:
-    # Debian packages:  .deb files
-    # CSV format similar to lists
-    debian_packages:
-      - https://download.teamviewer.com/download/teamviewer_i386.deb,TeamViewer.deb
+    # Debian packages: .deb files
+    debs:
+      - https://download.teamviewer.com/download/teamviewer_i386.deb
+      - https://github.com/sharkdp/bat/releases/download/v0.17.1/bat_0.17.1_amd64.deb
     # Static Binaries which will be placed in /usr/local/bin
-    # minikube, docker-compose, etc.
-    # Follows same pattern as Debian packages
-    # Name to be saved is second field
+    # <binary-name-as-available-in-path>::<URL>
     binaries:
-      - https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64,minikube
-      - https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-amd64,kompose
+      - minikube::https://github.com/kubernetes/minikube/releases/download/v0.28.2/minikube-linux-amd64
+      - kompose::https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-amd64
     apt:
       # Admin related Stuff
       administration:
         - dconf-editor
         - htop
         - apt-xapian-index
-        - gdebi
         - gparted
         - synaptic
         - bleachbit
       # Security Related Stuff
       security:
-        - gufw
+        - firewalld
       # Productivity & Office Tools.
       productivity:
         - pandoc
@@ -132,6 +142,7 @@ config:
         - google-chrome-stable
         - spotify-client
         - code
+        - conda
         - google-cloud-sdk
         - docker-ce
         - runsc

@@ -1,4 +1,4 @@
-# After-Effects
+# Ubuntu Post Installation Script
 
 An Effortless & Simple post-installation script for Ubuntu, Linux Mint, Elementary OS, Debian and their derivatives.
 
@@ -20,7 +20,7 @@ This script is built for one purpose only. Automating post installation tasks on
 
 ### Latest Stable Release (Recommended)
 
-```bash
+```console
 wget https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O after-effects
 wget https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha256sums.txt -O sha256sums.txt
 sha256sum -c sha256sums.txt
@@ -28,7 +28,7 @@ sha256sum -c sha256sums.txt
 
 ### Master Branch
 
-```bash
+```console
 wget https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/after-effects -O after-effects
 ```
 
