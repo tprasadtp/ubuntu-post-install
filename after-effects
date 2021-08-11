@@ -554,11 +554,18 @@ function _fix_ubuntu_derivatives() {
     log_success "Keeping the codename as $AE_RUN_CODENAME."
     ;;
   ulyana | ulyssa | uma)
-    log_info "Release is Linux mint 20.X."
+    log_info "Release is Linux Mint 20.X."
     log_info "Setting additional repositories to follow Ubuntu 20.04."
     AE_RUN_CODENAME="focal"
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     readonly AE_RUN_SNAP_REMOVE_APT_BLOCK="true"
+    log_success "Changed codename to $AE_RUN_CODENAME"
+    ;;
+  odin)
+    log_info "Release is elementaryOS 6 - Odin."
+    log_info "Setting additional repositories to follow Ubuntu 20.04."
+    AE_RUN_CODENAME="focal"
+    readonly AE_RUN_DISTRO_NAME="ubuntu"
     log_success "Changed codename to $AE_RUN_CODENAME"
     ;;
   # Current Ubuntu release
