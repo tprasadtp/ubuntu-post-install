@@ -115,7 +115,7 @@ function term_exit_handler() {
         # error did not lead to exit but we will exit with non zero indicating error occured
         # otherwise dont alter it
         if [[ $exit_code -eq 0 ]]; then
-          return 1
+          exit 1
         fi
       done
     else
@@ -236,7 +236,7 @@ function __logger_core() {
       ;;
     error)
       declare -r lvl_str="ERROR"
-      declare -r lvl_sym="✖"
+      declare -r lvl_sym="•"
       declare -r lvl_color="${AE_COLOR_RED}"
       ;;
     critical)
@@ -410,8 +410,8 @@ function __setup_platform_vars() {
   readonly AE_UBUNTU_CODENAME_LATEST_LTS="focal"
   readonly AE_UBUNTU_CODENAME_PREV_LTS="bionic"
 
-  readonly AE_DEBIAN_CODENAME_LATEST="buster"
-  readonly AE_DEBIAN_CODENAME_UPCOMING="bullseye"
+  readonly AE_DEBIAN_CODENAME_LATEST="bullseye"
+  readonly AE_DEBIAN_CODENAME_UPCOMING="bookworm"
 
   #============================ Switches/ booleans & Vars ================================
 
@@ -1092,6 +1092,7 @@ function _set_yaml_config() {
   _check_bool "AE_RUN_CONFIG_REPO_PROTONVPN" "${AE_RUN__config__add_repo__protonvpn[0]}"
   _check_bool "AE_RUN_CONFIG_REPO_NEURODEBIAN" "${AE_RUN__config__add_repo__neurodebian[0]}"
   _check_bool "AE_RUN_CONFIG_REPO_MINICONDA" "${AE_RUN__config__add_repo__miniconda[0]}"
+  _check_bool "AE_RUN_CONFIG_REPO_ELEMENT_IO" "${AE_RUN__config__add_repo__element_io[0]}"
 
   # Debian Components
   _check_bool "AE_RUN_CONFIG_REPO_DEBIAN_NONFREE" "${AE_RUN__config__add_repo__debian_nonfree[0]}"
@@ -1291,7 +1292,7 @@ function _fix_repo_not_available() {
   # (may not be LTS) for adding repository
 
   log_debug "Check and apply codename fixes"
-  if [ "$AE_RUN_FIX" == "true" ]; then
+  if [[ $AE_RUN_FIX == "true" ]] && [[ $AE_RUN_IS_DEBIAN != "true" ]]; then
     # Check LTS fallback flag is being used
     # if running on current LTS, and fix mode is LTS fallback to last LTS.
     if [[ $AE_RUN_FIX_MODE_LTS == "true" ]] && [[ $AE_RUN_CODENAME == "${AE_UBUNTU_CODENAME_LATEST_LTS}" ]]; then
@@ -1303,7 +1304,7 @@ function _fix_repo_not_available() {
     elif [[ $AE_RUN_FIX_MODE_LTS != "true" ]] && [[ $AE_RUN_CODENAME == "${AE_UBUNTU_CODENAME_LATEST}" ]]; then
       log_warn "Using previous release ${AE_UBUNTU_CODENAME_PREV} as fallback"
 
-      # fallback is non LTS so it might disapper/become unsupported! warn
+      # fallback is non LTS so it might disapper/become unsupported!
       if [[ $AE_UBUNTU_CODENAME_PREV != "$AE_UBUNTU_CODENAME_LATEST_LTS" ]]; then
         log_warn "Fallback Ubuntu (${AE_UBUNTU_CODENAME_LATEST}) is a non LTS release!"
       fi
@@ -1437,7 +1438,8 @@ function add_ppas() {
       fi
     done
   else
-    log_error "This is Debian. PPAs are not available."
+    log_error "PPAs are not supported on Debian!"
+    AE_RUN_STACK_ERR+=("config-error:config.tasks.ppa")
   fi
 
 }
@@ -1629,10 +1631,12 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
         log_success "OK"
       else
         log_error "Adding Google Chrome Repository failed"
+        AE_RUN_STACK_ERR+=("add-repo-error:config.add_repo.chrome")
       fi
 
     else
       log_error "Google Chrome is not supported on this architecture($AE_ARCH)"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.chrome")
     fi
   else
     log_debug "Skipped Google chrome repository"
@@ -1653,6 +1657,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       fi
     else
       log_error "Spotify Desktop is not supported on this architecture(${AE_ARCH})"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.spotify")
     fi
   else
     log_debug "Skipped adding Spotify repository"
@@ -1673,6 +1678,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       fi
     else
       log_error "Skype for Linux is not supported on this architecture(${AE_ARCH})"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.skype")
     fi
   else
     log_debug "Skipped Skype for Linux."
@@ -1692,7 +1698,8 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
         log_error "Failed to addd Signal for desktop repository!"
       fi
     else
-      log_error "Signal for Desktop is not supported on this architecture(${AE_ARCH})"
+      log_error "Signal for Desktop is not supported on this (${AE_ARCH})"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.signal")
     fi
   else
     log_debug "Skipped adding Signal for desktop repository"
@@ -1713,6 +1720,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       fi
     else
       log_error "Mendeley Desktop is not supported on this architecture(${AE_ARCH})"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.mendeley")
     fi
 
   else
@@ -1728,6 +1736,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
         log_error "Latest version of WINE depends on libfaudio0 package,"
         log_error "which is not available on your distribution!"
         log_warn "For more information visit https://forum.winehq.org/viewtopic.php?f=8&t=32192"
+        AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.winehq")
       else
         __add_repo_keys --format "asc" \
           --file-prefix "wine-hq" \
@@ -1747,6 +1756,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       fi
     else
       log_error "WineHQ is not supported on this architecture(${AE_ARCH})"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.winehq")
     fi
   else
     log_info "Skipped adding WineHQ."
@@ -1787,6 +1797,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       fi
     else
       log_error "GCSFUSE is not supported on this architecture(${AE_ARCH})"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.gcsfuse")
     fi
 
   else
@@ -1877,6 +1888,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       fi
     else
       log_error "Microsoft Edge is not supported on this architecture($AE_ARCH)!"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.edge")
     fi
   else
     log_debug "Skipped adding Microsoft Edge repository"
@@ -1893,6 +1905,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       fi
     else
       log_error "Microsoft Teams is not supported on this architecture($AE_ARCH)!"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.teams")
     fi
   else
     log_debug "Skipped adding Microsoft Teams repository"
@@ -1949,6 +1962,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
 
     else
       log_error "Hashicorp repository is not supported on this architecture($AE_ARCH)!"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.hashicorp")
     fi
   else
     log_debug "Skipped adding Hashicorp repository"
@@ -1970,6 +1984,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
 
     else
       log_error "Bazel repository is not supported on this architecture($AE_ARCH)!"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.bazel")
     fi
   else
     log_debug "Skipped adding Bazel repository"
@@ -1995,6 +2010,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
     else
       log_error "gVisor is not supported on this architecture(${AE_ARCH})"
       log_dev "Visit https://gvisor.dev/ for more info"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.gvisor")
     fi
 
   else
@@ -2020,10 +2036,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
 
     else
       log_error "Podman is not supported on ${AE_DISTRO_NAME}/${AE_ARCH}"
-      if [[ ${AE_RUN_DISTRO_NAME} == "debian" ]]; then
-        log_warn "Podman depends on libseccomp2 from backports repository."
-        log_warn "See https://podman.io/getting-started/installation."
-      fi
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.podman")
     fi
 
   else
@@ -2047,6 +2060,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
 
     else
       log_error "SublimeText repository is not supported on this architecture($AE_ARCH)!"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.sublimetext")
     fi
   else
     log_debug "Skipped adding SublimeText repository"
@@ -2078,6 +2092,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
 
     else
       log_error "Brave Browser repository is not supported on this architecture($AE_ARCH)!"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.brave_browser")
     fi
   else
     log_debug "Skipped adding Brave Browser repository"
@@ -2103,11 +2118,12 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       if echo "deb [arch=amd64 signed-by=${AE_APT_KEYRINGS_DIR}/slack-archive-keyring.gpg] https://packagecloud.io/slacktechnologies/slack/debian/ jessie main #Slack" >${AE_APT_SOURCES_DIR}/slack.list; then
         log_success "OK"
       else
-        log_error "Failed to add Brave Browser repository"
+        log_error "Failed to add Slack repository"
       fi
 
     else
       log_error "Slack is not supported on this architecture($AE_ARCH)!"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.slack")
     fi
   else
     log_debug "Skipped adding Slack repository"
@@ -2139,6 +2155,8 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
 
     else
       log_error "Vivaldi Browser repository is not supported on this architecture($AE_ARCH)!"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.vivaldi")
+
     fi
   else
     log_debug "Skipped adding Vivaldi Browser repository"
@@ -2179,7 +2197,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       fi
     else
       log_error "Miniconda repository is not supported on this architecture($AE_ARCH)!"
-      AE_RUN_STACK_ERR+=("repo-unsupported-error::config.add_repo.miniconda")
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.miniconda")
     fi
   else
     log_debug "Skipped adding Miniconda repository"
@@ -2206,10 +2224,33 @@ deb [signed-by=${AE_APT_KEYRINGS_DIR}/neurodebian-archive-keyring.gpg] http://ne
       fi
     else
       log_error "NeuroDebian repository is not supported on this architecture($AE_ARCH)!"
-      AE_RUN_STACK_ERR+=("repo-unsupported-error::config.add_repo.neurodebian")
+      AE_RUN_STACK_ERR+=("add-repo-unsupported::config.add_repo.neurodebian")
     fi
   else
     log_debug "Skipped adding NeuroDebian repository"
+  fi
+
+  # Element (riot.im)
+  if [[ $AE_RUN_CONFIG_REPO_ELEMENT_IO == "true" ]]; then
+    if [ "$AE_ARCH" == "amd64" ]; then
+      log_info "Element / Riot (Matrix Client)"
+      __add_repo_keys \
+        --format "gpg" \
+        --file-prefix "element-io-archive-keyring" \
+        --key-url "https://packages.riot.im/debian/riot-im-archive-keyring.gpg"
+
+      if echo "deb [signed-by=/usr/share/keyrings/element-io-archive-keyring.gpg] https://packages.riot.im/debian/ default main #element.io" >${AE_APT_SOURCES_DIR}/element-io.list; then
+        log_success "OK"
+      else
+        log_error "Failed to add Element.io/Riot.im repository"
+        AE_RUN_STACK_ERR+=("repo-add-error::config.add_repo.element")
+      fi
+    else
+      log_error "NeuElement.io/Riot.imroDebian repository is not supported on this architecture($AE_ARCH)!"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported::config.add_repo.element")
+    fi
+  else
+    log_debug "Skipped adding Element.io/Riot.im repository"
   fi
 
   # ROS2
@@ -2566,6 +2607,7 @@ function purge_not_required() {
       if [[ $exit_status -eq 0 ]]; then
         log_success "Done!"
       else
+        AE_RUN_STACK_ERR+=("install-error::config.purge")
         log_error "Something went wrong while purging packages."
         log_error "Please see the log file for more details."
       fi
@@ -2631,6 +2673,7 @@ function install_apps() {
       if [[ $exit_status -eq 0 ]]; then
         log_success "Done!"
       else
+        AE_RUN_STACK_ERR+=("install-error::config.install.apt.${array}")
         log_error "Something went wrong while installing packages in set - $array."
         log_error "Please see the log file for more details."
       fi
@@ -2933,6 +2976,7 @@ function _process_menu() {
   -------------------------------------------------------
   Brave Browser                : $AE_RUN_CONFIG_REPO_BRAVE_BROWSER
   Docker Community Edition     : $AE_RUN_CONFIG_REPO_DOCKER
+  Element.io/Riot.im           : $AE_RUN_CONFIG_REPO_ELEMENT_IO
   GitHub CLI                   : $AE_RUN_CONFIG_REPO_GH
   Google - Bazel               : $AE_RUN_CONFIG_REPO_BAZEL
   Google - Chrome              : $AE_RUN_CONFIG_REPO_CHROME

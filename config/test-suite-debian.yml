@@ -11,15 +11,13 @@ config:
     # Add Repos
     # individual repos flags are mentioned under config.add_repo key
     add_repo: true
-    # Add PPAs
-    ppa: true
     # APT Packages
-    apt: true
+    # apt: true
     # Whether to purge packages mentioned in config.purge key
-    purge: true
-    debs: true
-    binaries: true
-    snaps: true
+    # purge: true
+    # debs: true
+    # binaries: true
+    # snaps: true
   # Repository Flags
   add_repo:
     azurecli: true
@@ -38,11 +36,11 @@ config:
     mendeley: false
     miniconda: true
     neurodebian: true
-    podman: true
     protonvpn: true
     ros: true
     ros2: true
     signal: true
+    podman: true
     skype: true
     spotify: true
     slack: true
@@ -54,10 +52,6 @@ config:
     # Debian
     debian_nonfree: true
     debian_contrib: true
-    # Ubuntu
-    ubuntu_universe: true
-    ubuntu_multiverse: true
-    ubuntu_restricted: true
 
   # Flags
   flags:
@@ -67,12 +61,6 @@ config:
   # Packages to purge
   purge:
     - gnome-mines
-  # PPA
-  ppa:
-    # With prefix ppa:
-    - ppa:yubico/stable
-    # No Prefix ppa:
-    - kicad/kicad-5.1-releases
   # Install components
   # APT Packages, Python Modules, Debian packages
   install:
@@ -138,14 +126,13 @@ config:
         - unrar
         # Brave
         - brave-browser
-        # Slack
-        - slack-desktop
+        # Slack (libappindicator error)
+        # - slack-desktop
         # Vivaldi
         - vivaldi-stable
         # ProtonVPN
         - protonvpn
         # Miniconda
         - conda
-        - podman
         # Element
         - element-desktop

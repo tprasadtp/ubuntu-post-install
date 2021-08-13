@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: [ "buster" ]
+        release: [ "buster", "bullseye" ]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -87,7 +87,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: ["stretch", "buster"]
+        release: ["stretch", "buster", "bullseye"]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -97,4 +97,4 @@ jobs:
         uses: docker/setup-qemu-action@v1
 
       - name: Test on ARM64 ${{ matrix.release }}
-        run: ./tests/local.sh --build --trace --distro arm64v8/debian --release "${{ matrix.release }}" --cfg config/arm.yml
+        run: ./tests/local.sh --build --trace --distro arm64v8/debian --release "${{ matrix.release }}" --cfg config/arm-debian.yml

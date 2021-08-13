@@ -84,7 +84,11 @@ function main()
       echo -e "\e[93mOverriding default test config ($cfg_file) \e[39m"
     fi
   else
-    cfg_file="config/test-suite.yml"
+    if [[ $distro_name == "debian" ]]; then
+      cfg_file="config/test-suite-debian.yml"
+    else
+      cfg_file="config/test-suite.yml"
+    fi
   fi
 
   if [[ -z $distro_name ]] || [[ -z $release_name ]]; then
@@ -141,15 +145,6 @@ function main()
         --autopilot \
         "${EXTRA_ARGS[@]}" \
         "${cfg_file}"
-      exit_code="$?"
-      # turn of trace
-      set +x
-
-      echo ""
-      echo "Script Exit code is $exit_code"
-      if [[ $exit_code -ne 0 ]]; then
-        exit "$exit_code"
-      fi # exit code
     fi   # shell
   fi     # args
 }

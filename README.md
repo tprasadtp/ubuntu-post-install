@@ -8,7 +8,6 @@ Effortless way to setup your fresh Ubuntu, Linux Mint and Debian installation.
 [![netlify][netlify-badge]][netlify]
 [![version][version]][changelog]
 [![license][gpl-badge]][license]
-![dl](https://img.shields.io/github/downloads/tprasadtp/ubuntu-post-install/total?logo=github&label=DL)
 
 ![Bash](https://static.prasadt.com/logo64/bash.png)
 
@@ -98,6 +97,7 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 | ----------------------- | ----------------- | ------------------------------------------------------------ |
 | [Brave Browser][]       | brave_browser     | brave-browser                                                |
 | Docker                  | docker            | docker-ce, docker-ce-rootless-extras, docker-ce-cli          |
+| [Element.io][element]   | element_io        | element-desktop
 | [GitHub - CLI][]        | github            | gh                                                           |
 | [Google - Bazel][]      | bazel             | bazel                                                        |
 | Google - Chrome         | chrome            | google-chrome-stable, google-chrome-beta                     |
@@ -144,8 +144,6 @@ See [Contributing and forks](/CONTRIBUTING.md)
 - [snwh/ubuntu-post-install](https://github.com/snwh/ubuntu-post-install):  Has few features like setting up dotfiles, but has limited config options and requires shell to be interactive. Only few external repositories are supported.
 - [Ansible](https://ansible.com) : Requires python on your system. Much more deteministic and better idempotency. There are plenty of roles and collections available on ansible-galaxy. But it adds more complexity and you have to write your own playbooks.
 
-![Analytics](https://ga-beacon.prasadt.com/UA-101760811-3/github/ubuntu-post-install?flat)
-
 [FAQ]: https://ae.prasadt.com/faq/dependencies/
 [docs]: https://ae.prasadt.com/
 [known-issues]: https://ae.prasadt.com/faq/errors/
@@ -172,6 +170,7 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [license]: https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE
 
 [Brave Browser]: https://brave.com/linux/
+[element]: https://element.io
 [GitHub - CLI]: https://cli.github.com
 [Google - gVisor]: https://gvisor.dev
 [Miniconda]: https://www.anaconda.com/blog/rpm-and-debian-repositories-for-miniconda
