@@ -2669,7 +2669,7 @@ function install_debs() {
       continue
     fi
 
-    log_debug "Downloading"
+    log_debug "Downloading - $deb_url"
     if wget -q "$deb_url" -O "${deb_file}" 2>&1 | log_trace "${AE_LOG_PHASE_DEB}"; then
       log_debug "Downloaded"
     else

@@ -10,8 +10,6 @@ config:
     # Add Repos
     # individual repos flags are mentioned under config.add_repo key
     add_repo: true
-    # Add PPAs
-    ppa: true
     # APT Packages
     apt: true
     # Whether to purge packages mentioned in config.purge key

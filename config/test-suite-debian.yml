@@ -12,12 +12,12 @@ config:
     # individual repos flags are mentioned under config.add_repo key
     add_repo: true
     # APT Packages
-    # apt: true
+    apt: true
     # Whether to purge packages mentioned in config.purge key
-    # purge: true
-    # debs: true
-    # binaries: true
-    # snaps: true
+    purge: true
+    debs: true
+    binaries: true
+    snaps: true
   # Repository Flags
   add_repo:
     azurecli: true

@@ -49,20 +49,6 @@ jobs:
       - name: Debian ${{ matrix.release }}
         run: ./tests/local.sh --build --trace --distro debian --release "${{ matrix.release }}"
 
-  elementary:
-    needs: [ "shellcheck"]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        release: [ "stable"]
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          persist-credentials: false
-
-      - name: Elementary ${{ matrix.release }}
-        run:  ./tests/local.sh --build --trace --distro elementary/docker --release "${{ matrix.release }}"
   # Ubuntu ARM
   arm:
     needs: [ "shellcheck"]
