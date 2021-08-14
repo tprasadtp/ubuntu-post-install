@@ -21,7 +21,6 @@ config:
     snaps: yes
   # Repository Flags
   add_repo:
-    azurecli: true
     docker: true
     github: true
     gvisor: true
@@ -66,5 +65,5 @@ config:
         - docker-ce
         # Github
         - gh
-        # ProtonVPN
-        - protonvpn
+        # VS Code
+        - code

@@ -59,7 +59,7 @@ function __init_core_variables() {
   readonly AE_RUN_BASE_DIR="$(pwd -P)"
 
   #Initialize printf variables
-  readonly AE_LOG_PHASE_REPO="(CORE)"
+  readonly AE_LOG_PHASE_CORE="(CORE)"
   readonly AE_LOG_PHASE_REPO="(REPO)"
   readonly AE_LOG_PHASE_PPA="(PPA)"
   readonly AE_LOG_PHASE_DEB="(DPKG)"
@@ -400,7 +400,7 @@ function __setup_platform_vars() {
 
   #-------------------------- Release codenames --------------------------------------
   readonly AE_UBUNTU_CODENAME_LATEST="hirsute"
-  readonly AE_UBUNTU_CODENAME_PREV="groovy"
+  # readonly AE_UBUNTU_CODENAME_PREV="groovy"
 
   # 404 is a placeholder which is  set when there are
   # no suitable releases which can use this feature or
@@ -408,15 +408,12 @@ function __setup_platform_vars() {
   readonly AE_UBUNTU_CODENAME_UPCOMING="impish"
 
   readonly AE_UBUNTU_CODENAME_LATEST_LTS="focal"
-  readonly AE_UBUNTU_CODENAME_PREV_LTS="bionic"
+  # readonly AE_UBUNTU_CODENAME_PREV_LTS="bionic"
 
   readonly AE_DEBIAN_CODENAME_LATEST="bullseye"
   readonly AE_DEBIAN_CODENAME_UPCOMING="bookworm"
 
   #============================ Switches/ booleans & Vars ================================
-
-  # Fix Repo not available for latest release
-  AE_RUN_FIX="false"
 
   # Allow repo fixes for Upcoming releases of ubuntu and its derivatives.
   AE_RUN_FIX_UPCOMING="false"
@@ -448,7 +445,7 @@ function __setup_platform_vars() {
   # Check Debian Flags
   AE_RUN_IS_DEBIAN="false"
 
-  # Boolean to hold if --fix or --fix-mode-lts or --pre-release was applied
+  # Boolean to hold if --pre-release was applied
   AE_RUN_FIX_ACTIVE="false"
 
 }
@@ -1287,39 +1284,6 @@ function _install_pre_requisites() {
 
 }
 
-function _fix_repo_not_available() {
-  # If repository is not available for latest Ubuntu release, this uses last stable release
-  # (may not be LTS) for adding repository
-
-  log_debug "Check and apply codename fixes"
-  if [[ $AE_RUN_FIX == "true" ]] && [[ $AE_RUN_IS_DEBIAN != "true" ]]; then
-    # Check LTS fallback flag is being used
-    # if running on current LTS, and fix mode is LTS fallback to last LTS.
-    if [[ $AE_RUN_FIX_MODE_LTS == "true" ]] && [[ $AE_RUN_CODENAME == "${AE_UBUNTU_CODENAME_LATEST_LTS}" ]]; then
-      log_warn "Using Previous LTS release ::${AE_UBUNTU_CODENAME_PREV_LTS}::"
-      AE_RUN_CODENAME="$AE_UBUNTU_CODENAME_PREV_LTS"
-      # note applied fix
-      AE_RUN_FIX_ACTIVE="true"
-
-    elif [[ $AE_RUN_FIX_MODE_LTS != "true" ]] && [[ $AE_RUN_CODENAME == "${AE_UBUNTU_CODENAME_LATEST}" ]]; then
-      log_warn "Using previous release ${AE_UBUNTU_CODENAME_PREV} as fallback"
-
-      # fallback is non LTS so it might disapper/become unsupported!
-      if [[ $AE_UBUNTU_CODENAME_PREV != "$AE_UBUNTU_CODENAME_LATEST_LTS" ]]; then
-        log_warn "Fallback Ubuntu (${AE_UBUNTU_CODENAME_LATEST}) is a non LTS release!"
-      fi
-      AE_RUN_CODENAME="$AE_UBUNTU_CODENAME_PREV"
-      AE_RUN_FIX_ACTIVE="true"
-
-    else
-      log_warn "Not applicable."
-      AE_RUN_FIX_ACTIVE="false"
-    fi # lts
-  else
-    AE_RUN_FIX_ACTIVE="false"
-    log_debug "Feature --fix/--fix-mode-lts is not available or disabled."
-  fi # fix
-}
 
 function _warn_about_fix_codename() {
   log_warn "Repositories from older Ubuntu release are being used."
@@ -1328,10 +1292,7 @@ function _warn_about_fix_codename() {
 }
 
 function __fix_prerelease() {
-  # If repository is not available for upcoming  release, this uses last stable release
-  # Aka if the pre-release release is 18.04 it might use 17.10 if used with --fix, it will use 18.04 repos.
-  # With Debian If release is 11, when used with this flag we will use Debian 10 repos.
-  # --fix is not valid in case of Debian, only --pre-release applies.
+  # If repository is not available for upcoming  release use older repos
 
   log_debug "Check and apply codename fixes (--pre-release)"
   # check for fix-pre-release flag
@@ -1348,7 +1309,6 @@ function __fix_prerelease() {
       AE_RUN_FIX_ACTIVE="true"
 
     elif [[ $AE_RUN_CODENAME == "$AE_DEBIAN_CODENAME_UPCOMING" ]]; then
-      log_dev "Pre-Release-Fix-Codename is experimental on Debian"
       log_warn "Using lastest Debian Stable (${AE_DEBIAN_CODENAME_LATEST}) as fallback!"
 
       AE_RUN_CODENAME="${AE_DEBIAN_CODENAME_LATEST}"
@@ -1489,7 +1449,6 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
   # if repository is not available for latest ubuntu release, use previous release
   # Be careful, things might not be compatible
   __fix_prerelease
-  _fix_repo_not_available
 
   # OBS
   _map_to_obs_repos
@@ -1736,7 +1695,6 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
         log_error "Latest version of WINE depends on libfaudio0 package,"
         log_error "which is not available on your distribution!"
         log_warn "For more information visit https://forum.winehq.org/viewtopic.php?f=8&t=32192"
-        AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.winehq")
       else
         __add_repo_keys --format "asc" \
           --file-prefix "wine-hq" \
@@ -1814,7 +1772,8 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
       --key-url https://packages.microsoft.com/keys/microsoft.asc
   elif [[ ${AE_RUN_CONFIG_REPO_VSCODE} == "true" ]]; then
     log_debug "Adding Microsoft keys."
-    __add_repo_keys --format "asc" \
+    __add_repo_keys \
+      --format "asc" \
       --file-prefix "microsoft" \
       --key-url https://packages.microsoft.com/keys/microsoft.asc
   else
@@ -1836,7 +1795,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
 
   # Azure cli
   if [[ ${AE_RUN_CONFIG_REPO_AZURECLI} == "true" ]]; then
-    if [[ ${AE_ARCH} == "amd64" ]]; then
+    if [[ ${AE_ARCH} == "amd64" ]] && [[ ${AE_RUN_CODENAME} != "bionic" ]]; then
       log_info "Azure CLI"
       if echo "deb [arch=$AE_ARCH signed-by=${AE_APT_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ focal main #Azure CLI" >${AE_APT_SOURCES_DIR}/azure-cli.list; then
         log_success "OK"
@@ -1844,8 +1803,9 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
         log_error "Failed to addd Azure CLI repository!"
       fi
     else
-      log_error "Azure CLI cannot be installed via package manager on this architecture."
+      log_error "Azure CLI cannot be installed via package manager on ${AE_DISTRO_PRETTY_NAME}/${AE_ARCH}"
       log_warn "See https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=script"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.azurecli")
     fi
   else
     log_debug "Skipped adding Azure CLI repository"
@@ -1993,11 +1953,12 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
   # gVisor container Runtime
   if [[ $AE_RUN_CONFIG_REPO_GVISOR == "true" ]]; then
 
-    if [[ $AE_ARCH == "amd64" ]] || [[ $AE_ARCH == "amd64" ]]; then
+    if [[ $AE_ARCH == "amd64" ]] || [[ $AE_ARCH == "arm64" ]]; then
       log_info "gVisor"
 
       # Adding gVisor Keys
-      __add_repo_keys --format "asc" \
+      __add_repo_keys \
+        --format "asc" \
         --file-prefix "gvisor" \
         --key-url https://gvisor.dev/archive.key
 
@@ -2156,7 +2117,6 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
     else
       log_error "Vivaldi Browser repository is not supported on this architecture($AE_ARCH)!"
       AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.vivaldi")
-
     fi
   else
     log_debug "Skipped adding Vivaldi Browser repository"
@@ -2164,17 +2124,22 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
 
   # ProtonVPN
   if [ "$AE_RUN_CONFIG_REPO_PROTONVPN" == "true" ]; then
-    log_info "ProtonVPN Client"
-    __add_repo_keys \
-      --format "asc" \
-      --file-prefix "protonvpn-stable-archive-keyring" \
-      --key-url https://repo.protonvpn.com/debian/public_key.asc
+    if [[ $AE_ARCH == "amd64" ]]; then
+      log_info "ProtonVPN Client"
+      __add_repo_keys \
+        --format "asc" \
+        --file-prefix "protonvpn-stable-archive-keyring" \
+        --key-url https://repo.protonvpn.com/debian/public_key.asc
 
-    if echo "deb [arch=${AE_ARCH} signed-by=${AE_APT_KEYRINGS_DIR}/protonvpn-stable-archive-keyring.gpg] https://repo.protonvpn.com/debian stable main #ProtonVPN-Client" >${AE_APT_SOURCES_DIR}/protonvpn-stable.list; then
-      log_success "OK"
+      if echo "deb [arch=${AE_ARCH} signed-by=${AE_APT_KEYRINGS_DIR}/protonvpn-stable-archive-keyring.gpg] https://repo.protonvpn.com/debian stable main #ProtonVPN-Client" >${AE_APT_SOURCES_DIR}/protonvpn-stable.list; then
+        log_success "OK"
+      else
+        log_error "Failed to add ProtonVPN repository"
+        AE_RUN_STACK_ERR+=("repo-add-error::config.add_repo.protonvpn")
+      fi
     else
-      log_error "Failed to add ProtonVPN repository"
-      AE_RUN_STACK_ERR+=("repo-add-error::config.add_repo.protonvpn")
+      log_error "ProtonVPN repository is not supported on this architecture($AE_ARCH)!"
+      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.protonvpn")
     fi
   else
     log_debug "Skipped adding ProtonVPN repository"
@@ -2259,7 +2224,7 @@ deb [signed-by=${AE_APT_KEYRINGS_DIR}/neurodebian-archive-keyring.gpg] http://ne
 
   if [[ $AE_RUN_CONFIG_REPO_ROS2 == "true" ]] && [[ ${AE_RUN_FIX_ACTIVE} == "true" ]]; then
     log_info "ROS2"
-    log_error "You have enabled --fix or --pre-release option."
+    log_error "You have enabled --pre-release option."
     log_error "ROS2 depends heavily on packages included in the distribution."
     log_error "ROS2 repositories will not be added for sanity of your system!"
 
@@ -2288,7 +2253,7 @@ deb [signed-by=${AE_APT_KEYRINGS_DIR}/neurodebian-archive-keyring.gpg] http://ne
       fi
 
     else
-      log_error "ROS2 is not supported on this distro/release!"
+      log_error "ROS2 is not supported on ${AE_DISTRO_PRETTY_NAME}!"
     fi # ros_arch_supported
 
   else
@@ -2301,7 +2266,7 @@ deb [signed-by=${AE_APT_KEYRINGS_DIR}/neurodebian-archive-keyring.gpg] http://ne
 
   if [[ $AE_RUN_CONFIG_REPO_ROS == "true" ]] && [[ ${AE_RUN_FIX_ACTIVE} == "true" ]]; then
     log_info "ROS"
-    log_error "You have enabled --fix or --pre-release option."
+    log_error "You have enabled --pre-release option."
     log_error "ROS depends heavily on packages included in the distribution."
     log_error "ROS repositories will not be added for sanity of your system!"
 
@@ -2350,7 +2315,7 @@ deb [signed-by=${AE_APT_KEYRINGS_DIR}/neurodebian-archive-keyring.gpg] http://ne
       fi
 
     else
-      log_error "ROS is not supported on this distro!"
+      log_error "ROS is not supported on ${AE_DISTRO_PRETTY_NAME}"
     fi # ros_arch_supported
 
   else
@@ -2527,7 +2492,6 @@ function update_repos() {
     log_error "Command apt-get update failed and exited with ${exit_status}"
     log_notice "[1] This is due to either missing keys or wrongly configured repositories."
     log_notice "[2] In some cases repositories might not be available for your version of release."
-    log_notice "[3] You can try running with --fix or --fix --fix-mode-lts to use repositories for older version of Ubuntu/Debian."
     log_and_exit "The script cannot proceed with this error." "61"
   fi
 }
@@ -3250,15 +3214,14 @@ ${AE_COLOR_BLUE}OPTIONS:${AE_COLOR_NC}
 ${AE_COLOR_ORANGE}CONFIGURATION:${AE_COLOR_NC}
   -A, --autopilot     Enables AUTOPILOT mode(No Prompts).
   -d, --purge         Enable Purging packages.
-  -f, --fix           Fix codenames for new releases.
-  --fix-mode-lts      Use prevoous LTS release as fallback when using --fix(Ubutnu only).
-  -p, --pre-release   Same as --fix but for beta/alpha releases of Ubuntu and Debian.
+  -p, --pre-release   Use repositories for previous releases.
+  --fix-mode-lts      Use previous LTS release as fallback when using --pre-release
   -k, --keep-debs     Do not invoke apt-clean after installing packages.
   -l, --delete-log    Delete the logfile. (./log/after-effects.log)
 
 ${AE_COLOR_PINK}LOGS:${AE_COLOR_NC}
   --debug             Prints debug logs.
-  --trace             Prints trace level logs which includes output from apt-get and other commands.
+  --trace             Prints trace level logs.
 
 ${AE_COLOR_GRAY}DEBUG:
   -s, --simulate      Try not to make changes to system. See Docs for limitaions!
@@ -3347,10 +3310,6 @@ function main() {
     -s | --simulate)
       readonly AE_RUN_CONFIG_SIMULATE="true"
       log_property "Simulate" "ENABLED" "3"
-      ;;
-    -f | --fix)
-      AE_RUN_FIX="true"
-      log_property "Fix" "ENABLED" "2"
       ;;
     --fix-mode-lts)
       AE_RUN_FIX_MODE_LTS="true"

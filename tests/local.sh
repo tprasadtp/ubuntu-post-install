@@ -7,6 +7,7 @@
 # Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
 set -eo pipefail
+export DOCKER_BUILDKIT=1
 
 function display_usage()
 {
@@ -53,7 +54,6 @@ function main()
         ;;
       -s | --shell) give_shell="true" ;;
       -b | --build) build_image="true" ;;
-      --fix) EXTRA_ARGS+=('--fix') ;;
       --fix-lts) EXTRA_ARGS+=('--fix-mode-lts') ;;
       --pre) EXTRA_ARGS+=('--pre-release') ;;
       --sv) EXTRA_ARGS+=('--no-version-check') ;;
@@ -84,10 +84,31 @@ function main()
       echo -e "\e[93mOverriding default test config ($cfg_file) \e[39m"
     fi
   else
-    if [[ $distro_name == "debian" ]]; then
-      cfg_file="config/test-suite-debian.yml"
+    if [[ ${distro_name} =~ ^arm64v8.* ]]; then
+      arch="arm64"
     else
-      cfg_file="config/test-suite.yml"
+      arch="amd64"
+    fi
+
+    if [[ ${arch} != "amd64" ]]; then
+      if [[ -f "config/test-suite-${distro_name}-${release_name}-${arch}.yml" ]]; then
+        cfg_file="config/test-suite-${distro_name}-${release_name}-${arch}.yml"
+      elif [[ -f "config/test-suite-${distro_name}-${arch}.yml" ]]; then
+        cfg_file="config/test-suite-${distro_name}-${arch}.yml"
+      elif [[ -f "config/test-suite-${arch}.yml" ]]; then
+        cfg_file="config/test-suite-${arch}.yml"
+      else
+        cfg_file="config/test-suite.yml"
+      fi
+    # amd64
+    else
+      if [[ -f "config/test-suite-${distro_name}-${release_name}.yml" ]]; then
+        cfg_file="config/test-suite-${distro_name}-${release_name}.yml"
+      elif [[ -f "config/test-suite-${distro_name}.yml" ]]; then
+        cfg_file="config/test-suite-${distro_name}.yml"
+      else
+        cfg_file="config/test-suite.yml"
+      fi
     fi
   fi
 
@@ -145,8 +166,8 @@ function main()
         --autopilot \
         "${EXTRA_ARGS[@]}" \
         "${cfg_file}"
-    fi   # shell
-  fi     # args
+    fi # shell
+  fi   # args
 }
 
 main "$@"

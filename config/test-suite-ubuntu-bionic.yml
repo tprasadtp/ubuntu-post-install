@@ -22,7 +22,6 @@ config:
     snaps: true
   # Repository Flags
   add_repo:
-    azurecli: true
     bazel: true
     brave_browser: true
     chrome: true
@@ -114,7 +113,6 @@ config:
         - terraform
         # Microsoft
         - code
-        - azure-cli
         # Google
         - google-cloud-sdk
         - google-chrome-stable

@@ -1,31 +1,30 @@
 # Command line options
 
-## Help
+## Helps
 
 Displays this help option.
-<pre>./after-effects<font color="#00AFFF">-h</font>
-A Post Installation Script for Ubuntu, Debian,
+
+<pre>A Post Installation Script for Ubuntu, Debian,
 Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.
 
 <font color="#FFD700">USAGE: </font>
   [sudo] ./after-effects [OPTION]... config-file|config-url
 
-<font color="#D7FF87">OPTIONS:</font>
+<font color="#AFFFFF">OPTIONS:</font>
   -v,  --version      Display version info.
   -h,  --help         Display this help message.
 
 <font color="#FF8700">CONFIGURATION:</font>
   -A, --autopilot     Enables AUTOPILOT mode(No Prompts).
   -d, --purge         Enable Purging packages.
-  -f, --fix           Fix codenames for new releases.
-  --fix-mode-lts      Use prevoous LTS release as fallback when using --fix (Ubutnu only).
-  -p, --pre-release   Same as --fix but for beta/alpha releases of Ubuntu and Debian.
+  -p, --pre-release   Use repositories for previous releases.
+  --fix-mode-lts      Use previous LTS release as fallback when using --pre-release
   -k, --keep-debs     Do not invoke apt-clean after installing packages.
   -l, --delete-log    Delete the logfile. (./log/after-effects.log)
 
 <font color="#FF87D7">LOGS:</font>
   --debug             Prints debug logs.
-  --trace             Prints trace level logs which includes output from apt-get and other commands.
+  --trace             Prints trace level logs.
 
 <font color="#949494">DEBUG:</font>
 <font color="#949494">  -s, --simulate      Try not to make changes to system. See Docs for limitaions!</font>
@@ -37,7 +36,6 @@ Linux-Mint, elementaryOS, Pop!_OS, MX Linux etc.
   Report bugs to      <font color="#00FFFF">https://ae.prasadt.com/issues</font>
   Documentation       <font color="#00FFFF">https://ae.prasadt.com</font>
   License             <font color="#00FFFF">GPLv3</font>
-
 </pre>
 
 ## Simulating package installation
@@ -88,7 +86,7 @@ Please do have a look at exceptions, as all tasks cannot be simulated.
 Script will warn you and exit if you are not running latest version of the script. You can skip that by using the above option.
 
 
-## Fix for latest Ubuntu releases
+## Fix for Beta/Testing releases
 
 !!! snippet "Usage"
 
@@ -99,21 +97,14 @@ Script will warn you and exit if you are not running latest version of the scrip
     OR
 
     ```console
-    ./after-effects --fix <config-file|config-url>
+    ./after-effects --pre-release <config-file|config-url>
     ```
 
-Usually it takes a while for additional repositories (Docker,etc) to add support for latest release of Ubuntu. However we can use the previous release for which packages might be available. Using packages built for previous release works fine most of the time.
+Usually it takes a while for additional repositories (Docker,etc) to add support for Beta/Testing version of Ubuntu/Debian. However we can use the previous release for which packages might be available. Using packages built for previous release works fine most of the time.
 
 - Repositories like Spotify and Google Chrome do not use code names in their repository URLs. So the above workaround is not necessary.
-- Derivatives of Ubuntu will use the code name of Ubuntu on which they are based. For example Linux mint 20.2 Uma will use code name `focal` as it is based on Ubuntu 20.04 Focal Fossa
-- This option applies only for the latest release and will be ignored if the release is not latest.
+- This option applies only for the prerelease aka alpha/testing release and will be ignored if the release is not a prerelease.
 - This options cannot be applied for PPAs
-
-??? danger "Note for Pre-Release/ development version of Ubuntu/Debian"
-
-    - If you are using a pre-release version of Ubuntu, you can use `--pre-release` flag to apply the above mentioned fix to pre-release version of Ubuntu.
-    - This flag can be used independent of `--fix`. If both are used together then both flags will be applied if the release is upcoming-release.
-    - If the release is stable, only `--fix` flag will be valid and `--pre-release` is ignored.
 
 ## Fix fallback to LTS
 
@@ -123,7 +114,7 @@ Usually it takes a while for additional repositories (Docker,etc) to add support
     ./after-effects --fix-mode-lts --fix <config-file|config-url>
     ```
 
-Use LTS as fallback. This flag should be used in conjunction with `--fix` Otherwise it will be ignored. Instead of using previous Ubuntu release this will use the last LTS release. i.e if you are on `21.04` and `20.04` repositories will be used. Please use this with caution as it may not work. This has no effect on Debian and its derivatives.
+Use LTS as fallback. This flag should be used in conjunction with `--pre-release` Otherwise it will be ignored. Instead of using previous Ubuntu release this will use the last LTS release. i.e if you are on `21.04` and `20.04` repositories will be used. Please use this with caution as it may not work. This has no effect on Debian and its derivatives.
 
 
 ## Purge not required packages

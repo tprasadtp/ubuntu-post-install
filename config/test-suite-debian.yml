@@ -40,7 +40,6 @@ config:
     ros: true
     ros2: true
     signal: true
-    podman: true
     skype: true
     spotify: true
     slack: true
@@ -111,7 +110,7 @@ config:
         # Skype
         - skypeforlinux
         # WineHQ
-        - wine-stable
+        # - wine-stable
         # Bazel
         - bazel
         # Edge

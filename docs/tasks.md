@@ -41,9 +41,6 @@ This task can add the following repositories.
 
 > Support for adding `multiverse`, `universe`, `restricted`(on Ubuntu), `contrib` and `non-free` (on Debian) is considered beta. Use with caution!
 
-??? tip "Using `--fix` flag"
-    Please note that the above repositories are sometimes not updated for latest Ubuntu release and most certainly will not be available for upcoming release of Ubuntu(Alpha/Beta). It might take some time till the repositories are available for the latest release. Use -f or --fix command line option or --pre-release in case you are using a development version of Ubuntu to revert using latest available version of repositories (usually previous Ubuntu release or in case of Beta/Alpha latest stable release of Ubuntu). [For more info see command line options.](/clioptions/#fix-for-latest-ubuntu-releases)
-
 !!! warning "ROS Releases & Ubuntu/Debian versions"
     - ROS repository only supports certain Ubuntu/Debian distributions. You can find more info at [ROS-Wiki](http://wiki.ros.org/ROS/Installation)
     - Though Ubuntu derivatives might work, they are not supported.
