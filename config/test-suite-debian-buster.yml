@@ -1,0 +1,135 @@
+# Install Config
+api: 3
+name: Test-Suite
+author: Prasad T
+# Configuration
+config:
+  # Enabled Tasks
+  tasks:
+    update: true
+    upgrade: false
+    # Add Repos
+    # individual repos flags are mentioned under config.add_repo key
+    add_repo: true
+    # APT Packages
+    apt: true
+    # Whether to purge packages mentioned in config.purge key
+    purge: true
+    debs: true
+    binaries: true
+    snaps: true
+  # Repository Flags
+  add_repo:
+    bazel: true
+    brave_browser: true
+    chrome: true
+    docker: true
+    edge: true
+    element_io: true
+    # This is really flaky so drop it
+    gcsfuse: false
+    github: true
+    googlecloud: true
+    gvisor: true
+    hashicorp: true
+    mendeley: false
+    miniconda: true
+    neurodebian: true
+    protonvpn: true
+    ros: true
+    ros2: true
+    signal: true
+    skype: true
+    spotify: true
+    slack: true
+    sublimetext: true
+    teams: true
+    vivaldi: true
+    vscode: true
+    winehq: true
+    # Debian
+    debian_nonfree: true
+    debian_contrib: true
+
+  # Flags
+  flags:
+    purge_enabled: true
+    preserve_debs: false
+
+  # Packages to purge
+  purge:
+    - gnome-mines
+  # Install components
+  # APT Packages, Python Modules, Debian packages
+  install:
+    snaps:
+      - htop
+      - classic::vscode
+      - classic::edge::hugo
+    # Debian packages/.deb files
+    debs:
+      - https://github.com/sharkdp/bat/releases/download/v0.17.1/bat_0.17.1_amd64.deb
+    binaries:
+      - kubectl::https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/amd64/kubectl
+    apt:
+      # Admin related Stuff
+      administration:
+        - curl
+      # Security Related Stuff
+      security:
+        - gnupg2
+      # Productivity & Office Tools.
+      productivity:
+        - curl
+      # Tools related to development.
+      development:
+        - iputils-ping
+      # Everything Else
+      other:
+        - less
+      external:
+        # Docker
+        - docker-ce
+        # spotify
+        - spotify-client
+        # Github
+        - gh
+        # Gvisor
+        - runsc
+        # Hashicorp
+        - terraform
+        # Microsoft
+        - code
+        # Google
+        - google-cloud-sdk
+        - google-chrome-stable
+        # Signal
+        - signal-desktop
+        # Skype
+        - skypeforlinux
+        # WineHQ
+        # - wine-stable
+        # Bazel
+        - bazel
+        # Edge
+        - microsoft-edge-dev
+        # Teams
+        - teams
+        # Sublime
+        - sublime-text
+        # From Universe in Ubuntu
+        - apt-xapian-index
+        # Non-free in debian, multiverse in Ubuntu(canonical partner repos)
+        - unrar
+        # Brave
+        - brave-browser
+        # Slack (libappindicator error)
+        # - slack-desktop
+        # Vivaldi
+        - vivaldi-stable
+        # ProtonVPN
+        - protonvpn
+        # Miniconda
+        - conda
+        # Element
+        - element-desktop

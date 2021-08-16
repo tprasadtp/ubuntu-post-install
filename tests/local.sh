@@ -15,14 +15,15 @@ function display_usage()
   cat <<EOF
 Bash script to run test containers
 
-Usage: ${SCRIPT}  [options]
--d --distro          Distribution Base (ubuntu/debian)
--r --release         Distribution Release (focal/buster etc..)
--s --shell           Drop into a bash shell
+Usage: ${SCRIPT}  [OPTIONS]
+-d, --distro         Distribution Base (ubuntu/debian)
+-r, --release        Distribution Release (focal/buster etc..)
+-s, --shell          Drop into a bash shell
 --cfg                Specify custom config
+-b, --build          Build Docker image
 --debug              Debug
 --trace              Trace
--h --help            Display this help message
+-h, --help           Display this help message
 
 EOF
 }
@@ -75,6 +76,14 @@ function main()
     fi
   done
 
+  if [[ -z $distro_name ]] || [[ -z $release_name ]]; then
+    echo -e "\e[91m--distro or --release not specified. See usage below. \e[39m"
+    display_usage
+    exit 1
+  else
+    docker_tag="${distro_name//[\/]/-}-${release_name}"
+  fi
+
   # check if cfg override is present
   if [[ $bool_custom_config_file == "true" ]]; then
     if [[ -z $cfg_file ]] || [[ $cfg_file == "" ]]; then
@@ -90,15 +99,15 @@ function main()
       arch="amd64"
     fi
 
+    distro_name="${distro_name##*/}"
+
     if [[ ${arch} != "amd64" ]]; then
       if [[ -f "config/test-suite-${distro_name}-${release_name}-${arch}.yml" ]]; then
         cfg_file="config/test-suite-${distro_name}-${release_name}-${arch}.yml"
       elif [[ -f "config/test-suite-${distro_name}-${arch}.yml" ]]; then
         cfg_file="config/test-suite-${distro_name}-${arch}.yml"
-      elif [[ -f "config/test-suite-${arch}.yml" ]]; then
-        cfg_file="config/test-suite-${arch}.yml"
       else
-        cfg_file="config/test-suite.yml"
+        cfg_file="config/test-suite-${arch}.yml"
       fi
     # amd64
     else
@@ -112,62 +121,54 @@ function main()
     fi
   fi
 
-  if [[ -z $distro_name ]] || [[ -z $release_name ]]; then
-    echo -e "\e[91m--distro or --release not specified. See usage below. \e[39m"
-    display_usage
-    exit 1
+  if [[ -t 1 ]] && [[ ${AE_NON_INTERACTIVE} != "true" ]]; then
+    echo "Terminal is interactive, using -it for docker runs"
+    DOCKER_RUN_ARGS+=("-it")
   else
-    docker_tag="${distro_name//[\/]/-}-${release_name}"
-
-    if [[ -t 1 ]] && [[ ${AE_NON_INTERACTIVE} != "true" ]]; then
-      echo "Terminal is interactive, using -it for docker runs"
-      DOCKER_RUN_ARGS+=("-it")
-    else
-      if [[ $give_shell == "true" ]]; then
-        echo -e "\e[91mCannot give shell in a non-interactive terminal! \e[39m"
-        exit 10
-      fi
-      echo "Terminal is NON interactive"
-    fi
-
-    # If Image needs to be built?
-    if [[ $build_image == "true" ]]; then
-      echo "➜ Building ae:${docker_tag}"
-      docker build -t ae:"${docker_tag}" \
-        --build-arg DISTRO="${distro_name}" \
-        --build-arg CODE_NAME="${release_name}" \
-        ./tests/docker
-    fi
-
     if [[ $give_shell == "true" ]]; then
-      echo "# Dropping you in ${docker_tag}"
-      docker run --rm \
-        -it \
-        -e CI \
-        -e GITHUB_ACTIONS \
-        --name="${docker_tag}" \
-        --hostname="${docker_tag}" \
-        -v "$(pwd)":/shared \
-        ae:"${docker_tag}" \
-        bash -c "echo \"alias c='clear';alias e='exit';export PS1='\\e[31m\u@\h\\e[0m on \\e[32m\W\[\033[0;35m\] \[\033[1;36m\]\n🐳\\e[0m ➜ '\" >> ~/.bashrc && bash"
-    else
-      echo "# Running in docker ${docker_tag}"
-      # turn on trace
-      set -x
-      docker run --rm \
-        "${DOCKER_RUN_ARGS[@]}" \
-        -e CI \
-        -e GITHUB_ACTIONS \
-        --hostname="${docker_tag}" \
-        -v "$(pwd)":/shared \
-        ae:"${docker_tag}" \
-        ./after-effects \
-        --simulate \
-        --autopilot \
-        "${EXTRA_ARGS[@]}" \
-        "${cfg_file}"
-    fi # shell
-  fi   # args
+      echo -e "\e[91mCannot give shell in a non-interactive terminal! \e[39m"
+      exit 10
+    fi
+    echo "Terminal is NON interactive"
+  fi
+
+  # If Image needs to be built?
+  if [[ $build_image == "true" ]]; then
+    echo "➜ Building ae:${docker_tag}"
+    docker build -t ae:"${docker_tag}" \
+      --build-arg DISTRO="${distro_name}" \
+      --build-arg CODE_NAME="${release_name}" \
+      ./tests/docker
+  fi
+
+  if [[ $give_shell == "true" ]]; then
+    echo "# Dropping you in ${docker_tag}"
+    docker run --rm \
+      -it \
+      -e CI \
+      -e GITHUB_ACTIONS \
+      --name="${docker_tag}" \
+      --hostname="${docker_tag}" \
+      -v "$(pwd)":/shared \
+      ae:"${docker_tag}" \
+      bash -c "echo \"alias c='clear';alias e='exit';export PS1='\\e[31m\u@\h\\e[0m on \\e[32m\W\[\033[0;35m\] \[\033[1;36m\]\n🐳\\e[0m ➜ '\" >> ~/.bashrc && bash"
+  else
+    echo "# Running in docker ${docker_tag}"
+    # turn on trace
+    set -x
+    docker run --rm \
+      "${DOCKER_RUN_ARGS[@]}" \
+      -e CI \
+      -e GITHUB_ACTIONS \
+      --hostname="${docker_tag}" \
+      -v "$(pwd)":/shared \
+      ae:"${docker_tag}" \
+      ./after-effects \
+      --simulate \
+      --autopilot \
+      "${EXTRA_ARGS[@]}" \
+      "${cfg_file}"
+  fi # shell
 }
 
 main "$@"

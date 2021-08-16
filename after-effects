@@ -1795,7 +1795,9 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
 
   # Azure cli
   if [[ ${AE_RUN_CONFIG_REPO_AZURECLI} == "true" ]]; then
-    if [[ ${AE_ARCH} == "amd64" ]] && [[ ${AE_RUN_CODENAME} != "bionic" ]]; then
+    # libc6 errors occur with latest versions of azure cli on buster and bionic.
+    # Drop support for them.
+    if [[ ${AE_ARCH} == "amd64" ]] && [[ ${AE_RUN_CODENAME} != "bionic" ]] && [[ ${AE_RUN_CODENAME} != "buster" ]]; then
       log_info "Azure CLI"
       if echo "deb [arch=$AE_ARCH signed-by=${AE_APT_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ focal main #Azure CLI" >${AE_APT_SOURCES_DIR}/azure-cli.list; then
         log_success "OK"

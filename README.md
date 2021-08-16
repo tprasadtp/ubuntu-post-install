@@ -95,40 +95,43 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 
 | Name                    | Key               | Packages                                                     |
 | ----------------------- | ----------------- | ------------------------------------------------------------ |
-| [Brave Browser][]       | brave_browser     | brave-browser                                                |
+| [Brave Browser][]*      | brave_browser     | brave-browser                                                |
 | Docker                  | docker            | docker-ce, docker-ce-rootless-extras, docker-ce-cli          |
-| [Element.io][element]   | element_io        | element-desktop
+| [Element.io][element]*  | element_io        | element-desktop
 | [GitHub - CLI][]        | github            | gh                                                           |
-| [Google - Bazel][]      | bazel             | bazel                                                        |
-| Google - Chrome         | chrome            | google-chrome-stable, google-chrome-beta                     |
-| Google - Cloud SDK      | googlecloud       | google-cloud-sdk, kubectl, google-cloud-sdk-minikube         |
+| [Google - Bazel][]*     | bazel             | bazel                                                        |
+| Google - Chrome*        | chrome            | google-chrome-stable, google-chrome-beta                     |
+| Google - Cloud SDK*     | googlecloud       | google-cloud-sdk, kubectl, google-cloud-sdk-minikube         |
 | [Google - gVisor][]     | gvisor            | runsc                                                        |
-| Hashicorp               | hashicorp         | terraform, consul, nomad, vault, boundary, waypoint          |
-| Mendeley desktop        | mendeley          | mendeleydesktop                                              |
-| Microsoft - Azure CLI   | azurecli          | azure-cli                                                    |
-| Microsoft - Edge        | edge              | microsoft-edge-dev                                           |
-| Microsoft - Skype       | skype             | skypeforlinux                                                |
-| Microsoft - Teams       | teams             | teams, teams-insiders                                        |
+| Hashicorp*              | hashicorp         | terraform, consul, nomad, vault, boundary, waypoint          |
+| Mendeley desktop*       | mendeley          | mendeleydesktop                                              |
+| Microsoft - Azure CLI*  | azurecli          | azure-cli                                                    |
+| Microsoft - Edge*       | edge              | microsoft-edge-dev                                           |
+| Microsoft - Skype*      | skype             | skypeforlinux                                                |
+| Microsoft - Teams*      | teams             | teams, teams-insiders                                        |
 | Microsoft - VSCode      | vscode            | code, code-insiders, code-exploration                        |
-| [Miniconda][]           | miniconda         | conda                                                        |
-| NeuroDebian             | neurodebian       | https://neuro.debian.net/                                    |
-| [Podman][] (via OBS)    | podman            | podman, podman-plugins, cri-o-runc, cri-tools, buildah, crun |
-| ProtonVPN Client        | protonvpn         | protonvpn                                                    |
+| [Miniconda][]*          | miniconda         | conda                                                        |
+| NeuroDebian*            | neurodebian       | https://neuro.debian.net/                                    |
+| [Podman][] (via OBS)*   | podman            | podman, podman-plugins, cri-o-runc, cri-tools, buildah, crun |
+| ProtonVPN Client*       | protonvpn         | protonvpn                                                    |
 | ROS                     | ros               |                                                              |
 | ROS2                    | ros2              |                                                              |
-| Signal                  | signal            | signal-desktop                                               |
-| Slack Desktop           | slack             | slack-desktop                                                |
-| Spotify Client          | spotify           | spotify-client                                               |
-| Sublime Text Editor     | sublimetext       | sublime-text                                                 |
-| Vivaldi                 | vivaldi           | vivaldi-stable                                               |
-| Wine HQ                 | winehq            | winehq-stable, winehq-staging                                |
+| Signal*                 | signal            | signal-desktop                                               |
+| Slack Desktop*          | slack             | slack-desktop                                                |
+| Spotify Client*         | spotify           | spotify-client                                               |
+| Sublime Text Editor*    | sublimetext       | sublime-text                                                 |
+| Vivaldi*                | vivaldi           | vivaldi-stable                                               |
+| Wine HQ*                 | winehq            | winehq-stable, winehq-staging                                |
 | [Ubuntu - Universe][]   | ubuntu_universe   |                                                              |
 | [Ubuntu - Multiverse][] | ubuntu_multiverse |                                                              |
 | [Ubuntu - Restricted][] | ubuntu_restricted |                                                              |
 | [Debian - contrib][]    | debian_contrib    |                                                              |
 | [Debian - non-free][]   | debian_nonfree    |                                                              |
 
-> Support for adding `multiverse`, `universe`, `restricted`(on Ubuntu), `contrib` and `non-free` (on Debian) is considered beta. Use with caution!
+- `azurecli` is not supported on Ubuntu 18.04, Debian 9, 10 and their derivatives.
+- `winehq` is not supported on Ubuntu 18.04, Debian 9, 10 and their derivatives.
+- `*` Only amd64/x86_64 is supported. ARM CPUs like Raspberry Pi/Nvidia Tegra are not
+ supported.
 
 ## Issues & Help
 
