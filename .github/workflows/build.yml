@@ -18,6 +18,7 @@ jobs:
           chmod +x tests/*.sh
       - name: Shellcheck
         run: ./scripts/shellcheck.sh after-effects tests/local.sh
+
   # Ubuntu
   ubuntu:
     needs: [ "shellcheck"]
@@ -33,6 +34,7 @@ jobs:
 
       - name: Ubuntu ${{ matrix.release }}
         run: ./tests/local.sh --build --trace --distro ubuntu --release "${{ matrix.release }}"
+
   # Debian
   debian:
     needs: [ "shellcheck"]
@@ -49,8 +51,8 @@ jobs:
       - name: Debian ${{ matrix.release }}
         run: ./tests/local.sh --build --trace --distro debian --release "${{ matrix.release }}"
 
-  # Ubuntu ARM
-  arm:
+  # Ubuntu ARM64
+  ubuntu-arm:
     needs: [ "shellcheck"]
     runs-on: ubuntu-latest
     strategy:
@@ -67,7 +69,9 @@ jobs:
 
       - name: Test on ARM64 ${{ matrix.release }}
         run: ./tests/local.sh --build --trace --distro arm64v8/ubuntu --release "${{ matrix.release }}"
-  arm-debian:
+
+  # Debian ARM64
+  debian-arm:
     needs: [ "shellcheck"]
     runs-on: ubuntu-latest
     strategy:
