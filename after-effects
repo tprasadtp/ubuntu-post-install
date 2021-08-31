@@ -25,7 +25,7 @@ function __init_core_variables() {
   # Start tik
   readonly AE_EXEC_START=$(date +%s)
   # Version
-  readonly AE_VERSION="9.0.0-beta.1"
+  readonly AE_VERSION="9.0.0"
   # Config Version
   readonly AE_CONFIG_API="3"
 
