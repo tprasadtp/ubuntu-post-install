@@ -97,7 +97,8 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 | ----------------------- | ----------------- | ------------------------------------------------------------ |
 | [Brave Browser][]*      | brave_browser     | brave-browser                                                |
 | Docker                  | docker            | docker-ce, docker-ce-rootless-extras, docker-ce-cli          |
-| [Element.io][element]*  | element_io        | element-desktop
+| [deCONZ][]*             | deconz            | deconz                                                       |
+| [Element.io][element]*  | element_io        | element-desktop                                              |
 | [GitHub - CLI][]        | github            | gh                                                           |
 | [Google - Bazel][]*     | bazel             | bazel                                                        |
 | Google - Chrome*        | chrome            | google-chrome-stable, google-chrome-beta                     |
@@ -121,7 +122,7 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 | Spotify Client*         | spotify           | spotify-client                                               |
 | Sublime Text Editor*    | sublimetext       | sublime-text                                                 |
 | Vivaldi*                | vivaldi           | vivaldi-stable                                               |
-| Wine HQ*                 | winehq            | winehq-stable, winehq-staging                                |
+| Wine HQ*                | winehq            | winehq-stable, winehq-staging                                |
 | [Ubuntu - Universe][]   | ubuntu_universe   |                                                              |
 | [Ubuntu - Multiverse][] | ubuntu_multiverse |                                                              |
 | [Ubuntu - Restricted][] | ubuntu_restricted |                                                              |
@@ -173,6 +174,7 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [license]: https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE
 
 [Brave Browser]: https://brave.com/linux/
+[deCONZ]: https://phoscon.de/en/conbee/install#ubuntu
 [element]: https://element.io
 [GitHub - CLI]: https://cli.github.com
 [Google - gVisor]: https://gvisor.dev

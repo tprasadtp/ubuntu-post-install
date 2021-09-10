@@ -25,7 +25,7 @@ function __init_core_variables() {
   # Start tik
   readonly AE_EXEC_START=$(date +%s)
   # Version
-  readonly AE_VERSION="9.0.0"
+  readonly AE_VERSION="9.1.0"
   # Config Version
   readonly AE_CONFIG_API="3"
 
@@ -1090,6 +1090,7 @@ function _set_yaml_config() {
   _check_bool "AE_RUN_CONFIG_REPO_NEURODEBIAN" "${AE_RUN__config__add_repo__neurodebian[0]}"
   _check_bool "AE_RUN_CONFIG_REPO_MINICONDA" "${AE_RUN__config__add_repo__miniconda[0]}"
   _check_bool "AE_RUN_CONFIG_REPO_ELEMENT_IO" "${AE_RUN__config__add_repo__element_io[0]}"
+  _check_bool "AE_RUN_CONFIG_REPO_DECONZ" "${AE_RUN__config__add_repo__deconz[0]}"
 
   # Debian Components
   _check_bool "AE_RUN_CONFIG_REPO_DEBIAN_NONFREE" "${AE_RUN__config__add_repo__debian_nonfree[0]}"
@@ -2213,11 +2214,29 @@ deb [signed-by=${AE_APT_KEYRINGS_DIR}/neurodebian-archive-keyring.gpg] http://ne
         AE_RUN_STACK_ERR+=("repo-add-error::config.add_repo.element")
       fi
     else
-      log_error "NeuElement.io/Riot.imroDebian repository is not supported on this architecture($AE_ARCH)!"
+      log_error "Element.io/Riot.im repository is not supported on this architecture($AE_ARCH)!"
       AE_RUN_STACK_ERR+=("add-repo-unsupported::config.add_repo.element")
     fi
   else
     log_debug "Skipped adding Element.io/Riot.im repository"
+  fi
+
+  # ConBee/Raspbee deCONZ
+  if [[ $AE_RUN_CONFIG_REPO_DECONZ == "true" ]]; then
+      log_info "deCONZ (Dresden Electronik)"
+      __add_repo_keys \
+        --format "asc" \
+        --file-prefix "phoscon-de-archive-keyring" \
+        --key-url "http://phoscon.de/apt/deconz.pub.key"
+
+      if echo "deb [signed-by=/usr/share/keyrings/phoscon-de-archive-keyring.gpg]  http://phoscon.de/apt/deconz ${AE_RUN_CODENAME} main #phoscon.de" >${AE_APT_SOURCES_DIR}/element-io.list; then
+        log_success "OK"
+      else
+        log_error "Failed to add deCONZ repository"
+        AE_RUN_STACK_ERR+=("repo-add-error::config.add_repo.dezcon")
+      fi
+  else
+    log_debug "Skipped adding deCONZ repository"
   fi
 
   # ROS2
@@ -2942,6 +2961,7 @@ function _process_menu() {
   -------------------------------------------------------
   Brave Browser                : $AE_RUN_CONFIG_REPO_BRAVE_BROWSER
   Docker Community Edition     : $AE_RUN_CONFIG_REPO_DOCKER
+  deCONZ                       : ${AE_RUN_CONFIG_REPO_DECONZ}
   Element.io/Riot.im           : $AE_RUN_CONFIG_REPO_ELEMENT_IO
   GitHub CLI                   : $AE_RUN_CONFIG_REPO_GH
   Google - Bazel               : $AE_RUN_CONFIG_REPO_BAZEL
