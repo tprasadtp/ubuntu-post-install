@@ -23,6 +23,7 @@ config:
     bazel: true
     brave_browser: true
     chrome: true
+    deconz: true
     docker: true
     edge: true
     element_io: true
@@ -133,3 +134,5 @@ config:
         - conda
         # Element
         - element-desktop
+        # deCONZ
+        - deconz

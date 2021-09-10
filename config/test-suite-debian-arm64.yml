@@ -20,6 +20,7 @@ config:
     snaps: yes
   # Repository Flags
   add_repo:
+    deconz: true
     docker: true
     github: true
     gvisor: true
@@ -66,3 +67,5 @@ config:
         - gh
         # VS Code
         - code
+        # deCONZ
+        - deconz
