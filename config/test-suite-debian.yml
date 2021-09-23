@@ -25,7 +25,6 @@ config:
     brave_browser: true
     chrome: true
     docker: true
-    deconz: true
     edge: true
     element_io: true
     # This is really flaky so drop it
@@ -92,8 +91,6 @@ config:
       external:
         # Docker
         - docker-ce
-        # deCONZ
-        - deconz
         # spotify
         - spotify-client
         # Github
