@@ -137,7 +137,7 @@ function main()
     echo "➜ Building ae:${docker_tag}"
     docker build -t ae:"${docker_tag}" \
       --build-arg DISTRO="${distro_name}" \
-      --build-arg CODE_NAME="${release_name}" \
+      --build-arg RELEASE="${release_name}" \
       ./tests/docker
   fi
 

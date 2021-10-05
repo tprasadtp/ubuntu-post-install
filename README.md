@@ -52,6 +52,12 @@ Sample configuration can be found in `config` directory.
 
 ![inaction](docs/assets/recordings/ubuntu-focal.gif)
 
+
+## ⚠️ Ubuntu Impish Indri 21.10 ⚠️
+
+Testing & development on Impish is blocked due to [#LP-1943049](https://bugs.launchpad.net/cloud-images/+bug/1943049)
+
+
 ## FAQ & Documentation
 
 See /docs or visit [docs][docs]
