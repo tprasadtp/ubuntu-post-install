@@ -1,7 +1,7 @@
 version: "2.3"
 services:
   site:
-    image: squidfunk/mkdocs-material:7.1.9
+    image: squidfunk/mkdocs-material:7.3.1
     runtime: runsc-kvm
     userns_mode: host
     # it is important to specify dev address as 0.0.0.0 otherwise server

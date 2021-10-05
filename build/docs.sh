@@ -11,5 +11,5 @@ set -e pipefail
 echo "Building Docs"
 docker run \
   --workdir=/docs \
-  -v "$(pwd)":/docs squidfunk/mkdocs-material:7.1.9 \
+  -v "$(pwd)":/docs squidfunk/mkdocs-material:7.3.1 \
   build -v -s --config-file /docs/mkdocs.yml

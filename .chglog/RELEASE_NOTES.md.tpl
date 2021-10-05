@@ -23,12 +23,6 @@
 {{ end }}
 {{ end -}}
 
-{{- if .RevertCommits -}}
-### Reverts
-{{ range .RevertCommits -}}
-- {{ .Revert.Header }} ([{{ .Hash.Short }}]({{ $.Info.RepositoryURL }}/commit/{{ .Hash.Long }}))
-{{ end }}
-{{ end -}}
 
 {{- if .MergeCommits -}}
 ### Merged Pull Requests

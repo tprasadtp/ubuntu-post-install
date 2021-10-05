@@ -53,12 +53,6 @@ Example yaml configuration snippet is given below.
 ```yaml
 api: 3
 config:
-  # Enabled Tasks
-  tasks:
-    update: true
-    # Add Repos
-    # individual repos flags are mentioned under config.add_repo key
-    repo: true
   # Repository Flags
   add_repo:
     azurecli: true

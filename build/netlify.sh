@@ -6,20 +6,9 @@
 # Version:1.0
 # Author: Prasad Tengse
 
-# gh-pages is built on gh. and deploy it on netlify to production.
-# Remove .toml and scripts. & deploy the entire branch. No need to build anything as its already built.
-# If something else is pushed to any branches, deploy it as branch deploy.
 set -e # halt script on error
 
 echo "---> Building Website "
-
-function usage()
-{
-  #Prints out help menu
-cat <<EOF
-Usage: netlify-deploy [OPTIONS]
-EOF
-}
 
 function generate_changelog()
 {
@@ -35,7 +24,7 @@ function generate_changelog()
   echo "---> Generating docs/changelog.md via git-chglog"
   ./scripts/changelog.sh \
     --changelog \
-    --oldest-tag "v7.0.0" \
+    --oldest-tag "v9.0.0" \
     --footer-file .chglog/OLD_CHGLOG.md \
     --output docs/changelog.md \
     --repository "https://github.com/tprasadtp/ubuntu-post-install"
@@ -45,7 +34,7 @@ function generate_changelog()
 function install_dependencies()
 {
   pip3 install --upgrade pip
-  pip3 install mkdocs-material==7.1.9
+  pip3 install mkdocs-material==7.3.1
   pip3 install \
       mkdocs-minify-plugin>=0.3 \
       mkdocs-redirects>=1.0
@@ -55,19 +44,13 @@ function install_dependencies()
 
 function main()
 {
-      #check if no args
-      if [ $# -eq 0 ]; then
-              echo "---> No arguments found. See usage below."
-              usage;
-      		    exit 1;
-      fi;
-
+  echo "---> Prepare"
 
   install_dependencies;
   generate_changelog
 
-  echo "---> Building Website with Branch"
-  mkdocs build;
-  }
-#
+  echo "---> Building Website"
+  mkdocs build
+}
+
 main "$@"

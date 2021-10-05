@@ -25,7 +25,7 @@ jobs:
         run: |
           ./scripts/changelog.sh \
             --changelog \
-            --oldest-tag "v7.0.0" \
+            --oldest-tag "v9.0.0" \
             --footer-file .chglog/OLD_CHGLOG.md \
             --output docs/changelog.md \
             --repository "https://github.com/tprasadtp/ubuntu-post-install"
@@ -35,7 +35,7 @@ jobs:
         run: |
           ./scripts/changelog.sh \
             --changelog \
-            --oldest-tag "v7.0.0" \
+            --oldest-tag "v9.0.0" \
             --footer-file .chglog/OLD_CHGLOG.md \
             --output docs/changelog.md \
             --repository "https://github.com/tprasadtp/ubuntu-post-install"

@@ -1,6 +1,6 @@
 # Command line options
 
-## Helps
+## Help
 
 Displays this help option.
 
