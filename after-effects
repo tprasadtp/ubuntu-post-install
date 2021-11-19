@@ -25,9 +25,9 @@ function __init_core_variables() {
   # Start tik
   readonly AE_EXEC_START=$(date +%s)
   # Version
-  readonly AE_VERSION="9.0.0"
+  readonly AE_VERSION="9.1.0"
   # Config Version
-  readonly AE_CONFIG_API="3"
+  readonly AE_CONFIG_API="4"
 
   # ERR
   declare -a AE_RUN_STACK_ERR
@@ -434,7 +434,7 @@ function __setup_platform_vars() {
   AE_RUN_CONFIG_FLAG_PURGE="false"
 
   # Keep Downloaded DEB packages
-  AE_RUN_CONFIG_FLAG_PRESERVE_DEBS="false"
+  AE_RUN_CONFIG_FLAG_PRESERVE_PKGS="false"
 
   #
   # ================================================================================== #
@@ -550,7 +550,7 @@ function _fix_ubuntu_derivatives() {
     log_info "This is latest LTS release of Ubuntu"
     log_success "Keeping the codename as $AE_RUN_CODENAME."
     ;;
-  ulyana | ulyssa | uma)
+  ulyana | ulyssa | uma | una)
     log_info "Release is Linux Mint 20.X."
     log_info "Setting additional repositories to follow Ubuntu 20.04."
     AE_RUN_CODENAME="focal"
@@ -565,37 +565,39 @@ function _fix_ubuntu_derivatives() {
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     log_success "Changed codename to $AE_RUN_CODENAME"
     ;;
-  # Current Ubuntu release
   hirsute)
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     log_notice "Release is Ubuntu 21.04 Hirsute Hippo"
     ;;
-  # Upcoming Ubuntu release
   impish)
     readonly AE_RUN_DISTRO_NAME="ubuntu"
-    log_warn "Release is Ubuntu 21.10 (Unstable!)"
+    log_warn "Release is Ubuntu 21.10 Impish Indri"
+    ;;
+  jammy)
+    readonly AE_RUN_DISTRO_NAME="ubuntu"
+    log_warn "Release is Ubuntu 22.04 Jammy Jellyfish (dev)"
     ;;
   # Debian
   stretch)
     AE_RUN_IS_DEBIAN="true"
     readonly AE_RUN_DISTRO_NAME="debian"
-    log_notice "This is Debian. PPAs are disabled."
+    log_notice "This is Debian 9 Stretch. PPAs are disabled."
     ;;
   buster)
     AE_RUN_IS_DEBIAN="true"
     readonly AE_RUN_DISTRO_NAME="debian"
-    log_notice "This is Debian 10 Buster. PPAs are disabled."
+    log_notice "This is Debian 10 Buster(oldstable). PPAs are disabled."
     ;;
   bullseye)
     AE_RUN_IS_DEBIAN="true"
     readonly AE_RUN_DISTRO_NAME="debian"
-    log_notice "This is Debian 11 Bullseye. PPAs are disabled."
+    log_notice "This is Debian 11 Bullseye(stable). PPAs are disabled."
     ;;
   bookworm)
     AE_RUN_IS_DEBIAN="true"
     readonly AE_RUN_DISTRO_NAME="debian"
     log_dev "You are running Debian Testing!"
-    log_notice "This is Debian 12 Bookworm. PPAs are disabled."
+    log_notice "This is Debian 12 Bookworm(testing). PPAs are disabled."
     ;;
   # Unsupported releases
   groovy) _eol_message "June 2021" ;;
@@ -1021,14 +1023,11 @@ function _set_yaml_config() {
   log_info "Validating Config Version"
   if [[ $AE_RUN_CONFIG_API -eq 3 ]]; then
     log_success "[v3] OK"
-  elif [[ -z $AE_RUN_CONFIG_API ]]; then
-    log_error "[v3] Missing config API version identifier."
-    log_error "[v3] Suggeted Action: Please include api: ${AE_CONFIG_API} in your config file."
+  elif [[ $AE_RUN_CONFIG_API -eq 4 ]]; then
+    log_success "[v4] OK"
   else
-    log_error "[v3] Config API version mismatch!"
-    log_error "[v3] Expected: ${AE_CONFIG_API} Got: ${AE_RUN_CONFIG_API}"
-    log_error "[v3] api key MUST be set to ${AE_CONFIG_API}"
-    log_error "[v3] Suggeted Action: Please ensure api: ${AE_CONFIG_API} is set in your config file."
+    log_error "[v4] Missing or incorrect config API version identifier."
+    log_error "[v4] Suggeted Action: Please include api:  in your config file."
     AE_RUN_CFG_BUILD_ERRORS=$((AE_RUN_CFG_BUILD_ERRORS + 1))
   fi
 
@@ -1100,6 +1099,9 @@ function _set_yaml_config() {
   _check_bool "AE_RUN_CONFIG_REPO_UBUNTU_MULTIVERSE" "${AE_RUN__config__add_repo__ubuntu_multiverse[0]}"
   _check_bool "AE_RUN_CONFIG_REPO_UBUNTU_RESTRICTED" "${AE_RUN__config__add_repo__ubuntu_restricted[0]}"
 
+  # RPM Components
+  _check_bool "AE_RUN_CONFIG_REPO_EPEL" "${AE_RUN__config__add_repo__epel[0]}"
+
   # Other Script Flags
   #################################################################################
 
@@ -1110,11 +1112,19 @@ function _set_yaml_config() {
     _check_bool "AE_RUN_CONFIG_FLAG_PURGE" "${AE_RUN__config__flags__purge_enabled[0]}"
   fi
 
-  # Keep Debs
-  if [[ $AE_RUN_CONFIG_FLAG_PRESERVE_DEBS == "true" ]]; then
-    log_debug "Ignoring config.flags.preserve_debs because of cli flag"
+  # Keep pkgs
+  if [[ $AE_CONFIG_API -gt 3 ]]; then
+    if [[ $AE_RUN_CONFIG_FLAG_PRESERVE_PKGS == "true" ]]; then
+      log_debug "Ignoring config.flags.preserve_pkgs because of cli flag"
+    else
+      _check_bool "AE_RUN_CONFIG_FLAG_PRESERVE_PKGS" "${AE_RUN__config__flags__preserve_pkgs[0]}"
+    fi
   else
-    _check_bool "AE_RUN_CONFIG_FLAG_PRESERVE_DEBS" "${AE_RUN__config__flags__preserve_debs[0]}"
+    if [[ $AE_RUN_CONFIG_FLAG_PRESERVE_PKGS == "true" ]]; then
+      log_debug "Ignoring config.flags.preserve_debs because of cli flag"
+    else
+      _check_bool "AE_RUN_CONFIG_FLAG_PRESERVE_PKGS" "${AE_RUN__config__flags__preserve_debs[0]}"
+    fi
   fi
 
   # Uni-Mirror
@@ -1131,7 +1141,13 @@ function _set_yaml_config() {
 
   _check_bool "AE_RUN_CONFIG_TASK_PPA" "${AE_RUN__config__tasks__ppa[0]}"
 
-  _check_bool "AE_RUN_CONFIG_TASK_APT" "${AE_RUN__config__tasks__apt[0]}"
+  # Migrate APT to PKGS
+  if [[ $AE_CONFIG_API -gt 3 ]]; then
+    _check_bool "AE_RUN_CONFIG_TASK_PKGS" "${AE_RUN__config__tasks__pkgs[0]}"
+  else
+    _check_bool "AE_RUN_CONFIG_TASK_APT" "${AE_RUN__config__tasks__apt[0]}"
+    _check_bool "AE_RUN_CONFIG_TASK_PKGS" "AE_RUN_CONFIG_TASK_APT"
+  fi
 
   _check_bool "AE_RUN_CONFIG_TASK_DEBS" "${AE_RUN__config__tasks__debs[0]}"
 
@@ -1144,14 +1160,12 @@ function _set_yaml_config() {
   #################################################################################
   #                              Parse Arrays
   #################################################################################
-  # Config file YAML has arrays of apt packages.
-  # We need to parse apt packages, ppa's, deb packages, listed in yaml
-  # to bash arrays.
+  # Config file YAML has arrays of packages.
 
   #--------------------------------------------------------------------------------
-  #                               APT Lists
+  #                               PKG Lists
   #--------------------------------------------------------------------------------
-  # There are Seven lists under key config.install.apt.[mentioned from 1-7]
+  # There are Seven lists under key config.install.apt|pkgs.[mentioned from 1-7]
   # 1. administration : Contains Administrative packages
   # 2. security       : contains Security related tools and packages
   # 3. productivity   : Office tools, writing tools, LateX, document tools and other
@@ -1178,22 +1192,31 @@ function _set_yaml_config() {
   #                             Special list - Purge list
   #--------------------------------------------------------------------------------
   # There is a special package list under key, config.purge, which contains
-  # list of apt packages to be purged from the system if present.
+  # list of packages to be purged from the system if present.
   # Lets get em, shall we?
-
-  # Copy package array
 
   # Purge
   declare -gar AE_RUN_PARSED_PURGE_PKGS=("${AE_RUN__config__purge_[@]}")
 
-  # Normal
-  declare -gar AE_RUN_PARSED_ADMINISTRATION_PKGS=("${AE_RUN__config__install__apt__administration_[@]}")
-  declare -gar AE_RUN_PARSED_SECURITY_PKGS=("${AE_RUN__config__install__apt__security_[@]}")
-  declare -gar AE_RUN_PARSED_PRODUCTIVITY_PKGS=("${AE_RUN__config__install__apt__productivity_[@]}")
-  declare -gar AE_RUN_PARSED_MULTIMEDIA_PKGS=("${AE_RUN__config__install__apt__multimedia_[@]}")
-  declare -gar AE_RUN_PARSED_DEV_PKGS=("${AE_RUN__config__install__apt__development_[@]}")
-  declare -gar AE_RUN_PARSED_OTHER_PKGS=("${AE_RUN__config__install__apt__other_[@]}")
-  declare -gar AE_RUN_PARSED_EXTERNAL_PKGS=("${AE_RUN__config__install__apt__external_[@]}")
+  if [[ $AE_CONFIG_API -gt 3 ]]; then
+    log_debug "Using unified pkg congfigs from config.install.pkgs"
+    declare -gar AE_RUN_PARSED_ADMINISTRATION_PKGS=("${AE_RUN__config__install__pkgs__administration_[@]}")
+    declare -gar AE_RUN_PARSED_SECURITY_PKGS=("${AE_RUN__config__install__pkgs__security_[@]}")
+    declare -gar AE_RUN_PARSED_PRODUCTIVITY_PKGS=("${AE_RUN__config__install__pkgs__productivity_[@]}")
+    declare -gar AE_RUN_PARSED_MULTIMEDIA_PKGS=("${AE_RUN__config__install__pkgs__multimedia_[@]}")
+    declare -gar AE_RUN_PARSED_DEV_PKGS=("${AE_RUN__config__install__pkgs__development_[@]}")
+    declare -gar AE_RUN_PARSED_OTHER_PKGS=("${AE_RUN__config__install__pkgs__other_[@]}")
+    declare -gar AE_RUN_PARSED_EXTERNAL_PKGS=("${AE_RUN__config__install__pkgs__external_[@]}")
+  else
+    log_debug "Using unified pkg congfigs from config.install.apt"
+    declare -gar AE_RUN_PARSED_ADMINISTRATION_PKGS=("${AE_RUN__config__install__apt__administration_[@]}")
+    declare -gar AE_RUN_PARSED_SECURITY_PKGS=("${AE_RUN__config__install__apt__security_[@]}")
+    declare -gar AE_RUN_PARSED_PRODUCTIVITY_PKGS=("${AE_RUN__config__install__apt__productivity_[@]}")
+    declare -gar AE_RUN_PARSED_MULTIMEDIA_PKGS=("${AE_RUN__config__install__apt__multimedia_[@]}")
+    declare -gar AE_RUN_PARSED_DEV_PKGS=("${AE_RUN__config__install__apt__development_[@]}")
+    declare -gar AE_RUN_PARSED_OTHER_PKGS=("${AE_RUN__config__install__apt__other_[@]}")
+    declare -gar AE_RUN_PARSED_EXTERNAL_PKGS=("${AE_RUN__config__install__apt__external_[@]}")
+  fi
 
   #--------------------------------------------------------------------------------
   #                             PPA Lists
@@ -1207,9 +1230,17 @@ function _set_yaml_config() {
   #--------------------------------------------------------------------------------
   # Config file contains list of DEB packages to be downloaded & installed under key
   # config.install.debs
-  # The configuration is not simple URL its csv. <URL to Deb file>,<Name of the Package>
-  # This is for compatiblity reasons
   declare -gar AE_RUN_PARSED_DEBFILES=("${AE_RUN__config__install__debs_[@]}")
+
+  #--------------------------------------------------------------------------------
+  #                             RPM packages
+  #--------------------------------------------------------------------------------
+  # Config file contains list of RPM packages to be downloaded & installed under key
+  # config.install.rpms
+  if [[ $AE_CONFIG_API -gt 3 ]]; then
+    #shellcheck disable=SC2034
+    declare -gar AE_RUN_PARSED_RPMFILES=("${AE_RUN__config__install__rpms_[@]}")
+  fi
 
   #--------------------------------------------------------------------------------
   #                             Static binaries
@@ -1233,7 +1264,7 @@ function _clean_apt_cache() {
   # Function to clean apt package cache. Takes care of -k flag in all the installs.
   # Honor -k flag
   # Delete DEBs
-  if [ "$AE_RUN_CONFIG_FLAG_PRESERVE_DEBS" != "true" ]; then
+  if [ "$AE_RUN_CONFIG_FLAG_PRESERVE_PKGS" != "true" ]; then
     log_debug "Removing cached APT packages"
     apt-get -q -o=Dpkg::Use-Pty=0 clean | log_trace "${AE_LOG_PHASE_APT}"
   else
@@ -1283,7 +1314,6 @@ function _install_pre_requisites() {
   fi
 
 }
-
 
 function _warn_about_fix_codename() {
   log_warn "Repositories from older Ubuntu release are being used."
@@ -3325,11 +3355,10 @@ function main() {
       AE_RUN_CONFIG_FLAG_PURGE="true"
       log_notice "Purge packages is set to true."
       log_warn "No checks are being made on the packages in the list."
-      log_warn "Use carefully!. Purging system packages is a stupid idea!"
       ;;
-    -k | --keep-debs)
-      AE_RUN_CONFIG_FLAG_PRESERVE_DEBS="true"
-      log_notice "Will keep downloaded DEB packages."
+    -k | --keep-debs | keep-pkgs)
+      AE_RUN_CONFIG_FLAG_PRESERVE_PKGS="true"
+      log_notice "Will keep downloaded packages."
       ;;
     -V | --no-version-check)
       AE_RUN_VERSION_CHECK="false"
@@ -3460,7 +3489,7 @@ function main() {
     __autopilot_run_task "$AE_RUN_CONFIG_TASK_UPGRADE" "upgrade_apps"
     __autopilot_run_task "$AE_RUN_CONFIG_TASK_REPO" "add_repositories"
     __autopilot_run_task "$AE_RUN_CONFIG_TASK_PPA" "add_ppas"
-    __autopilot_run_task "$AE_RUN_CONFIG_TASK_APT" "install_apps"
+    __autopilot_run_task "$AE_RUN_CONFIG_TASK_PKGS" "install_apps"
     __autopilot_run_task "$AE_RUN_CONFIG_TASK_DEBS" "install_debs"
     __autopilot_run_task "$AE_RUN_CONFIG_TASK_PURGE" "purge_not_required"
     __autopilot_run_task "$AE_RUN_CONFIG_TASK_BIN" "install_binaries"

@@ -17,7 +17,7 @@ jobs:
           chmod +x after-effects
           chmod +x tests/*.sh
       - name: Shellcheck
-        run: ./scripts/shellcheck.sh after-effects tests/local.sh
+        run: ./scripts/shellcheck after-effects tests/local.sh
 
   # Ubuntu
   ubuntu:
@@ -26,14 +26,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: ["focal", "bionic", "hirsute"]
+        release: ["bionic", "focal", "hirsute", "impish"]
     steps:
       - uses: actions/checkout@v2
         with:
           persist-credentials: false
 
       - name: Ubuntu ${{ matrix.release }}
-        run: ./tests/local.sh --build --trace --distro ubuntu --release "${{ matrix.release }}"
+        run: ./scripts/test --build --trace --distro ubuntu --release "${{ matrix.release }}"
 
   # Debian
   debian:
@@ -49,7 +49,7 @@ jobs:
           persist-credentials: false
 
       - name: Debian ${{ matrix.release }}
-        run: ./tests/local.sh --build --trace --distro debian --release "${{ matrix.release }}"
+        run: ./scripts/test --build --trace --distro debian --release "${{ matrix.release }}"
 
   # Ubuntu ARM64
   ubuntu-arm:
@@ -58,7 +58,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: ["focal", "bionic", "hirsute"]
+        release: ["bionic", "focal", "hirsute"]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -68,7 +68,7 @@ jobs:
         uses: docker/setup-qemu-action@v1
 
       - name: Test on ARM64 ${{ matrix.release }}
-        run: ./tests/local.sh --build --trace --distro arm64v8/ubuntu --release "${{ matrix.release }}"
+        run: ./scripts/test --build --trace --distro arm64v8/ubuntu --release "${{ matrix.release }}"
 
   # Debian ARM64
   debian-arm:
@@ -77,7 +77,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: ["stretch", "buster", "bullseye"]
+        release: ["buster", "bullseye"]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -87,4 +87,4 @@ jobs:
         uses: docker/setup-qemu-action@v1
 
       - name: Test on ARM64 ${{ matrix.release }}
-        run: ./tests/local.sh --build --trace --distro arm64v8/debian --release "${{ matrix.release }}"
+        run: ./scripts/test --build --trace --distro arm64v8/debian --release "${{ matrix.release }}"

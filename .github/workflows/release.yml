@@ -23,20 +23,17 @@ jobs:
 
       - name: Generate changelog
         run: |
-          ./scripts/changelog.sh \
-            --changelog \
+          ./scripts/build-changelog \
+            changelog \
             --oldest-tag "v9.0.0" \
-            --footer-file .chglog/OLD_CHGLOG.md \
             --output docs/changelog.md \
             --repository "https://github.com/tprasadtp/ubuntu-post-install"
-            cat docs/changelog.md
+            cat build-docs/changelog.md
 
       - name: Generate release notes
         run: |
-          ./scripts/changelog.sh \
-            --changelog \
-            --oldest-tag "v9.0.0" \
-            --footer-file .chglog/OLD_CHGLOG.md \
+          ./scripts/build-changelog \
+            release-notes \
             --output docs/changelog.md \
             --repository "https://github.com/tprasadtp/ubuntu-post-install"
 
@@ -61,7 +58,7 @@ jobs:
         with:
           tag_name: ${{ steps.get_version.outputs.VERSION }}
           release_name: Release ${{ steps.get_version.outputs.VERSION }}
-          body_path: docs/changelog.md
+          body_path: build-docs/changelog.md
           draft: false
           prerelease: false
 

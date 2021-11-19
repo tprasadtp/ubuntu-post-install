@@ -22,8 +22,8 @@ jobs:
 
       - name: Generate changelog
         run: |
-          ./scripts/changelog.sh \
-            --changelog \
+          ./scripts/build-changelog \
+            changelog \
             --oldest-tag "v9.0.0" \
             --output docs/changelog.md \
             --repository "https://github.com/tprasadtp/ubuntu-post-install"
@@ -36,4 +36,4 @@ jobs:
 
       - name: Build Docs
         run: |
-          ./build/docs.sh
+          ./scripts/build-docs

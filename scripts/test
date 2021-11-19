@@ -55,6 +55,7 @@ function main()
         ;;
       -s | --shell) give_shell="true" ;;
       -b | --build) build_image="true" ;;
+      --fix) EXTRA_ARGS+=('--fix') ;;
       --fix-lts) EXTRA_ARGS+=('--fix-mode-lts') ;;
       --pre) EXTRA_ARGS+=('--pre-release') ;;
       --sv) EXTRA_ARGS+=('--no-version-check') ;;
@@ -132,19 +133,25 @@ function main()
     echo "Terminal is NON interactive"
   fi
 
+  # User namespaces
+  if docker info --format "{{ .SecurityOptions }}" | grep -q "name=userns"; then
+    echo "Skipping userns to avoid issues with mounted paths"
+    DOCKER_RUN_ARGS+=("--userns=host")
+  fi
+
   # If Image needs to be built?
   if [[ $build_image == "true" ]]; then
     echo "➜ Building ae:${docker_tag}"
     docker build -t ae:"${docker_tag}" \
       --build-arg DISTRO="${distro_name}" \
       --build-arg RELEASE="${release_name}" \
-      ./tests/docker
+      ./docker
   fi
 
   if [[ $give_shell == "true" ]]; then
     echo "# Dropping you in ${docker_tag}"
     docker run --rm \
-      -it \
+      "${DOCKER_RUN_ARGS[@]}" \
       -e CI \
       -e GITHUB_ACTIONS \
       --name="${docker_tag}" \

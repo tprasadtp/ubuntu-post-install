@@ -1,5 +1,5 @@
 # Install Config
-api: 4
+api: 3
 name: Test-Suite
 author: Prasad T
 # Configuration
@@ -62,7 +62,7 @@ config:
   # Flags
   flags:
     purge_enabled: true
-    preserve_pkgs: false
+    preserve_debs: false
 
   # Packages to purge
   purge:
@@ -85,7 +85,7 @@ config:
       - https://github.com/sharkdp/bat/releases/download/v0.17.1/bat_0.17.1_amd64.deb
     binaries:
       - kubectl::https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/amd64/kubectl
-    pkgs:
+    apt:
       # Admin related Stuff
       administration:
         - curl

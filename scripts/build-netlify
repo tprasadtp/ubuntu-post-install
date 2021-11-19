@@ -1,12 +1,8 @@
-#!/usr/bin/env bash
+#!/usr/bin/bash
+
 #shellcheck disable=SC2059
 
-# This is a bash script to build jekyll website and test it with htmlproofer
-# Netlify Deployments
-# Version:1.0
-# Author: Prasad Tengse
-
-set -e # halt script on error
+set -e
 
 echo "---> Building Website "
 
@@ -22,10 +18,9 @@ function generate_changelog()
   git tag --sort=-version:creatordate --sort=-v:refname --list --merged=master
 
   echo "---> Generating docs/changelog.md via git-chglog"
-  ./scripts/changelog.sh \
-    --changelog \
+  ./scripts/changelog \
+    changelog \
     --oldest-tag "v9.0.0" \
-    --footer-file .chglog/OLD_CHGLOG.md \
     --output docs/changelog.md \
     --repository "https://github.com/tprasadtp/ubuntu-post-install"
   cat docs/changelog.md
@@ -34,7 +29,7 @@ function generate_changelog()
 function install_dependencies()
 {
   pip3 install --upgrade pip
-  pip3 install mkdocs-material==7.3.1
+  pip3 install mkdocs-material
   pip3 install \
       mkdocs-minify-plugin>=0.3 \
       mkdocs-redirects>=1.0
