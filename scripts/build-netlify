@@ -31,8 +31,8 @@ function install_dependencies()
   pip3 install --upgrade pip
   pip3 install mkdocs-material
   pip3 install \
-      mkdocs-minify-plugin>=0.3 \
-      mkdocs-redirects>=1.0
+      "mkdocs-minify-plugin>=0.3" \
+      "mkdocs-redirects>=1.0"
   mkdocs --version
 }
 

@@ -8,18 +8,18 @@
 # Production context: All deploys to the main
 # repository branch will inherit these settings.
 [context.production]
-  command = "chmod +x ./build/*.sh && ./build/netlify.sh --production"
+  command = "./scripts/build-netlify --production"
 
 # Deploy Preview context: All Deploy Previews
 # will inherit these settings.
 [context.deploy-preview]
   publish = "_site/"
-  command = "chmod +x ./build/*.sh && ./build/netlify.sh --pull-request"
+  command = "./scripts/build-netlify --pull-request"
 
 # Branch Deploy context: All deploys that are not in
 # an active Deploy Preview will inherit these settings.
 [context.branch-deploy]
-  command = "chmod +x ./build/*.sh && ./build/netlify.sh --branch"
+  command = "./scripts/build-netlify --branch"
 
 # GH URLs
 [[redirects]]

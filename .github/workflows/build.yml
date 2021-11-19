@@ -12,12 +12,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Prepare
-        run: |
-          chmod +x after-effects
-          chmod +x tests/*.sh
       - name: Shellcheck
-        run: ./scripts/shellcheck after-effects tests/local.sh
+        run: ./scripts/shellcheck after-effects scripts/*
 
   # Ubuntu
   ubuntu:

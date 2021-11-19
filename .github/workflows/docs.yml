@@ -31,7 +31,10 @@ jobs:
 
       - name: Generate release notes
         run: |
-          ./scripts/changelog.sh --release-notes --repository "https://github.com/tprasadtp/ubuntu-post-install" --output RELEASE_NOTES.md
+          ./scripts/build-changelog \
+            release-notes \
+            --repository "https://github.com/tprasadtp/ubuntu-post-install" \
+            --output RELEASE_NOTES.md
           cat RELEASE_NOTES.md
 
       - name: Build Docs

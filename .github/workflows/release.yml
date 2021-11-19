@@ -34,7 +34,7 @@ jobs:
         run: |
           ./scripts/build-changelog \
             release-notes \
-            --output docs/changelog.md \
+            --output RELEASE_NOTES.md \
             --repository "https://github.com/tprasadtp/ubuntu-post-install"
 
       - name: Get the version
@@ -58,7 +58,7 @@ jobs:
         with:
           tag_name: ${{ steps.get_version.outputs.VERSION }}
           release_name: Release ${{ steps.get_version.outputs.VERSION }}
-          body_path: build-docs/changelog.md
+          body_path: RELEASE_NOTES.md
           draft: false
           prerelease: false
 
