@@ -6,26 +6,28 @@ ARG RELEASE
 FROM ${DISTRO}:${RELEASE}
 LABEL maintainer "Prasad Tengse <tprasadtp@users.noreply.github.com>"
 
+RUN rm -f /etc/apt/apt.conf.d/docker-clean
+
 # Install essentials
 WORKDIR /shared
 
-RUN rm -f /etc/apt/apt.conf.d/docker-clean \
-    && echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/buildkit-cache
-
 # hadolint ignore=DL3008,DL3009
-RUN --mount=type=tmpfs,target=/downloads/ \
-    --mount=type=tmpfs,target=/var/lib/apt \
+RUN --mount=type=tmpfs,target=/var/lib/apt \
     --mount=type=cache,sharing=private,target=/var/cache/apt \
+    --mount=type=cache,target=/var/cache/yum \
+    if command -v apt-get > /dev/null 2>&1; then \
     apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y --no-install-recommends \
         wget \
         whiptail \
         iputils-ping \
         procps \
-        ca-certificates \
         apt-transport-https \
         ca-certificates \
         curl \
         apt-utils \
         gnupg2 \
-        software-properties-common
+        software-properties-common; \
+    elif command -v dnf > /dev/null 2>&1; then\
+        dnf install -y iputils procps-ng gnupg2 curl newt; \
+    fi

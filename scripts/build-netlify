@@ -18,7 +18,7 @@ function generate_changelog()
   git tag --sort=-version:creatordate --sort=-v:refname --list --merged=master
 
   echo "---> Generating docs/changelog.md via git-chglog"
-  ./scripts/changelog \
+  ./scripts/build-changelog \
     changelog \
     --oldest-tag "v9.0.0" \
     --output docs/changelog.md \

@@ -370,23 +370,22 @@ function __setup_platform_vars() {
     log_and_exit "I cannot determine distro/codename!" "5"
   fi
 
-  declare -r architecture="$(dpkg --print-architecture)"
+  declare -r architecture="$(uname -m)"
   case "${architecture}" in
-  amd64)
+  x86_64)
     log_debug "Architecture is 64 bit."
     readonly AE_ARCH="amd64"
     ;;
-  armhf)
+  armv7* | armv8*)
     log_debug "Running on ARM CPU with HW Floating point Processor"
     readonly AE_ARCH="armhf"
     ;;
-  arm64)
+  aarch64 | arm64)
     log_debug "This is an ARM64. Please be advised that not all repositories support this arch."
     readonly AE_ARCH="arm64"
     ;;
   *)
-    log_error "Sorry! This architecture is not supported by this script!"
-    log_and_exit "Unsupported Architecture. $(architecture)" "11"
+    log_and_exit "Unsupported Architecture. ${architecture}" "11"
     ;;
   esac
 
@@ -394,9 +393,6 @@ function __setup_platform_vars() {
 
   # etc sources list dir
   readonly AE_APT_SOURCES_DIR=/etc/apt/sources.list.d
-
-  # Ping URL
-  readonly AE_PING_URL="http://connectivitycheck.gstatic.com/generate_204"
 
   #-------------------------- Release codenames --------------------------------------
   readonly AE_UBUNTU_CODENAME_LATEST="hirsute"
@@ -461,9 +457,24 @@ function delete_log_file() {
   fi
 }
 
+# Checks if command is available
+function has_command() {
+  if command -v "$1" >/dev/null; then
+    return 0
+  else
+    return 1
+  fi
+  return 1
+}
+
+
 function __print_runtime_info() {
   # This function logs and displays the Necessary details which helps in debugging.
-  log_property "Hostname" "$(hostname)" 1
+  if has_command hostname; then
+    log_property "Hostname" "$(hostname)" 1
+  else
+    log_property "Hostname" "UNKNOWN"
+  fi
   log_property "OS" "${AE_DISTRO_PRETTY_NAME}" 1
   log_property "Distribution" "${AE_DISTRO_NAME}" 1
   log_property "Release" "${AE_DISTRO_CODENAME}" 1
@@ -487,14 +498,15 @@ function _check_dependencies() {
     if command -v "$dependency" >/dev/null; then
       log_property "${dependency}" "INSTALLED"
     else
-      log_property "$dependency" "NOT INSTALLED"
+      log_property "$dependency" "MISSING"
       dependency_check_failed_count=$((dependency_check_failed_count + 1))
     fi
   done
 
   if [ "$dependency_check_failed_count" -gt 0 ]; then
-    log_error "One or more dependencies not installed."
-    log_and_exit "Sorry! $AE_SCRIPT cannot continue!" "1"
+    return 1
+  else
+    return 0
   fi
 }
 
@@ -622,7 +634,7 @@ function _fix_ubuntu_derivatives() {
 function __test_internet() {
   # Function to check internet connection
   log_info "Checking connectivity"
-  if wget --tries=2 --timeout=10 "$AE_PING_URL" -O /dev/null -o /dev/null; then
+  if ping -c 4 -i 0.2 google.com 2>&1 | log_trace "${AE_LOG_PHASE_CORE}" ; then
     log_success "Connected!"
   else
     log_error "You are not connected to the Internet!. "
@@ -699,10 +711,19 @@ function _get_remote_file() {
 
   if [[ $# -eq 2 ]]; then
     # Remote files
-    wget -q "${file_url}" -O "$file_name" 2>&1 | log_trace "${AE_LOG_PHASE_CORE}"
-    exit_status="$?"
+    if command -v wget > /dev/null 2>&1; then
+      log_debug "Fetch handler is wget"
+      wget -q "${file_url}" -O "$file_name" 2>&1 | log_trace "${AE_LOG_PHASE_CORE}"
+      exit_status="$?"
+    elif command -v curl > /dev/null 2>&1; then
+      log_debug "Fetch handler is curl"
+      curl -sSfL "${file_url}" --output "$file_name" 2>&1 | log_trace "${AE_LOG_PHASE_CORE}"
+      exit_status="$?"
+    else
+      log_and_exit "No handlers available for fetching remote data!" "28"
+    fi
 
-    log_property "Exit code (wget)" "$exit_status"
+    log_property "Exit code" "$exit_status"
     if [[ $exit_status -ne 0 ]]; then
       log_error "Something went wrong while retrieving ${file_name}."
       log_and_exit "Error Getting file." "28"
@@ -3162,66 +3183,58 @@ function _process_menu() {
 }
 
 function __runtime_env_checks() {
-
+  # global Associative array
+  declare -Ag AE_RUN_RUNTIME_DETECT=([GITHUB_ACTIONS]=false [AZURE_PIPELINE]=false [CI]=false [KVM]=false [PODMAN]=false [DOCKER]=false [KVM]=false [HYPERV]=false [WSL]=false)
   if [ "$bool_skip_env_checks" == "true" ]; then
     log_debug "Skipping Run environment checks"
   else
     log_stage "Running environment checks"
+
+    # Github Actions
+    if [ "$GITHUB_ACTIONS" == "true" ]; then
+      log_debug "Running on GitHub Actions"
+      AE_RUN_RUNTIME_DETECT['GITHUB_ACTIONS']=true
+    fi
+
     # Check if running in CI & Containers
-    # VMs, GCP, AWS, Docker.
-    #================================ CI =============================================
-    if [ "$TRAVIS" == "true" ]; then
-      log_dev "Running on Travis CI"
-    elif [ "$APPVEYOR" == "true" ]; then
-      log_dev "Running on Appveyor CI"
-    elif [ "$TF_BUILD" == "True" ]; then
-      log_dev "Running on Azure Pipelines"
-    elif [ "$GITHUB_ACTIONS" == "true" ]; then
-      log_dev "Running on GitHub Actions"
+    if [ "$TF_BUILD" == "True" ]; then
+      log_debug "Running on Azure Pipelines"
+      AE_RUN_RUNTIME_DETECT['AZURE_PIPELINE']=true
     fi
 
-    if grep -q Microsoft /proc/version; then
-      log_warn "Running on Windows Subsystem for Linux"
-    fi
-    #============================ Docker =============================================
-    if grep docker /proc/1/cgroup -qa; then
-      log_dev "Running in docker"
-    else
-      log_debug "Probably not running in docker"
-    fi
-    #------------------------------- EC2, GCP, DO ------------------------------------
-    # This first, simple check will work for many older instance types.
-    if [ -f /sys/hypervisor/uuid ] && [ "$(head -c 3 /sys/hypervisor/uuid)" == "ec2" ]; then
-      log_dev "Running on EC2"
-
-    # This check will work on newer m5/c5 instances, but only if you have root!
-    # If the file exists AND is readable by us, we can rely on it.
-    elif [ -r /sys/devices/virtual/dmi/id/product_uuid ] && [ "$(head -c 3 /sys/devices/virtual/dmi/id/product_uuid)" == "EC2" ]; then
-      log_dev "Running on EC2"
-
-    # Fallback check of http://169.254.169.254/. If we wanted to be REALLY
-    # authoritative, we could follow Amazon's suggestions for cryptographically
-    # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-identity-documents.html
-    # but this is almost certainly overkill for this purpose (and the above
-    # checks of "EC2" prefixes have a higher false positive potential anyway).
-    elif wget -O- -q --timeout=1 --tries=1 http://169.254.169.254/latest/dynamic/instance-identity/document | grep -q availabilityZone; then
-      log_dev "Running on EC2"
-
-    #------------------------------- GCP ---------------------------------------------
-    elif wget -q -O- --timeout=1 --tries=1 -nc --header="Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/virtual-clock/drift-token >/dev/null; then
-      log_dev "Running on Google Compute"
-
-    elif wget -q -O- --timeout=1 --tries=1 -nc http://169.254.169.254/metadata/v1/id; then
-      log_dev "Running on Digital Ocean droplet"
-
-      declare -r AZURE_METADATA_URL="http://169.254.169.254/metadata/instance/compute/location?api-version=2017-08-01&format=text"
-    elif AZURE_REGION="$(wget -q -O- --timeout=1 --tries=1 --header "Metadata:true" "${AZURE_METADATA_URL}")"; then
-      log_dev "Running on Microsoft Azure ${AZURE_REGION}"
-
-    else
-      log_debug "Probably not running on AWS/GCP/Azure or Digital Ocean."
+    # Generic CI
+    if [ "$CI" == "true" ]; then
+      log_debug "Running on CI"
+      AE_RUN_RUNTIME_DETECT['CI']=true
     fi
 
+    # WSL
+    if grep -q Microsoft /proc/sys/kernel/osrelease; then
+      log_debug "Running on Windows Subsystem for Linux"
+      AE_RUN_RUNTIME_DETECT['WSL']=true
+    fi
+
+    #============================ Docker & Podman ====================================
+    if test -f /run/.containerenv; then
+      log_debug "Running in podman"
+      AE_RUN_RUNTIME_DETECT['PODMAN']=true
+    fi
+
+    if test -f /.dockerenv; then
+      log_debug "Running in docker"
+      AE_RUN_RUNTIME_DETECT['DOCKER']=true
+    fi
+
+    log_dev "Runtime Details"
+    # declare -Ag AE_RUN_RUNTIME_DETECT=([GITHUB_ACTIONS]=false [AZURE_PIPELINE]=false [CI]=false [KVM]=false [PODMAN]=false [DOCKER]=false [KVM]=false [HYPERV]=false [WSL]=false)
+    log_dev "KVM              : ${AE_RUN_RUNTIME_DETECT[KVM]}"
+    log_dev "HYPERV           : ${AE_RUN_RUNTIME_DETECT[HYPERV]}"
+    log_dev "WSL              : ${AE_RUN_RUNTIME_DETECT[WSL]}"
+    log_dev "DOCKER           : ${AE_RUN_RUNTIME_DETECT[DOCKER]}"
+    log_dev "PODMAN           : ${AE_RUN_RUNTIME_DETECT[PODMAN]}"
+    log_dev "GH-ACTIONS       : ${AE_RUN_RUNTIME_DETECT[GITHUB_ACTIONS]}"
+    log_dev "AZURE PIPELEINES : ${AE_RUN_RUNTIME_DETECT[AZURE_PIPELINE]}"
+    log_dev "CI               : ${AE_RUN_RUNTIME_DETECT[CI]}"
   fi
 
 }
@@ -3414,7 +3427,7 @@ function main() {
   fi
 
   # Check dependencies
-  declare -ar after_effects_core_dependencies=(wget ping ps grep cut tr awk)
+  declare -ar after_effects_core_dependencies=(ping ps grep cut tr awk)
 
   log_info "Checking dependencies"
 
@@ -3430,7 +3443,16 @@ function main() {
     log_debug "whiptail is not required as autopilot is active."
   fi
 
-  _check_dependencies "${after_effects_core_dependencies[@]}"
+  if ! _check_dependencies "${after_effects_core_dependencies[@]}"; then
+    log_and_exit "Missing depdendencies" "1"
+  fi
+
+  if _check_dependencies "wget" ||  _check_dependencies "curl"; then
+    log_debug "wget or curl is available"
+  else
+    log_and_exit "wget and curl both are missing!" "1"
+  fi
+
 
   # Prime and Print Runtime Info
   __print_runtime_info

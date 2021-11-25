@@ -366,7 +366,7 @@ function main() {
         changelog) mode="changelog" ;;
         release-notes) mode="release-notes" ;;
         # Options
-        -r | --repo)
+        -r | --repo | --repository)
             shift
             PROJECT_SOURCE="${1}"
             ;;
@@ -404,7 +404,7 @@ function main() {
             exit 0
             ;;
         *)
-            log_error "Invalid argument(s). See usage below."
+            log_error "Invalid argument(s) - $*. See usage below."
             display_usage
             exit 1
             ;;
