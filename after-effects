@@ -467,7 +467,6 @@ function has_command() {
   return 1
 }
 
-
 function __print_runtime_info() {
   # This function logs and displays the Necessary details which helps in debugging.
   if has_command hostname; then
@@ -577,6 +576,13 @@ function _fix_ubuntu_derivatives() {
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     log_success "Changed codename to $AE_RUN_CODENAME"
     ;;
+  jolnir)
+    log_info "Release is elementaryOS 6.1 - Jólnir."
+    log_info "Setting additional repositories to follow Ubuntu 20.04."
+    AE_RUN_CODENAME="focal"
+    readonly AE_RUN_DISTRO_NAME="ubuntu"
+    log_success "Changed codename to $AE_RUN_CODENAME"
+    ;;
   hirsute)
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     log_notice "Release is Ubuntu 21.04 Hirsute Hippo"
@@ -634,7 +640,7 @@ function _fix_ubuntu_derivatives() {
 function __test_internet() {
   # Function to check internet connection
   log_info "Checking connectivity"
-  if ping -c 4 -i 0.2 google.com 2>&1 | log_trace "${AE_LOG_PHASE_CORE}" ; then
+  if ping -c 4 -i 0.2 google.com 2>&1 | log_trace "${AE_LOG_PHASE_CORE}"; then
     log_success "Connected!"
   else
     log_error "You are not connected to the Internet!. "
@@ -711,11 +717,11 @@ function _get_remote_file() {
 
   if [[ $# -eq 2 ]]; then
     # Remote files
-    if command -v wget > /dev/null 2>&1; then
+    if command -v wget >/dev/null 2>&1; then
       log_debug "Fetch handler is wget"
       wget -q "${file_url}" -O "$file_name" 2>&1 | log_trace "${AE_LOG_PHASE_CORE}"
       exit_status="$?"
-    elif command -v curl > /dev/null 2>&1; then
+    elif command -v curl >/dev/null 2>&1; then
       log_debug "Fetch handler is curl"
       curl -sSfL "${file_url}" --output "$file_name" 2>&1 | log_trace "${AE_LOG_PHASE_CORE}"
       exit_status="$?"
@@ -1657,10 +1663,10 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
     if [[ ${AE_ARCH} == "amd64" ]]; then
       log_info "Spotify"
       __add_repo_keys --format "asc" \
-        --file-prefix "spotify" \
-        --key-url https://download.spotify.com/debian/pubkey_0D811D58.gpg
+        --file-prefix "spotify-5E3C45D7B312C643" \
+        --key-url https://download.spotify.com/debian/pubkey_5E3C45D7B312C643.gpg
 
-      if echo "deb [arch=$AE_ARCH signed-by=${AE_APT_KEYRINGS_DIR}/spotify.gpg] http://repository.spotify.com stable non-free #Spotify" >${AE_APT_SOURCES_DIR}/spotify.list; then
+      if echo "deb [arch=$AE_ARCH signed-by=${AE_APT_KEYRINGS_DIR}/spotify-5E3C45D7B312C643.gpg] http://repository.spotify.com stable non-free #Spotify" >${AE_APT_SOURCES_DIR}/spotify.list; then
         log_success "OK"
       else
         log_error "Adding Spotify Repository Failed"
@@ -2475,7 +2481,14 @@ function __add_repo_keys() {
 
   # check if file prefix is valid
   # shellcheck disable=SC1001
-  if [[ ! ${key_file_prefix} =~ ^[a-zA-Z][a-zA-Z.\-]+[a-zA-Z0-9]$ ]]; then
+  case "$key_file_prefix" in
+  ubuntu* | linuxmint* | mint* | debian* | pop* | system76* | canonical*)
+    log_and_exit "Internal Error! Using reserved prefix for key prefix!" "19"
+    exit 19
+    ;;
+  esac
+
+  if [[ ! ${key_file_prefix} =~ ^[a-zA-Z][a-zA-Z0-9\-]+[a-zA-Z0-9]$ ]]; then
     log_and_exit "Internal Error in ${FUNCNAME[0]}  --file-prefix is invalid!" "19"
   fi
 
@@ -3447,12 +3460,11 @@ function main() {
     log_and_exit "Missing depdendencies" "1"
   fi
 
-  if _check_dependencies "wget" ||  _check_dependencies "curl"; then
+  if _check_dependencies "wget" || _check_dependencies "curl"; then
     log_debug "wget or curl is available"
   else
     log_and_exit "wget and curl both are missing!" "1"
   fi
-
 
   # Prime and Print Runtime Info
   __print_runtime_info
