@@ -4,7 +4,6 @@ ARG DISTRO
 ARG RELEASE
 
 FROM ${DISTRO}:${RELEASE}
-LABEL maintainer "Prasad Tengse <tprasadtp@users.noreply.github.com>"
 
 RUN rm -f /etc/apt/apt.conf.d/docker-clean
 

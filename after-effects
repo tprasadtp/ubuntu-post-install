@@ -25,7 +25,7 @@ function __init_core_variables() {
   # Start tik
   readonly AE_EXEC_START=$(date +%s)
   # Version
-  readonly AE_VERSION="9.1.0"
+  readonly AE_VERSION="9.2.0"
   # Config Version
   readonly AE_CONFIG_API="4"
 
@@ -395,16 +395,14 @@ function __setup_platform_vars() {
   readonly AE_APT_SOURCES_DIR=/etc/apt/sources.list.d
 
   #-------------------------- Release codenames --------------------------------------
-  readonly AE_UBUNTU_CODENAME_LATEST="hirsute"
-  # readonly AE_UBUNTU_CODENAME_PREV="groovy"
+  readonly AE_UBUNTU_CODENAME_LATEST="jammy"
 
   # 404 is a placeholder which is  set when there are
   # no suitable releases which can use this feature or
   # the release is unknown or too early in developement.
-  readonly AE_UBUNTU_CODENAME_UPCOMING="impish"
+  readonly AE_UBUNTU_CODENAME_UPCOMING="kinetic"
 
-  readonly AE_UBUNTU_CODENAME_LATEST_LTS="focal"
-  # readonly AE_UBUNTU_CODENAME_PREV_LTS="bionic"
+  readonly AE_UBUNTU_CODENAME_LATEST_LTS="jammy"
 
   readonly AE_DEBIAN_CODENAME_LATEST="bullseye"
   readonly AE_DEBIAN_CODENAME_UPCOMING="bookworm"
@@ -494,7 +492,7 @@ function _check_dependencies() {
   local dependency_check_failed_count dependency
   dependency_check_failed_count=0
   for dependency in "${dependencies[@]}"; do
-    if command -v "$dependency" >/dev/null; then
+    if has_command "$dependency" >/dev/null; then
       log_property "${dependency}" "INSTALLED"
     else
       log_property "$dependency" "MISSING"
@@ -535,6 +533,23 @@ function _fix_ubuntu_derivatives() {
   log_var "AE_RUN_CODENAME"
 
   case ${AE_RUN_CODENAME} in
+  # Ubuntu 22.10 and its derivatives
+  kinetic)
+    readonly AE_RUN_DISTRO_NAME="ubuntu"
+    log_warn "Release is Ubuntu 22.10 Kinetic Kudu"
+    ;;
+  # Ubuntu 22.04 and its derivatives
+  jammy)
+    readonly AE_RUN_DISTRO_NAME="ubuntu"
+    log_info "Release is Ubuntu 22.04 LTS Jammy Jellyfish"
+    ;;
+  venessa)
+    log_info "This is Linux-Mint 21.X."
+    log_info "Setting additional repositories to follow Ubuntu 22.04."
+    AE_RUN_CODENAME="jammy"
+    readonly AE_RUN_DISTRO_NAME="ubuntu"
+    log_success "Changed codename to $AE_RUN_CODENAME"
+    ;;
   # Ubuntu 18.04 and its derivatives
   bionic)
     readonly AE_RUN_DISTRO_NAME="ubuntu"
@@ -583,18 +598,6 @@ function _fix_ubuntu_derivatives() {
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     log_success "Changed codename to $AE_RUN_CODENAME"
     ;;
-  hirsute)
-    readonly AE_RUN_DISTRO_NAME="ubuntu"
-    log_notice "Release is Ubuntu 21.04 Hirsute Hippo"
-    ;;
-  impish)
-    readonly AE_RUN_DISTRO_NAME="ubuntu"
-    log_warn "Release is Ubuntu 21.10 Impish Indri"
-    ;;
-  jammy)
-    readonly AE_RUN_DISTRO_NAME="ubuntu"
-    log_warn "Release is Ubuntu 22.04 Jammy Jellyfish (dev)"
-    ;;
   # Debian
   stretch)
     AE_RUN_IS_DEBIAN="true"
@@ -618,6 +621,8 @@ function _fix_ubuntu_derivatives() {
     log_notice "This is Debian 12 Bookworm(testing). PPAs are disabled."
     ;;
   # Unsupported releases
+  impish) _eol_message "July 2022" ;;
+  hirsute) _eol_message "January 20, 2022" ;;
   groovy) _eol_message "June 2021" ;;
   xenial) _eol_message "April 2021" ;;
   sarah | serena | sonya | sylvia) _eol_message "April 2021" ;;
@@ -637,15 +642,29 @@ function _fix_ubuntu_derivatives() {
   log_var "AE_RUN_IS_DEBIAN"
 }
 
+function __not_connected_to_internet() {
+  log_error "You are not connected to the Internet!. "
+  log_error "Please check your Internet connection and try again."
+  log_and_exit "No internet connection!" "14"
+}
+
 function __test_internet() {
   # Function to check internet connection
   log_info "Checking connectivity"
-  if ping -c 4 -i 0.2 google.com 2>&1 | log_trace "${AE_LOG_PHASE_CORE}"; then
-    log_success "Connected!"
+  if has_command wget; then
+    if wget -q -O /dev/null http://www.gstatic.com/generate_204 2>&1 | log_trace "${AE_LOG_PHASE_CORE}"; then
+      log_success "Connected!"
+    else
+      __not_connected_to_internet
+    fi
+  elif has_command curl; then
+    if curl -sSfL -o /dev/null http://www.gstatic.com/generate_204 2>&1 | log_trace "${AE_LOG_PHASE_CORE}"; then
+      log_success "Connected!"
+    else
+      __not_connected_to_internet
+    fi
   else
-    log_error "You are not connected to the Internet!. "
-    log_error "Please check your Internet connection and try again."
-    log_and_exit "No internet connection!" "14"
+    log_and_exit "No wget or curl command found!" "15"
   fi
 }
 
@@ -717,11 +736,11 @@ function _get_remote_file() {
 
   if [[ $# -eq 2 ]]; then
     # Remote files
-    if command -v wget >/dev/null 2>&1; then
+    if has_command wget; then
       log_debug "Fetch handler is wget"
       wget -q "${file_url}" -O "$file_name" 2>&1 | log_trace "${AE_LOG_PHASE_CORE}"
       exit_status="$?"
-    elif command -v curl >/dev/null 2>&1; then
+    elif has_command curl; then
       log_debug "Fetch handler is curl"
       curl -sSfL "${file_url}" --output "$file_name" 2>&1 | log_trace "${AE_LOG_PHASE_CORE}"
       exit_status="$?"
@@ -1398,9 +1417,8 @@ function _map_to_obs_repos() {
   # Ubuntu
   bionic) readonly AE_RUN_OBS_PREFIX="xUbuntu_18.04" ;;
   focal) readonly AE_RUN_OBS_PREFIX="xUbuntu_20.04" ;;
-  groovy) readonly AE_RUN_OBS_PREFIX="xUbuntu_20.10" ;;
-  hirsute) readonly AE_RUN_OBS_PREFIX="xUbuntu_21.04" ;;
-  impish) readonly AE_RUN_OBS_PREFIX="xUbuntu_21.10" ;;
+  jammy) readonly AE_RUN_OBS_PREFIX="xUbuntu_22.04" ;;
+  kinetic) readonly AE_RUN_OBS_PREFIX="xUbuntu_22.10" ;;
   # Debian
   stretch) readonly AE_RUN_OBS_PREFIX="Debian_9" ;;
   buster) readonly AE_RUN_OBS_PREFIX="Debian_10" ;;
@@ -2041,19 +2059,25 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
   # Podman via OBS
   if [[ ${AE_RUN_CONFIG_REPO_PODMAN} == "true" ]]; then
 
-    if [[ ${AE_ARCH} == "amd64" ]] && [[ $AE_RUN_DISTRO_NAME == "ubuntu" ]]; then
-
-      log_info "Podman"
-      __add_repo_keys \
-        --format "asc" \
-        --file-prefix "obs-podman-${AE_RUN_CODENAME}" \
-        --key-url https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_RUN_OBS_PREFIX}/Release.key
-      if echo "deb [arch=$AE_ARCH signed-by=${AE_APT_KEYRINGS_DIR}/obs-podman-${AE_RUN_CODENAME}.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_RUN_OBS_PREFIX}/ / #Podman (via OBS)" >${AE_APT_SOURCES_DIR}/podman.list; then
-        log_success "OK"
-      else
-        log_error "Adding Podman repository failed!"
-      fi
-
+    if [[ ${AE_ARCH} == "amd64" ]]; then
+      case ${AE_RUN_CODENAME} in
+      bionic | focal | buster)
+        log_info "Podman"
+        __add_repo_keys \
+          --format "asc" \
+          --file-prefix "obs-podman-${AE_RUN_CODENAME}" \
+          --key-url https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_RUN_OBS_PREFIX}/Release.key
+        if echo "deb [arch=$AE_ARCH signed-by=${AE_APT_KEYRINGS_DIR}/obs-podman-${AE_RUN_CODENAME}.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${AE_RUN_OBS_PREFIX}/ / #Podman (via OBS)" >${AE_APT_SOURCES_DIR}/podman.list; then
+          log_success "OK"
+        else
+          log_error "Adding Podman repository failed!"
+        fi
+        ;;
+      *)
+        log_error "Podman is not supported on ${AE_DISTRO_NAME}/${AE_ARCH}"
+        AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.podman")
+        ;;
+      esac
     else
       log_error "Podman is not supported on ${AE_DISTRO_NAME}/${AE_ARCH}"
       AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.podman")
@@ -2888,14 +2912,14 @@ function install_snaps() {
       # Build snap cli command
       if [[ ${entry} == *"classic::"* ]] || [[ ${entry} == *"::classic"* ]]; then
         snapd_options+=("--classic")
-        entry="${entry#$snap_classic_prefix}"
-        entry="${entry%$snap_classic_suffix}"
+        entry="${entry#"$snap_classic_prefix"}"
+        entry="${entry%"$snap_classic_suffix"}"
       fi
 
       if [[ ${entry} == *"edge::"* || ${entry} == *"::edge"* ]]; then
         snapd_options+=("--edge")
-        entry="${entry#$snap_edge_prefix}"
-        entry="${entry%$snap_edge_suffix}"
+        entry="${entry#"$snap_edge_prefix"}"
+        entry="${entry%"$snap_edge_suffix"}"
       fi
       log_debug "Options for ${entry} are ${snapd_options[*]}"
 
@@ -3416,12 +3440,11 @@ function main() {
     shift
   done
 
-  log_property "Arguments: ${NON_OPTION_ARGS[*]}"
+  log_property "ARGUMENTS" "${NON_OPTION_ARGS[*]}"
 
   if [[ ${#NON_OPTION_ARGS[@]} -ne 1 ]]; then
     log_and_exit "Invalid number of arguments: ${#NON_OPTION_ARGS[@]}, expected 1" 7
   else
-    log_debug "Validate config"
     declare -r config_arg="${NON_OPTION_ARGS[0]}"
 
     case $config_arg in

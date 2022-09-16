@@ -1,0 +1,34 @@
+{
+  "github": {
+    "silent": true
+  },
+  "buildCommand": "./scripts/build-docs",
+  "trailingSlash": false,
+  "public": false,
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/config/version.yml",
+      "destination": "https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/671a94d49598578f29d495164f102573902e99ac/config/version.yml"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ]
+}

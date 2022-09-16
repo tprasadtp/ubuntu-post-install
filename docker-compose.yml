@@ -3,12 +3,9 @@ services:
   site:
     image: squidfunk/mkdocs-material
     userns_mode: host
-    # it is important to specify dev address as 0.0.0.0 otherwise server
-    # wont listen on required interfaces.
     command: -v serve --dev-addr=0.0.0.0:8000
     volumes:
       - ./docs:/docs/docs:ro
       - ./mkdocs.yml:/docs/mkdocs.yml:ro
-networks:
-  default:
-    internal: true
+    ports:
+      - "127.0.0.1:8000:8000"

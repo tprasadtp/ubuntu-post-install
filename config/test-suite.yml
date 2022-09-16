@@ -38,10 +38,9 @@ config:
     mendeley: false
     miniconda: true
     neurodebian: true
-    podman: true
+    # Kubic repo is deprecated for jammy and later.
+    podman: false
     protonvpn: true
-    ros: true
-    ros2: true
     signal: true
     skype: true
     spotify: true

@@ -1,8 +1,0 @@
-#!/bin/bash
-
-# shellcheck disable=SC2155,SC2034
-
-set -eo pipefail
-sed -i '/#diana::snippet:shlib-logger:begin#/,/#diana::snippet:shlib-logger:end#/!b;//!d;/#diana::snippet:shlib-logger:end#/e  curl -sSfL https://raw.githubusercontent.com/tprasadtp/dotfiles/master/libs/logger/logger.sh' scripts/changelog
-sed -i '/#diana::snippet:shlib-logger:begin#/,/#diana::snippet:shlib-logger:end#/!b;//!d;/#diana::snippet:shlib-logger:end#/e  curl -sSfL https://raw.githubusercontent.com/tprasadtp/dotfiles/master/libs/logger/logger.sh' scripts/shellcheck
-sed -i '/#diana::snippet:shlib-logger:begin#/,/#diana::snippet:shlib-logger:end#/!b;//!d;/#diana::snippet:shlib-logger:end#/e  curl -sSfL https://raw.githubusercontent.com/tprasadtp/dotfiles/master/libs/logger/logger.sh' scripts/sign

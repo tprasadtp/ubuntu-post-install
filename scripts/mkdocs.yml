@@ -118,6 +118,7 @@ nav:
     - Exit Codes: faq/exit-codes.md
     - Debugging: faq/debug.md
   - Testing: testing.md
+  - Changelog: changelog.md
   - License: license.md
 
 plugins:

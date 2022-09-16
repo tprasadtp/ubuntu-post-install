@@ -19,14 +19,14 @@ Effortless way to setup your fresh Ubuntu, Linux Mint and Debian installation.
 
 ```console
 wget https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/after-effects -O after-effects
-wget https://github.com/tprasadtp/ubuntu-post-install/releases/latest/download/sha256sums.txt -O sha256sums.txt
-sha256sum -c sha256sums.txt
+chmod +x ./after-effects
 ```
 
 #### Using latest master branch
 
 ```console
 wget https://raw.githubusercontent.com/tprasadtp/ubuntu-post-install/master/after-effects -O after-effects
+chmod +x ./after-effects
 ```
 
 ### 2. Setup your YAML configuration file
@@ -70,15 +70,10 @@ See /docs or visit [docs][docs]
 [![Debian](https://static.prasadt.com/logo64/debian.png)](https://www.debian.org/)
 [![Elementary-OS](https://static.prasadt.com/logo64/elementary-os.png)](https://elementary.io/)
 
-I have not tested the script on the distros listed below. Because they use Ubuntu as their base,
-It should work fine. But no promises.
+> I have not tested the script on distributions based on Debian and Ubuntu.
+> Though It should work fine.
 
-[![Kde-Neon](https://static.prasadt.com/logo64/kde-neon.png)](https://neon.kde.org/)
-[![Pop-OS](https://static.prasadt.com/logo64/pop-os.png)](https://system76.com/pop)
-[![Bodhi-Linux](https://static.prasadt.com/logo64/bodhi-linux.png)](https://www.bodhilinux.com/)
-[![Peppermint-OS](https://static.prasadt.com/logo64/peppermint-os.png)](https://peppermintos.com/)
-
-For a complete  list of supported distributions [click here](https://ae.prasadt.com/faq/distros/).
+For a complete list of supported distributions [click here](https://ae.prasadt.com/faq/distros/).
 
 ## Features
 

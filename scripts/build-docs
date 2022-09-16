@@ -6,13 +6,11 @@ set -e pipefail
 # Build Static
 echo "Building docs"
 
-declare -a extra_args
-if docker info --format "{{ .SecurityOptions }}" | grep -q "name=userns"; then
-  echo "Skpping userns to avoid issues with mounted paths"
-  extra_args+=("--userns=host")
-fi
-
 docker run \
-  --workdir=/docs "${extra_args[@]}" \
-  -v "$(pwd)":/docs squidfunk/mkdocs-material \
-  build -v -s --config-file /docs/mkdocs.yml
+  -v "$(pwd)":/docs \
+  --rm \
+  --user="$(id -u):$(id -g)" \
+  --userns=host \
+  --workdir=/docs \
+  squidfunk/mkdocs-material \
+  build -v -s

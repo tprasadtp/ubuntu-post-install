@@ -10,33 +10,10 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3 # ratchet:exclude
         with:
           persist-credentials: false
           fetch-depth: 0
-
-      - name: Install git-chglog
-        run: |
-          brew tap git-chglog/git-chglog
-          brew install git-chglog
-
-      - name: Generate changelog
-        run: |
-          ./scripts/build-changelog \
-            changelog \
-            --oldest-tag "v9.0.0" \
-            --output docs/changelog.md \
-            --repository "https://github.com/tprasadtp/ubuntu-post-install"
-          cat docs/changelog.md
-
-      - name: Generate release notes
-        run: |
-          ./scripts/build-changelog \
-            release-notes \
-            --repository "https://github.com/tprasadtp/ubuntu-post-install" \
-            --output RELEASE_NOTES.md
-          cat RELEASE_NOTES.md
-
       - name: Build Docs
         run: |
           ./scripts/build-docs

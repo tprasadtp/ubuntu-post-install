@@ -10,61 +10,32 @@ jobs:
       # For creating releases
       contents: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3 # ratchet:exclude
         with:
           persist-credentials: true
           # Avoid breaking git rev date plugin
           fetch-depth: 0
-
-      - name: Install git-chglog
-        run: |
-          brew tap git-chglog/git-chglog
-          brew install git-chglog
-
-      - name: Generate changelog
-        run: |
-          ./scripts/build-changelog \
-            changelog \
-            --oldest-tag "v9.0.0" \
-            --output docs/changelog.md \
-            --repository "https://github.com/tprasadtp/ubuntu-post-install"
-            cat build-docs/changelog.md
-
-      - name: Generate release notes
-        run: |
-          ./scripts/build-changelog \
-            release-notes \
-            --output RELEASE_NOTES.md \
-            --repository "https://github.com/tprasadtp/ubuntu-post-install"
-
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-
       - name: Version
         run: echo $VERSION
-
       - name: Checksums
-        run: |
-          sha256sum after-effects | tee -a sha256sums.txt
-          sha512sum after-effects | tee -a sha512sums.txt
-
+        run: sha256sum after-effects | cut -f 1 -d ' ' | tee after-effects.sha256
       # create a release on tag
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@0cb9c9b65d5d1901c1f53e5e66eaf4afd303e70e # ratchet:actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.get_version.outputs.VERSION }}
           release_name: Release ${{ steps.get_version.outputs.VERSION }}
-          body_path: RELEASE_NOTES.md
           draft: false
           prerelease: false
-
       # Upload Release assets
       - name: Upload Script
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5 # ratchet:actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -73,36 +44,13 @@ jobs:
           asset_path: after-effects
           asset_name: after-effects
           asset_content_type: text/plain
-
-      - name: Upload SIG
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: after-effects.asc
-          asset_name: after-effects.asc
-          asset_content_type: text/plain
-
       - name: Upload Checksum SHA256
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5 # ratchet:actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: sha256sums.txt
-          asset_name: sha256sums.txt
-          asset_content_type: text/plain
-
-      - name: Upload Checksum SHA512
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: sha512sums.txt
-          asset_name: sha512sums.txt
+          asset_path: after-effects.sha256
+          asset_name: after-effects.sha256
           asset_content_type: text/plain
