@@ -1,15 +1,7 @@
 #!/usr/bin/env bash
+# Copyright (c) 2022 Prasad Tengse
+# SPDX-License-Identifier: GPL-3.0-only
 # shellcheck disable=SC2059,SC2154,SC2155
-# vim: filetype=sh
-
-# Author: Prasad Tengse
-# Licence: GPLv3
-# Github Repository: https://github.com/tprasadtp/ubuntu-post-install
-# Requirements - Bash v4.2 and above
-#              - coreutils
-#              - whiptail (if not using autopilot)
-#
-
 set -o pipefail
 
 function __init_core_variables() {
@@ -1068,9 +1060,9 @@ function _set_yaml_config() {
 
   log_info "Validating Config Version"
   if [[ $AE_RUN_CONFIG_API -eq 3 ]]; then
-    log_success "[v3] OK"
+    log_debug "[v3] OK"
   elif [[ $AE_RUN_CONFIG_API -eq 4 ]]; then
-    log_success "[v4] OK"
+    log_debug "[v4] OK"
   else
     log_error "[v4] Missing or incorrect config API version identifier."
     log_error "[v4] Suggeted Action: Please include api:  in your config file."

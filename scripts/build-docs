@@ -1,16 +1,4 @@
 #!/usr/bin/bash
-
-# shellcheck disable=SC2059
 set -e pipefail
-
-# Build Static
-echo "Building docs"
-
-docker run \
-  -v "$(pwd)":/docs \
-  --rm \
-  --user="$(id -u):$(id -g)" \
-  --userns=host \
-  --workdir=/docs \
-  squidfunk/mkdocs-material \
-  build -v -s
+printf "==> Building docs\n"
+mkdocs build -v -s

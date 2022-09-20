@@ -28,15 +28,14 @@ A Complete  list of supported distributions is given below.
 
 | Distribution       | Code name/Version       | Supported | Notes
 | :----------------- | :---------------------- | ----------| :------
-| Ubuntu 20.04       | _Focal Fossa_           | Yes       |
-| Ubuntu 21.10       | **Impish Indri**        | Yes       |
-| Ubuntu 21.04       | Hirsute Hippo           | Yes       |
+| Ubuntu 22.04       | **Jammy Jellyfish**     | Yes       |
+| Ubuntu 20.04       | Focal Fossa             | Yes       |
 | Ubuntu 18.04       | Bionic Beaver           | Yes       |
-| Linux Mint 20,20.x | Ulyana, Ulyssa, **Uma** | Yes       |
+| Linux Mint 21      | **Vanessa**             | Yes       |
+| Linux Mint 20,20.x | Ulyana, Ulyssa, Uma     | Yes       |
 | Linux Mint 19,19.X |                         | Yes       |
 | Debian/RaspiOS 11  | **Bullseye**            | Yes       |
-| Debian/Rasblian 10 | Buster                  | Yes       |
-| Debian 9           | Stretch                 | Yes       |
+| Debian/Raspbian 10 | Buster                  | Yes       |
 | Elementary-OS 6    | **Odin**                | Yes       | Not tested
 | Elementary-OS 5.1  | Hera                    | Yes       |
 | Elementary-OS 5.0  | Juno                    | Yes       | Not tested
