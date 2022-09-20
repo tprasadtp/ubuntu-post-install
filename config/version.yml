@@ -1,8 +1,0 @@
-# This file is required for legacy update checks.
-# Netlify should handle the redirects from get/v3/version endpoints.
-# This config is setup in such a way, that user is to forced to
-# upgrade the script, without breaking update check mechanisms.
-# Updated versions of the script uses GitHub v3 releases API.
-version:
-  number: 65500
-  name: FORCE-UPDATE-TO-8.0.1-AND-ABOVE
