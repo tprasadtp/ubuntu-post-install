@@ -2,7 +2,6 @@
   "github": {
     "silent": true
   },
-  "buildCommand": "./scripts/build-docs",
   "trailingSlash": false,
   "public": false,
   "cleanUrls": true,
