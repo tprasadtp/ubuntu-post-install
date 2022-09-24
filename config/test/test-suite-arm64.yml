@@ -27,6 +27,14 @@ config:
     ros: true
     ros2: true
     vscode: true
+    github: true
+    # Debian
+    debian_nonfree: true
+    debian_contrib: true
+    # Ubuntu
+    ubuntu_universe: true
+    ubuntu_multiverse: true
+    ubuntu_restricted: true
 
   # Flags
   flags:
