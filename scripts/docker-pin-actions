@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+printf "==> Pinning workflow/build.yml\n"
+docker run \
+  --rm \
+  -v $(pwd)/.github/workflows:/workflows:rw \
+  --userns=host \
+  ghcr.io/sethvargo/ratchet:0.3.0  \
+  pin /workflows/build.yml

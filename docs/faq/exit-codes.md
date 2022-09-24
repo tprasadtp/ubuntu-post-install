@@ -1,16 +1,16 @@
 # Exit Codes
 
-| Exit Codes | Reason                                                                             |
-|:----------:|:---------------------------------------------------------------------------------- |
-|   1- 10    | Script cannot run on the system                                                    |
-|     1      | Dependencies are not met                                                           |
-|     2      | Script not running as root                                                         |
-|     7      | Invalid number of arguments                                                        |
+| Exit Codes | Reason |
+|:----------:|--- |
+|   1- 10    | Script cannot run on the system
+|     1      | Dependencies are not met
+|     2      | Script not running as root
+|     7      | Invalid number of arguments
 |     8      | Remote get operation failed.                                                       |
 |     5      | Failed to determine distribution. Is /etc/os-release file missing?                 |
 |   10-19    | Not running with right configuration or internal flags                             |
 |     11     | Unsupported architecture                                                           |
-|     12     | End of Life release                                                                |
+|     12     | End of                  |
 |     14     | No Internet connection                                                             |
 |     15     | Conflicting apps are running                                                       |
 |     16     | Distribution is not supported                                                      |

@@ -29,7 +29,6 @@ config:
     docker: true
     edge: true
     element_io: true
-    # This is really flaky so drop it
     gcsfuse: false
     github: true
     googlecloud: true
@@ -38,7 +37,6 @@ config:
     mendeley: false
     miniconda: true
     neurodebian: true
-    podman: true
     protonvpn: true
     ros: true
     ros2: true
@@ -59,10 +57,14 @@ config:
     ubuntu_multiverse: true
     ubuntu_restricted: true
 
+    # podman is in repos
+    podman: false
+
+
   # Flags
   flags:
     purge_enabled: true
-    preserve_debs: false
+    preserve_pkgs: false
 
   # Packages to purge
   purge:
@@ -85,7 +87,7 @@ config:
       - https://github.com/sharkdp/bat/releases/download/v0.17.1/bat_0.17.1_amd64.deb
     binaries:
       - kubectl::https://storage.googleapis.com/kubernetes-release/release/v1.20.1/bin/linux/amd64/kubectl
-    apt:
+    sapt:
       # Admin related Stuff
       administration:
         - curl
@@ -114,7 +116,7 @@ config:
         - terraform
         # Microsoft
         - code
-        - azure-cli
+        # - azure-cli # disabled due to upstream openssl issue.
         # Google
         - google-cloud-sdk
         - google-chrome-stable

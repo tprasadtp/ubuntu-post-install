@@ -4,7 +4,6 @@
 # Version:2.0
 # Author: Prasad Tengse
 # Licence: GPLv3
-# Github Repository: https://github.com/tprasadtp/after-effects-ubuntu
 
 set -eo pipefail
 export DOCKER_BUILDKIT=1
@@ -32,7 +31,7 @@ function main()
 {
   # No args just run the setup function
   if [[ $# -eq 0 ]]; then
-    echo -e "\e[91mNot enought arguments See usage below. \e[39m"
+    echo -e "Not enought arguments See usage below."
     display_usage
     exit 1
   fi
@@ -67,7 +66,7 @@ function main()
         cfg_file="${1}"
         ;;
       *)
-        echo -e "\e[91mInvalid argument(s). See usage below. \e[39m"
+        echo -e "Invalid argument(s). See usage below."
         display_usage
         exit 1
         ;;
@@ -78,7 +77,7 @@ function main()
   done
 
   if [[ -z $distro_name ]] || [[ -z $release_name ]]; then
-    echo -e "\e[91m--distro or --release not specified. See usage below. \e[39m"
+    echo -e "--distro or --release not specified. See usage below."
     display_usage
     exit 1
   else
@@ -88,10 +87,10 @@ function main()
   # check if cfg override is present
   if [[ $bool_custom_config_file == "true" ]]; then
     if [[ -z $cfg_file ]] || [[ $cfg_file == "" ]]; then
-      echo -e "\e[91m- Custom config file is not readable/not specified! \e[39m"
+      echo -e "Custom config file is not readable/not specified!"
       exit 10
     else
-      echo -e "\e[93mOverriding default test config ($cfg_file) \e[39m"
+      echo -e "Overriding default test config ($cfg_file)"
     fi
   else
     if [[ ${distro_name} =~ ^arm64v8.* ]]; then
@@ -103,31 +102,31 @@ function main()
     distro_name="${distro_name##*/}"
 
     if [[ ${arch} != "amd64" ]]; then
-      if [[ -f "config/test-suite-${distro_name}-${release_name}-${arch}.yml" ]]; then
-        cfg_file="config/test-suite-${distro_name}-${release_name}-${arch}.yml"
-      elif [[ -f "config/test-suite-${distro_name}-${arch}.yml" ]]; then
-        cfg_file="config/test-suite-${distro_name}-${arch}.yml"
+      if [[ -f "config/test/test-suite-${distro_name}-${release_name}-${arch}.yml" ]]; then
+        cfg_file="config/test/test-suite-${distro_name}-${release_name}-${arch}.yml"
+      elif [[ -f "config/test/test-suite-${distro_name}-${arch}.yml" ]]; then
+        cfg_file="config/test/test-suite-${distro_name}-${arch}.yml"
       else
-        cfg_file="config/test-suite-${arch}.yml"
+        cfg_file="config/test/test-suite-${arch}.yml"
       fi
     # amd64
     else
-      if [[ -f "config/test-suite-${distro_name}-${release_name}.yml" ]]; then
-        cfg_file="config/test-suite-${distro_name}-${release_name}.yml"
-      elif [[ -f "config/test-suite-${distro_name}.yml" ]]; then
-        cfg_file="config/test-suite-${distro_name}.yml"
+      if [[ -f "config/test/test-suite-${distro_name}-${release_name}.yml" ]]; then
+        cfg_file="config/test/test-suite-${distro_name}-${release_name}.yml"
+      elif [[ -f "config/test/test-suite-${distro_name}.yml" ]]; then
+        cfg_file="config/test/test-suite-${distro_name}.yml"
       else
-        cfg_file="config/test-suite.yml"
+        cfg_file="config/test/test-suite.yml"
       fi
     fi
   fi
 
   if [[ -t 1 ]] && [[ ${AE_NON_INTERACTIVE} != "true" ]]; then
-    echo "Terminal is interactive, using -it for docker runs"
+    echo "➜ Terminal is interactive, using -it for docker runs"
     DOCKER_RUN_ARGS+=("-it")
   else
     if [[ $give_shell == "true" ]]; then
-      echo -e "\e[91mCannot give shell in a non-interactive terminal! \e[39m"
+      echo -e "Cannot give shell in a non-interactive terminal!"
       exit 10
     fi
     echo "Terminal is NON interactive"
@@ -135,11 +134,10 @@ function main()
 
   # User namespaces
   if docker info --format "{{ .SecurityOptions }}" | grep -q "name=userns"; then
-    echo "Skipping userns to avoid issues with mounted paths"
+    echo "➜ Skipping userns to avoid issues with mounted paths"
     DOCKER_RUN_ARGS+=("--userns=host")
   fi
 
-  # If Image needs to be built?
   if [[ $build_image == "true" ]]; then
     echo "➜ Building ae:${docker_tag}"
     docker build -t ae:"${docker_tag}" \

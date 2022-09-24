@@ -1,0 +1,21 @@
+#!/usr/bin/bash
+set -e pipefail
+
+printf "==> Installing PIP/Python\n"
+if [[ "$(id -u)" != "0" ]]; then
+  sudo yum install -y \
+    python3-pip cairo-devel freetype-devel \
+    libffi-devel libjpeg-devel libpng-devel zlib-devel
+else
+  yum install -y \
+    python3-pip cairo-devel freetype-devel \
+    libffi-devel libjpeg-devel libpng-devel zlib-develfi
+fi
+
+printf "==> Installing mkdocs-material\n"
+pip3 install --use-feature=2020-resolver \
+  -U mkdocs-material \
+    mkdocs-minify-plugin \
+    mkdocs-redirects \
+    pillow \
+    cairosvg

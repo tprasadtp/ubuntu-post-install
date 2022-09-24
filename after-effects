@@ -18,8 +18,6 @@ function __init_core_variables() {
   readonly AE_EXEC_START=$(date +%s)
   # Version
   readonly AE_VERSION="9.2.0"
-  # Config Version
-  readonly AE_CONFIG_API="4"
 
   # ERR
   declare -a AE_RUN_STACK_ERR
@@ -156,11 +154,6 @@ function __init_logfile() {
   else
     log_and_exit "Log file - ${AE_LOG_FILE} is not writable!" 2
   fi
-}
-
-# Utility functions
-function _line_fill() {
-  printf "_______________________________________________________\n"
 }
 
 function __logger_core() {
@@ -410,9 +403,6 @@ function __setup_platform_vars() {
   # Not used
   # readonly AE_DEPRECATED_VERSION_URL="https://ae.prasadt.com/get/v3/version"
 
-  # Achtung!
-  # ========================================================================================= #
-
   # Purge not required packages
   # Default is false
   # Requires command line option -d to be passed via command line otherwise it will not work.
@@ -469,7 +459,6 @@ function __print_runtime_info() {
   log_property "Release" "${AE_DISTRO_CODENAME}" 1
   log_property "Architecture" "${AE_ARCH}" 1
   log_property "Version" "${AE_VERSION}" 1
-  log_property "Config API" "${AE_CONFIG_API}" 1
 
   log_property "AE_APT_SOURCES_DIR" "${AE_APT_SOURCES_DIR}"
   log_property "AE_APT_KEYRINGS_DIR" "${AE_APT_KEYRINGS_DIR}"
@@ -503,8 +492,11 @@ function _eol_message() {
   # Display EOL Message and upgrade instruction URLs.
   # Arguments: 1
   # ARG 1: EOL Date
+  log_and_exit "${AE_DISTRO_PRETTY_NAME} is no longer supported. ($1)." "12"
+}
 
-  log_and_exit "This version of ${AE_DISTRO_PRETTY_NAME} is no longer supported. ($1)." "12"
+function _usup_message() {
+  log_and_exit "${AE_DISTRO_PRETTY_NAME} is not supported by the script." "12"
 }
 
 function _fix_ubuntu_derivatives() {
@@ -542,26 +534,6 @@ function _fix_ubuntu_derivatives() {
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     log_success "Changed codename to $AE_RUN_CODENAME"
     ;;
-  # Ubuntu 18.04 and its derivatives
-  bionic)
-    readonly AE_RUN_DISTRO_NAME="ubuntu"
-    log_info "This is a LTS release of Ubuntu (18.04)"
-    log_success "Keeping the codename as $AE_RUN_CODENAME."
-    ;;
-  tara | tessa | tina | tricia)
-    log_info "This is Linux-Mint 19.X."
-    log_info "Setting additional repositories to follow Ubuntu 18.04."
-    AE_RUN_CODENAME="bionic"
-    readonly AE_RUN_DISTRO_NAME="ubuntu"
-    log_success "Changed codename to $AE_RUN_CODENAME"
-    ;;
-  juno | hera)
-    log_info "This release of Elementary OS is based on Ubuntu 18.04 Bionic."
-    log_info "External repositories will use Ubuntu 18.04."
-    AE_RUN_CODENAME="bionic"
-    readonly AE_RUN_DISTRO_NAME="ubuntu"
-    log_success "Changed codename to $AE_RUN_CODENAME"
-    ;;
   # Ubuntu 20.04 and its derivatives (Current Ubuntu LTS release)
   focal)
     readonly AE_RUN_DISTRO_NAME="ubuntu"
@@ -590,12 +562,6 @@ function _fix_ubuntu_derivatives() {
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     log_success "Changed codename to $AE_RUN_CODENAME"
     ;;
-  # Debian
-  stretch)
-    AE_RUN_IS_DEBIAN="true"
-    readonly AE_RUN_DISTRO_NAME="debian"
-    log_notice "This is Debian 9 Stretch. PPAs are disabled."
-    ;;
   buster)
     AE_RUN_IS_DEBIAN="true"
     readonly AE_RUN_DISTRO_NAME="debian"
@@ -612,6 +578,7 @@ function _fix_ubuntu_derivatives() {
     log_dev "You are running Debian Testing!"
     log_notice "This is Debian 12 Bookworm(testing). PPAs are disabled."
     ;;
+
   # Unsupported releases
   impish) _eol_message "July 2022" ;;
   hirsute) _eol_message "January 20, 2022" ;;
@@ -619,6 +586,11 @@ function _fix_ubuntu_derivatives() {
   xenial) _eol_message "April 2021" ;;
   sarah | serena | sonya | sylvia) _eol_message "April 2021" ;;
   loki) _eol_message "April 2021" ;;
+  stretch) _eol_message "June 30, 2022" ;;
+  # Too old for many repos and integration tests
+  bionic) _usup_message ;;
+  tara | tessa | tina | tricia) _usup_message ;;
+  juno | hera) _usup_message ;;
   *)
     log_and_exit "Unknown or unsupported release($AE_RUN_CODENAME) !" "16"
     ;;
@@ -1061,11 +1033,9 @@ function _set_yaml_config() {
   log_info "Validating Config Version"
   if [[ $AE_RUN_CONFIG_API -eq 3 ]]; then
     log_debug "[v3] OK"
-  elif [[ $AE_RUN_CONFIG_API -eq 4 ]]; then
-    log_debug "[v4] OK"
   else
-    log_error "[v4] Missing or incorrect config API version identifier."
-    log_error "[v4] Suggeted Action: Please include api:  in your config file."
+    log_error "[v3] Missing or incorrect config API version identifier."
+    log_error "[v3] Suggeted Action: Please include api:  in your config file."
     AE_RUN_CFG_BUILD_ERRORS=$((AE_RUN_CFG_BUILD_ERRORS + 1))
   fi
 
@@ -1137,9 +1107,6 @@ function _set_yaml_config() {
   _check_bool "AE_RUN_CONFIG_REPO_UBUNTU_MULTIVERSE" "${AE_RUN__config__add_repo__ubuntu_multiverse[0]}"
   _check_bool "AE_RUN_CONFIG_REPO_UBUNTU_RESTRICTED" "${AE_RUN__config__add_repo__ubuntu_restricted[0]}"
 
-  # RPM Components
-  _check_bool "AE_RUN_CONFIG_REPO_EPEL" "${AE_RUN__config__add_repo__epel[0]}"
-
   # Other Script Flags
   #################################################################################
 
@@ -1151,18 +1118,11 @@ function _set_yaml_config() {
   fi
 
   # Keep pkgs
-  if [[ $AE_CONFIG_API -gt 3 ]]; then
-    if [[ $AE_RUN_CONFIG_FLAG_PRESERVE_PKGS == "true" ]]; then
-      log_debug "Ignoring config.flags.preserve_pkgs because of cli flag"
-    else
-      _check_bool "AE_RUN_CONFIG_FLAG_PRESERVE_PKGS" "${AE_RUN__config__flags__preserve_pkgs[0]}"
-    fi
+
+  if [[ $AE_RUN_CONFIG_FLAG_PRESERVE_PKGS == "true" ]]; then
+    log_debug "Ignoring config.flags.preserve_debs because of cli flag"
   else
-    if [[ $AE_RUN_CONFIG_FLAG_PRESERVE_PKGS == "true" ]]; then
-      log_debug "Ignoring config.flags.preserve_debs because of cli flag"
-    else
-      _check_bool "AE_RUN_CONFIG_FLAG_PRESERVE_PKGS" "${AE_RUN__config__flags__preserve_debs[0]}"
-    fi
+    _check_bool "AE_RUN_CONFIG_FLAG_PRESERVE_PKGS" "${AE_RUN__config__flags__preserve_debs[0]}"
   fi
 
   # Uni-Mirror
@@ -1180,12 +1140,7 @@ function _set_yaml_config() {
   _check_bool "AE_RUN_CONFIG_TASK_PPA" "${AE_RUN__config__tasks__ppa[0]}"
 
   # Migrate APT to PKGS
-  if [[ $AE_CONFIG_API -gt 3 ]]; then
-    _check_bool "AE_RUN_CONFIG_TASK_PKGS" "${AE_RUN__config__tasks__pkgs[0]}"
-  else
-    _check_bool "AE_RUN_CONFIG_TASK_APT" "${AE_RUN__config__tasks__apt[0]}"
-    _check_bool "AE_RUN_CONFIG_TASK_PKGS" "AE_RUN_CONFIG_TASK_APT"
-  fi
+  _check_bool "AE_RUN_CONFIG_TASK_APT" "${AE_RUN__config__tasks__apt[0]}"
 
   _check_bool "AE_RUN_CONFIG_TASK_DEBS" "${AE_RUN__config__tasks__debs[0]}"
 
@@ -1236,25 +1191,13 @@ function _set_yaml_config() {
   # Purge
   declare -gar AE_RUN_PARSED_PURGE_PKGS=("${AE_RUN__config__purge_[@]}")
 
-  if [[ $AE_CONFIG_API -gt 3 ]]; then
-    log_debug "Using unified pkg congfigs from config.install.pkgs"
-    declare -gar AE_RUN_PARSED_ADMINISTRATION_PKGS=("${AE_RUN__config__install__pkgs__administration_[@]}")
-    declare -gar AE_RUN_PARSED_SECURITY_PKGS=("${AE_RUN__config__install__pkgs__security_[@]}")
-    declare -gar AE_RUN_PARSED_PRODUCTIVITY_PKGS=("${AE_RUN__config__install__pkgs__productivity_[@]}")
-    declare -gar AE_RUN_PARSED_MULTIMEDIA_PKGS=("${AE_RUN__config__install__pkgs__multimedia_[@]}")
-    declare -gar AE_RUN_PARSED_DEV_PKGS=("${AE_RUN__config__install__pkgs__development_[@]}")
-    declare -gar AE_RUN_PARSED_OTHER_PKGS=("${AE_RUN__config__install__pkgs__other_[@]}")
-    declare -gar AE_RUN_PARSED_EXTERNAL_PKGS=("${AE_RUN__config__install__pkgs__external_[@]}")
-  else
-    log_debug "Using unified pkg congfigs from config.install.apt"
-    declare -gar AE_RUN_PARSED_ADMINISTRATION_PKGS=("${AE_RUN__config__install__apt__administration_[@]}")
-    declare -gar AE_RUN_PARSED_SECURITY_PKGS=("${AE_RUN__config__install__apt__security_[@]}")
-    declare -gar AE_RUN_PARSED_PRODUCTIVITY_PKGS=("${AE_RUN__config__install__apt__productivity_[@]}")
-    declare -gar AE_RUN_PARSED_MULTIMEDIA_PKGS=("${AE_RUN__config__install__apt__multimedia_[@]}")
-    declare -gar AE_RUN_PARSED_DEV_PKGS=("${AE_RUN__config__install__apt__development_[@]}")
-    declare -gar AE_RUN_PARSED_OTHER_PKGS=("${AE_RUN__config__install__apt__other_[@]}")
-    declare -gar AE_RUN_PARSED_EXTERNAL_PKGS=("${AE_RUN__config__install__apt__external_[@]}")
-  fi
+  declare -gar AE_RUN_PARSED_ADMINISTRATION_PKGS=("${AE_RUN__config__install__apt__administration_[@]}")
+  declare -gar AE_RUN_PARSED_SECURITY_PKGS=("${AE_RUN__config__install__apt__security_[@]}")
+  declare -gar AE_RUN_PARSED_PRODUCTIVITY_PKGS=("${AE_RUN__config__install__apt__productivity_[@]}")
+  declare -gar AE_RUN_PARSED_MULTIMEDIA_PKGS=("${AE_RUN__config__install__apt__multimedia_[@]}")
+  declare -gar AE_RUN_PARSED_DEV_PKGS=("${AE_RUN__config__install__apt__development_[@]}")
+  declare -gar AE_RUN_PARSED_OTHER_PKGS=("${AE_RUN__config__install__apt__other_[@]}")
+  declare -gar AE_RUN_PARSED_EXTERNAL_PKGS=("${AE_RUN__config__install__apt__external_[@]}")
 
   #--------------------------------------------------------------------------------
   #                             PPA Lists
@@ -1269,16 +1212,6 @@ function _set_yaml_config() {
   # Config file contains list of DEB packages to be downloaded & installed under key
   # config.install.debs
   declare -gar AE_RUN_PARSED_DEBFILES=("${AE_RUN__config__install__debs_[@]}")
-
-  #--------------------------------------------------------------------------------
-  #                             RPM packages
-  #--------------------------------------------------------------------------------
-  # Config file contains list of RPM packages to be downloaded & installed under key
-  # config.install.rpms
-  if [[ $AE_CONFIG_API -gt 3 ]]; then
-    #shellcheck disable=SC2034
-    declare -gar AE_RUN_PARSED_RPMFILES=("${AE_RUN__config__install__rpms_[@]}")
-  fi
 
   #--------------------------------------------------------------------------------
   #                             Static binaries
@@ -1407,7 +1340,6 @@ function _map_to_obs_repos() {
   # We dont need mint/elementary here because we dont use them as base anyway!
   case ${AE_RUN_CODENAME} in
   # Ubuntu
-  bionic) readonly AE_RUN_OBS_PREFIX="xUbuntu_18.04" ;;
   focal) readonly AE_RUN_OBS_PREFIX="xUbuntu_20.04" ;;
   jammy) readonly AE_RUN_OBS_PREFIX="xUbuntu_22.04" ;;
   kinetic) readonly AE_RUN_OBS_PREFIX="xUbuntu_22.10" ;;
@@ -1753,12 +1685,10 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
     log_debug "Skipped adding Mendeley repository"
   fi
 
-  #Wine HQ
   if [ "$AE_RUN_CONFIG_REPO_WINEHQ" == "true" ]; then
     if [[ ${AE_ARCH} == "amd64" ]]; then
       log_info "WineHQ"
-      if [[ ${AE_RUN_CODENAME} == "bionic" ]] || [[ ${AE_RUN_CODENAME} == "buster" ]] ||
-        [[ ${AE_RUN_CODENAME} == "stretch" ]]; then
+      if [[ ${AE_RUN_CODENAME} == "buster" ]]; then
         log_error "Latest version of WINE depends on libfaudio0 package,"
         log_error "which is not available on your distribution!"
         log_warn "For more information visit https://forum.winehq.org/viewtopic.php?f=8&t=32192"
@@ -1862,14 +1792,20 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
 
   # Azure cli
   if [[ ${AE_RUN_CONFIG_REPO_AZURECLI} == "true" ]]; then
-    # libc6 errors occur with latest versions of azure cli on buster and bionic.
+    # libc6 errors occur with latest versions of azure cli on buster.
     # Drop support for them.
-    if [[ ${AE_ARCH} == "amd64" ]] && [[ ${AE_RUN_CODENAME} != "bionic" ]] && [[ ${AE_RUN_CODENAME} != "buster" ]]; then
-      log_info "Azure CLI"
-      if echo "deb [arch=$AE_ARCH signed-by=${AE_APT_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ focal main #Azure CLI" >${AE_APT_SOURCES_DIR}/azure-cli.list; then
-        log_success "OK"
+    if [[ ${AE_ARCH} == "amd64" ]]; then
+      if [[ ${AE_RUN_CODENAME} != "buster" ]]; then
+        log_info "Azure CLI"
+        if echo "deb [arch=$AE_ARCH signed-by=${AE_APT_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ focal main #Azure CLI" >${AE_APT_SOURCES_DIR}/azure-cli.list; then
+          log_success "OK"
+        else
+          log_error "Failed to addd Azure CLI repository!"
+        fi
       else
-        log_error "Failed to addd Azure CLI repository!"
+        log_error "Azure CLI cannot be installed via package manager on ${AE_DISTRO_PRETTY_NAME}/${AE_ARCH}"
+        log_warn "See https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=script"
+        AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.azurecli")
       fi
     else
       log_error "Azure CLI cannot be installed via package manager on ${AE_DISTRO_PRETTY_NAME}/${AE_ARCH}"
@@ -1964,13 +1900,11 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
     __add_repo_keys --format "gpg" \
       --file-prefix "githubcli-archive-keyring" \
       --key-url https://cli.github.com/packages/githubcli-archive-keyring.gpg
-
     if echo "deb [arch=$AE_ARCH signed-by=${AE_APT_KEYRINGS_DIR}/githubcli-archive-keyring.gpg ] https://cli.github.com/packages stable main #GitHub-CLI" >${AE_APT_SOURCES_DIR}/github-cli.list; then
       log_success "OK"
     else
       log_error "Adding GH CLi repository failed"
     fi
-
   else
     log_debug "Skipped GitHub CLI(gh)."
   fi
@@ -2053,7 +1987,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
 
     if [[ ${AE_ARCH} == "amd64" ]]; then
       case ${AE_RUN_CODENAME} in
-      bionic | focal | buster)
+      focal | buster)
         log_info "Podman"
         __add_repo_keys \
           --format "asc" \
@@ -2351,13 +2285,7 @@ deb [signed-by=${AE_APT_KEYRINGS_DIR}/neurodebian-archive-keyring.gpg] http://ne
 
     # Distro/Version/Arch checks
     if [[ $AE_RUN_DISTRO_NAME == "ubuntu" ]]; then
-      if [[ $AE_RUN_CODENAME == "bionic" ]]; then
-        ros_arch_supported="true"
-        log_debug "ROS is available on Bionic/$AE_ARCH"
-      elif [[ $AE_RUN_CODENAME == "xenial" ]]; then
-        ros_arch_supported="true"
-        log_debug "ROS is available on Xenial/$AE_ARCH"
-      elif [[ $AE_RUN_CODENAME == "focal" ]]; then
+      if [[ $AE_RUN_CODENAME == "focal" ]]; then
         ros_arch_supported="true"
         log_debug "ROS is available on Focal/$AE_ARCH"
       fi
@@ -2365,7 +2293,7 @@ deb [signed-by=${AE_APT_KEYRINGS_DIR}/neurodebian-archive-keyring.gpg] http://ne
 
     if [ "$AE_RUN_DISTRO_NAME" == "debian" ]; then
       # Check architectures
-      if [[ $AE_RUN_CODENAME == "stretch" ]] || [[ $AE_RUN_CODENAME == "buster" ]]; then
+      if [[ $AE_RUN_CODENAME == "buster" ]]; then
         ros_arch_supported="true"
         log_debug "ROS is available on Debian ${AE_RUN_CODENAME}/$AE_ARCH"
       fi
@@ -2378,7 +2306,7 @@ deb [signed-by=${AE_APT_KEYRINGS_DIR}/neurodebian-archive-keyring.gpg] http://ne
         --key-url https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc
 
       if [[ $AE_RUN_CONFIG_FLAG_UF_MIRROR == "true" ]]; then
-        log_warn "UF ROS Repo is no loger syncing with upstream."
+        log_warn "UF ROS repository is no loger syncing with upstream."
         log_warn "This feature will be enabled once the mirror is back in sync!"
         log_warn "Till then, upstream is being used!"
       fi
@@ -3221,40 +3149,33 @@ function __runtime_env_checks() {
 
     # Github Actions
     if [ "$GITHUB_ACTIONS" == "true" ]; then
-      log_debug "Running on GitHub Actions"
       AE_RUN_RUNTIME_DETECT['GITHUB_ACTIONS']=true
     fi
 
     # Check if running in CI & Containers
     if [ "$TF_BUILD" == "True" ]; then
-      log_debug "Running on Azure Pipelines"
       AE_RUN_RUNTIME_DETECT['AZURE_PIPELINE']=true
     fi
 
     # Generic CI
     if [ "$CI" == "true" ]; then
-      log_debug "Running on CI"
       AE_RUN_RUNTIME_DETECT['CI']=true
     fi
 
     # WSL
     if grep -q Microsoft /proc/sys/kernel/osrelease; then
-      log_debug "Running on Windows Subsystem for Linux"
       AE_RUN_RUNTIME_DETECT['WSL']=true
     fi
 
     #============================ Docker & Podman ====================================
     if test -f /run/.containerenv; then
-      log_debug "Running in podman"
       AE_RUN_RUNTIME_DETECT['PODMAN']=true
     fi
 
     if test -f /.dockerenv; then
-      log_debug "Running in docker"
       AE_RUN_RUNTIME_DETECT['DOCKER']=true
     fi
 
-    log_dev "Runtime Details"
     # declare -Ag AE_RUN_RUNTIME_DETECT=([GITHUB_ACTIONS]=false [AZURE_PIPELINE]=false [CI]=false [KVM]=false [PODMAN]=false [DOCKER]=false [KVM]=false [HYPERV]=false [WSL]=false)
     log_dev "KVM              : ${AE_RUN_RUNTIME_DETECT[KVM]}"
     log_dev "HYPERV           : ${AE_RUN_RUNTIME_DETECT[HYPERV]}"
@@ -3538,7 +3459,7 @@ function main() {
     __autopilot_run_task "$AE_RUN_CONFIG_TASK_UPGRADE" "upgrade_apps"
     __autopilot_run_task "$AE_RUN_CONFIG_TASK_REPO" "add_repositories"
     __autopilot_run_task "$AE_RUN_CONFIG_TASK_PPA" "add_ppas"
-    __autopilot_run_task "$AE_RUN_CONFIG_TASK_PKGS" "install_apps"
+    __autopilot_run_task "$AE_RUN_CONFIG_TASK_APT" "install_apps"
     __autopilot_run_task "$AE_RUN_CONFIG_TASK_DEBS" "install_debs"
     __autopilot_run_task "$AE_RUN_CONFIG_TASK_PURGE" "purge_not_required"
     __autopilot_run_task "$AE_RUN_CONFIG_TASK_BIN" "install_binaries"

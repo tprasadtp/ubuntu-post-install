@@ -1,33 +1,43 @@
-# Project information
 site_name: Ubuntu Post Installation Script
 site_description: Effortless & Simple post-installation script for Ubuntu, Linux Mint and Debian
 site_author: Prasad Tengse
 site_url: https://ae.prasadt.com/
-docs_dir: 'docs'
-site_dir: '_site/'
-# Repository
 repo_name: ubuntu-post-install
 repo_url: https://github.com/tprasadtp/ubuntu-post-install
-edit_uri: "blob/master/docs/"
+copyright: >
+  Copyright &copy; 2016 - 2022 Prasad Tengse –
+  <a href="#__consent">Change cookie settings</a>
+
+docs_dir: "docs"
+site_dir: "build/www"
 remote_branch: master
 remote_name: origin
+edit_uri: ""
 
-copyright: 'Copyright &copy; 2017-2022 Prasad Tengse'
+plugins:
+  - search
+  - social:
+      cards_font: Ubuntu
+  - minify:
+      minify_html: true
 
-# Configuration
 theme:
   name: material
   features:
     - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.indexes
+    - navigation.tabs
     - navigation.top
     - header.autohide
+    - search.suggest
+    - search.highlight
   icon:
     logo: material/book
     repo: fontawesome/brands/github-alt
 
-  # Language settings
   language: en
-  # Color Settings
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -37,7 +47,6 @@ theme:
         icon: material/toggle-switch-off-outline
         name: Switch to dark mode
 
-    # Dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       primary: orange
@@ -45,14 +54,10 @@ theme:
       toggle:
         icon: material/toggle-switch
         name: Switch to light mode
-  # Fonts
   font:
     text: Ubuntu
     code: Ubuntu Mono
-  # Custom Favicon
   favicon: assets/images/favicon.png
-
-  # Don't include MkDocs' JavaScript
   include_search_page: false
   search_index_only: true
 
@@ -62,26 +67,17 @@ extra:
       link: https://ae.prasadt.com
     - icon: fontawesome/brands/github-alt
       link: https://github.com/tprasadtp
-  analytics:
-    provider: google
-    property: G-XBZN2CTE07
 
 # Extensions
 markdown_extensions:
-  # Nice Admonitions
   - markdown.extensions.admonition
   - pymdownx.superfences
-  # Syntax highlighting
   - codehilite
-  # Markdown in HTML
   - markdown.extensions.md_in_html
-  # Footnotes
   - markdown.extensions.footnotes
-  # Page Metadata
   - markdown.extensions.meta
   - markdown.extensions.toc:
       permalink: true
-  # Synmols MathJX and Emoji
   - pymdownx.arithmatex
   - pymdownx.betterem:
       smart_enable: all
@@ -104,7 +100,6 @@ markdown_extensions:
       repo_url_shorthand: true
       user: tprasadtp
       repo: ubuntu-post-install
-# Page tree
 nav:
   - Home: index.md
   - Options: clioptions.md
@@ -112,17 +107,10 @@ nav:
   - Configuration: configuration.md
   - Example: yaml.md
   - FAQ:
-    - Dependencies: faq/dependencies.md
-    - Distros: faq/distros.md
-    - Errors: faq/errors.md
-    - Exit Codes: faq/exit-codes.md
-    - Debugging: faq/debug.md
+      - Dependencies: faq/dependencies.md
+      - Distros: faq/distros.md
+      - Errors: faq/errors.md
+      - Exit Codes: faq/exit-codes.md
+      - Debugging: faq/debug.md
   - Testing: testing.md
   - License: license.md
-
-plugins:
-  - search
-  - minify:
-      minify_html: true
-  # - git-revision-date-localized:
-  #     type: timeago

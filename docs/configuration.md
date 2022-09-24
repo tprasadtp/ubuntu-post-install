@@ -14,7 +14,7 @@ Using`--autopilot` will run all the tasks specified in the YAML file. The order 
 - Update
 - Upgrade packages
 - Add repositories
-- Add PPAs [if supported]
+- Add PPAs (Only on Ubuntu & its derivatives)
 - Install packages
 - Install .deb packages
 - Purge unwanted packages

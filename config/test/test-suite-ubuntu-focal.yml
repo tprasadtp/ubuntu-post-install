@@ -22,6 +22,7 @@ config:
     snaps: true
   # Repository Flags
   add_repo:
+    azurecli: true
     bazel: true
     brave_browser: true
     chrome: true
@@ -61,7 +62,7 @@ config:
   # Flags
   flags:
     purge_enabled: true
-    preserve_debs: false
+    preserve_pkgs: false
 
   # Packages to purge
   purge:
@@ -113,6 +114,7 @@ config:
         - terraform
         # Microsoft
         - code
+        - azure-cli
         # Google
         - google-cloud-sdk
         - google-chrome-stable
