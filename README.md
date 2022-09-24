@@ -3,7 +3,6 @@
 Effortless way to setup your fresh Ubuntu, Linux Mint and Debian installation.
 
 [![build][build-badge]][build-link]
-[![release][release-ci-badge]][release-ci-link]
 ![website-deploy-badge]
 [![version][version]][changelog]
 [![license][gpl-badge]][license]
@@ -32,9 +31,6 @@ chmod +x ./after-effects
 
 Setup YAML file to suit your needs. Change PPAs, add or delete packages to list etc.
 Please see [Configuration](https://ae.prasadt.com/configuration/) & [Tasks](https://ae.prasadt.com/tasks/).
-
-[![Configuration-Page](https://img.shields.io/badge/Info-Configuration-blue.svg)](https://ae.prasadt.com/configuration/)
-[![Tasks-Page](https://img.shields.io/badge/Info-Tasks-green.svg)](https://ae.prasadt.com/tasks/)
 
 ### 3. Run the script
 

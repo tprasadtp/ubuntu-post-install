@@ -235,7 +235,7 @@ config:
     upgrade: true
     # Add Repos
     # individual repos flags are mentioned under config.add_repo
-    repo: true
+    add_repo: true
     # Add PPAs
     ppa: true
     # APT Packages

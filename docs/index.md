@@ -1,18 +1,7 @@
 # Ubuntu Post Installation Script
 
-An Effortless & Simple post-installation script for Ubuntu, Linux Mint, Elementary OS, Debian and their derivatives.
-
-
-[![build][build-badge]][build-link]
-[![release][release-ci-badge]][release-ci-link]
-[![docs][docs-ci-badge]][docs-ci-link]
-[![netlify][netlify-badge]][netlify]
-[![version][version]][changelog]
-[![license][gpl-badge]][license]
-
-[![Bash](https://static.prasadt.com/logo64/bash.png)](https://ae.prasadt.com)
-
-This script is built for one purpose only. Automating post installation tasks on a fresh Ubuntu/Debian installation.
+An Effortless & Simple post-installation script for Ubuntu, Linux Mint,
+Elementary OS, Debian and their derivatives.
 
 ## Usage
 
@@ -87,21 +76,3 @@ It should work fine. But no promises.
 - Debian (.deb) packages
 - Install Static binaries like kubectl
 - Snap packages
-
-[build-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/build/badge.svg
-[build-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Abuild
-
-[release-ci-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/release/badge.svg
-[release-ci-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Arelease
-
-[docs-ci-badge]: https://github.com/tprasadtp/ubuntu-post-install/workflows/docs/badge.svg
-[docs-ci-link]: https://github.com/tprasadtp/ubuntu-post-install/actions?query=workflow%3Adocs
-
-[netlify-badge]: https://api.netlify.com/api/v1/badges/887c3d5c-5203-46b9-a31d-67cada282f36/deploy-status
-[netlify]: https://app.netlify.com/sites/ubuntu-post-install/deploys
-
-[version]: https://img.shields.io/github/v/release/tprasadtp/ubuntu-post-install?label=version
-[gpl-badge]: https://img.shields.io/badge/License-GPLv3-ff69b4
-[license]: https://github.com/tprasadtp/ubuntu-post-install/blob/master/LICENSE
-
-[changelog]: https://ae.prasadt.com/changelog/
