@@ -96,7 +96,6 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 | Microsoft - Azure CLI*  | azurecli          | azure-cli                                                    |
 | Microsoft - Edge*       | edge              | microsoft-edge-dev                                           |
 | Microsoft - Skype*      | skype             | skypeforlinux                                                |
-| Microsoft - Teams*      | teams             | teams, teams-insiders                                        |
 | Microsoft - VSCode      | vscode            | code, code-insiders, code-exploration                        |
 | [Miniconda][]*          | miniconda         | conda                                                        |
 | NeuroDebian*            | neurodebian       | https://neuro.debian.net/                                    |

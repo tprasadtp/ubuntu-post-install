@@ -45,7 +45,6 @@ config:
     spotify: true
     slack: true
     sublimetext: true
-    teams: true
     vivaldi: true
     vscode: true
     winehq: true
@@ -59,7 +58,6 @@ config:
 
     # podman is in repos
     podman: false
-
 
   # Flags
   flags:

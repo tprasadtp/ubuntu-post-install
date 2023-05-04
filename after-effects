@@ -1088,7 +1088,6 @@ function _set_yaml_config() {
   _check_bool "AE_RUN_CONFIG_REPO_EDGE" "${AE_RUN__config__add_repo__edge[0]}"
   _check_bool "AE_RUN_CONFIG_REPO_SKYPE" "${AE_RUN__config__add_repo__skype[0]}"
   _check_bool "AE_RUN_CONFIG_REPO_VSCODE" "${AE_RUN__config__add_repo__vscode[0]}"
-  _check_bool "AE_RUN_CONFIG_REPO_MSTEAMS" "${AE_RUN__config__add_repo__teams[0]}"
   _check_bool "AE_RUN_CONFIG_REPO_BRAVE_BROWSER" "${AE_RUN__config__add_repo__brave_browser[0]}"
   _check_bool "AE_RUN_CONFIG_REPO_SLACK" "${AE_RUN__config__add_repo__slack[0]}"
   _check_bool "AE_RUN_CONFIG_REPO_VIVALDI" "${AE_RUN__config__add_repo__vivaldi[0]}"
@@ -1771,7 +1770,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
 
   # Microsoft Keys
   # shellcheck disable=SC2235
-  if [[ ($AE_ARCH == "amd64") && ($AE_RUN_CONFIG_REPO_AZURECLI == "true" || ${AE_RUN_CONFIG_REPO_EDGE} == "true" || ${AE_RUN_CONFIG_REPO_MSTEAMS} == "true") ]]; then
+  if [[ ($AE_ARCH == "amd64") && ($AE_RUN_CONFIG_REPO_AZURECLI == "true" || ${AE_RUN_CONFIG_REPO_EDGE} == "true" ]]; then
     log_debug "Adding Microsoft keys."
     __add_repo_keys \
       --format "asc" \
@@ -1867,23 +1866,6 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
     fi
   else
     log_debug "Skipped adding Microsoft Edge repository"
-  fi
-
-  # Microsoft Teams
-  if [[ ${AE_RUN_CONFIG_REPO_MSTEAMS} == "true" ]]; then
-    if [[ ${AE_ARCH} == "amd64" ]]; then
-      log_info "Microsoft Teams"
-      if echo "deb [arch=$AE_ARCH signed-by=${AE_APT_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/ms-teams stable main #Microsoft Teams" >${AE_APT_SOURCES_DIR}/microsoft-teams.list; then
-        log_success "OK"
-      else
-        log_error "Failed to addd Microsoft Teams repository!"
-      fi
-    else
-      log_error "Microsoft Teams is not supported on this architecture($AE_ARCH)!"
-      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.teams")
-    fi
-  else
-    log_debug "Skipped adding Microsoft Teams repository"
   fi
 
   # Docker CE
@@ -1996,7 +1978,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
   if [[ ${AE_RUN_CONFIG_REPO_PODMAN} == "true" ]]; then
     if [[ ${AE_ARCH} == "amd64" ]]; then
       case ${AE_RUN_CODENAME} in
-      jammy | bullseye)
+      jammy | bullseye | focal)
         log_info "Podman"
         __add_repo_keys \
           --format "asc" \
@@ -2967,7 +2949,6 @@ function _process_menu() {
   Microsoft - Azure CLI        : $AE_RUN_CONFIG_REPO_AZURECLI
   Microsoft - Edge             : $AE_RUN_CONFIG_REPO_EDGE
   Microsoft - Skype            : $AE_RUN_CONFIG_REPO_SKYPE
-  Microsoft - Teams            : $AE_RUN_CONFIG_REPO_MSTEAMS
   Microsoft - VSCode           : $AE_RUN_CONFIG_REPO_VSCODE
   Miniconda (anaconda)         : $AE_RUN_CONFIG_REPO_MINICONDA
   NeuroDebian                  : $AE_RUN_CONFIG_REPO_NEURODEBIAN
