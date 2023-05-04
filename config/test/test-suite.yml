@@ -22,7 +22,7 @@ config:
     snaps: true
   # Repository Flags
   add_repo:
-    azurecli: true
+    azurecli: false
     bazel: true
     brave_browser: true
     chrome: true
@@ -34,13 +34,12 @@ config:
     github: true
     googlecloud: true
     gvisor: true
-    hashicorp: true
+    hashicorp: false
     mendeley: false
     miniconda: true
     neurodebian: true
-    # Kubic repo is deprecated for jammy and later.
     podman: false
-    protonvpn: true
+    protonvpn: false
     signal: true
     skype: true
     spotify: true

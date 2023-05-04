@@ -65,9 +65,6 @@ See /docs or visit [docs][docs]
 [![Debian](https://static.prasadt.com/logo64/debian.png)](https://www.debian.org/)
 [![Elementary-OS](https://static.prasadt.com/logo64/elementary-os.png)](https://elementary.io/)
 
-> I have not tested the script on distributions based on Debian and Ubuntu.
-> Though It should work fine.
-
 For a complete list of supported distributions [click here](https://ae.prasadt.com/faq/distros/).
 
 ## Features
@@ -119,8 +116,6 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 | [Debian - contrib][]    | debian_contrib    |                                                              |
 | [Debian - non-free][]   | debian_nonfree    |                                                              |
 
-- `azurecli` is not supported on Ubuntu 18.04, Debian 9, 10 and their derivatives.
-- `winehq` is not supported on Ubuntu 18.04, Debian 9, 10 and their derivatives.
 - `*` Only amd64/x86_64 is supported. ARM CPUs like Raspberry Pi/Nvidia Tegra are not
  supported.
 

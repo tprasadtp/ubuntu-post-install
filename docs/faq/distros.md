@@ -28,19 +28,17 @@ A Complete  list of supported distributions is given below.
 
 | Distribution       | Code name/Version       | Supported | Notes
 | :----------------- | :---------------------- | ----------| :------
-| Ubuntu 22.04       | **Jammy Jellyfish**     | Yes       |
+| Ubuntu 23.04       | **Lunar Lobster**       | Yes       |
+| Ubuntu 22.04       | __Jammy Jellyfish__     | Yes       |
 | Ubuntu 20.04       | Focal Fossa             | Yes       |
-| Linux Mint 21      | **Vanessa**             | Yes       |
-| Linux Mint 20,20.x | Ulyana, Ulyssa, Uma     | Yes       |
+| Linux Mint 21.X    | Venessa, Vera           | Yes       |
+| Linux Mint 20.x    | Ulyana, Ulyssa, Uma     | Yes       |
 | Debian/RaspiOS 11  | **Bullseye**            | Yes       |
 | Debian/Raspbian 10 | Buster                  | Yes       |
-| Elementary-OS 6    | **Odin**                | Yes       | Not tested
+| Elementary-OS 7    | **Jolnir**              | Yes       | Not tested
+| Elementary-OS 6    | Odin                    | Yes       | Not tested
 | PoP! OS            | **Same as Ubuntu**      | Yes       | Not tested
-| Bodhi Linux        | 5.1                     | Yes       | Not tested
-| Bodhi Linux        | 6.0                     | Yes       | Not tested
 | KDE Neon           | **Same as Ubuntu LTS**  | Yes       | Not Tested
-| Peppermint 11   | Based on Ubuntu         | Yes       | Not Tested
-
 
 > - _Italics_ : Latest stable LTS release(if any)
 > - **Bold** : Latest stable release

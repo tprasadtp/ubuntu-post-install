@@ -380,12 +380,12 @@ function __setup_platform_vars() {
   readonly AE_APT_SOURCES_DIR=/etc/apt/sources.list.d
 
   #-------------------------- Release codenames --------------------------------------
-  readonly AE_UBUNTU_CODENAME_LATEST="jammy"
+  readonly AE_UBUNTU_CODENAME_LATEST="lunar"
 
   # 404 is a placeholder which is  set when there are
   # no suitable releases which can use this feature or
   # the release is unknown or too early in developement.
-  readonly AE_UBUNTU_CODENAME_UPCOMING="kinetic"
+  readonly AE_UBUNTU_CODENAME_UPCOMING="mythic"
 
   readonly AE_UBUNTU_CODENAME_LATEST_LTS="jammy"
 
@@ -517,17 +517,22 @@ function _fix_ubuntu_derivatives() {
   log_var "AE_RUN_CODENAME"
 
   case ${AE_RUN_CODENAME} in
-  # Ubuntu 22.10 and its derivatives
-  kinetic)
+  # Ubuntu 23.10 and its derivatives
+  mythic)
     readonly AE_RUN_DISTRO_NAME="ubuntu"
-    log_warn "Release is Ubuntu 22.10 Kinetic Kudu"
+    log_warn "Release is Ubuntu 23.10 Mythic Marvel"
+    ;;
+  # Ubuntu 23.04 and its derivatives
+  lunar)
+    readonly AE_RUN_DISTRO_NAME="ubuntu"
+    log_info "Release is Ubuntu 23.04 Lunar Lobster"
     ;;
   # Ubuntu 22.04 and its derivatives
   jammy)
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     log_info "Release is Ubuntu 22.04 LTS Jammy Jellyfish"
     ;;
-  venessa)
+  venessa | vera | victoria)
     log_info "This is Linux-Mint 21.X."
     log_info "Setting additional repositories to follow Ubuntu 22.04."
     AE_RUN_CODENAME="jammy"
@@ -562,35 +567,29 @@ function _fix_ubuntu_derivatives() {
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     log_success "Changed codename to $AE_RUN_CODENAME"
     ;;
-  buster)
-    AE_RUN_IS_DEBIAN="true"
-    readonly AE_RUN_DISTRO_NAME="debian"
-    log_notice "This is Debian 10 Buster(oldstable). PPAs are disabled."
-    ;;
   bullseye)
     AE_RUN_IS_DEBIAN="true"
     readonly AE_RUN_DISTRO_NAME="debian"
-    log_notice "This is Debian 11 Bullseye(stable). PPAs are disabled."
+    log_notice "This is Debian 11 Bullseye. PPAs are disabled."
     ;;
   bookworm)
     AE_RUN_IS_DEBIAN="true"
     readonly AE_RUN_DISTRO_NAME="debian"
-    log_dev "You are running Debian Testing!"
-    log_notice "This is Debian 12 Bookworm(testing). PPAs are disabled."
+    log_notice "This is Debian 12 Bookworm. PPAs are disabled."
     ;;
-
+  trixie)
+    AE_RUN_IS_DEBIAN="true"
+    readonly AE_RUN_DISTRO_NAME="debian"
+    log_dev "You are running Debian Testing!"
+    log_notice "This is Debian Trixie. PPAs are disabled."
+    ;;
   # Unsupported releases
-  impish) _eol_message "July 2022" ;;
-  hirsute) _eol_message "January 20, 2022" ;;
-  groovy) _eol_message "June 2021" ;;
-  xenial) _eol_message "April 2021" ;;
-  sarah | serena | sonya | sylvia) _eol_message "April 2021" ;;
-  loki) _eol_message "April 2021" ;;
+  kinetic) _usup_message ;;
+  buster) _usup_message ;;
   stretch) _eol_message "June 30, 2022" ;;
-  # Too old for many repos and integration tests
-  bionic) _usup_message ;;
-  tara | tessa | tina | tricia) _usup_message ;;
-  juno | hera) _usup_message ;;
+  bionic) _eol_message "April 2023" ;;
+  tara | tessa | tina | tricia) _eol_message "April 2023" ;;
+  juno | hera) _eol_message "April 2023" ;;
   *)
     log_and_exit "Unknown or unsupported release($AE_RUN_CODENAME) !" "16"
     ;;
@@ -1103,7 +1102,16 @@ function _set_yaml_config() {
   _check_bool "AE_RUN_CONFIG_REPO_DEBIAN_CONTRIB" "${AE_RUN__config__add_repo__debian_contrib[0]}"
 
   # Ubuntu Components
-  _check_bool "AE_RUN_CONFIG_REPO_UBUNTU_UNIVERSE" "${AE_RUN__config__add_repo__ubuntu_universe[0]}"
+  case "$AE_RUN_CONFIG_REPO_ROS2" in
+  true | True | TRUE | Yes | yes | YES | 1) # shellcheck disable=SC2086
+    log_warn "Forcing AE_RUN_CONFIG_REPO_UBUNTU_UNIVERSE=true because of ROS2"
+    _check_bool "AE_RUN_CONFIG_REPO_UBUNTU_UNIVERSE" "true"
+    ;;
+  false | False | FALSE | No | no | NO | 0) # shellcheck disable=SC2086
+    log_warn "Ignoring AE_RUN_CONFIG_REPO_UBUNTU_UNIVERSE=false because of ROS2"
+    _check_bool "AE_RUN_CONFIG_REPO_UBUNTU_UNIVERSE" "true"
+    ;;
+  esac
   _check_bool "AE_RUN_CONFIG_REPO_UBUNTU_MULTIVERSE" "${AE_RUN__config__add_repo__ubuntu_multiverse[0]}"
   _check_bool "AE_RUN_CONFIG_REPO_UBUNTU_RESTRICTED" "${AE_RUN__config__add_repo__ubuntu_restricted[0]}"
 
@@ -1343,6 +1351,8 @@ function _map_to_obs_repos() {
   focal) readonly AE_RUN_OBS_PREFIX="xUbuntu_20.04" ;;
   jammy) readonly AE_RUN_OBS_PREFIX="xUbuntu_22.04" ;;
   kinetic) readonly AE_RUN_OBS_PREFIX="xUbuntu_22.10" ;;
+  lunar) readonly AE_RUN_OBS_PREFIX="xUbuntu_23.04" ;;
+  mythic) readonly AE_RUN_OBS_PREFIX="xUbuntu_23.10" ;;
   # Debian
   stretch) readonly AE_RUN_OBS_PREFIX="Debian_9" ;;
   buster) readonly AE_RUN_OBS_PREFIX="Debian_10" ;;
@@ -1605,10 +1615,10 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
     if [[ ${AE_ARCH} == "amd64" ]]; then
       log_info "Spotify"
       __add_repo_keys --format "asc" \
-        --file-prefix "spotify-5E3C45D7B312C643" \
-        --key-url https://download.spotify.com/debian/pubkey_5E3C45D7B312C643.gpg
+        --file-prefix "spotify-7A3A762FAFD4A51F" \
+        --key-url https://download.spotify.com/debian/pubkey_7A3A762FAFD4A51F.gpg
 
-      if echo "deb [arch=$AE_ARCH signed-by=${AE_APT_KEYRINGS_DIR}/spotify-5E3C45D7B312C643.gpg] http://repository.spotify.com stable non-free #Spotify" >${AE_APT_SOURCES_DIR}/spotify.list; then
+      if echo "deb [arch=$AE_ARCH signed-by=${AE_APT_KEYRINGS_DIR}/spotify-7A3A762FAFD4A51F.gpg] http://repository.spotify.com stable non-free #Spotify" >${AE_APT_SOURCES_DIR}/spotify.list; then
         log_success "OK"
       else
         log_error "Adding Spotify Repository Failed"
@@ -1797,7 +1807,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
     if [[ ${AE_ARCH} == "amd64" ]]; then
       if [[ ${AE_RUN_CODENAME} != "buster" ]]; then
         log_info "Azure CLI"
-        if echo "deb [arch=$AE_ARCH signed-by=${AE_APT_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ focal main #Azure CLI" >${AE_APT_SOURCES_DIR}/azure-cli.list; then
+        if echo "deb [arch=$AE_ARCH signed-by=${AE_APT_KEYRINGS_DIR}/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ ${AE_RUN_CODENAME} main #Azure CLI" >${AE_APT_SOURCES_DIR}/azure-cli.list; then
           log_success "OK"
         else
           log_error "Failed to addd Azure CLI repository!"
@@ -1984,10 +1994,9 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
 
   # Podman via OBS
   if [[ ${AE_RUN_CONFIG_REPO_PODMAN} == "true" ]]; then
-
     if [[ ${AE_ARCH} == "amd64" ]]; then
       case ${AE_RUN_CODENAME} in
-      focal | buster)
+      jammy | bullseye)
         log_info "Podman"
         __add_repo_keys \
           --format "asc" \
@@ -2211,12 +2220,12 @@ deb [signed-by=${AE_APT_KEYRINGS_DIR}/neurodebian-archive-keyring.gpg] http://ne
       __add_repo_keys \
         --format "gpg" \
         --file-prefix "element-io-archive-keyring" \
-        --key-url "https://packages.riot.im/debian/riot-im-archive-keyring.gpg"
+        --key-url "https://packages.element.io/debian/element-io-archive-keyring.gpg"
 
-      if echo "deb [signed-by=/usr/share/keyrings/element-io-archive-keyring.gpg] https://packages.riot.im/debian/ default main #element.io" >${AE_APT_SOURCES_DIR}/element-io.list; then
+      if echo "deb [signed-by=/usr/share/keyrings/element-io-archive-keyring.gpg] https://packages.element.io/debian/ default main #element.io" >${AE_APT_SOURCES_DIR}/element-io.list; then
         log_success "OK"
       else
-        log_error "Failed to add Element.io/Riot.im repository"
+        log_error "Failed to add Element.io repository"
         AE_RUN_STACK_ERR+=("repo-add-error::config.add_repo.element")
       fi
     else
@@ -2243,9 +2252,9 @@ deb [signed-by=${AE_APT_KEYRINGS_DIR}/neurodebian-archive-keyring.gpg] http://ne
 
     # Distro/Version/Arch checks
     if [[ $AE_RUN_DISTRO_NAME == "ubuntu" ]]; then
-      if [[ $AE_RUN_CODENAME == "focal" ]]; then
+      if [[ $AE_RUN_CODENAME == "focal" ]] || [[ $AE_RUN_CODENAME == "jammy" ]]; then
         ros2_supported="true"
-        log_debug "ROS2 is available on Focal/$AE_ARCH"
+        log_debug "ROS2 is available on $AE_RUN_CODENAME/$AE_ARCH"
       fi
     fi #ubuntu
 
@@ -2287,16 +2296,12 @@ deb [signed-by=${AE_APT_KEYRINGS_DIR}/neurodebian-archive-keyring.gpg] http://ne
     if [[ $AE_RUN_DISTRO_NAME == "ubuntu" ]]; then
       if [[ $AE_RUN_CODENAME == "focal" ]]; then
         ros_arch_supported="true"
-        log_debug "ROS is available on Focal/$AE_ARCH"
+        log_debug "ROS is available on $AE_RUN_CODENAME/$AE_ARCH"
       fi
     fi #ubuntu
 
     if [ "$AE_RUN_DISTRO_NAME" == "debian" ]; then
-      # Check architectures
-      if [[ $AE_RUN_CODENAME == "buster" ]]; then
-        ros_arch_supported="true"
-        log_debug "ROS is available on Debian ${AE_RUN_CODENAME}/$AE_ARCH"
-      fi
+      log_error "ROS1 is no longer supported on Debian ${AE_RUN_CODENAME}/$AE_ARCH"
     fi #debian
 
     if [[ $ros_arch_supported == "true" ]]; then
