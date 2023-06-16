@@ -160,7 +160,7 @@ See [Contributing and forks](/CONTRIBUTING.md)
 [GitHub - CLI]: https://cli.github.com
 [Google - gVisor]: https://gvisor.dev
 [Miniconda]: https://www.anaconda.com/blog/rpm-and-debian-repositories-for-miniconda
-[Podman]: https://podmain.io
+[Podman]: https://podman.io
 [Google - Bazel]: https://bazel.build
 [Ubuntu - Universe]: https://help.ubuntu.com/community/Repositories/Ubuntu
 [Ubuntu - Restricted]: https://help.ubuntu.com/community/Repositories/Ubuntu
