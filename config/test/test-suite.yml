@@ -125,8 +125,6 @@ config:
         - bazel
         # Edge
         - microsoft-edge-dev
-        # Teams
-        - teams
         # Sublime
         - sublime-text
         # From Universe in Ubuntu

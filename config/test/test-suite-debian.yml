@@ -112,14 +112,10 @@ config:
         - bazel
         # Edge
         - microsoft-edge-dev
-        # Teams
-        - teams
         # Sublime
         - sublime-text
         # From Universe in Ubuntu
         - apt-xapian-index
-        # Non-free in debian, multiverse in Ubuntu(canonical partner repos)
-        - unrar
         # Brave
         - brave-browser
         # Slack (libappindicator error)

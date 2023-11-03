@@ -23,8 +23,6 @@ config:
     docker: true
     github: true
     gvisor: true
-    ros: true
-    ros2: true
     vscode: true
 
   # Flags

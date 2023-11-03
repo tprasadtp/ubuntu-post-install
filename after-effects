@@ -17,7 +17,7 @@ function __init_core_variables() {
   # Start tik
   readonly AE_EXEC_START=$(date +%s)
   # Version
-  readonly AE_VERSION="9.2.0"
+  readonly AE_VERSION="9.3.0"
 
   # ERR
   declare -a AE_RUN_STACK_ERR
@@ -351,8 +351,7 @@ function __setup_platform_vars() {
     # Read Human Readable Distro Name
     readonly AE_DISTRO_NAME="$(awk '/^NAME=/' "${OS_RELEASE_FILE}" | sed 's/^NAME=//' | tr -d '"')"
   else
-    log_error "Hey, What kind of system is this?"
-    log_and_exit "I cannot determine distro/codename!" "5"
+    log_and_exit "Script cannot determine distro/codename!" "5"
   fi
 
   declare -r architecture="$(uname -m)"
@@ -380,17 +379,17 @@ function __setup_platform_vars() {
   readonly AE_APT_SOURCES_DIR=/etc/apt/sources.list.d
 
   #-------------------------- Release codenames --------------------------------------
-  readonly AE_UBUNTU_CODENAME_LATEST="lunar"
+  readonly AE_UBUNTU_CODENAME_LATEST="mantic"
 
   # 404 is a placeholder which is  set when there are
   # no suitable releases which can use this feature or
   # the release is unknown or too early in developement.
-  readonly AE_UBUNTU_CODENAME_UPCOMING="mythic"
+  readonly AE_UBUNTU_CODENAME_UPCOMING="noble"
 
   readonly AE_UBUNTU_CODENAME_LATEST_LTS="jammy"
 
-  readonly AE_DEBIAN_CODENAME_LATEST="bullseye"
-  readonly AE_DEBIAN_CODENAME_UPCOMING="bookworm"
+  readonly AE_DEBIAN_CODENAME_LATEST="bookworm"
+  readonly AE_DEBIAN_CODENAME_UPCOMING="trixie"
 
   #============================ Switches/ booleans & Vars ================================
 
@@ -517,10 +516,14 @@ function _fix_ubuntu_derivatives() {
   log_var "AE_RUN_CODENAME"
 
   case ${AE_RUN_CODENAME} in
-  # Ubuntu 23.10 and its derivatives
-  mythic)
+  noble)
     readonly AE_RUN_DISTRO_NAME="ubuntu"
-    log_warn "Release is Ubuntu 23.10 Mythic Marvel"
+    log_warn "Release is Ubuntu 24.04 Noble Numbat"
+    ;;
+  # Ubuntu 23.10 and its derivatives
+  mantic)
+    readonly AE_RUN_DISTRO_NAME="ubuntu"
+    log_warn "Release is Ubuntu 23.14 Mantic Minotaur"
     ;;
   # Ubuntu 23.04 and its derivatives
   lunar)
@@ -539,7 +542,7 @@ function _fix_ubuntu_derivatives() {
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     log_success "Changed codename to $AE_RUN_CODENAME"
     ;;
-  # Ubuntu 20.04 and its derivatives (Current Ubuntu LTS release)
+  # Ubuntu 20.04 and its derivatives
   focal)
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     log_info "This is latest LTS release of Ubuntu"
@@ -564,6 +567,13 @@ function _fix_ubuntu_derivatives() {
     log_info "Release is elementaryOS 6.1 - Jólnir."
     log_info "Setting additional repositories to follow Ubuntu 20.04."
     AE_RUN_CODENAME="focal"
+    readonly AE_RUN_DISTRO_NAME="ubuntu"
+    log_success "Changed codename to $AE_RUN_CODENAME"
+    ;;
+  horus)
+    log_info "Release is elementaryOS 7 - Horus."
+    log_info "Setting additional repositories to follow Ubuntu 22.04."
+    AE_RUN_CODENAME="jammy"
     readonly AE_RUN_DISTRO_NAME="ubuntu"
     log_success "Changed codename to $AE_RUN_CODENAME"
     ;;
@@ -1351,12 +1361,14 @@ function _map_to_obs_repos() {
   jammy) readonly AE_RUN_OBS_PREFIX="xUbuntu_22.04" ;;
   kinetic) readonly AE_RUN_OBS_PREFIX="xUbuntu_22.10" ;;
   lunar) readonly AE_RUN_OBS_PREFIX="xUbuntu_23.04" ;;
-  mythic) readonly AE_RUN_OBS_PREFIX="xUbuntu_23.10" ;;
+  mantic) readonly AE_RUN_OBS_PREFIX="xUbuntu_23.10" ;;
+  noble) readonly AE_RUN_OBS_PREFIX="xUbuntu_23.10" ;;
   # Debian
   stretch) readonly AE_RUN_OBS_PREFIX="Debian_9" ;;
   buster) readonly AE_RUN_OBS_PREFIX="Debian_10" ;;
   bullseye) readonly AE_RUN_OBS_PREFIX="Debian_11" ;;
-  bookworm) readonly AE_RUN_OBS_PREFIX="Debian_Testing" ;;
+  bookworm) readonly AE_RUN_OBS_PREFIX="Debian_12" ;;
+  trixie) readonly AE_RUN_OBS_PREFIX="Debian_Testing" ;;
   *) log_and_exit "Internal Error in ${FUNCNAME[0]}, Failed to match AE_RUN_OBS_PREFIX for ${AE_RUN_CODENAME}" "67" ;;
 
   esac
@@ -1369,7 +1381,7 @@ function _map_to_obs_repos() {
 function add_ppas() {
   # Function to add ppa by reading ppas from ppa.list of from YAML key config.ppa
   # List/Config file should contain ppas in following format
-  # ppa:ppa:<author>/<ppa> for example, ppa:mozillateam/firefox-nex for adding firefox next/Beta PPA
+  # ppa:ppa:<author>/<ppa> for example, ppa:mozillateam/firefox-next for adding firefox next/Beta PPA
   log_stage "Adding PPAs"
   local index
   local _ppa_dependencies=(apt-transport-https ca-certificates curl gnupg2 software-properties-common)
@@ -1461,20 +1473,22 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
   # OBS
   _map_to_obs_repos
 
-  # Backup sources.list if it will be modified
-  if [[ $AE_RUN_CONFIG_REPO_UBUNTU_MULTIVERSE == "true" ]] || [[ $AE_RUN_CONFIG_REPO_UBUNTU_UNIVERSE == "true" ]] ||
-    [[ $AE_RUN_CONFIG_REPO_UBUNTU_RESTRICTED == "true" ]] || [[ $AE_RUN_CONFIG_REPO_DEBIAN_CONTRIB == "true" ]] ||
-    [[ $AE_RUN_CONFIG_REPO_DEBIAN_NONFREE == "true" ]]; then
-    log_warn "Configuration will modify etc/apt/sources.list"
-    sources_list_bak_ts="$(date +'%Y%m%d-%H%M%S')"
-    log_info "Backing up with suffix - ${sources_list_bak_ts}.ae.bak"
-    if cp /etc/apt/sources.list "/etc/apt/sources.list.${sources_list_bak_ts}.ae.bak" 2>&1 | log_trace "${AE_LOG_PHASE_REPO}"; then
-      log_success "Backed up!"
+  if [[ -e /etc/apt/sources.list ]]; then
+    # Backup sources.list if it will be modified
+    if [[ $AE_RUN_CONFIG_REPO_UBUNTU_MULTIVERSE == "true" ]] || [[ $AE_RUN_CONFIG_REPO_UBUNTU_UNIVERSE == "true" ]] ||
+      [[ $AE_RUN_CONFIG_REPO_UBUNTU_RESTRICTED == "true" ]] || [[ $AE_RUN_CONFIG_REPO_DEBIAN_CONTRIB == "true" ]] ||
+      [[ $AE_RUN_CONFIG_REPO_DEBIAN_NONFREE == "true" ]]; then
+      log_warn "Configuration will modify etc/apt/sources.list"
+      sources_list_bak_ts="$(date +'%Y%m%d-%H%M%S')"
+      log_info "Backing up with suffix - ${sources_list_bak_ts}.ae.bak"
+      if cp /etc/apt/sources.list "/etc/apt/sources.list.${sources_list_bak_ts}.ae.bak" 2>&1 | log_trace "${AE_LOG_PHASE_REPO}"; then
+        log_success "Backed up!"
+      else
+        log_and_exit "Failed to create backup of sources.list before modification!" "68"
+      fi
     else
-      log_and_exit "Failed to create backup of sources.list before modification!" "68"
+      log_debug "No need to backup sources.list!"
     fi
-  else
-    log_debug "No need to backup sources.list!"
   fi
 
   # Ubuntu multiverse/universe/restricted
@@ -1730,7 +1744,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
   # shellcheck disable=SC2235
   if [[ $AE_RUN_CONFIG_REPO_GCP == "true" ]] || ([[ ${AE_RUN_CONFIG_REPO_GCSFUSE} == "true" ]] && [[ ${AE_ARCH} == "amd64" ]]); then
     log_debug "Adding GCP packaging keys"
-    __add_repo_keys --format "gpg" \
+    __add_repo_keys --format "asc" \
       --file-prefix "google-cloud-packaging" \
       --key-url https://packages.cloud.google.com/apt/doc/apt-key.gpg
   else
@@ -1770,7 +1784,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
 
   # Microsoft Keys
   # shellcheck disable=SC2235
-  if [[ ($AE_ARCH == "amd64") && ($AE_RUN_CONFIG_REPO_AZURECLI == "true" || ${AE_RUN_CONFIG_REPO_EDGE} == "true" ]]; then
+  if [[ ($AE_ARCH == "amd64") && ($AE_RUN_CONFIG_REPO_AZURECLI == "true" || ${AE_RUN_CONFIG_REPO_EDGE} == "true") ]]; then
     log_debug "Adding Microsoft keys."
     __add_repo_keys \
       --format "asc" \
@@ -1978,7 +1992,7 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
   if [[ ${AE_RUN_CONFIG_REPO_PODMAN} == "true" ]]; then
     if [[ ${AE_ARCH} == "amd64" ]]; then
       case ${AE_RUN_CODENAME} in
-      jammy | bullseye | focal)
+      jammy)
         log_info "Podman"
         __add_repo_keys \
           --format "asc" \
@@ -1992,12 +2006,10 @@ deb https://desktop-download.mendeley.com/download/apt stable main"
         ;;
       *)
         log_error "Podman is not supported on ${AE_DISTRO_NAME}/${AE_ARCH}"
-        AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.podman")
         ;;
       esac
     else
       log_error "Podman is not supported on ${AE_DISTRO_NAME}/${AE_ARCH}"
-      AE_RUN_STACK_ERR+=("add-repo-unsupported:config.add_repo.podman")
     fi
 
   else
@@ -2253,7 +2265,7 @@ deb [signed-by=${AE_APT_KEYRINGS_DIR}/neurodebian-archive-keyring.gpg] http://ne
       fi
 
     else
-      log_error "ROS2 is not supported on ${AE_DISTRO_PRETTY_NAME}!"
+      log_warn "ROS2 is not supported on ${AE_DISTRO_PRETTY_NAME}"
     fi # ros_arch_supported
 
   else
@@ -2283,7 +2295,7 @@ deb [signed-by=${AE_APT_KEYRINGS_DIR}/neurodebian-archive-keyring.gpg] http://ne
     fi #ubuntu
 
     if [ "$AE_RUN_DISTRO_NAME" == "debian" ]; then
-      log_error "ROS1 is no longer supported on Debian ${AE_RUN_CODENAME}/$AE_ARCH"
+      log_warn "ROS is no longer supported on Debian"
     fi #debian
 
     if [[ $ros_arch_supported == "true" ]]; then

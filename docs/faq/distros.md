@@ -26,19 +26,18 @@ It should work fine. But no promises.
 
 A Complete  list of supported distributions is given below.
 
-| Distribution       | Code name/Version       | Supported | Notes
-| :----------------- | :---------------------- | ----------| :------
-| Ubuntu 23.04       | **Lunar Lobster**       | Yes       |
-| Ubuntu 22.04       | __Jammy Jellyfish__     | Yes       |
-| Ubuntu 20.04       | Focal Fossa             | Yes       |
-| Linux Mint 21.X    | Venessa, Vera           | Yes       |
-| Linux Mint 20.x    | Ulyana, Ulyssa, Uma     | Yes       |
-| Debian/RaspiOS 11  | **Bullseye**            | Yes       |
-| Debian/Raspbian 10 | Buster                  | Yes       |
-| Elementary-OS 7    | **Jolnir**              | Yes       | Not tested
-| Elementary-OS 6    | Odin                    | Yes       | Not tested
-| PoP! OS            | **Same as Ubuntu**      | Yes       | Not tested
-| KDE Neon           | **Same as Ubuntu LTS**  | Yes       | Not Tested
-
-> - _Italics_ : Latest stable LTS release(if any)
-> - **Bold** : Latest stable release
+| Distribution       | Supported | Notes
+| :----------------- | ----------| :------
+| Ubuntu 23.10       | Yes       |
+| Ubuntu 23.04       | Yes       |
+| Ubuntu 22.04       | Yes       |
+| Ubuntu 20.04       | Yes       |
+| Linux Mint 21.X    | Yes       |
+| Linux Mint 20.x    | Yes       |
+| Debian/RaspiOS 11  | Yes       |
+| Debian/RaspiOS 10  | Yes       |
+| Elementary-OS 7.1  | Yes       | Not tested
+| Elementary-OS 7    | Yes       | Not tested
+| Elementary-OS 6    | Yes       | Not tested
+| PoP! OS            | Yes       | Not tested
+| KDE Neon           | Yes       | Not Tested

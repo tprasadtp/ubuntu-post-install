@@ -1,4 +1,0 @@
-#!/usr/bin/bash
-set -e pipefail
-printf "==> Building docs\n"
-mkdocs build -v -s

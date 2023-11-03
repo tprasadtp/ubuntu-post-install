@@ -11,6 +11,8 @@ config:
     # Add Repos
     # individual repos flags are mentioned under config.add_repo key
     add_repo: true
+    # Add PPAs
+    ppa: true
     # APT Packages
     apt: true
     # Whether to purge packages mentioned in config.purge key
@@ -20,6 +22,7 @@ config:
     snaps: true
   # Repository Flags
   add_repo:
+    azurecli: true
     bazel: true
     brave_browser: true
     chrome: true
@@ -49,15 +52,23 @@ config:
     # Debian
     debian_nonfree: true
     debian_contrib: true
+    # Ubuntu
+    ubuntu_universe: true
+    ubuntu_multiverse: true
+    ubuntu_restricted: true
 
   # Flags
   flags:
     purge_enabled: true
-    preserve_debs: false
+    preserve_pkgs: false
 
   # Packages to purge
   purge:
     - gnome-mines
+  # PPA
+  ppa:
+    # No Prefix ppa:
+    - kicad/kicad-5.1-releases
   # Install components
   # APT Packages, Python Modules, Debian packages
   install:
@@ -99,6 +110,7 @@ config:
         - terraform
         # Microsoft
         - code
+        - azure-cli
         # Google
         - google-cloud-sdk
         - google-chrome-stable
@@ -112,8 +124,6 @@ config:
         - bazel
         # Edge
         - microsoft-edge-dev
-        # Teams
-        - teams
         # Sublime
         - sublime-text
         # From Universe in Ubuntu
@@ -122,13 +132,14 @@ config:
         - unrar
         # Brave
         - brave-browser
-        # Slack (libappindicator error)
-        # - slack-desktop
+        # Slack
+        - slack-desktop
         # Vivaldi
         - vivaldi-stable
         # ProtonVPN
         - protonvpn
         # Miniconda
         - conda
+        - podman
         # Element
         - element-desktop
