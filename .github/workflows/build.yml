@@ -10,65 +10,72 @@ jobs:
   shellcheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3 # ratchet:exclude
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - name: Shellcheck
         run: shellcheck after-effects
+
   ubuntu:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        release: ["focal", "jammy"]
+        release: ["focal", "jammy", "mantic"]
     steps:
-      - uses: actions/checkout@v3 # ratchet:exclude
+      - uses: actions/checkout@v3
         with:
           persist-credentials: false
+
       - name: Ubuntu ${{ matrix.release }}
         run: ./scripts/docker-test --build --trace --distro ubuntu --release "${{ matrix.release }}"
+
   debian:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        release: ["bullseye"]
+        release: ["bullseye", "bookworm"]
     steps:
-      - uses: actions/checkout@v3 # ratchet:exclude
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
+
       - name: Debian ${{ matrix.release }}
         run: ./scripts/docker-test --build --trace --distro debian --release "${{ matrix.release }}"
+
   ubuntu-arm:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        release: ["focal", "jammy"]
+        release: ["focal", "jammy", "mantic"]
     steps:
-      - uses: actions/checkout@v3 # ratchet:exclude
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
+
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@8b122486cedac8393e77aa9734c3528886e4a1a8 # ratchet:docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
+
       - name: Test on ARM64 ${{ matrix.release }}
         run: ./scripts/docker-test --build --trace --distro arm64v8/ubuntu --release "${{ matrix.release }}"
-  # Debian ARM64
+
   debian-arm:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        release: ["bullseye"]
+        release: ["bullseye", "bookworm"]
     steps:
-      - uses: actions/checkout@v3 # ratchet:exclude
+      - uses: actions/checkout@v3
         with:
           persist-credentials: false
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@8b122486cedac8393e77aa9734c3528886e4a1a8 # ratchet:docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       - name: Test on ARM64 ${{ matrix.release }}
         run: ./scripts/docker-test --build --trace --distro arm64v8/debian --release "${{ matrix.release }}"
-  # Release
+
   release:
     if: startsWith(github.ref, 'refs/tags/v')
     needs:
@@ -81,7 +88,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v3 # ratchet:exclude
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0

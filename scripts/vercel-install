@@ -13,8 +13,7 @@ else
 fi
 
 printf "==> Installing mkdocs-material\n"
-pip3 install --use-feature=2020-resolver \
-  -U mkdocs-material \
+pip3 install -U mkdocs-material \
     mkdocs-minify-plugin \
     mkdocs-redirects \
     pillow \

@@ -81,42 +81,46 @@ Also handles adding several tweaks and fixes necessary to add repositories and P
 
 ## Supported External repositories
 
-| Name                    | Key               | Packages                                                     |
-| ----------------------- | ----------------- | ------------------------------------------------------------ |
-| [Brave Browser][]*      | brave_browser     | brave-browser                                                |
-| Docker                  | docker            | docker-ce, docker-ce-rootless-extras, docker-ce-cli          |
+| Name                    | Key               | Packages
+| ----------------------- | ----------------- | ---
+| [Brave Browser][]*      | brave_browser     | brave-browser
+| Docker                  | docker            | docker-ce, docker-ce-rootless-extras, docker-ce-cli
 | [Element.io][element]*  | element_io        | element-desktop
-| [GitHub - CLI][]        | github            | gh                                                           |
-| [Google - Bazel][]*     | bazel             | bazel                                                        |
-| Google - Chrome*        | chrome            | google-chrome-stable, google-chrome-beta                     |
-| Google - Cloud SDK*     | googlecloud       | google-cloud-sdk, kubectl, google-cloud-sdk-minikube         |
-| [Google - gVisor][]     | gvisor            | runsc                                                        |
-| Hashicorp*              | hashicorp         | terraform, consul, nomad, vault, boundary, waypoint          |
-| Mendeley desktop*       | mendeley          | mendeleydesktop                                              |
-| Microsoft - Azure CLI*  | azurecli          | azure-cli                                                    |
-| Microsoft - Edge*       | edge              | microsoft-edge-dev                                           |
-| Microsoft - Skype*      | skype             | skypeforlinux                                                |
-| Microsoft - VSCode      | vscode            | code, code-insiders, code-exploration                        |
-| [Miniconda][]*          | miniconda         | conda                                                        |
-| NeuroDebian*            | neurodebian       | https://neuro.debian.net/                                    |
-| [Podman][] (via OBS)*   | podman            | podman, podman-plugins, cri-o-runc, cri-tools, buildah, crun |
-| ProtonVPN Client*       | protonvpn         | protonvpn                                                    |
-| ROS                     | ros               |                                                              |
-| ROS2                    | ros2              |                                                              |
-| Signal*                 | signal            | signal-desktop                                               |
-| Slack Desktop*          | slack             | slack-desktop                                                |
-| Spotify Client*         | spotify           | spotify-client                                               |
-| Sublime Text Editor*    | sublimetext       | sublime-text                                                 |
-| Vivaldi*                | vivaldi           | vivaldi-stable                                               |
-| Wine HQ*                 | winehq            | winehq-stable, winehq-staging                                |
-| [Ubuntu - Universe][]   | ubuntu_universe   |                                                              |
-| [Ubuntu - Multiverse][] | ubuntu_multiverse |                                                              |
-| [Ubuntu - Restricted][] | ubuntu_restricted |                                                              |
-| [Debian - contrib][]    | debian_contrib    |                                                              |
-| [Debian - non-free][]   | debian_nonfree    |                                                              |
+| [GitHub - CLI][]        | github            | gh
+| [Google - Bazel][]*     | bazel             | bazel
+| Google - Chrome*        | chrome            | google-chrome-stable, google-chrome-beta
+| Google - Cloud SDK*     | googlecloud       | google-cloud-sdk, kubectl, google-cloud-sdk-minikube
+| [Google - gVisor][]     | gvisor            | runsc
+| Hashicorp*              | hashicorp         | terraform, consul, nomad, vault, boundary, waypoint
+| Mendeley desktop*       | mendeley          | mendeleydesktop
+| Microsoft - Azure CLI*  | azurecli          | azure-cli
+| Microsoft - Edge*       | edge              | microsoft-edge-dev
+| Microsoft - Skype*      | skype             | skypeforlinux
+| Microsoft - VSCode      | vscode            | code, code-insiders, code-exploration
+| [Miniconda][]*          | miniconda         | conda
+| NeuroDebian*            | neurodebian       | https://neuro.debian.net/
+| [Podman][] (via OBS)*   | podman            | podman, buildah
+| ProtonVPN Client*       | protonvpn         | protonvpn
+| ROS                     | ros               |
+| ROS2                    | ros2              |
+| Signal*                 | signal            | signal-desktop
+| Slack Desktop*          | slack             | slack-desktop
+| Spotify Client*         | spotify           | spotify-client
+| Sublime Text Editor*    | sublimetext       | sublime-text
+| Vivaldi*                | vivaldi           | vivaldi-stable
+| Wine HQ*                | winehq            | winehq-stable, winehq-staging
+| [Ubuntu - Universe][]   | ubuntu_universe   |
+| [Ubuntu - Multiverse][] | ubuntu_multiverse |
+| [Ubuntu - Restricted][] | ubuntu_restricted |
+| [Debian - contrib][]    | debian_contrib    |
+| [Debian - non-free][]** | debian_nonfree    |
 
-- `*` Only amd64/x86_64 is supported. ARM CPUs like Raspberry Pi/Nvidia Tegra are not
- supported.
+> **Note**
+
+  - `*` Only amd64/x86_64 is supported. ARM CPUs like Raspberry Pi/Nvidia Tegra are not
+  supported.
+  - `**` Debain non free is not supported on Debian Bookworm due to DEB-822 and inclusion of
+  non free drivers by default.
 
 ## Issues & Help
 

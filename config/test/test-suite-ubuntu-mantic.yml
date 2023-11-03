@@ -22,25 +22,19 @@ config:
     snaps: true
   # Repository Flags
   add_repo:
-    azurecli: true
+    azurecli: false
     bazel: true
     brave_browser: true
     chrome: true
     docker: true
     edge: true
     element_io: true
-    # This is really flaky so drop it
-    gcsfuse: false
     github: true
     googlecloud: true
     gvisor: true
-    hashicorp: true
-    mendeley: false
+    hashicorp: false
     miniconda: true
-    neurodebian: true
     protonvpn: true
-    ros: true
-    ros2: true
     signal: true
     skype: true
     spotify: true
@@ -49,9 +43,6 @@ config:
     vivaldi: true
     vscode: true
     winehq: true
-    # Debian
-    debian_nonfree: true
-    debian_contrib: true
     # Ubuntu
     ubuntu_universe: true
     ubuntu_multiverse: true
@@ -67,8 +58,7 @@ config:
     - gnome-mines
   # PPA
   ppa:
-    # No Prefix ppa:
-    - kicad/kicad-5.1-releases
+    # - kicad/kicad-5.1-releases
   # Install components
   # APT Packages, Python Modules, Debian packages
   install:
@@ -101,16 +91,14 @@ config:
         # Docker
         - docker-ce
         # spotify
-        - spotify-client
+        # - spotify-client
         # Github
         - gh
         # Gvisor
         - runsc
-        # Hashicorp
-        - terraform
         # Microsoft
         - code
-        - azure-cli
+        # - azure-cli
         # Google
         - google-cloud-sdk
         - google-chrome-stable
@@ -140,5 +128,6 @@ config:
         - protonvpn
         # Miniconda
         - conda
+        - podman
         # Element
         - element-desktop
